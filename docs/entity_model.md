@@ -35,3 +35,4 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | saldo | Aktueller Saldo in Euro; bei einer Kreditkarte mit offenem Betrag negativ | Decimal |  | Pflicht; Beispiel 2145.30; negativ bei Kreditkarte mit offenem Betrag |
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
 | dispositionsrahmen | Eingeräumter Dispositionsrahmen in Euro; nur beim Girokonto belegt | Decimal |  | Beispiel 1000.00; nur bei Art Girokonto |
+| verfuegbarerBetrag | Verfügbarer Betrag in Euro: Saldo plus Dispositionsrahmen; nur beim Girokonto belegt | Decimal |  | Beispiel 3145.30; nur bei Art Girokonto |

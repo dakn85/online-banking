@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Online-Banking
   version: 0.1.0
-paths: { /api/konten: { get: { description: "Liefert die Konten der angemeldeten Kundin für den Finanzstatus. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um. Beträge in Euro, negative Salden (Kreditkarte mit offenem Betrag) als negative Zahl. Dispositionsrahmen nur beim Girokonto.", operationId: kontenLesen, responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Kontenuebersicht' } } }, description: Konten der Kundin mit Gesamtvermögen }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung } }, summary: Konten der angemeldeten Kundin mit Salden und Gesamtvermögen, tags: [ Finanzstatus ], x-use-cases: [ UC-001 ] } } }
+paths: { /api/konten: { get: { description: "Liefert die Konten der angemeldeten Kundin für den Finanzstatus. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um. Beträge in Euro, negative Salden (Kreditkarte mit offenem Betrag) als negative Zahl. Dispositionsrahmen und verfügbarer Betrag nur beim Girokonto.", operationId: kontenLesen, responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Kontenuebersicht' } } }, description: Konten der Kundin mit Gesamtvermögen }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung } }, summary: Konten der angemeldeten Kundin mit Salden und Gesamtvermögen, tags: [ Finanzstatus ], x-use-cases: [ UC-001 ] } } }
 components:
   schemas:
     Fehler:
@@ -35,6 +35,9 @@ components:
           enum:
             - EUR
           type: string
+        verfuegbarerBetrag:
+          type: number
+          description: Verfügbarer Betrag in Euro (Saldo plus Dispositionsrahmen); nur beim Girokonto vorhanden
       required:
         - kontoname
         - iban

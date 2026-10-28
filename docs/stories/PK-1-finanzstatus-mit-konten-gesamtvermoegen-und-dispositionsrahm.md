@@ -68,3 +68,13 @@ Die Überweisung selbst kommt als eigene Story; der Knopf „Überweisen“ füh
   **Antwort:** Die Felder fehlen (nur das Girokonto trägt sie).
 - [x] Sind diese Feldnamen für die Antwort von GET /api/konten verbindlich?
   **Antwort:** Ja, so wie vorgeschlagen.
+- [x] Die Zeile des Girokontos trägt Knopf „Überweisen“ und verfügbaren Betrag, die Kreditkarte nicht (UC-001 Schritt 6/7). Die Maske finanzstatus führt dafür kein Feld. Woran erkennt die Oberfläche die Girokonto-Zeile? (GET /api/konten, art)
+  **Antwort:** Über art aus der Antwort; art wird als Feld in die Maske aufgenommen (unsichtbar, nur zur Steuerung).
+- [x] Für den Dispositionsrahmen ist nur „nur beim Girokonto belegt“ festgelegt, nicht ob ein Girokonto ihn haben muss. Was gilt, wenn einem Girokonto der Rahmen fehlt? (GET /api/konten, dispositionsrahmen)
+  **Antwort:** Pflicht beim Girokonto; die Entität bekommt diese Validierungsregel, die Demo-Daten halten sie ein, ein Girokonto ohne Rahmen ist ein Datenfehler.
+- [x] Das ER-Diagramm sagt Konto }o--|| Kunde, der Entität Konto fehlt aber jedes Attribut, das ein Konto einer Kundin zuordnet — und der Dienst kennt zwei Demo-Kunden (lena.hoffmann, jonas.weber). Welche Konten sieht eine angemeldete Kundin? (Aussage „Jedes Konto ist genau einer Kundin zugeordnet (Konto }o--|| Kunde), sodass der D“)
+  **Antwort:** Die zwei Demo-Konten gelten für jede angemeldete Kundin; die Demo-Daten tragen keinen Kundenbezug.
+- [x] Wo wird der verfügbare Betrag gebildet und wie heißt das Feld in der Antwort?
+  **Antwort:** Im Dienst als Feld verfuegbarerBetrag, nur beim Girokonto vorhanden.
+- [x] Wie ist der Platzhalter hinter dem Knopf „Überweisen“ festgelegt?
+  **Antwort:** Der Knopf führt auf die vorhandene Seite /ueberweisung der Projektvorlage; dort steht bis zur Überweisungs-Story der Platzhalter „In Vorbereitung“. Keine eigene Maske.
