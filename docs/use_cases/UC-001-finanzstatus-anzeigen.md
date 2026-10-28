@@ -35,6 +35,14 @@
 1. Das System leitet auf die Anmeldeseite um.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
 
+### A2: Finanzstatus nicht verfügbar
+
+**Auslöser:** Der Dienst antwortet mit dem Datenfehler 500, etwa weil einem Girokonto Dispositionsrahmen oder verfügbarer Betrag fehlt. (Schritt 2).  
+**Ablauf:**
+
+1. Das System zeigt die Meldung „Der Finanzstatus ist derzeit nicht verfügbar.“.
+2. Das System zeigt keine Zeile ohne Dispositionsrahmen und keinen Knopf „Überweisen“.
+
 ## Sequenzdiagramm
 
 ```mermaid

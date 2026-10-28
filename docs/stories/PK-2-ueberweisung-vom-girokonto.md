@@ -21,7 +21,7 @@ Termin- und Daueraufträge; Überweisungen von anderen Konten als dem Girokonto;
 | Genau einmalige Ausführung einer Überweisung | Neu | Qualitätsanforderung neu |
 | Finanzstatus | Geändert | Aktion Überweisen neu |
 | Überweisung bestätigen | Neu | Maske neu |
-| UC-001 Finanzstatus anzeigen | Geändert | Notizen geändert, Schritt 7 geändert |
+| UC-001 Finanzstatus anzeigen | Geändert | Notizen geändert, Schritt 7 geändert, A2 neu: Finanzstatus nicht verfügbar |
 | UC-002 Überweisung vom Girokonto | Neu | Use Case neu |
 | BR-0003 IBAN des Empfängers | Neu | Neu in UC-002 |
 | BR-0004 Betragsgrenze des Girokontos | Neu | Neu in UC-002 |
@@ -51,6 +51,7 @@ Termin- und Daueraufträge; Überweisungen von anderen Konten als dem Girokonto;
 - [ ] Überweisung: Maske neu
 - [ ] UC-001: Notizen geändert
 - [ ] UC-001: Schritt 7 geändert
+- [ ] UC-001: A2 neu: Finanzstatus nicht verfügbar
 - [ ] UC-002: Use Case neu
 - [ ] BR-0003: Neu in UC-002
 - [ ] BR-0004: Neu in UC-002
