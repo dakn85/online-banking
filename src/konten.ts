@@ -1,0 +1,48 @@
+/* Konten der Demo-Kundinnen (C-001: noch kein Kernbanksystem). Alle Kundinnen sehen denselben Demo-Bestand. */
+
+export type Kontoart = 'Girokonto' | 'Kreditkarte';
+
+export interface Konto {
+  kontoname: string;
+  art: Kontoart;
+  iban: string;
+  saldo: number;
+  waehrung: 'EUR';
+  /** BR-0002: nur beim Girokonto, dort Pflicht. */
+  dispositionsrahmen?: number;
+}
+
+/** Girokonto zuerst, dann Kreditkarte. */
+const AUSGANGSSTAND: Konto[] = [
+  { kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE02500105175407324931', saldo: 2145.30, waehrung: 'EUR', dispositionsrahmen: 1000 },
+  { kontoname: 'Kreditkarte', art: 'Kreditkarte', iban: 'DE44500105175407324955', saldo: -387.45, waehrung: 'EUR' },
+];
+
+let konten: Konto[] = [];
+
+export function zuruecksetzen(): void {
+  konten = AUSGANGSSTAND.map(k => ({ ...k }));
+}
+zuruecksetzen();
+
+/** Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler (Vertrag: 500). */
+export class Datenfehler extends Error {}
+
+const runden = (betrag: number) => Math.round(betrag * 100) / 100;
+
+/** UC-001: Konten mit verfügbarem Betrag (BR-0002) und Gesamtvermögen (BR-0001). */
+export function finanzstatus(): { gesamtvermoegen: number; konten: (Konto & { verfuegbarerBetrag?: number })[] } {
+  return {
+    gesamtvermoegen: runden(konten.reduce((summe, k) => summe + k.saldo, 0)),
+    konten: konten.map(k => {
+      if (k.art !== 'Girokonto') return { ...k };
+      if (k.dispositionsrahmen === undefined) throw new Datenfehler(`Girokonto ${k.iban} ohne Dispositionsrahmen`);
+      return { ...k, verfuegbarerBetrag: runden(k.saldo + k.dispositionsrahmen) };
+    }),
+  };
+}
+
+/** Nur für Tests: Konten setzen. */
+export function kontenSetzen(neu: Konto[]): void {
+  konten = neu.map(k => ({ ...k }));
+}
