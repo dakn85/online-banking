@@ -70,6 +70,14 @@
 1. Das System leitet auf die Anmeldeseite um.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
 
+### A6: Bestätigung abgelehnt
+
+**Auslöser:** Der Dienst lehnt das Auftraggeberkonto ab (403) oder antwortet mit einem Fehler außerhalb von 400 und 422. (Schritt 7).  
+**Ablauf:**
+
+1. Das System führt den Auftrag nicht aus und springt auf die Überweisung zurück; die bisherigen Eingaben bleiben stehen.
+2. Das System zeigt die Meldung „Die Überweisung konnte nicht ausgeführt werden.“ und gibt den Knopf „Bestätigen“ wieder frei.
+
 ## Sequenzdiagramm
 
 ```mermaid
