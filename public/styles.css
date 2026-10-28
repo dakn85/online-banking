@@ -168,6 +168,33 @@ a { color: var(--tanne); }
 .konto__symbol { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: #e6efed; color: var(--tanne); }
 .konto__symbol--kreditkarte { background: #f6ecd6; color: #7a5a1c; }
 
+/* Überweisung (UC-002) */
+.finanzstatus__meldung { margin: 0 0 18px; align-items: center; font-weight: 500; }
+.schritte { list-style: none; display: flex; gap: 28px; margin: 0 0 22px; padding: 0; color: var(--tinte-2); font-weight: 500; font-size: 14px; }
+.schritte li { display: flex; align-items: center; gap: 10px; }
+.schritte span { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; border: 1.5px solid #b9c6c2; }
+.schritte li[aria-current] { color: var(--tinte); }
+.schritte li[aria-current] span { background: var(--tanne); border-color: var(--tanne); color: #fff; }
+.schritte li.erledigt span { background: #e6efed; border-color: #e6efed; color: var(--tanne); }
+.ueberweisung__raster { display: grid; grid-template-columns: minmax(0, 620px) 300px; gap: 28px; align-items: start; }
+.ueberweisung__form { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); padding: 28px; display: grid; gap: 18px; }
+.ueberweisung__form h2 { font-size: 18px; }
+.ueberweisung__unter { margin: 4px 0 0; color: var(--tinte-2); font-size: 14px; }
+.ueberweisung__form input[readonly] { background: #f7f9f8; color: var(--tinte-2); }
+.ueberweisung__aktionen { display: flex; justify-content: flex-end; gap: 12px; padding-top: 4px; }
+.ueberweisung__konto { background: var(--tanne); color: #fff; border-radius: var(--rund-m); padding: 22px; }
+.ueberweisung__klein { margin: 0; font-size: 13px; color: #b9d3cd; }
+.ueberweisung__kontoname { margin: 6px 0 2px; font-weight: 600; font-size: 17px; }
+.ueberweisung__konto .iban { margin: 0 0 16px; font-size: 14px; color: #cfe0dc; }
+.ueberweisung__konto dl { margin: 0; display: grid; gap: 8px; border-top: 1px solid rgba(255,255,255,.16); padding-top: 14px; }
+.ueberweisung__konto dl div, .zusammenfassung div { display: flex; justify-content: space-between; gap: 16px; }
+.ueberweisung__konto dt { color: #b9d3cd; }
+.ueberweisung__konto dd { margin: 0; font-weight: 600; }
+.ueberweisung__betrag { margin: 0; font-size: 36px; font-weight: 600; letter-spacing: -.02em; }
+.zusammenfassung { margin: 0; display: grid; gap: 12px; border-top: 1px solid var(--linie); padding-top: 18px; }
+.zusammenfassung dt { color: var(--tinte-2); }
+.zusammenfassung dd { margin: 0; font-weight: 500; text-align: right; }
+
 @media (max-width: 860px) {
   .vermoegen { padding: 24px; }
   .vermoegen__summe { font-size: 34px; }
@@ -183,5 +210,7 @@ a { color: var(--tanne); }
   .leiste__kunde { display: none; }
   .inhalt { padding: 24px 16px 48px; }
   .vorbereitung { grid-template-columns: 1fr; padding: 32px 24px; }
+  .ueberweisung__raster { grid-template-columns: 1fr; }
+  .ueberweisung__konto { order: -1; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

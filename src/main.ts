@@ -2,6 +2,7 @@ import express from 'express';
 import { join } from 'node:path';
 import { Datenfehler, finanzstatus, zuruecksetzen } from './konten';
 import { kundeMitKennung } from './kunden';
+import { Ablehnung, ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from './ueberweisung';
 import { alleBeenden, angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 
 const port = Number(process.env.PORT ?? 8080);
@@ -43,11 +44,30 @@ app.get('/api/konten', nurAngemeldet('api'), (_req, res) => {
   }
 });
 
+// UC-002: Überweisung vom Girokonto, genau einmal je Auftrags-Kennung (BR-0005)
+const PFLICHT = ['auftragsId', 'auftraggeberIban', 'empfaenger', 'empfaengerIban', 'verwendungszweck'] as const;
+app.post('/api/ueberweisungen', nurAngemeldet('api'), (req, res) => {
+  const b = req.body ?? {};
+  if (PFLICHT.some(feld => typeof b[feld] !== 'string' || !b[feld].trim()) || typeof b.betrag !== 'number') {
+    return res.status(400).json({ fehler: 'Der Auftrag ist unvollständig.' });
+  }
+  try {
+    const { neu, ueberweisung } = ausfuehren({
+      auftragsId: b.auftragsId, auftraggeberIban: b.auftraggeberIban, empfaenger: b.empfaenger.trim(),
+      empfaengerIban: b.empfaengerIban, betrag: b.betrag, verwendungszweck: b.verwendungszweck.trim(),
+    });
+    res.status(neu ? 201 : 200).json(ueberweisung);
+  } catch (fehler) {
+    if (!(fehler instanceof Ablehnung)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
-  // Testdaten zurücksetzen: alle Sitzungen beenden, Demo-Konten auf den Ausgangsstand.
-  app.post('/api/test/reset', (_req, res) => { alleBeenden(); zuruecksetzen(); res.status(204).end(); });
+  // Testdaten zurücksetzen: alle Sitzungen beenden, Demo-Konten auf den Ausgangsstand, keine Aufträge.
+  app.post('/api/test/reset', (_req, res) => { alleBeenden(); zuruecksetzen(); auftraegeZuruecksetzen(); res.status(204).end(); });
 }
 
 // Seiten

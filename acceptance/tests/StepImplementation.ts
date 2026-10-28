@@ -130,4 +130,58 @@ export default class StepImplementation {
     await page.goto(`${basisUrl}/finanzstatus`, { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/anmelden$/);
   }
+
+  @Step('Die Kundin öffnet die Überweisung vom Girokonto')
+  public async ueberweisungOeffnen() {
+    const page = await this.kontentabelle();
+    await page.locator('.kontentabelle tbody tr[data-konto="Girokonto"]').getByRole('link', { name: 'Überweisen' }).click();
+    const konto = page.getByRole('form', { name: 'Überweisung' }).getByLabel('Auftraggeberkonto', { exact: true });
+    await konto.waitFor();
+    assert.match(await konto.inputValue(), /DE02 5001 0517 5407 3249 31/, 'Auftraggeberkonto ist nicht das Girokonto');
+  }
+
+  /** Füllt das Formular der Überweisung und wählt „Weiter“. */
+  private async erfassen(empfaenger: string, iban: string, betrag: string, zweck: string): Promise<Page> {
+    const page = await this.seite();
+    const form = page.getByRole('form', { name: 'Überweisung' });
+    await form.getByLabel('Empfänger', { exact: true }).fill(text(empfaenger));
+    await form.getByLabel('IBAN des Empfängers').fill(text(iban));
+    await form.getByLabel('Betrag in Euro').fill(text(betrag));
+    await form.getByLabel('Verwendungszweck').fill(text(zweck));
+    await form.getByRole('button', { name: 'Weiter' }).click();
+    return page;
+  }
+
+  @Step('Die Kundin erfasst Empfänger <empfaenger>, IBAN <iban>, Betrag <betrag>, Verwendungszweck <zweck> und prüft die Zusammenfassung')
+  public async erfassenUndPruefen(empfaenger: string, iban: string, betrag: string, zweck: string) {
+    const page = await this.erfassen(empfaenger, iban, betrag, zweck);
+    const zusammenfassung = page.getByRole('region', { name: 'Zusammenfassung' });
+    await zusammenfassung.waitFor();
+    const werte = Object.fromEntries(await zusammenfassung.locator('dl > div').evaluateAll(zeilen =>
+      zeilen.map(z => [z.querySelector('dt')!.textContent!.trim(), z.querySelector('dd')!.textContent!.trim()])));
+    assert.strictEqual(werte['Empfänger'], text(empfaenger));
+    assert.strictEqual(werte['IBAN des Empfängers'], text(iban));
+    assert.strictEqual(sichtbar(werte['Betrag in Euro']), sichtbar(text(betrag)));
+    assert.strictEqual(werte['Verwendungszweck'], text(zweck));
+  }
+
+  @Step('Die Kundin erfasst Empfänger <empfaenger>, IBAN <iban>, Betrag <betrag>, Verwendungszweck <zweck> und wählt „Weiter“')
+  public async erfassenUndWeiter(empfaenger: string, iban: string, betrag: string, zweck: string) {
+    await this.erfassen(empfaenger, iban, betrag, zweck);
+  }
+
+  @Step('Die Überweisung zeigt die Meldung <meldung>')
+  public async ueberweisungMeldet(meldung: string) {
+    const page = await this.seite();
+    await page.getByRole('form', { name: 'Überweisung' }).getByRole('alert').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  /** „2“ Mal: beide Klicks gehen an den Knopf, bevor die Seite wechselt (Doppelklick). */
+  @Step('Die Kundin bestätigt die Überweisung <anzahl> Mal und sieht die Meldung <meldung>')
+  public async bestaetigen(anzahl: string, meldung: string) {
+    const page = await this.seite();
+    await page.getByRole('button', { name: 'Bestätigen' }).click({ clickCount: Number(anzahl) });
+    await page.getByRole('status').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.kontentabelle').waitFor();
+  }
 }

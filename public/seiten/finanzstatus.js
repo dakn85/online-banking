@@ -10,7 +10,7 @@
 
   Aventa.seite('/finanzstatus', {
     titel: 'Finanzstatus',
-    async zeigen(flaeche) {
+    async zeigen(flaeche, _kunde, parameter) {
       let status;
       try {
         status = await Aventa.api('/api/konten');
@@ -19,8 +19,13 @@
         flaeche.innerHTML = `<p class="meldung" role="alert">Der Finanzstatus ist derzeit nicht möglich.</p>`;
         return;
       }
+      // UC-002 Schritt 9: nach der Überweisung einmal die Meldung, die Adresse wird wieder schlicht.
+      const ausgefuehrt = parameter && parameter.get('ausgefuehrt') === '1';
+      if (ausgefuehrt) history.replaceState(null, '', '/finanzstatus');
       const stand = new Date().toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      flaeche.innerHTML = `
+      flaeche.innerHTML = `${ausgefuehrt ? `<p class="meldung meldung--erfolg finanzstatus__meldung" role="status">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m5.5 9.2 2.3 2.3 4.7-4.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Überweisung ausgeführt.</p>` : ''}
         <section class="vermoegen" aria-label="Gesamtvermögen">
           <div>
             <p class="vermoegen__titel">Gesamtvermögen</p>
