@@ -86,3 +86,9 @@ Die Überweisung selbst kommt als eigene Story; der Knopf „Überweisen“ füh
   **Antwort:** 200 mit leerem konten-Array und gesamtvermoegen 0; die Tabelle bleibt leer, ohne Hinweis
 - [x] Ein Girokonto ohne Dispositionsrahmen ist laut Rückfrage ein Datenfehler (Pflicht beim Girokonto) — die Entitätsänderung enthält diese Pflichtregel aber nicht, und der Vertrag kennt nur 200 und 401. Was liefert GET /api/konten in diesem Fall? (GET /api/konten, Konto.art Girokonto)
   **Antwort:** 500 mit fehler — die Pflichtverletzung ist ein Datenfehler; der Vertrag wird um 500 ergänzt
+- [x] Der Vertrag ergänzt 500 mit fehler für „ein Girokonto ohne Dispositionsrahmen“. UC-001 kennt nur A1 (keine Sitzung), die Maske hat kein Fehlerfeld und keine Fehlerfläche. Was zeigt der Finanzstatus bei 500? (GET /api/konten, fehler)
+  **Antwort:** Feste Meldung „Finanzstatus derzeit nicht möglich“ ohne Tabelle, fehler wird nicht angezeigt; UC-001 bekommt A2
+- [x] Die Rückfrage legt fest, dass hinter „Überweisen“ auf /ueberweisung der Platzhalter „In Vorbereitung“ steht. Die Projektvorlage zeigt dort bereits „Hier überweisen Sie bald Geld von einem Ihrer Konten, im Inland und im SEPA-Raum.“ Was gilt? (Aussage „Der Knopf „Überweisen“ führt auf die Seite /ueberweisung, dort steht der Platzha“)
+  **Antwort:** Der vorhandene Platzhaltertext der Vorlage bleibt unverändert; die Rückfrage meint nur, dass keine eigene Maske gebaut wird
+- [x] Zeigt der Finanzstatus eine Spalte „Art“, oder bleibt art ein reines Steuerfeld ohne Spalte?
+  **Antwort:** Sichtbare Spalte „Art“ (wie in der Änderung benannt).

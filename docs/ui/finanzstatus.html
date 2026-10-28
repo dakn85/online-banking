@@ -4,6 +4,7 @@
   "fields": [
     {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
     {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
+    {"name":"art","label":"Art","kind":"anzeige","attribute":"Konto.art"},
     {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
     {"name":"saldo","label":"Saldo","kind":"anzeige","attribute":"Konto.saldo"},
     {"name":"dispositionsrahmen","label":"Dispositionsrahmen","kind":"anzeige","attribute":"Konto.dispositionsrahmen"},
@@ -23,10 +24,10 @@
 <table data-wf="tabelle">
   <caption>Ihre Konten</caption>
   <thead>
-    <tr><th>Kontoname</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
+    <tr><th>Kontoname</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
   </thead>
   <tbody>
-    <tr><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button data-wf="primaer">Überweisen</button></td></tr>
-    <tr><td>Kreditkarte</td><td>DE44 5001 0517 5407 3249 55</td><td>-387,45 €</td><td></td><td></td><td></td></tr>
+    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button data-wf="primaer">Überweisen</button></td></tr>
+    <tr><td>Kreditkarte</td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3249 55</td><td>-387,45 €</td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
