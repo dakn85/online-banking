@@ -1,13 +1,14 @@
-# PK-2: Überweisung erfassen: Im Finanzstatus führt der Knopf „Überweisen“ beim Girokonto auf die Überweisung, das …
+# PK-2: Überweisung vom Girokonto
 
-**Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Neu · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
-Überweisung erfassen: Im Finanzstatus führt der Knopf „Überweisen“ beim Girokonto auf die Überweisung, das Auftraggeberkonto ist vorbelegt.
-Die Kundin gibt Empfänger, IBAN, Betrag in Euro und einen Verwendungszweck ein. Die IBAN muss gültig sein und zu einem SEPA-Land gehören, der Betrag darf den verfügbaren Betrag des Girokontos nicht übersteigen.
-Vor dem Absenden sieht sie eine Zusammenfassung und bestätigt. Danach steht sie wieder auf dem Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“
-Wer doppelt auf Bestätigen klickt, bucht trotzdem nur einmal. Termin- und Daueraufträge kommen später.
+Als Privatkundin möchte ich vom Finanzstatus aus eine Überweisung von meinem Girokonto erfassen, in einer Zusammenfassung prüfen und bestätigen, damit ich ohne Filiale Geld überweise und sofort den neuen Saldo sehe.
+
+## Nicht im Scope
+
+Termin- und Daueraufträge; Überweisungen von anderen Konten als dem Girokonto; Zahlungen außerhalb des SEPA-Raums; Umsatzanzeige und Kontobewegungen; Empfängerverwaltung oder Kontaktbuch.
 
 ## Änderungen
 
