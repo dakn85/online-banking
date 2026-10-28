@@ -72,11 +72,12 @@
 
 ### A6: Bestätigung abgelehnt
 
-**Auslöser:** Der Dienst lehnt das Auftraggeberkonto ab (403) oder antwortet mit einem Fehler außerhalb von 400 und 422. (Schritt 7).  
+**Auslöser:** Der Dienst lehnt das Auftraggeberkonto ab (403) oder antwortet mit einem Fehler außerhalb von 400, 401 und 422. (Schritt 7).  
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus und springt auf die Überweisung zurück; die bisherigen Eingaben bleiben stehen.
 2. Das System zeigt die Meldung „Die Überweisung konnte nicht ausgeführt werden.“ und gibt den Knopf „Bestätigen“ wieder frei.
+3. Antwortet der Dienst mit 401, leitet das System auf die Anmeldeseite um (A5); es wird nichts gebucht.
 
 ## Sequenzdiagramm
 
