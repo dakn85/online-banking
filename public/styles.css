@@ -1,0 +1,152 @@
+/* Aventa Bank – Online-Banking. Ein Erscheinungsbild für Anmeldung und Rahmen. */
+@font-face { font-family: Inter; font-weight: 400; font-display: swap; src: url(/assets/fonts/inter-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 500; font-display: swap; src: url(/assets/fonts/inter-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 600; font-display: swap; src: url(/assets/fonts/inter-latin-600-normal.woff2) format('woff2'); }
+
+:root {
+  --tanne: #0e3b36;
+  --tanne-hell: #17524b;
+  --tanne-tief: #0a2b27;
+  --messing: #c29a4b;
+  --messing-hell: #e6cf9d;
+  --grund: #f2f5f4;
+  --flaeche: #ffffff;
+  --tinte: #13201e;
+  --tinte-2: #44554f;
+  --linie: #d9e1df;
+  --plus: #1c7a4c;
+  --minus: #b42318;
+  --fokus: 0 0 0 3px rgba(194, 154, 75, .55);
+  --rund-s: 6px;
+  --rund-m: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font: 400 15px/1.5 Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--tinte);
+  background: var(--grund);
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.01em; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--tanne); }
+:focus-visible { outline: none; box-shadow: var(--fokus); }
+
+/* Knöpfe und Felder */
+.knopf {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 20px; border-radius: var(--rund-s); border: 1px solid transparent;
+  font-weight: 600; cursor: pointer; text-decoration: none; transition: background .15s;
+}
+.knopf--haupt { background: var(--tanne); color: #fff; }
+.knopf--haupt:hover { background: var(--tanne-hell); }
+.knopf--still { background: transparent; border-color: var(--linie); color: var(--tinte); }
+.knopf--still:hover { background: var(--grund); }
+.knopf[disabled] { opacity: .6; cursor: default; }
+
+.feld { display: grid; gap: 6px; }
+.feld label { font-weight: 500; font-size: 14px; }
+.feld input, .feld select, .feld textarea {
+  height: 46px; padding: 0 14px; border: 1px solid #b9c6c2; border-radius: var(--rund-s); background: #fff;
+}
+.feld textarea { height: auto; min-height: 76px; padding: 10px 14px; resize: vertical; }
+.feld input:focus, .feld select:focus, .feld textarea:focus { outline: none; border-color: var(--messing); box-shadow: var(--fokus); }
+.feld .hinweis { font-size: 13px; color: var(--tinte-2); }
+.feld--fehler input { border-color: var(--minus); }
+
+.meldung { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--rund-s); font-size: 14px; }
+.meldung--fehler { background: #fdecea; color: #7a1a12; }
+.meldung--erfolg { background: #e7f4ec; color: #14532f; }
+.meldung[hidden] { display: none; }
+
+/* ---------- Anmeldung ---------- */
+.anmeldung { display: grid; grid-template-columns: minmax(380px, 46%) 1fr; min-height: 100vh; }
+.anmeldung__marke {
+  position: relative; overflow: hidden; background: var(--tanne); color: #fff;
+  display: flex; flex-direction: column; justify-content: space-between; padding: 44px 56px;
+}
+.anmeldung__marke svg.guilloche { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.anmeldung__marke > * { position: relative; }
+.anmeldung__claim { max-width: 520px; }
+.anmeldung__claim h2 { font-size: 40px; line-height: 1.12; font-weight: 600; letter-spacing: -.02em; }
+.anmeldung__claim p { margin: 16px 0 0; color: #cfe0dc; font-size: 17px; max-width: 36ch; }
+.anmeldung__fuss { color: #a9c4be; font-size: 13px; }
+
+.anmeldung__form { display: grid; place-items: center; padding: 40px 24px; background: var(--flaeche); }
+.anmeldung__karte { width: min(400px, 100%); display: grid; gap: 22px; }
+.anmeldung__karte h1 { font-size: 28px; }
+.anmeldung__karte .unterzeile { margin: 6px 0 0; color: var(--tinte-2); }
+.anmeldung__karte form { display: grid; gap: 18px; }
+.anmeldung__karte .knopf { width: 100%; height: 48px; }
+.demo-zugang { border: 1px dashed #c9d4d1; border-radius: var(--rund-s); padding: 12px 14px; font-size: 14px; color: var(--tinte-2); }
+.demo-zugang b { color: var(--tinte); font-weight: 600; }
+.sicherheit { font-size: 13px; color: var(--tinte-2); display: flex; gap: 8px; }
+.sicherheit svg { flex: none; margin-top: 2px; }
+
+/* ---------- Marke ---------- */
+.marke { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
+.marke__zeichen { width: 36px; height: 36px; flex: none; }
+.marke__name { font-weight: 600; font-size: 18px; letter-spacing: .01em; line-height: 1.1; }
+.marke__name small { display: block; font-weight: 400; font-size: 12px; color: #a9c4be; letter-spacing: 0; }
+
+/* ---------- Rahmen nach der Anmeldung ---------- */
+.rahmen { display: grid; grid-template-columns: 264px 1fr; min-height: 100vh; }
+.leiste {
+  background: var(--tanne); color: #e5efec; display: flex; flex-direction: column;
+  padding: 28px 18px 22px; position: sticky; top: 0; height: 100vh;
+}
+.leiste .marke { padding: 0 10px 30px; }
+.navigation { display: grid; gap: 4px; }
+.navigation a {
+  display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--rund-s);
+  color: #d6e5e1; text-decoration: none; font-weight: 500; position: relative;
+}
+.navigation a svg { width: 20px; height: 20px; flex: none; opacity: .85; }
+.navigation a:hover { background: var(--tanne-hell); color: #fff; }
+.navigation a[aria-current='page'] { background: var(--tanne-tief); color: #fff; }
+.navigation a[aria-current='page']::before {
+  content: ''; position: absolute; left: -18px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--messing);
+}
+.leiste__kunde { margin-top: auto; border-top: 1px solid rgba(255,255,255,.12); padding: 18px 10px 0; display: grid; gap: 4px; }
+.leiste__kunde strong { color: #fff; font-weight: 600; }
+.leiste__kunde span { font-size: 13px; color: #a9c4be; }
+.leiste__kunde button {
+  margin-top: 12px; justify-self: start; display: inline-flex; gap: 8px; align-items: center;
+  background: none; border: 1px solid rgba(255,255,255,.22); color: #e5efec; border-radius: var(--rund-s);
+  padding: 7px 12px; cursor: pointer; font-size: 14px;
+}
+.leiste__kunde button:hover { background: var(--tanne-hell); }
+
+.inhalt { min-width: 0; padding: 40px 48px 64px; }
+.inhalt__kopf { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 28px; max-width: 1120px; }
+.inhalt__kopf h1 { font-size: 30px; }
+.inhalt__kopf p { margin: 4px 0 0; color: var(--tinte-2); }
+.inhalt__flaeche { max-width: 1120px; }
+
+/* Leerer Bereich, solange eine Seite noch nicht gebaut ist */
+.vorbereitung {
+  background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m);
+  padding: 56px 48px; display: grid; grid-template-columns: 96px 1fr; gap: 32px; align-items: center;
+}
+.vorbereitung h2 { font-size: 20px; }
+.vorbereitung p { margin: 8px 0 0; color: var(--tinte-2); max-width: 58ch; }
+.vorbereitung .marke-klein { width: 96px; height: 96px; }
+.etikett { display: inline-block; font-size: 12px; font-weight: 600; color: #6b4e14; background: #f6ecd6; border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+
+@media (max-width: 860px) {
+  .anmeldung { grid-template-columns: 1fr; }
+  .anmeldung__marke { padding: 28px 24px; min-height: 220px; }
+  .anmeldung__claim h2 { font-size: 28px; }
+  .rahmen { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .leiste { position: static; height: auto; padding: 16px; }
+  .leiste .marke { padding: 0 0 12px; }
+  .navigation { grid-auto-flow: column; overflow-x: auto; }
+  .navigation a[aria-current='page']::before { display: none; }
+  .leiste__kunde { display: none; }
+  .inhalt { padding: 24px 16px 48px; }
+  .vorbereitung { grid-template-columns: 1fr; padding: 32px 24px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
