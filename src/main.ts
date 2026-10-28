@@ -1,5 +1,6 @@
 import express from 'express';
 import { join } from 'node:path';
+import { Datenfehler, finanzstatus, zuruecksetzen } from './konten';
 import { kundeMitKennung } from './kunden';
 import { alleBeenden, angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 
@@ -31,11 +32,22 @@ app.get('/api/sitzung', nurAngemeldet('api'), (_req, res) => {
   res.json({ vorname: k.vorname, nachname: k.nachname, kundennummer: k.kundennummer });
 });
 
+// UC-001: Finanzstatus der angemeldeten Kundin
+app.get('/api/konten', nurAngemeldet('api'), (_req, res) => {
+  try {
+    res.json(finanzstatus());
+  } catch (fehler) {
+    if (!(fehler instanceof Datenfehler)) throw fehler;
+    console.error(fehler.message);
+    res.status(500).json({ fehler: 'Der Finanzstatus ist derzeit nicht möglich.' });
+  }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
-  // Testdaten zurücksetzen: alle Sitzungen beenden.
-  app.post('/api/test/reset', (_req, res) => { alleBeenden(); res.status(204).end(); });
+  // Testdaten zurücksetzen: alle Sitzungen beenden, Demo-Konten auf den Ausgangsstand.
+  app.post('/api/test/reset', (_req, res) => { alleBeenden(); zuruecksetzen(); res.status(204).end(); });
 }
 
 // Seiten

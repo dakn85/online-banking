@@ -6,10 +6,13 @@ const basisUrl = process.env.BANKING_URL || 'http://localhost:18300';
 
 // gauge-ts liefert Parameter aus Ziffern als Zahl; Kennungen und PINs bleiben Text.
 const text = (wert: unknown) => String(wert);
+// Beträge stehen mit geschütztem Leerzeichen vor „€“ und je nach Browser mit typografischem Minus.
+const sichtbar = (wert: string | null) => (wert ?? '').replace(/\u00a0/g, ' ').replace(/\u2212/g, '-').trim();
 
 export default class StepImplementation {
   private static browser?: Browser;
-  private page?: Page;
+  /** Eine Seite für die ganze Suite: In der Live View bleibt so dasselbe Bild stehen, Szenarien trennt das Löschen der Cookies. */
+  private static page?: Page;
 
   /** Der Dienst muss aus einem der Commits gebaut sein, die der Plattformlauf nennt (AGENTS.md). Lokal ohne Prüfung. */
   @BeforeSuite()
@@ -23,22 +26,22 @@ export default class StepImplementation {
   }
 
   @AfterScenario()
-  public async seiteSchliessen() {
-    await this.page?.context().close();
-    this.page = undefined;
+  public async cookiesLoeschen() {
+    await StepImplementation.page?.context().clearCookies();
   }
 
   @AfterSuite()
   public async browserSchliessen() {
     await StepImplementation.browser?.close();
     StepImplementation.browser = undefined;
+    StepImplementation.page = undefined;
   }
 
-  /** Die Seite des Szenarios; ein Browser für die ganze Suite. */
+  /** Ein Browser und eine Seite für die ganze Suite. */
   protected async seite(): Promise<Page> {
     StepImplementation.browser ??= await chromium.launch();
-    this.page ??= await (await StepImplementation.browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'de-DE' })).newPage();
-    return this.page;
+    StepImplementation.page ??= await (await StepImplementation.browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'de-DE' })).newPage();
+    return StepImplementation.page;
   }
 
   @Step('Testdaten sind zurückgesetzt')
@@ -50,11 +53,13 @@ export default class StepImplementation {
   @Step('<kennung> meldet sich mit der PIN <pin> an')
   public async anmelden(kennung: string, pin: string) {
     const page = await this.seite();
-    await page.goto(`${basisUrl}/anmelden`);
+    await page.goto(`${basisUrl}/anmelden`, { waitUntil: 'domcontentloaded' });
     await page.getByLabel('Kennung').pressSequentially(text(kennung), { delay: 25 });
     await page.getByLabel('PIN').pressSequentially(text(pin), { delay: 25 });
     await page.getByRole('button', { name: 'Anmelden' }).click();
-    await page.waitForLoadState('networkidle');
+    // Angemeldet steht die Kundin im Rahmen, sonst die Meldung unter dem Formular.
+    await page.locator('#kunde-name').filter({ hasText: /\S/ })
+      .or(page.getByRole('alert').filter({ hasText: /\S/ })).first().waitFor();
   }
 
   @Step('Der Rahmen zeigt die Kundin <name>')
@@ -88,5 +93,41 @@ export default class StepImplementation {
   public async anmeldeseite() {
     const page = await this.seite();
     await page.getByRole('heading', { name: 'Anmelden' }).waitFor();
+  }
+
+  /** Die Kontentabelle des Finanzstatus; ruft ihn auf, wenn die Seite woanders steht. */
+  private async kontentabelle(): Promise<Page> {
+    const page = await this.seite();
+    if (!new URL(page.url()).pathname.startsWith('/finanzstatus')) await page.goto(`${basisUrl}/finanzstatus`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.kontentabelle').waitFor();
+    return page;
+  }
+
+  @Step('Die Zeile <konto> zeigt <spalte> <wert>')
+  public async zeileZeigt(konto: string, spalte: string, wert: string) {
+    const page = await this.kontentabelle();
+    const kopf = (await page.locator('.kontentabelle thead th').allInnerTexts()).map(sichtbar);
+    const index = kopf.indexOf(text(spalte));
+    assert.ok(index >= 0, `Spalte „${spalte}“ fehlt, da sind: ${kopf.join(', ')}`);
+    const zeile = page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`);
+    await zeile.waitFor();
+    const zellen = (await zeile.locator('th, td').allInnerTexts()).map(sichtbar);
+    assert.strictEqual(zellen[index], sichtbar(text(wert)), `Zeile „${konto}“, Spalte „${spalte}“`);
+  }
+
+  @Step('Der Finanzstatus zeigt das Gesamtvermögen <betrag>')
+  public async gesamtvermoegen(betrag: string) {
+    const page = await this.kontentabelle();
+    assert.strictEqual(sichtbar(await page.locator('#gesamtvermoegen').textContent()), sichtbar(text(betrag)));
+  }
+
+  @Step('Der Finanzstatus ist ohne Anmeldung nicht erreichbar')
+  public async ohneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const api = await fetch(`${basisUrl}/api/konten`);
+    assert.strictEqual(api.status, 401, 'GET /api/konten ohne Sitzung');
+    await page.goto(`${basisUrl}/finanzstatus`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
   }
 }

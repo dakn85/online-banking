@@ -1,0 +1,33 @@
+<!-- maske: {
+  "title": "Finanzstatus",
+  "useCases": ["UC-001"],
+  "fields": [
+    {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
+    {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
+    {"name":"art","label":"Art","kind":"anzeige","attribute":"Konto.art"},
+    {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"saldo","label":"Saldo","kind":"anzeige","attribute":"Konto.saldo"},
+    {"name":"dispositionsrahmen","label":"Dispositionsrahmen","kind":"anzeige","attribute":"Konto.dispositionsrahmen"},
+    {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"}
+  ],
+  "actions": [
+    {"label":"Überweisen","useCase":"UC-001#7"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Finanzstatus</h1>
+  <p>Ihre Konten und Ihr Gesamtvermögen auf einen Blick.</p>
+</header>
+<dl data-wf="kennzahl">
+  <div><dt>Gesamtvermögen</dt><dd>1.757,85 €</dd></div>
+</dl>
+<table data-wf="tabelle">
+  <caption>Ihre Konten</caption>
+  <thead>
+    <tr><th>Kontoname</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button data-wf="primaer">Überweisen</button></td></tr>
+    <tr><td>Kreditkarte</td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3249 55</td><td>-387,45 €</td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
