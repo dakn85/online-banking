@@ -33,3 +33,4 @@ Tags: UC-001, PK-1
 
 * Testdaten sind zurückgesetzt
 * Der Finanzstatus ist ohne Anmeldung nicht erreichbar
+* Die Anmeldeseite ist zu sehen
