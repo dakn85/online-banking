@@ -22,7 +22,7 @@
 4. Das System zeigt über der Tabelle das Gesamtvermögen in Euro.
 5. Das System zeigt die Konten in einer Tabelle mit Kontoname, IBAN und Saldo in Euro.
 6. Das System zeigt in der Zeile des Girokontos Dispositionsrahmen und verfügbaren Betrag (Saldo plus Rahmen).
-7. Das System zeigt in der Zeile des Girokontos den Knopf „Überweisen“; er führt bis zur Überweisungs-Story auf den Platzhalter.
+7. Das System zeigt in der Zeile des Girokontos den Knopf „Überweisen“; er öffnet die Überweisung mit dem Girokonto als Auftraggeberkonto (UC-002).
 8. Die Kundin liest Salden und Gesamtvermögen ab.
 
 ## Alternativabläufe
@@ -71,4 +71,4 @@ Nur das Girokonto hat einen Dispositionsrahmen. Sein verfügbarer Betrag ist der
 
 ## Notizen
 
-Die Konten sind Demo-Daten (C-001). Der Knopf „Überweisen“ steht schon im Finanzstatus, die Überweisung folgt als eigene Story.
+Die Konten sind Demo-Daten (C-001). Der Knopf „Überweisen“ öffnet die Überweisung (UC-002).
