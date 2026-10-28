@@ -122,6 +122,10 @@ Ein Auftrag wird genau einmal ausgeführt. Die Seite sperrt den Knopf „Bestät
 
 Nach der Ausführung ist der Saldo des Girokontos um den Betrag gemindert; das Gesamtvermögen des Finanzstatus folgt daraus nach BR-0001.
 
+### BR-0007: Auftraggeberkonto der Kundin
+
+Die auftraggeberIban im Auftrag gehört zu einem Girokonto der angemeldeten Kundin. Sonst führt das System den Auftrag nicht aus.
+
 ## Weitere Prüfungen
 
 - **WP-1** (Unit-Test): IBAN-Prüfziffer nach ISO 7064 MOD 97-10 und Zugehörigkeit des Länderkennzeichens zur SEPA-Länderliste.

@@ -27,6 +27,7 @@ Termin- und Daueraufträge; Überweisungen von anderen Konten als dem Girokonto;
 | BR-0004 Betragsgrenze des Girokontos | Neu | Neu in UC-002 |
 | BR-0005 Genau einmalige Ausführung | Neu | Neu in UC-002 |
 | BR-0006 Saldo nach der Überweisung | Neu | Neu in UC-002 |
+| BR-0007 Auftraggeberkonto der Kundin | Neu | Neu in UC-002 |
 | Vision | Geändert | Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
 
 ## Akzeptanztests
@@ -55,6 +56,7 @@ Termin- und Daueraufträge; Überweisungen von anderen Konten als dem Girokonto;
 - [ ] BR-0004: Neu in UC-002
 - [ ] BR-0005: Neu in UC-002
 - [ ] BR-0006: Neu in UC-002
+- [ ] BR-0007: Neu in UC-002
 - [ ] Vision: Z-5 neu
 - [ ] Vision: Abgrenzung geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-2 implementieren
