@@ -26,6 +26,8 @@ Tags: UC-001, PK-1
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Zeile "Girokonto" zeigt "Dispositionsrahmen" "1.000,00 €"
 * Die Zeile "Girokonto" zeigt "Verfügbarer Betrag" "3.145,30 €"
+* Die Zeile "Kreditkarte" zeigt "Dispositionsrahmen" ""
+* Die Zeile "Kreditkarte" zeigt "Verfügbarer Betrag" ""
 
 ## Ohne Anmeldung ist der Finanzstatus nicht erreichbar
 
