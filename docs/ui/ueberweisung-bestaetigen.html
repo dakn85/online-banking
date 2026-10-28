@@ -1,0 +1,33 @@
+<!-- maske: {
+  "title": "Überweisung bestätigen",
+  "useCases": ["UC-002"],
+  "fields": [
+    {"name":"auftraggeberkonto","label":"Auftraggeberkonto","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"empfaenger","label":"Empfänger","kind":"anzeige","attribute":"Überweisung.empfaenger"},
+    {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"anzeige","attribute":"Überweisung.empfaengerIban"},
+    {"name":"betrag","label":"Betrag in Euro","kind":"anzeige","attribute":"Überweisung.betrag"},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Überweisung.verwendungszweck"}
+  ],
+  "actions": [
+    {"label":"Bestätigen","operation":"POST /api/ueberweisungen","screen":"finanzstatus"},
+    {"label":"Abbrechen","screen":"finanzstatus"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Überweisung bestätigen</h1>
+  <p>Bitte prüfen Sie Ihre Angaben.</p>
+  <div data-wf="aktionen">
+    <button data-wf="primaer">Bestätigen</button>
+    <button>Abbrechen</button>
+  </div>
+</header>
+<section data-wf="gruppe" data-merkmal="Zusammenfassung">
+  <h2>Zusammenfassung</h2>
+  <dl data-wf="kennzahl">
+    <div><dt>Auftraggeberkonto</dt><dd>Girokonto · DE02 5001 0517 5407 3249 31</dd></div>
+    <div><dt>Empfänger</dt><dd>Möbel Nord GmbH</dd></div>
+    <div><dt>IBAN des Empfängers</dt><dd>DE02 5001 0517 5407 3249 31</dd></div>
+    <div><dt>Betrag in Euro</dt><dd>50,00 €</dd></div>
+    <div><dt>Verwendungszweck</dt><dd>Rechnung 4711</dd></div>
+  </dl>
+</section>

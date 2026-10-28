@@ -42,6 +42,19 @@ export function finanzstatus(): { gesamtvermoegen: number; konten: (Konto & { ve
   };
 }
 
+/** BR-0007: das Girokonto mit dieser IBAN, sonst nichts. */
+export function girokonto(iban: string): (Konto & { dispositionsrahmen: number }) | undefined {
+  const konto = konten.find(k => k.art === 'Girokonto' && k.iban === iban);
+  return konto && konto.dispositionsrahmen !== undefined ? konto as Konto & { dispositionsrahmen: number } : undefined;
+}
+
+/** BR-0006: den Saldo eines Kontos um den Betrag mindern. */
+export function belasten(iban: string, betrag: number): void {
+  const konto = konten.find(k => k.iban === iban);
+  if (!konto) throw new Error(`Konto ${iban} unbekannt`);
+  konto.saldo = runden(konto.saldo - betrag);
+}
+
 /** Nur für Tests: Konten setzen. */
 export function kontenSetzen(neu: Konto[]): void {
   konten = neu.map(k => ({ ...k }));
