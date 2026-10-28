@@ -20,17 +20,18 @@
 1. Das System zeigt die Überweisung mit dem Auftraggeberkonto vorbelegt: Kontoname, IBAN und verfügbarer Betrag des Girokontos.
 2. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro und Verwendungszweck ein.
 3. Die Kundin wählt „Weiter“.
-4. Das System zeigt die Zusammenfassung mit Auftraggeberkonto, Empfänger, IBAN, Betrag in Euro und Verwendungszweck.
-5. Die Kundin bestätigt.
-6. Das System prüft die IBAN (BR-0003) und den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
-7. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
-8. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
+4. Das System prüft die IBAN (BR-0003) und den Betrag (BR-0004) und zeigt bei einer Abweichung die Meldung im Formular der Überweisung.
+5. Das System zeigt die Zusammenfassung mit Auftraggeberkonto, Empfänger, IBAN, Betrag in Euro und Verwendungszweck.
+6. Die Kundin bestätigt.
+7. Der Dienst prüft den Betrag beim Bestätigen noch einmal gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
+8. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
+9. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
 
 ## Alternativabläufe
 
 ### A1: IBAN ungültig oder außerhalb des SEPA-Raums
 
-**Auslöser:** Die IBAN des Empfängers hat keine gültige Prüfziffer oder ihr Länderkennzeichen steht nicht in der SEPA-Länderliste. (Schritt 6).  
+**Auslöser:** Die IBAN des Empfängers hat keine gültige Prüfziffer oder ihr Länderkennzeichen steht nicht in der SEPA-Länderliste. (Schritt 4).  
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“.
@@ -38,7 +39,7 @@
 
 ### A2: Betrag über dem verfügbaren Betrag
 
-**Auslöser:** Der Betrag ist nicht größer als 0 oder übersteigt den verfügbaren Betrag des Girokontos (BR-0004). (Schritt 6).  
+**Auslöser:** Der Betrag ist nicht größer als 0 oder übersteigt den verfügbaren Betrag des Girokontos (BR-0004). (Schritt 4).  
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
@@ -46,7 +47,7 @@
 
 ### A3: Mehrfaches Bestätigen
 
-**Auslöser:** Die Kundin bestätigt denselben Auftrag mehrfach, etwa durch einen Doppelklick. (Schritt 5).  
+**Auslöser:** Die Kundin bestätigt denselben Auftrag mehrfach, etwa durch einen Doppelklick. (Schritt 6).  
 **Ablauf:**
 
 1. Das System führt den Auftrag nur einmal aus; weitere Bestätigungen mit derselben Auftrags-Kennung buchen nicht erneut (BR-0005).
@@ -76,15 +77,17 @@ sequenceDiagram
     kundin->>banking: „Überweisen“ in der Zeile des Girokontos
     banking-->>kundin: Überweisung, Auftraggeberkonto vorbelegt
     kundin->>banking: Empfänger, IBAN, Betrag, Verwendungszweck; „Weiter“
-    banking-->>kundin: Zusammenfassung
-    kundin->>banking: „Bestätigen“
-    banking->>banking: POST /api/ueberweisungen
-    banking->>banking: GET /api/konten
-    banking-->>kundin: Finanzstatus, neuer Saldo, „Überweisung ausgeführt.“
+    banking->>banking: Prüfung IBAN und Betrag im Formular
     alt IBAN ungültig oder außerhalb des SEPA-Raums
         banking-->>kundin: Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“
     else Betrag über dem verfügbaren Betrag
         banking-->>kundin: Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“
+    else Angaben gültig
+        banking-->>kundin: Zusammenfassung
+        kundin->>banking: „Bestätigen“
+        banking->>banking: POST /api/ueberweisungen
+        banking->>banking: GET /api/konten
+        banking-->>kundin: Finanzstatus, neuer Saldo, „Überweisung ausgeführt.“
     else mehrfaches Bestätigen
         banking-->>kundin: Finanzstatus, Saldo einmal gemindert
     end
