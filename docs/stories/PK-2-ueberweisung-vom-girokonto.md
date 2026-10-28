@@ -113,3 +113,5 @@ Termin- und Daueraufträge; Überweisungen von anderen Konten als dem Girokonto;
   **Antwort:** Umleitung auf die Anmeldeseite; nach der Anmeldung wird der Auftrag mit derselben auftragsId erneut gesendet (BR-0005 verhindert die Doppelbuchung)
 - [x] Das Anfrageschema schließt einen Betrag von 0 mit exclusiveMinimum aus, die 422-Antwort und BR-0004 sollen „Betrag nicht größer als 0“ aber mit dem A2-Text beantworten. Welcher Weg gilt beim Bestätigen für einen Betrag ≤ 0? (Aussage „Ein Betrag von 0 oder kleiner erreicht die 422-Antwort, weil das Anfrageschema 0“)
   **Antwort:** 422 mit dem A2-Text: exclusiveMinimum aus dem Anfrageschema entfernen, damit der Dienst den Betrag prüft
+- [x] Welche gültige Empfänger-IBAN sollen die Szenarien verwenden?
+  **Antwort:** DE89 3704 0044 0532 0130 00, eine gültige deutsche Beispiel-IBAN.
