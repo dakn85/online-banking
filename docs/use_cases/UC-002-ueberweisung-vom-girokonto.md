@@ -116,7 +116,7 @@ Der Betrag ist größer als 0 und übersteigt den verfügbaren Betrag des Giroko
 
 ### BR-0005: Genau einmalige Ausführung
 
-Ein Auftrag wird genau einmal ausgeführt. Die Seite sperrt den Knopf „Bestätigen“ während des Absendens und gibt je Überweisung eine Auftrags-Kennung mit; eine wiederholte Bestätigung derselben Kennung ändert den Saldo nicht erneut.
+Ein Auftrag wird genau einmal ausgeführt. Die Seite sperrt den Knopf „Bestätigen“ während des Absendens, gibt je Überweisung eine Auftrags-Kennung mit und vergibt nach jeder Ablehnung eine neue Auftrags-Kennung; eine wiederholte Bestätigung derselben Kennung ändert den Saldo nicht erneut.
 
 ### BR-0006: Saldo nach der Überweisung
 
