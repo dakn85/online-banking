@@ -78,3 +78,11 @@ Die Überweisung selbst kommt als eigene Story; der Knopf „Überweisen“ füh
   **Antwort:** Im Dienst als Feld verfuegbarerBetrag, nur beim Girokonto vorhanden.
 - [x] Wie ist der Platzhalter hinter dem Knopf „Überweisen“ festgelegt?
   **Antwort:** Der Knopf führt auf die vorhandene Seite /ueberweisung der Projektvorlage; dort steht bis zur Überweisungs-Story der Platzhalter „In Vorbereitung“. Keine eigene Maske.
+- [x] Die zwei Demo-Konten gelten laut Rückfrage für jede angemeldete Kundin und tragen keinen Kundenbezug; Konto.iban ist laut Entität eindeutig. Wie werden die Konten geführt? (GET /api/konten, konten)
+  **Antwort:** Ein gemeinsamer Demo-Bestand ohne Kundenbezug: beide Kundinnen sehen dieselben zwei Konten, die IBANs bleiben eindeutig
+- [x] In welcher Reihenfolge liefert GET /api/konten die Konten im Array konten? (GET /api/konten, konten)
+  **Antwort:** Girokonto zuerst, dann Kreditkarte — wie in der Maske der Vorlage
+- [x] Was liefert der Finanzstatus, wenn die angemeldete Kundin keine Konten hat? BR-0001 und der Vertrag sagen dazu nichts, gesamtvermoegen ist aber Pflichtfeld. (GET /api/konten, gesamtvermoegen)
+  **Antwort:** 200 mit leerem konten-Array und gesamtvermoegen 0; die Tabelle bleibt leer, ohne Hinweis
+- [x] Ein Girokonto ohne Dispositionsrahmen ist laut Rückfrage ein Datenfehler (Pflicht beim Girokonto) — die Entitätsänderung enthält diese Pflichtregel aber nicht, und der Vertrag kennt nur 200 und 401. Was liefert GET /api/konten in diesem Fall? (GET /api/konten, Konto.art Girokonto)
+  **Antwort:** 500 mit fehler — die Pflichtverletzung ist ein Datenfehler; der Vertrag wird um 500 ergänzt
