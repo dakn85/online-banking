@@ -1,0 +1,51 @@
+import express from 'express';
+import { join } from 'node:path';
+import { kundeMitKennung } from './kunden';
+import { alleBeenden, angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
+
+const port = Number(process.env.PORT ?? 8080);
+const testbetrieb = process.env.TEST_MODE === '1';
+const oeffentlich = join(__dirname, '..', 'public');
+
+const app = express();
+app.use(express.json());
+app.use('/assets', express.static(oeffentlich, { index: false }));
+
+// Anmeldung (Dummy: feste Demo-Kunden, siehe kunden.ts)
+app.post('/api/anmeldung', (req, res) => {
+  const kunde = kundeMitKennung(String(req.body?.kennung ?? ''));
+  if (!kunde || String(req.body?.pin ?? '') !== kunde.pin) {
+    return res.status(401).json({ fehler: 'Kennung oder PIN ist falsch.' });
+  }
+  anlegen(res, kunde);
+  res.json({ name: `${kunde.vorname} ${kunde.nachname}` });
+});
+
+app.post('/api/abmeldung', (req, res) => {
+  beenden(req, res);
+  res.status(204).end();
+});
+
+app.get('/api/sitzung', nurAngemeldet('api'), (_req, res) => {
+  const k = res.locals.kunde;
+  res.json({ vorname: k.vorname, nachname: k.nachname, kundennummer: k.kundennummer });
+});
+
+app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
+
+if (testbetrieb) {
+  // Testdaten zurücksetzen: alle Sitzungen beenden.
+  app.post('/api/test/reset', (_req, res) => { alleBeenden(); res.status(204).end(); });
+}
+
+// Seiten
+app.get('/anmelden', (req, res) => {
+  if (angemeldeterKunde(req)) return res.redirect('/finanzstatus');
+  res.sendFile(join(oeffentlich, 'anmelden.html'));
+});
+app.get('/', (_req, res) => res.redirect('/finanzstatus'));
+for (const seite of ['/finanzstatus', '/ueberweisung']) {
+  app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
+}
+
+app.listen(port, () => console.log(`Online-Banking läuft auf Port ${port}${testbetrieb ? ' (Testbetrieb)' : ''}`));

@@ -1,0 +1,6 @@
+node_modules/
+dist/
+acceptance/node_modules/
+acceptance/reports/
+acceptance/logs/
+acceptance/.gauge/
