@@ -86,7 +86,8 @@ sequenceDiagram
     actor kundin as Privatkundin
     participant banking as Online-Banking
     kundin->>banking: „Überweisen“ in der Zeile des Girokontos
-    banking-->>kundin: Überweisung, Auftraggeberkonto vorbelegt
+    banking->>banking: GET /api/konten
+    banking-->>kundin: Überweisung, Auftraggeberkonto vorbelegt, verfügbarer Betrag
     kundin->>banking: Empfänger, IBAN, Betrag, Verwendungszweck; „Weiter“
     banking->>banking: Prüfung IBAN und Betrag im Formular
     alt IBAN ungültig oder außerhalb des SEPA-Raums
