@@ -1,13 +1,14 @@
-# PK-1: Finanzstatus: Nach der Anmeldung landet die Kundin auf dem Finanzstatus.
+# PK-1: Finanzstatus mit Konten, Gesamtvermögen und Dispositionsrahmen
 
-**Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Neu · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
-Finanzstatus: Nach der Anmeldung landet die Kundin auf dem Finanzstatus. Er zeigt alle ihre Konten in einer Tabelle mit Kontoname, IBAN und Saldo in Euro, darüber das Gesamtvermögen als Summe aller Salden.
-Eine Kreditkarte mit offenem Betrag hat einen negativen Saldo und mindert das Gesamtvermögen. Nur das Girokonto hat einen Dispositionsrahmen; dort stehen zusätzlich der Rahmen und der verfügbare Betrag (Saldo plus Rahmen).
-In der Zeile des Girokontos steht der Knopf „Überweisen“. Die Überweisung selbst kommt als nächste Story, bis dahin führt der Knopf auf den Platzhalter.
-Die Konten liefert vorerst der Dienst als Demo-Daten, ein Kernbanksystem gibt es noch nicht. Ohne Anmeldung ist die Seite nicht erreichbar.
+Als Kundin im Online-Banking möchte ich nach der Anmeldung auf dem Finanzstatus alle meine Konten mit Kontoname, IBAN und Saldo in Euro und darüber mein Gesamtvermögen sehen, damit ich mein Vermögen und den verfügbaren Betrag meines Girokontos auf einen Blick überblicke.
+
+## Nicht im Scope
+
+Die Überweisung selbst kommt als eigene Story; der Knopf „Überweisen“ führt bis dahin auf den Platzhalter. Anbindung an ein Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten. Konten anlegen, ändern oder schließen, Umsätze und Kontobewegungen.
 
 ## Änderungen
 
