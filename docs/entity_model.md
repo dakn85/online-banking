@@ -5,7 +5,8 @@
 ```mermaid
 erDiagram
     Konto }o--|| Kunde : "gehört zu"
-    Überweisung }o--|| Konto : "geht ab von"
+    "Überweisung" }o--|| Konto : "geht ab von"
+    Umsatz }o--|| Konto : "gehört zu"
 ```
 
 ## Entitäten
@@ -54,3 +55,20 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 | verwendungszweck | Verwendungszweck der Überweisung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
 | status | Stand des Auftrags | String |  | Pflicht; Werte ausgefuehrt; Beispiel ausgefuehrt |
 | erfasstAm | Zeitpunkt der Ausführung | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+
+### Umsatz
+
+**Bereich:** Finanzstatus  
+
+Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Jeder Umsatz entsteht aus einer ausgeführten Überweisung (BR-0012).
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| buchungstag | Tag der Buchung | Date |  | Pflicht; Beispiel 2026-02-14 |
+| gegenpartei | Name der Gegenpartei | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
+| verwendungszweck | Verwendungszweck der Buchung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
+| betrag | Betrag in Euro; beim Ausgang negativ | Decimal |  | Pflicht; Beispiel -50.00; negativ beim Ausgang |
+| waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
+| saldoDanach | Saldo des Kontos nach dieser Buchung in Euro | Decimal |  | Pflicht; Beispiel 2095.30 |
+
+**Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009).
