@@ -1,10 +1,14 @@
-# PK-6: Die Kundin sieht zu jedem Konto im Finanzstatus die Umsätze (Buchungstag, Gegenpartei, Verwendungszweck, Betrag, …
+# PK-6: Umsätze je Konto mit Suche und Filtern
 
-**Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Erweiterung · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
-Die Kundin sieht zu jedem Konto im Finanzstatus die Umsätze (Buchungstag, Gegenpartei, Verwendungszweck, Betrag, Saldo danach), neueste zuerst, kann nach Text suchen und nach Zeitraum und Ein-/Ausgang filtern; eine ausgeführte Überweisung erscheint dort sofort als Umsatz.
+Als Privatkundin möchte ich zu jedem Konto im Finanzstatus die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach sehen, darin nach Text suchen und nach Zeitraum und Ein-/Ausgang filtern, damit ich meine Buchungen ohne Filiale prüfe und eine gerade ausgeführte Überweisung sofort wiederfinde.
+
+## Nicht im Scope
+
+Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsätze aus einer Kernbank, Termin- und Daueraufträge, Empfängerverwaltung.
 
 ## Änderungen
 
