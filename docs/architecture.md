@@ -30,7 +30,7 @@ C4Context
     title "Systemkontext Online-Banking"
     Person(kundin, "Privatkundin", "meldet sich mit Kennung und PIN an, sieht Finanzstatus, überweist vom Girokonto")
     System(banking, "Online-Banking", "Node-Dienst mit Express: Anmeldung, Sitzung, Seiten und JSON-API, Demo-Konten")
-    Rel(kundin, banking, "nutzt im Browser", "HTTPS beim Betrieb, HTML und JSON")
+    Rel(kundin, banking, "nutzt im Browser", "HTTP ohne TLS im Dienst, HTML und JSON")
 ```
 
 | Gegenüber | Richtung | Daten | Schnittstelle |
