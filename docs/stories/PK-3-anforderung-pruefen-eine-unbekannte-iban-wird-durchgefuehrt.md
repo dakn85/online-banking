@@ -33,7 +33,18 @@ Call log:
     at async StepExecutionProcessor.process (/environments/typescript-live/environments/ddea6669492b7192f7d7518c05fc3674457d87d92ce82c1a772418b442c6376c/node_modules/gauge-ts/dist/processors/StepExecutionProcessor.js:16:24)
 ```
 
+## Akzeptanztests
+
+- `acceptance/specs/ueberweisung.spec`: Eine IBAN mit gültiger Prüfziffer außerhalb des SEPA-Raums wird abgelehnt
+
 ## Aufgaben für die Umsetzung
 
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-3 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-3 grün
+
+## Offene Fragen
+
+- [ ] Soll BR-0003/A1 so bleiben und der Akzeptanztest korrigiert werden?
+- [ ] Ist die im Code hinterlegte SEPA-Länderliste einschließlich „HR“ maßgeblich, und soll sie in der Anforderung benannt werden?
+- [ ] Soll BR-0003 unverändert bleiben und der Akzeptanztest die SEPA-Grenze prüfen?
+- [ ] Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
