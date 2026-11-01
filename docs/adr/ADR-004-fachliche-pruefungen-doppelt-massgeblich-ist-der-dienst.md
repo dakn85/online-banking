@@ -13,4 +13,4 @@ Dieselbe Regel steht zweimal, in public/seiten/ueberweisung.js und in src/ueberw
 
 ## Folgen
 
-Leichter: sofortige Feldmeldung und trotzdem eine belastbare Grenze in der Schnittstelle. Schwerer: jede Änderung an BR-0003 oder BR-0004 ist an zwei Stellen nötig, die SEPA-Länderliste ist in beiden Dateien hart kodiert, und Abweichungen sind nur an den Akzeptanztests zu erkennen.
+Leichter: sofortige Feldmeldung und trotzdem eine belastbare Grenze in der Schnittstelle. Schwerer: jede Änderung an BR-0003 oder BR-0004 ist an zwei Stellen nötig, die SEPA-Länderliste ist in beiden Dateien hart kodiert, und Abweichungen sind nur an den Akzeptanztests zu erkennen. Dazu vergibt der Dienst 400 auch für einen unvollständigen Auftrag (`src/main.ts`, „Der Auftrag ist unvollständig.“), die Oberfläche zeigt dafür aber die IBAN-Meldung am IBAN-Feld (`public/seiten/ueberweisung.js`); eine Prüfung, die nur den Dienst betrifft, ist im Browser damit falsch verortet.
