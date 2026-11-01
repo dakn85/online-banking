@@ -49,18 +49,19 @@ Call log:
 - `acceptance/specs/ueberweisung.spec`: Eine IBAN außerhalb der SEPA-Länderliste wird abgelehnt und keine Zusammenfassung gezeigt
 - `acceptance/specs/ueberweisung.spec`: Eine IBAN mit weniger als 15 Stellen wird abgelehnt
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Kontext geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
-- [ ] Überweisung: Feld Betrag in Euro geändert
-- [ ] Überweisung: Skizze geändert
-- [ ] UC-002: A1 geändert
-- [ ] UC-002: BR-0003 geändert
-- [ ] BR-0003: Text geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-3 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-3 grün
+_Goran Art (Agent „PK-3 Online-Banking“), 2026-11-01_
+
+**Bausteine:** Dienst `src/ueberweisung.ts`, Oberfläche `public/seiten/ueberweisung.js`, Akzeptanztests `acceptance/tests/StepImplementation.ts`.
+
+**Schritte**
+1. UC-002/A1, BR-0003: Die SEPA-Länderliste in Dienst und Oberfläche mit der Referenzliste in BR-0003 abgleichen (37 Kennzeichen, HR eingeschlossen). Sie stimmt bereits überein, darum ist kein Produktcode zu ändern.
+2. BR-0003: Länge 15–34 und Prüfziffer MOD 97-10 werden schon an beiden Stellen geprüft (Regex `[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}`). Ist die IBAN abgelehnt, bleibt das Formular mit der Meldung stehen, eine Zusammenfassung entsteht nicht.
+3. Maske `ueberweisung`, Betrag 0.01 bis verfügbar: Das ist durch BR-0004 abgedeckt (höchstens zwei Nachkommastellen, Cent > 0).
+4. Step „Die Überweisung zeigt keine Zusammenfassung“: Er sucht die Region „Zusammenfassung“ auf der ganzen Seite statt nur im Formular, das sie ersetzt.
+
+**Änderung am Rahmen:** keine.
 
 ## Entscheidungen
 
