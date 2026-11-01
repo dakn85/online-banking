@@ -99,4 +99,4 @@ Umsätze liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldet
 
 ## Notizen
 
-Der Ausgangsstand führt keine Umsätze (C-001): Jeder Umsatz entsteht aus einer ausgeführten Überweisung (UC-002, BR-0012). Die Umsatzliste ist eine eigene Seite, die der Knopf „Umsätze“ in der Zeile des Finanzstatus öffnet.
+Der Ausgangsstand führt je Konto einige Demo-Umsätze mit festen Buchungstagen; der jüngste Umsatz eines Kontos trägt als Saldo danach den aktuellen Kontosaldo (C-001, BR-0008). Weitere Umsätze entstehen aus einer ausgeführten Überweisung (UC-002, BR-0012). Die Umsatzliste ist eine eigene Seite, die der Knopf „Umsätze“ in der Zeile des Finanzstatus öffnet.
