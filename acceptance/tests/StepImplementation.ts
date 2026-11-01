@@ -184,4 +184,10 @@ export default class StepImplementation {
     await page.getByRole('status').filter({ hasText: text(meldung) }).waitFor();
     await page.locator('.kontentabelle').waitFor();
   }
+
+    // angefordert von specs/ueberweisung.spec
+    @Step("Die Überweisung zeigt keine Zusammenfassung")
+    public async dieUeberweisungZeigtKeineZusammenfassung(): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Überweisung zeigt keine Zusammenfassung");
+    }
 }
