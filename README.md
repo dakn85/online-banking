@@ -24,7 +24,10 @@ Demo-Zugang: Kennung `lena.hoffmann`, PIN `24680` (weitere in `src/kunden.ts`).
 ## Akzeptanztests
 
 ```sh
-cd acceptance && npm ci && gauge run specs
+scripts/akzeptanztests.sh                          # Dienst bauen und starten, alle Specs
+scripts/akzeptanztests.sh specs/ueberweisung.spec  # nur diese Spec
 ```
 
-`env/default` zielt auf die lokale Testumgebung, `env/platform` auf den Dienst im Netz der Plattform.
+Voraussetzungen: Node 22, [Gauge](https://docs.gauge.org/getting_started/installing-gauge) (die Plugins aus `acceptance/manifest.json` installiert Gauge beim ersten Lauf) und Docker; ohne Docker startet der Dienst mit Node. Das Skript nennt am Ende den Stand und den JUnit-Bericht `acceptance/reports/xml-report/result.xml`, den KnippQAi mit `akzeptanztests_melden` als Stufe Entwicklung annimmt.
+
+`env/default` zielt auf die lokale Testumgebung, `env/platform` auf den Dienst im Netz der Plattform. Die Testumgebung der Plattform hält `main`; ein Story-Zweig mit Produktcode wird lokal geprüft.
