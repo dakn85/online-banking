@@ -6,7 +6,7 @@
     {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"},
     {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Überweisung.empfaenger","rules":{"required":true,"maxLength":70}},
     {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Überweisung.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
-    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Überweisung.betrag","rules":{"required":true,"max":"Konto.verfuegbarerBetrag"}},
+    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Überweisung.betrag","rules":{"required":true,"min":"0.01","max":"Konto.verfuegbarerBetrag"}},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Überweisung.verwendungszweck","rules":{"required":true,"maxLength":140}}
   ],
   "actions": [
