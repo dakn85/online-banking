@@ -12,7 +12,9 @@ Ein Akzeptanztest erwartet ein Verhalten, das die Anforderung heute ausschließt
 
 **Betrifft:** BR-0003, UC-002
 
-### Beleg aus dem Akzeptanztest
+## Herkunft
+
+Ein roter Akzeptanztest.
 
 **Szenario:** Eine unbekannte IBAN wird durchgeführt
 
@@ -42,7 +44,7 @@ Call log:
 
 ## Akzeptanztests
 
-- `acceptance/specs/ueberweisung.spec`: Eine IBAN mit gültiger Prüfziffer außerhalb des SEPA-Raums wird abgelehnt
+- `acceptance/specs/ueberweisung.spec`: Eine IBAN außerhalb der SEPA-Länderliste wird abgelehnt und keine Zusammenfassung gezeigt
 
 ## Aufgaben für die Umsetzung
 
@@ -54,8 +56,10 @@ Call log:
 
 ## Offene Fragen
 
-- [ ] Soll BR-0003 unverändert bleiben und der Akzeptanztest die SEPA-Grenze prüfen?
 - [ ] Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
+- [ ] Ist diese Test-IBAN als Beleg der Längengrenze richtig, oder soll die Länge mit einem anderen Wert geprüft werden?
+- [ ] Der Belegfall „Länderkennzeichen außerhalb der SEPA-Länderliste“ ist im Szenario „Eine IBAN mit gültiger Prüfziffer außerhalb des SEPA-Raums wird abgelehnt“ bereits mit IBAN „TR33 0006 1005 1978 6457 8413 26“ umgesetzt. Soll ich darüber hinaus nichts ändern, oder soll dieser Testwert zusätzlich in BR-0003 als Beispiel stehen?
+- [ ] Soll die IBAN „TR33 0006 1005 1978 6457 8413 26“ in BR-0003 als Beispiel stehen oder nur im Akzeptanztest?
 
 ## Entscheidungen
 
@@ -64,4 +68,10 @@ Call log:
   _→ noch nicht in der Spezifikation_
 - Ist die im Code hinterlegte SEPA-Länderliste einschließlich „HR“ maßgeblich, und soll sie in der Anforderung benannt werden?
   **Antwort:** Ja, maßgeblich, aber die Liste soll in BR-0003 als Anhang/Referenz genannt werden.
-  _→ eingearbeitet in UC-002, BR-0003_
+  _→ eingearbeitet in UC-002, BR-0003 · 25d6880_
+- Soll BR-0003 unverändert bleiben und der Akzeptanztest die SEPA-Grenze prüfen?
+  **Antwort:** Ja, die Regel bleibt wörtlich; der Test erwartet die Ablehnung und keine Zusammenfassung.
+  _→ eingearbeitet_
+- Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
+  **Antwort:** TR33 0006 1005 1978 6457 8413 26 (Türkei) wie im Vorschlag
+  _→ noch nicht in der Spezifikation_

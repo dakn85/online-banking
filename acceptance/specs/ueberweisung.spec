@@ -60,7 +60,7 @@ Tags: UC-002, PK-2
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "3.200,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Überweisung zeigt die Meldung "Der Betrag übersteigt den verfügbaren Betrag des Girokontos."
 
-## Eine IBAN mit gültiger Prüfziffer außerhalb des SEPA-Raums wird abgelehnt
+## Eine IBAN außerhalb der SEPA-Länderliste wird abgelehnt und keine Zusammenfassung gezeigt
 
 Tags: UC-002, PK-3, BR-0003
 
