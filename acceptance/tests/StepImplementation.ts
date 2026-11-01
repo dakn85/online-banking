@@ -185,9 +185,13 @@ export default class StepImplementation {
     await page.locator('.kontentabelle').waitFor();
   }
 
-    // angefordert von specs/ueberweisung.spec
-    @Step("Die Überweisung zeigt keine Zusammenfassung")
-    public async dieUeberweisungZeigtKeineZusammenfassung(): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Überweisung zeigt keine Zusammenfassung");
-    }
+  @Step('Die Überweisung zeigt keine Zusammenfassung')
+  public async dieUeberweisungZeigtKeineZusammenfassung() {
+    const page = await this.seite();
+    const form = page.getByRole('form', { name: 'Überweisung' });
+    await form.waitFor();
+    // Die Zusammenfassung ist im Projekt als Region mit zugänglichem Namen „Zusammenfassung“ ausgezeichnet.
+    const zusammenfassung = form.getByRole('region', { name: 'Zusammenfassung' });
+    assert.strictEqual(await zusammenfassung.count(), 0, 'Die Überweisung zeigt unerwartet eine Zusammenfassung');
+  }
 }
