@@ -31,10 +31,10 @@
 
 ### A1: IBAN ungültig oder außerhalb des SEPA-Raums
 
-**Auslöser:** Die IBAN des Empfängers hat keine gültige Prüfziffer oder ihr Länderkennzeichen steht nicht in der SEPA-Länderliste. (Schritt 4).  
+**Auslöser:** Die IBAN des Empfängers hat keine gültige Prüfziffer, weniger als 15 oder mehr als 34 Stellen oder ihr Länderkennzeichen steht nicht in der SEPA-Länderliste (BR-0003). (Schritt 4).  
 **Ablauf:**
 
-1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“.
+1. Das System führt den Auftrag nicht aus, zeigt die Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“ und zeigt keine Zusammenfassung.
 2. Lehnt der Dienst die IBAN beim Bestätigen ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
 3. Die Kundin korrigiert die IBAN; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
@@ -88,7 +88,7 @@ sequenceDiagram
     kundin->>banking: „Überweisen“ in der Zeile des Girokontos
     banking->>banking: GET /api/konten
     banking-->>kundin: Überweisung, Auftraggeberkonto vorbelegt, verfügbarer Betrag
-    kundin->>banking: Empfänger, IBAN, Betrag, Verwendungszweck; „Weiter“
+    kundin->>banking: Empfänger, IBAN, Betrag, Verwendungszweck#59; „Weiter“
     banking->>banking: Prüfung IBAN und Betrag im Formular
     alt IBAN ungültig oder außerhalb des SEPA-Raums
         banking-->>kundin: Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“
