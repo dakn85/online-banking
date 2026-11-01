@@ -39,7 +39,7 @@ Call log:
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
-| Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Entscheidung geändert, Folgen geändert |
+| Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
 | Überweisung | Geändert | Skizze geändert |
 | UC-002 Überweisung vom Girokonto | Geändert | A1 geändert, BR-0003 geändert |
 | BR-0003 IBAN des Empfängers | Geändert | Text geändert |
@@ -51,6 +51,7 @@ Call log:
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Kontext geändert
 - [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
 - [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
 - [ ] Überweisung: Skizze geändert
