@@ -37,7 +37,8 @@ Call log:
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
-| UC-002 Überweisung vom Girokonto | Geändert | A1 geändert |
+| UC-002 Überweisung vom Girokonto | Geändert | A1 geändert, BR-0003 geändert |
+| BR-0003 IBAN des Empfängers | Geändert | Text geändert |
 
 ## Akzeptanztests
 
@@ -46,12 +47,13 @@ Call log:
 ## Aufgaben für die Umsetzung
 
 - [ ] UC-002: A1 geändert
+- [ ] UC-002: BR-0003 geändert
+- [ ] BR-0003: Text geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-3 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-3 grün
 
 ## Offene Fragen
 
-- [ ] Ist die im Code hinterlegte SEPA-Länderliste einschließlich „HR“ maßgeblich, und soll sie in der Anforderung benannt werden?
 - [ ] Soll BR-0003 unverändert bleiben und der Akzeptanztest die SEPA-Grenze prüfen?
 - [ ] Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
 
@@ -60,3 +62,6 @@ Call log:
 - Soll BR-0003/A1 so bleiben und der Akzeptanztest korrigiert werden?
   **Antwort:** Ja, Anforderung bleibt, das Szenario wird entfernt oder auf die Ablehnung umgestellt.
   _→ noch nicht in der Spezifikation_
+- Ist die im Code hinterlegte SEPA-Länderliste einschließlich „HR“ maßgeblich, und soll sie in der Anforderung benannt werden?
+  **Antwort:** Ja, maßgeblich, aber die Liste soll in BR-0003 als Anhang/Referenz genannt werden.
+  _→ eingearbeitet in UC-002, BR-0003_
