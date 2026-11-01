@@ -1,8 +1,8 @@
 # Architektur: Online-Banking
 
-# Architektur Online-Banking
-
 ## 1. Einführung und Ziele
+
+Aufgabe, Ziele und Stakeholder stehen in `docs/vision.md`.
 
 Das Online-Banking der Aventa Bank ist ein einzelner Node-Dienst (TypeScript, Express). Er stellt die Anmeldung mit Kennung und PIN, den Finanzstatus (UC-001) und die einmalige Überweisung vom Girokonto (UC-002) für Privatkundinnen bereit und liefert zugleich die Oberfläche aus: HTML-Seiten aus `public/` und JSON unter `/api`. Konten und Kunden sind Demo-Daten (C-001), ein Kernbanksystem gibt es nicht.
 
@@ -217,8 +217,6 @@ Bauen und Ausliefern:
 
 ## 8. Querschnittliche Konzepte
 
-## 8. Querschnittliche Konzepte
-
 ### Fehlerbehandlung
 
 Der Dienst antwortet mit HTTP-Status und einem Feld `fehler` mit deutschsprachigem Satz (kein Problem Details nach RFC 9457, siehe Risiken): 401 ohne Sitzung (`sitzung.ts`), 400 bei unvollständigem Auftrag (`main.ts`) und bei ungültiger IBAN (`Ablehnung`), 403 bei fremdem Auftraggeberkonto, 422 bei unzulässigem Betrag, 500 bei `Datenfehler` im Finanzstatus, 204 bei Abmeldung und Test-Reset. `main.ts` fängt nur `Ablehnung` und `Datenfehler`; alles andere wird nicht gefangen und beendet die Antwort nicht als gestalteter Fehler. `Datenfehler` wird mit `console.error` protokolliert.
@@ -262,24 +260,9 @@ Keine. Konten als Modulvariable mit `AUSGANGSSTAND`, Sitzungen und ausgeführte 
 
 Die Entscheidungen stehen einzeln unter `docs/adr/`.
 
-## 9. Architekturentscheidungen
-
-Die Entscheidungen stehen einzeln unter `docs/adr/` (MADR):
-
-| Entscheidung | Kern |
-| --- | --- |
-| Ein Dienst liefert Oberfläche und API | Ein Express-Prozess, HTML und JSON, kein Bundler, kein SPA-Framework; Seitenskripte melden sich mit `Aventa.seite` an |
-| Zustand nur im Speicher | Modulvariablen und Maps, Ausgangsstand über `POST /api/test/reset` bei `TEST_MODE=1`, Grundlage ist C-001 |
-| Genau einmalige Ausführung über die Auftrags-Kennung | `auftragsId` kommt aus der Oberfläche, der Dienst merkt sie in `ausgefuehrt`, 201 neu und 200 bei Wiederholung |
-| Prüfungen doppelt, Dienst maßgeblich | IBAN und Betrag im Browser und in `src/ueberweisung.ts`, der Dienst prüft beim Bestätigen erneut |
-| Geldbeträge als `number` in Euro | Rechnung in Cent mit `Math.round`, Rundung auf zwei Nachkommastellen, Währung EUR fest |
-| Akzeptanztests gegen laufende Testumgebung | Gauge und Playwright, Basis-URL aus der Umgebung, Stand über `GET /api/version` |
-
 ## 10. Qualitätsanforderungen
 
 Die Qualitätsanforderungen (NFR-…) stehen in `docs/requirements.md`.
-
-## 10. Qualitätsanforderungen
 
 Maß, Zielwert und Prüfung stehen in `docs/requirements.md`; hier steht, was der Code für die beiden Anforderungen tut.
 
@@ -289,8 +272,6 @@ Maß, Zielwert und Prüfung stehen in `docs/requirements.md`; hier steht, was de
 | NFR-002 Genau einmalige Ausführung einer Überweisung | Map `ausgefuehrt` nach `auftragsId` in `src/ueberweisung.ts` liefert bei Wiederholung dasselbe Ergebnis ohne zweite Belastung; Knopf wird während des Absendens gesperrt; je Zusammenfassung und nach jeder Ablehnung neue Kennung | Szenario Ein doppelter Klick auf Bestätigen bucht nur einmal in `acceptance/specs/ueberweisung.spec`, Unit-Test zu BR-0005 |
 
 Weitere Eigenschaften, die der Code trägt, ohne dass eine NFR sie verlangt: schnelle Antwort, weil alles im Speicher liegt; Bedienbarkeit durch deutsche Texte und `aria`-Rollen in den Seitenmodulen; Wartbarkeit durch getrennte Module in `src/`.
-
-## 11. Risiken und technische Schulden
 
 ## 11. Risiken und technische Schulden
 
@@ -310,8 +291,6 @@ Weitere Eigenschaften, die der Code trägt, ohne dass eine NFR sie verlangt: sch
 | Fängt der Dienst nur `Ablehnung` und `Datenfehler` | `src/main.ts` | Ein anderer Fehler endet ohne gestaltete Antwort; Express beantwortet ihn als HTML |
 | Version nur aus dem Build-Arg | `Dockerfile`, `scripts/testumgebung.sh` | Ohne `VERSION` meldet `GET /api/version` unbekannt; die Standprüfung der Akzeptanztests greift dann nicht |
 | Preload der Schrift, aber kein Cache-Konzept | `public/fonts/`, `/assets` über `express.static` | Jede Anfrage geht an den Dienst; im Betrieb ungemessen |
-
-## 12. Glossar
 
 ## 12. Glossar
 
