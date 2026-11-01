@@ -184,4 +184,14 @@ export default class StepImplementation {
     await page.getByRole('status').filter({ hasText: text(meldung) }).waitFor();
     await page.locator('.kontentabelle').waitFor();
   }
+
+  @Step('Die Überweisung zeigt keine Zusammenfassung')
+  public async dieUeberweisungZeigtKeineZusammenfassung() {
+    const page = await this.seite();
+    const form = page.getByRole('form', { name: 'Überweisung' });
+    await form.waitFor();
+    // Die Zusammenfassung ist eine Region „Zusammenfassung“, die das Formular ersetzt; darum auf der ganzen Seite suchen.
+    const zusammenfassung = page.getByRole('region', { name: 'Zusammenfassung' });
+    assert.strictEqual(await zusammenfassung.count(), 0, 'Die Überweisung zeigt unerwartet eine Zusammenfassung');
+  }
 }

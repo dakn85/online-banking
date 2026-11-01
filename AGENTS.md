@@ -38,6 +38,10 @@ Werkzeuge:
 | `verlauf_lesen` {story, path?, key?} | Die Stände der Story aus Git: wer wann welches Element geändert hat |
 | `steps_suchen` {q?, offset?, limit?, story?} | Vorhandene Gauge-Steps mit Muster, Parametern, Nutzung und ob sie implementiert sind |
 | `stories_am_element` {kind, key} | Welche anderen offenen Stories dasselbe Element ändern (Konflikte früh sehen) |
+| `entwurf_abgeben` {key, entwurf} | Vor dem Code: wie du die Story umsetzt (Bausteine aus technik_lesen, Schritte mit UC/BR, Änderung am Rahmen); KnippQAi schreibt ihn in die Story-Datei unter docs/stories/, danach git pull |
+| `technik_lesen` {adr?, teil?, story?} | Technischer Rahmen: docs/architecture.md (arc42), Entscheidungen unter docs/adr/ und Leitplanken des Hauses; was hier steht, gilt beim Bauen und Testen |
+| `betrieb_fehler` {stunden?, umgebung?} | Fehlergruppen im Betrieb mit Zustand, Vorkommen, Nutzern, Ort im Code und Story |
+| `betrieb_fehlergruppe` {id?, story?} | Eine Fehlergruppe mit Befund, Stacktrace, Logzeilen (maskiert), Bezug zu Operation, Use Cases und Stories; Zustand „beobachten“ heißt behoben, noch keine 24 Stunden ohne Vorkommen |
 
 ## Ablauf
 
