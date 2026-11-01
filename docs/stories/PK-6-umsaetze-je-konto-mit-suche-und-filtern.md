@@ -68,7 +68,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 
 - Sollen die Demo-Konten im Ausgangsstand bereits Umsätze tragen?
   **Antwort:** Ja: Je Konto einige Demo-Umsätze mit festen Buchungstagen, der jüngste mit Saldo danach gleich dem Kontosaldo.
-  _→ eingearbeitet in UC-003, Umsatz_
+  _→ eingearbeitet in UC-003, Umsatz · 3022bf4_
 - Wo erscheinen die Umsätze eines Kontos?
   **Antwort:** Eigene Maske „Umsätze“, je Konto über den Knopf in der Finanzstatus-Zeile geöffnet.
   _→ noch nicht in der Spezifikation_
@@ -80,7 +80,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
   _→ noch nicht in der Spezifikation_
 - Wo werden Textsuche und Filter ausgeführt?
   **Antwort:** Im Dienst über Abfrageparameter suchtext, von, bis und richtung.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze_
 - Sollen die festen Buchungstage der Demo-Umsätze in der Spezifikation stehen?
   **Antwort:** Nein, fest ist fest: der Bau wählt die Tage im Ausgangsstand.
   _→ noch nicht in der Spezifikation_
