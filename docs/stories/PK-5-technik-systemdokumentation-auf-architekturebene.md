@@ -32,7 +32,17 @@ Kein Code, keine Use Cases, Geschäftsregeln, API oder NFR (nur Verweise per Ken
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-5 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-5 grün
 
-## Offene Fragen
+## Entscheidungen
 
-- [ ] Soll die Verteilungsgrafik den Plattformlauf der Akzeptanztests als eigenen Knoten zeigen?
-- [ ] Soll die fehlende Autorisierung je Konto als eigene Entscheidung festgehalten werden oder als Risiko bleiben?
+- Soll die Verteilungsgrafik den Plattformlauf der Akzeptanztests als eigenen Knoten zeigen?
+  **Antwort:** Nein, die Tests stehen nur im Testkonzept.
+  _→ noch nicht in der Spezifikation_
+- Soll die fehlende Autorisierung je Konto als eigene Entscheidung festgehalten werden oder als Risiko bleiben?
+  **Antwort:** Als Risiko bleiben, kein weiterer ADR.
+  _→ noch nicht in der Spezifikation_
+- Soll der Plattformlauf der Akzeptanztests als eigener Knoten in der Verteilung erscheinen?
+  **Antwort:** Nein, die Verteilung bleibt bei den Umgebungen, in denen die Container der Bausteinsicht laufen; der Lauf steht im Testkonzept.
+  _→ noch nicht in der Spezifikation_
+- Soll die fehlende Autorisierung je Konto als eigene Entscheidung unter docs/adr/ festgehalten werden?
+  **Antwort:** Wir machen das später mit eigener Story
+  _→ noch nicht in der Spezifikation_
