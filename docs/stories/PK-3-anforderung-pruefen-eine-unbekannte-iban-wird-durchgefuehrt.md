@@ -54,13 +54,6 @@ Call log:
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-3 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-3 grün
 
-## Offene Fragen
-
-- [ ] Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
-- [ ] Ist diese Test-IBAN als Beleg der Längengrenze richtig, oder soll die Länge mit einem anderen Wert geprüft werden?
-- [ ] Der Belegfall „Länderkennzeichen außerhalb der SEPA-Länderliste“ ist im Szenario „Eine IBAN mit gültiger Prüfziffer außerhalb des SEPA-Raums wird abgelehnt“ bereits mit IBAN „TR33 0006 1005 1978 6457 8413 26“ umgesetzt. Soll ich darüber hinaus nichts ändern, oder soll dieser Testwert zusätzlich in BR-0003 als Beispiel stehen?
-- [ ] Soll die IBAN „TR33 0006 1005 1978 6457 8413 26“ in BR-0003 als Beispiel stehen oder nur im Akzeptanztest?
-
 ## Entscheidungen
 
 - Soll BR-0003/A1 so bleiben und der Akzeptanztest korrigiert werden?
@@ -71,7 +64,19 @@ Call log:
   _→ eingearbeitet in UC-002, BR-0003 · 25d6880_
 - Soll BR-0003 unverändert bleiben und der Akzeptanztest die SEPA-Grenze prüfen?
   **Antwort:** Ja, die Regel bleibt wörtlich; der Test erwartet die Ablehnung und keine Zusammenfassung.
-  _→ eingearbeitet_
+  _→ eingearbeitet · 74da1a4_
+- Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
+  **Antwort:** TR33 0006 1005 1978 6457 8413 26 (gültige Prüfziffer, außerhalb des SEPA-Raums).
+  _→ ohne Änderung: Warum kein Vorschlag: Das Szenario „Eine IBAN außerhalb der SEPA-Länderliste wird abgelehnt und keine Zusammenfassung gezeigt“ steht in `acceptance/specs/ueberweisung.spec` schon mit der entschiedenen IBAN `"TR33 0006 1005 1978 6457 8413 26"`, der Meldung und dem Tag BR-0003, und UC-002/A1 samt BR-0003 sind ebenso gefasst; ein Vorschlag würde diese Stellen nur unverändert neu schreiben. Was du tun kannst: 1. Die Entscheidung als eingearbeitet abhaken und die Story schließen. 2. Die Step-Bindung für „Die Überweisung zeigt keine Zusammenfassung“ in `acceptance/tests/StepImplementation.ts` ergänzen, damit das Szenario lauffähig ist. 3. Für die noch offene Rückfrage, ob TR33 zusätzlich als Beispiel in BR-0003 stehen soll, entscheiden und BR-0003 dafür in den Umfang nehmen._
 - Welche IBAN soll den Fall „Länderkennzeichen außerhalb der SEPA-Länderliste“ im Akzeptanztest belegen?
   **Antwort:** TR33 0006 1005 1978 6457 8413 26 (Türkei) wie im Vorschlag
+  _→ noch nicht in der Spezifikation_
+- Ist diese Test-IBAN als Beleg der Längengrenze richtig, oder soll die Länge mit einem anderen Wert geprüft werden?
+  **Antwort:** ist schon eingearbeitet
+  _→ noch nicht in der Spezifikation_
+- Der Belegfall „Länderkennzeichen außerhalb der SEPA-Länderliste“ ist im Szenario „Eine IBAN mit gültiger Prüfziffer außerhalb des SEPA-Raums wird abgelehnt“ bereits mit IBAN „TR33 0006 1005 1978 6457 8413 26“ umgesetzt. Soll ich darüber hinaus nichts ändern, oder soll dieser Testwert zusätzlich in BR-0003 als Beispiel stehen?
+  **Antwort:** nichts ändern
+  _→ noch nicht in der Spezifikation_
+- Soll die IBAN „TR33 0006 1005 1978 6457 8413 26“ in BR-0003 als Beispiel stehen oder nur im Akzeptanztest?
+  **Antwort:** Nein, der Wert steht nur im Szenario; BR-0003 bleibt wörtlich.
   _→ noch nicht in der Spezifikation_
