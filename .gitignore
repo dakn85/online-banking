@@ -5,3 +5,5 @@ acceptance/reports/
 acceptance/logs/
 acceptance/.gauge/
 build-test/
+.testumgebung.pid
+.testumgebung.log
