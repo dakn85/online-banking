@@ -47,6 +47,7 @@ Call log:
 ## Akzeptanztests
 
 - `acceptance/specs/ueberweisung.spec`: Eine IBAN außerhalb der SEPA-Länderliste wird abgelehnt und keine Zusammenfassung gezeigt
+- `acceptance/specs/ueberweisung.spec`: Eine IBAN mit weniger als 15 Stellen wird abgelehnt
 
 ## Aufgaben für die Umsetzung
 

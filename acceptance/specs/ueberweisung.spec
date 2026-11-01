@@ -70,3 +70,13 @@ Tags: UC-002, PK-3, BR-0003
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "TR33 0006 1005 1978 6457 8413 26", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Überweisung zeigt die Meldung "Die IBAN ist ungültig oder gehört zu keinem SEPA-Land."
 * Die Überweisung zeigt keine Zusammenfassung
+
+## Eine IBAN mit weniger als 15 Stellen wird abgelehnt
+
+Tags: UC-002, PK-3, BR-0003
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE93 3704 0044 05", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
+* Die Überweisung zeigt die Meldung "Die IBAN ist ungültig oder gehört zu keinem SEPA-Land."
