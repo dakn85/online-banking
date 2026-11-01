@@ -30,7 +30,11 @@ _Noch kein Story-Satz._
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-4 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-4 grün
 
-## Offene Fragen
+## Entscheidungen
 
-- [ ] Sollen die sechs ADRs als vorgeschlagen stehen bleiben oder als angenommen gelten?
-- [ ] Bleiben Geldbeträge als number in Euro, oder soll der technische Rahmen die Leitplanke durchsetzen (Betrag in Cent als Ganzzahl)?
+- Sollen die sechs ADRs als vorgeschlagen stehen bleiben oder als angenommen gelten?
+  **Antwort:** vorgeschlagen lassen, bis das Team sie im Review bestätigt
+  _→ noch nicht in der Spezifikation_
+- Bleiben Geldbeträge als number in Euro, oder soll der technische Rahmen die Leitplanke durchsetzen (Betrag in Cent als Ganzzahl)?
+  **Antwort:** number in Euro bleibt, Rundung auf Cent, wie im Code
+  _→ noch nicht in der Spezifikation_

@@ -1,9 +1,5 @@
 # Architektur: Online-Banking
 
-## 1. Einführung und Ziele
-
-Aufgabe, Ziele und Stakeholder stehen in `docs/vision.md`.
-
 # Architektur Online-Banking
 
 ## 1. Einführung und Ziele
@@ -18,16 +14,12 @@ Die Use Cases: UC-001 Finanzstatus anzeigen (Maske `finanzstatus`), UC-002 Über
 
 Die Leitplanken des Hauses stehen in `docs/leitplanken.md`, die Randbedingungen des Systems (C-…) in `docs/requirements.md`.
 
-## 2. Randbedingungen
-
 - **C-001:** Konten und Kunden sind feste Demo-Daten (`src/konten.ts`, `src/kunden.ts`); keine Kernbank, keine Datenbank, keine Persistenz.
 - **Laufzeit:** Node ab 22 (`engines` in `package.json`, `node:22-alpine` im Dockerfile), TypeScript strict, target ES2022, module commonjs mit esModuleInterop.
 - **Abhängigkeiten:** im Betrieb nur `express` (^4.22.1); zum Bauen `typescript` (~5.9.3) und die `@types`; die Oberfläche nutzt kein Framework und keinen Bundler.
 - **Geheimnisse:** keine im Repo; der Dienst liest `PORT`, `TEST_MODE` und `VERSION` aus der Umgebung. Die Demo-PINs stehen im Klartext in `src/kunden.ts`.
 - **Betrieb:** Der Dienst spricht HTTP auf Port 8080 (`EXPOSE 8080`); TLS endet nicht im Dienst.
 - Die Leitplanken des Hauses gelten. Wo der Code abweicht, steht das unter Risiken statt in einer stillschweigenden Änderung der Leitplanke.
-
-## 3. Kontextabgrenzung
 
 ## 3. Kontextabgrenzung
 
@@ -46,8 +38,6 @@ C4Context
 | Privatkundin | beide | Kennung und PIN zur Anmeldung; Konten, Salden, Gesamtvermögen; Überweisungsauftrag | Browser, HTML-Seiten des Online-Bankings, JSON unter /api |
 
 Es gibt kein Kernbanksystem, keine Marktdatenquelle und kein Messaging: der Dienst ist allein. Ein weiterer Dienst, der ihn aufruft, ist im Code nicht vorhanden; die Akzeptanztests sprechen ihn als Client an.
-
-## 4. Lösungsstrategie
 
 ## 4. Lösungsstrategie
 
@@ -75,8 +65,6 @@ Prägende Grundentscheidungen (je eine eigene ADR unter `docs/adr/`):
 6. Akzeptanztests mit Gauge und Playwright gegen eine laufende Testumgebung, Stand über `GET /api/version`.
 
 ## 5. Bausteinsicht
-
-## 5. Bausteine
 
 ```mermaid
 C4Container
@@ -113,8 +101,6 @@ C4Container
 Die Modulgrenzen folgen den fachlichen Teilen, nicht dem HTTP: `main.ts` enthält keine Regel, `konten.ts` und `ueberweisung.ts` kennen kein HTTP. Die Oberfläche kennt keine Entität, nur das JSON der beiden Operationen.
 
 ## 6. Laufzeitsicht
-
-## 6. Laufzeitverhalten
 
 ### Anmeldung
 
@@ -202,8 +188,6 @@ sequenceDiagram
 ```
 
 ## 7. Verteilungssicht
-
-## 7. Verteilung
 
 ```mermaid
 C4Deployment
