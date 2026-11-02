@@ -8,7 +8,7 @@ Als Privatkundin möchte ich jede Empfängervorlage über Symbole in ihrer Zeile
 
 ## Nicht im Scope
 
-Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervorlage und an den Endpunkten; kein Bearbeiten von IBAN oder Verwendungszweck; keine Änderung an der Überweisung (BR-0017).
+Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervorlage und an den Endpunkten; kein Bearbeiten von IBAN oder Verwendungszweck; keine Änderung an der Überweisung (BR-0017). In der Maske Empfängervorlagen entfallen der Abschnitt „Vorlage umbenennen“ mit den Feldern „Vorlage zum Umbenennen“ und „Neuer Name“ und das Feld „Vorlage zum Löschen“: Die Vorlage wird über die Aktionen in ihrer Zeile gewählt, der Dialog „Vorlage bearbeiten“ führt nur das Feld Name, und der Dialog „Vorlage löschen“ nennt die gewählte Vorlage mit ihrem Namen.
 
 ## Änderungen
 
@@ -49,7 +49,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
   _→ eingearbeitet in UC-004 · 88a26fd_
 - Wie sollen die Dialoge in der Spezifikation geführt werden?
   **Antwort:** Als Gruppen auf der Seite „Empfängervorlagen“, im Bau als Modale.
-  _→ eingearbeitet in UC-004_
+  _→ eingearbeitet in UC-004 · 41debc7_
 - Wo erscheinen die Fehlermeldungen zu Name, IBAN und Höchstzahl?
   **Antwort:** Im geöffneten Dialog, der offen bleibt.
   _→ eingearbeitet in UC-004 · 37840b3_
