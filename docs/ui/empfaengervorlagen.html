@@ -33,9 +33,6 @@
 <p data-wf="meldung" role="status">Empfängervorlage gespeichert.</p>
 <p data-wf="meldung" role="status">Empfängervorlage umbenannt.</p>
 <p data-wf="meldung" role="status">Empfängervorlage gelöscht.</p>
-<p data-wf="meldung" role="alert">Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.</p>
-<p data-wf="meldung" role="alert">Eine Vorlage mit diesem Namen gibt es bereits.</p>
-<p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
 <dl data-wf="kennzahl">
   <div><dt>Vorlagen</dt><dd>3 von 50</dd></div>
 </dl>
@@ -52,6 +49,9 @@
 </table>
 <section data-wf="gruppe" data-merkmal="Neue Vorlage">
   <h2>Neue Vorlage</h2>
+  <p data-wf="meldung" role="alert">Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.</p>
+  <p data-wf="meldung" role="alert">Eine Vorlage mit diesem Namen gibt es bereits.</p>
+  <p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
   <form data-wf="formular">
     <label data-wf="feld"><span>Name</span><input name="name" placeholder="Möbel Nord GmbH" required></label>
     <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
@@ -64,6 +64,7 @@
 </section>
 <section data-wf="gruppe" data-merkmal="Vorlage bearbeiten">
   <h2>Vorlage bearbeiten</h2>
+  <p data-wf="meldung" role="alert">Eine Vorlage mit diesem Namen gibt es bereits.</p>
   <form data-wf="formular">
     <label data-wf="feld"><span>Name</span><input name="name" placeholder="Möbel Nord GmbH (Filiale Süd)" required></label>
     <div data-wf="aktionen">

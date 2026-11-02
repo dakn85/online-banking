@@ -46,6 +46,11 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-13 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-13 grün
 
+## Offene Fragen
+
+- [ ] Der Dialog „Vorlage bearbeiten“ wird aus der Zeile einer Vorlage geöffnet; die angezeigte Liste kann veraltet sein (Vorlage in einem anderen Tab gelöscht) oder die Zeile stammt aus einer fremden Sitzung. Was tut das System, wenn PATCH /api/empfaengervorlagen/{vorlagenId} mit 404 antwortet („Keine Vorlage der Kundin mit dieser Kennung“)? (PATCH /api/empfaengervorlagen/{vorlagenId}, vorlagenId)
+- [ ] Der Dialog „Vorlage löschen“ bestätigt die Vorlage aus der Zeile. Was tut das System, wenn DELETE /api/empfaengervorlagen/{vorlagenId} mit 404 antwortet – die Vorlage wurde inzwischen gelöscht oder die Bestätigung doppelt ausgelöst, oder die Kennung gehört einer anderen Kundin? (DELETE /api/empfaengervorlagen/{vorlagenId}, vorlagenId)
+
 ## Entscheidungen
 
 - Soll der Dialog „Vorlage bearbeiten“ auch IBAN und Verwendungszweck änderbar machen?
