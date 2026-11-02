@@ -30,7 +30,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 | BR-0014 IBAN der Empfängervorlage | Neu | Neu in UC-004 |
 | BR-0015 Höchstzahl von 50 Empfängervorlagen | Neu | Neu in UC-004 |
 | BR-0016 Vorlagen der angemeldeten Kundin | Neu | Neu in UC-004 |
-| Vision | Geändert | Abschnitt „Ziele“ geändert |
+| Vision | Geändert | Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
 
 ## Akzeptanztests
 
@@ -67,6 +67,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 - [ ] BR-0015: Neu in UC-004
 - [ ] BR-0016: Neu in UC-004
 - [ ] Vision: Z-6 neu
+- [ ] Vision: Abgrenzung neu
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-7 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-7 grün
 
