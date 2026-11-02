@@ -80,3 +80,23 @@ Tags: UC-002, PK-3, BR-0003
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE93 3704 0044 05", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Überweisung zeigt die Meldung "Die IBAN ist ungültig oder gehört zu keinem SEPA-Land."
+
+## Eine gewählte Empfängervorlage belegt Empfänger, IBAN und Verwendungszweck
+
+Tags: UC-002, PK-7
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin wählt in der Überweisung die Vorlage "Möbel Nord GmbH" und sieht Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711"
+
+## Eine Vorlage ohne Verwendungszweck lässt das Feld Verwendungszweck leer
+
+Tags: UC-002, PK-7, BR-0017
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Hausverwaltung Weber" mit IBAN "DE44 5001 0517 5407 3249 31" ohne Verwendungszweck an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin wählt in der Überweisung die Vorlage "Hausverwaltung Weber" und sieht Empfänger "Hausverwaltung Weber", IBAN "DE44 5001 0517 5407 3249 31" und einen leeren Verwendungszweck

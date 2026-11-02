@@ -19,6 +19,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-3 | Verfügbarer Betrag des Girokontos sichtbar | Anteil der Girokonten, deren Zeile im Finanzstatus Dispositionsrahmen und verfügbaren Betrag zeigt | 100 % |
 | Z-4 | Einstieg nach der Anmeldung | Anteil der Anmeldungen, nach denen der Finanzstatus erscheint | 100 % |
 | Z-5 | Überweisung vom Girokonto ausführen | Anteil der bestätigten Überweisungen, die genau einmal ausgeführt werden und im neuen Saldo des Finanzstatus sichtbar sind | 100 % |
+| Z-6 | Empfänger aus Vorlage statt Neueingabe | Anteil der Überweisungen mit gewählter Empfängervorlage, bei denen das System Empfänger und IBAN des Empfängers unverändert aus der Vorlage übernimmt und den Verwendungszweck nur übernimmt, wenn die Vorlage einen hat | 100 % |
 
 ## Abgrenzung
 
@@ -26,6 +27,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
 - Umsätze und Kontobewegungen zu einem Konto.
+- Empfängervorlagen: ein Empfänger je Vorlage mit genau einer IBAN, kein Adressbuch mit mehreren Konten je Empfänger, kein Teilen von Vorlagen zwischen Kundinnen, kein Import und Export und keine Vorlagen aus einer Kernbank.
 
 ## Systemkontext
 

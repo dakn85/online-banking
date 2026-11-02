@@ -1,0 +1,82 @@
+<!-- maske: {
+  "title": "Empfängervorlagen",
+  "useCases": ["UC-004"],
+  "fields": [
+    {"name":"vorlage","label":"Vorlage","kind":"anzeige","attribute":"Empfaengervorlage.name"},
+    {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Empfaengervorlage.empfaengerIban"},
+    {"name":"zweck","label":"Verwendungszweck der Vorlage","kind":"anzeige","attribute":"Empfaengervorlage.verwendungszweck"},
+    {"name":"name","label":"Name","kind":"text","attribute":"Empfaengervorlage.name","rules":{"required":true,"maxLength":70}},
+    {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Empfaengervorlage.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Empfaengervorlage.verwendungszweck","rules":{"maxLength":140}},
+    {"name":"vorlageUmbenennen","label":"Vorlage zum Umbenennen","kind":"auswahl","attribute":"Empfaengervorlage.name"},
+    {"name":"neuerName","label":"Neuer Name","kind":"text","attribute":"Empfaengervorlage.name","rules":{"required":true,"maxLength":70}},
+    {"name":"vorlageLoeschen","label":"Vorlage zum Löschen","kind":"auswahl","attribute":"Empfaengervorlage.name"}
+  ],
+  "actions": [
+    {"label":"Speichern","useCase":"UC-004","operation":"POST /api/empfaengervorlagen","screen":"empfaengervorlagen"},
+    {"label":"Umbenennen","useCase":"UC-004","operation":"PATCH /api/empfaengervorlagen/{vorlagenId}","screen":"empfaengervorlagen"},
+    {"label":"Löschen","useCase":"UC-004","operation":"DELETE /api/empfaengervorlagen/{vorlagenId}","screen":"empfaengervorlagen"},
+    {"label":"Abbrechen","useCase":"UC-004","screen":"empfaengervorlagen"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Empfängervorlagen</h1>
+  <p>Empfänger speichern, umbenennen und löschen.</p>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#">Überweisung</a>
+  <a href="#" aria-current="page">Empfängervorlagen</a>
+</nav>
+<p data-wf="meldung" role="status">Empfängervorlage gespeichert.</p>
+<p data-wf="meldung" role="status">Empfängervorlage umbenannt.</p>
+<p data-wf="meldung" role="status">Empfängervorlage gelöscht.</p>
+<p data-wf="meldung" role="alert">Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.</p>
+<p data-wf="meldung" role="alert">Eine Vorlage mit diesem Namen gibt es bereits.</p>
+<p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
+<dl data-wf="kennzahl">
+  <div><dt>Vorlagen</dt><dd>3 von 50</dd></div>
+</dl>
+<table data-wf="tabelle">
+  <caption>Ihre Empfängervorlagen</caption>
+  <thead>
+    <tr><th>Vorlage</th><th>IBAN</th><th>Verwendungszweck der Vorlage</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Möbel Nord GmbH</td><td>DE89 3704 0044 0532 0130 00</td><td>Rechnung 4711</td></tr>
+    <tr><td>Stadtwerke Nord</td><td>DE02 5001 0517 5407 3249 31</td><td>Abschlag Strom</td></tr>
+    <tr><td>Hausverwaltung Weber</td><td>DE44 5001 0517 5407 3249 31</td><td></td></tr>
+  </tbody>
+</table>
+<section data-wf="gruppe" data-merkmal="Neue Vorlage">
+  <h2>Neue Vorlage</h2>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Name</span><input name="name" placeholder="Möbel Nord GmbH" required></label>
+    <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
+    <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Rechnung 4711"></textarea></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Speichern</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Vorlage umbenennen">
+  <h2>Vorlage umbenennen</h2>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Vorlage zum Umbenennen</span><select name="vorlageUmbenennen"><option>Möbel Nord GmbH</option><option>Stadtwerke Nord</option></select></label>
+    <label data-wf="feld"><span>Neuer Name</span><input name="neuerName" placeholder="Möbel Nord GmbH (Filiale Süd)" required></label>
+    <div data-wf="aktionen">
+      <button>Umbenennen</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Vorlage löschen">
+  <h2>Vorlage löschen</h2>
+  <p data-wf="meldung" role="status">Vorlage löschen?</p>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Vorlage zum Löschen</span><select name="vorlageLoeschen"><option>Möbel Nord GmbH</option><option>Stadtwerke Nord</option></select></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Löschen</button>
+      <button>Abbrechen</button>
+    </div>
+  </form>
+</section>
