@@ -41,7 +41,7 @@ Tags: UC-004, PK-13, BR-0014
 
 ## Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 
-Tags: UC-004, PK-13, BR-0013
+Tags: UC-004, PK-13
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -80,7 +80,7 @@ Tags: UC-004, PK-7
 
 ## Eine Vorlage lässt sich auf ihren eigenen Namen umbenennen
 
-Tags: UC-004, PK-13, BR-0013
+Tags: UC-004, PK-13
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -175,3 +175,18 @@ Tags: UC-004, PK-13
 * Die Empfängervorlagen zeigen die Meldung "Diese Empfängervorlage gibt es nicht."
 * Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gelöscht." nicht
 * Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen "0 von 50"
+
+## Die Empfängervorlagen zeigen weder Auswahlfeld noch Umbenennen-Formular
+
+Tags: UC-004, PK-13
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Empfängervorlagen zeigen den Abschnitt "Vorlage umbenennen" nicht
+* Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht
+| Feld                   |
+|------------------------|
+| Vorlage zum Umbenennen |
+| Neuer Name             |
+| Vorlage zum Löschen    |

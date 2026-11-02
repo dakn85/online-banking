@@ -24,6 +24,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - `acceptance/specs/empfaengervorlagen.spec`: Der Abbruch im Dialog „Vorlage bearbeiten“ ändert den Namen nicht
 - `acceptance/specs/empfaengervorlagen.spec`: Der Dialog „Vorlage bearbeiten“ führt nur das Feld Name
 - `acceptance/specs/empfaengervorlagen.spec`: Der Löschdialog nennt die gewählte Vorlage mit ihrem Namen
+- `acceptance/specs/empfaengervorlagen.spec`: Die Empfängervorlagen zeigen weder Auswahlfeld noch Umbenennen-Formular
 - `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
 - `acceptance/specs/empfaengervorlagen.spec`: Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
 - `acceptance/specs/empfaengervorlagen.spec`: Ein vergebener Name wird auch bei 50 Vorlagen als Konflikt abgelehnt
@@ -80,4 +81,4 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
   _→ eingearbeitet in UC-004, empfaengervorlagen · a07ebfd_
 - Zeigt die Seite bei 404 im Löschfall wörtlich „Diese Empfängervorlage gibt es nicht.“?
   **Antwort:** Ja, den Text des Dienstes aus dem Feld fehler anzeigen.
-  _→ eingearbeitet in UC-004_
+  _→ eingearbeitet in UC-004 · ec00118_
