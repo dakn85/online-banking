@@ -114,6 +114,7 @@ Tags: UC-002, PK-12, BR-0019
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "2.100,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
 * Die Kundin bestätigt die Überweisung und sieht in der Überweisung die Meldung "Der Betrag übersteigt das Tageslimit von 5.000,00 EUR."
+* Die Zeile "Girokonto" zeigt "Saldo" "3.000,00 €"
 
 ## Überweisungen bis genau zum Tageslimit werden am selben Kalendertag ausgeführt
 
