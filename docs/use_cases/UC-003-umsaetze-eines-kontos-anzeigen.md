@@ -50,6 +50,14 @@
 
 1. Das System zeigt den Hinweis „Das Konto wurde nicht gefunden.“ und keine Umsätze.
 
+### A4: Zeitraum ungültig
+
+**Auslöser:** Das Von-Datum liegt nach dem Bis-Datum (BR-0010). (Schritt 7).  
+**Ablauf:**
+
+1. Das System zeigt die Meldung „Der Zeitraum ist ungültig: von liegt nach bis.“ statt der Tabelle und keine Umsätze.
+2. Einen Hinweis nach A2 zeigt das System nicht.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -91,7 +99,7 @@ Ein Eingang hat einen positiven Betrag, ein Ausgang einen negativen Betrag; der 
 
 ### BR-0010: Zeitraum und Textsuche
 
-Der Zeitraumfilter zeigt die Umsätze, deren Buchungstag zwischen dem gewählten Von- und Bis-Datum liegt, beide Grenzen eingeschlossen; fehlt eine Grenze, gilt sie als offen. Die Textsuche zeigt die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung. Ohne Eingabe schränkt ein Filter nicht ein.
+Der Zeitraumfilter zeigt die Umsätze, deren Buchungstag zwischen dem gewählten Von- und Bis-Datum liegt, beide Grenzen eingeschlossen; fehlt eine Grenze, gilt sie als offen. Liegt das Von-Datum nach dem Bis-Datum, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keinen Hinweis nach A2. Die Textsuche zeigt die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung. Ohne Eingabe schränkt ein Filter nicht ein.
 
 ### BR-0011: Umsätze nur für Konten der Kundin
 

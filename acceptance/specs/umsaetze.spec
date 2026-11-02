@@ -100,3 +100,19 @@ Tags: UC-003, PK-6, BR-0011
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
 |-------------|------------------|--------|--------------|
+
+## Ein Von-Datum nach dem Bis-Datum zeigt die Meldung zum ungültigen Zeitraum
+
+Tags: UC-003, PK-6, BR-0010
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          | 2026-03-31   | 2026-03-01   | Alle         |
+* Die Umsätze zeigen die Meldung "Der Zeitraum ist ungültig: von liegt nach bis."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
+|-------------|------------------|--------|--------------|
