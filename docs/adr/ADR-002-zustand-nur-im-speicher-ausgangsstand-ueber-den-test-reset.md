@@ -9,7 +9,7 @@ C-001 sagt: Demo-Konten statt Kernbank. Die Akzeptanztests brauchen vor jedem Sz
 
 ## Entscheidung
 
-Konten, Sitzungen und ausgeführte Aufträge liegen ausschließlich im Speicher des Prozesses. POST /api/test/reset beendet alle Sitzungen und setzt Konten und Aufträge auf den Ausgangsstand zurück; die Route wird nur bei TEST_MODE=1 registriert. Der Ausgangsstand bleibt unverändert; eine zweite Route des Testbetriebs setzt den Saldo eines Kontos (POST /api/test/konten/{iban}/saldo), damit ein Szenario einen anderen Ausgangssaldo herstellen kann; auch sie ist nur bei TEST_MODE=1 vorhanden.
+Konten, Sitzungen und ausgeführte Aufträge liegen ausschließlich im Speicher des Prozesses. POST /api/test/reset beendet alle Sitzungen und setzt Konten und Aufträge auf den Ausgangsstand zurück; die Route wird nur bei TEST_MODE=1 registriert. Der Ausgangsstand bleibt unverändert; eine zweite Route des Testbetriebs setzt den Saldo eines Kontos (POST /api/test/konten/{iban}/saldo), damit ein Szenario einen anderen Ausgangssaldo herstellen kann; sie ändert nur den Saldo; die Demo-Umsätze samt ihren Saldo-danach-Werten bleiben stehen, deshalb bauen Szenarien, die die Umsatzliste prüfen, weiter auf dem Ausgangsstand auf; auch sie ist nur bei TEST_MODE=1 vorhanden.
 
 ## Folgen
 
