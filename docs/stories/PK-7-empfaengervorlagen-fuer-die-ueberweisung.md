@@ -111,4 +111,4 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
   _→ eingearbeitet in UC-004, BR-0015, POST /api/empfaengervorlagen · d7d23ad_
 - Was gilt, wenn die Kundin eine Vorlage auf ihren eigenen Namen in anderer Schreibweise oder mit anderen Leerzeichen umbenennt?
   **Antwort:** Die Eingabe wird gespeichert und angezeigt, die Vorlage gilt als umbenannt, Meldung „Empfängervorlage umbenannt.“
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-004, BR-0013, PATCH /api/empfaengervorlagen/{vorlagenId}_

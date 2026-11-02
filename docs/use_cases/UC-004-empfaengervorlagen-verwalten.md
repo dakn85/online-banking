@@ -54,7 +54,7 @@
 **Ablauf:**
 
 1. Das System prüft den neuen Namen nach BR-0013 (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig auch ohne Beachtung der Groß-/Kleinschreibung und ohne führende und folgende Leerzeichen; die eigene Vorlage zählt dabei nicht mit); ist er bei einer anderen Vorlage der Kundin schon vergeben, bleibt die Vorlage unverändert und das System zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“.
-2. Trägt die Vorlage den eingegebenen Namen schon, ändert das System nichts und antwortet mit 200 und der unveränderten Vorlage; sonst ändert es nur den Namen, IBAN des Empfängers und Verwendungszweck bleiben, und das System zeigt die Vorlagen mit dem neuen Namen und der Meldung „Empfängervorlage umbenannt.“.
+2. Trägt die Vorlage den eingegebenen Namen nach diesem Vergleich schon, entsteht kein Konflikt und der Dienst antwortet mit 200; sonst ändert das System nur den Namen. IBAN des Empfängers und Verwendungszweck bleiben in beiden Fällen unverändert, gespeichert und angezeigt wird die Eingabe der Kundin, und das System zeigt die Vorlagen mit diesem Namen und der Meldung „Empfängervorlage umbenannt.“.
 
 ### A5: Vorlage löschen
 
@@ -108,7 +108,7 @@ sequenceDiagram
 
 ### BR-0013: Name der Empfängervorlage
 
-Der Name der Vorlage ist Pflicht, 1 bis 70 Zeichen lang und je Kundin eindeutig, auch nach dem Umbenennen. Für die Eindeutigkeit vergleicht das System den Namen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert und angezeigt wird die Eingabe der Kundin. Beim Umbenennen schließt die Eindeutigkeitsprüfung die umbenannte Vorlage selbst aus: Trägt die Vorlage den eingegebenen Namen schon, antwortet der Dienst mit 200 und der unveränderten Vorlage, und es entsteht kein Konflikt; ein Konflikt besteht nur mit einer anderen Vorlage der Kundin. Ist der Name leer, speichert das System die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“; ist er bei einer anderen Vorlage der Kundin schon vergeben, antwortet der Dienst mit 409 und zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“, die bestehende Vorlage bleibt unverändert.
+Der Name der Vorlage ist Pflicht, 1 bis 70 Zeichen lang und je Kundin eindeutig, auch nach dem Umbenennen. Für die Eindeutigkeit vergleicht das System den Namen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert und angezeigt wird die Eingabe der Kundin. Beim Umbenennen schließt die Eindeutigkeitsprüfung die umbenannte Vorlage selbst aus: ein Konflikt besteht nur mit einer anderen Vorlage der Kundin. Trägt die Vorlage den eingegebenen Namen nach diesem Vergleich schon, entsteht kein Konflikt, der Dienst antwortet mit 200 und speichert die Eingabe der Kundin, sodass angezeigt wird, was sie eingegeben hat. Ist der Name leer, speichert das System die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“; ist er bei einer anderen Vorlage der Kundin schon vergeben, antwortet der Dienst mit 409 und zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“, die bestehende Vorlage bleibt unverändert.
 
 ### BR-0014: IBAN der Empfängervorlage
 
