@@ -15,6 +15,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Empfängervorlage umbenennen | Geändert | Antwort 404 geändert |
+| Empfängervorlage löschen | Geändert | Antwort 404 geändert |
 | Empfängervorlagen | Geändert | Feld Vorlage zum Umbenennen entfällt, Feld Neuer Name entfällt, Feld Vorlage zum Löschen entfällt, und 3 weitere |
 | UC-004 Empfängervorlagen verwalten | Geändert | Notizen geändert, Schritt 2 geändert, Schritt 3 geändert, und 6 weitere |
 
@@ -41,6 +42,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 ## Aufgaben für die Umsetzung
 
 - [ ] Empfängervorlage umbenennen: Antwort 404 geändert
+- [ ] Empfängervorlage löschen: Antwort 404 geändert
 - [ ] Empfängervorlagen: Feld Vorlage zum Umbenennen entfällt
 - [ ] Empfängervorlagen: Feld Neuer Name entfällt
 - [ ] Empfängervorlagen: Feld Vorlage zum Löschen entfällt
@@ -82,3 +84,6 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - Zeigt die Seite bei 404 im Löschfall wörtlich „Diese Empfängervorlage gibt es nicht.“?
   **Antwort:** Ja, den Text des Dienstes aus dem Feld fehler anzeigen.
   _→ eingearbeitet in UC-004 · ec00118_
+- Die Story verlangt, dass die Seite bei 404 im Löschfall wörtlich den Text des Dienstes aus fehler anzeigt („Diese Empfängervorlage gibt es nicht.“). Der Vertrag von DELETE beschreibt die 404-Antwort nur als „Keine Vorlage der Kundin mit dieser Kennung“ und legt keinen Text fest, anders als PATCH, dessen 404 die Meldung ausdrücklich trägt. Welchen Text soll der Dienst im Feld fehler der 404-Antwort auf DELETE liefern? (Aussage „Die 404-Antwort auf DELETE trägt als fehler wörtlich „Diese Empfängervorlage gib“)
+  **Antwort:** DELETE-404 trägt wie PATCH wörtlich „Diese Empfängervorlage gibt es nicht.“; die Seite zeigt diesen Text unverändert an (empfohlen)
+  _→ eingearbeitet in DELETE /api/empfaengervorlagen/{vorlagenId}_
