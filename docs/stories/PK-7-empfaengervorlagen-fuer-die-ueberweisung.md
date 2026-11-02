@@ -1,10 +1,14 @@
-# PK-7: Die Kundin speichert Empfänger als Vorlage (Name, IBAN, optional Verwendungszweck) und wählt sie bei der Überweisung …
+# PK-7: Empfängervorlagen für die Überweisung
 
-**Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Neu · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
-Die Kundin speichert Empfänger als Vorlage (Name, IBAN, optional Verwendungszweck) und wählt sie bei der Überweisung aus, statt sie neu einzutippen; Vorlagen lassen sich umbenennen und löschen, höchstens 50 je Kundin.
+Als Privatkundin möchte ich Empfänger als Vorlage mit Name, IBAN und optional Verwendungszweck speichern, umbenennen und löschen und sie bei der Überweisung auswählen, damit ich wiederkehrende Empfänger nicht neu eintippe.
+
+## Nicht im Scope
+
+Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen von Vorlagen zwischen Kundinnen; Import und Export von Vorlagen; Vorlagen aus einer Kernbank; Umsätze und Kontobewegungen (Story PK-6).
 
 ## Änderungen
 
