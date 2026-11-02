@@ -21,8 +21,13 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 
 - `acceptance/specs/empfaengervorlagen.spec`: Der Dialog „Vorlage bearbeiten“ führt nur das Feld Name
 - `acceptance/specs/empfaengervorlagen.spec`: Der Löschdialog nennt die gewählte Vorlage mit ihrem Namen
+- `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
+- `acceptance/specs/empfaengervorlagen.spec`: Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
+- `acceptance/specs/empfaengervorlagen.spec`: Ein vergebener Name wird auch bei 50 Vorlagen als Konflikt abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine abgebrochene Neuanlage legt keine Vorlage an
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage lässt sich auf ihren eigenen Namen umbenennen
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 - `acceptance/specs/empfaengervorlagen.spec`: Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
