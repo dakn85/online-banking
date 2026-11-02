@@ -10,11 +10,13 @@ Als Betrieb der Aventa Bank möchte ich für Finanzstatus und Überweisung messb
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
+| Architektur | Geändert | Querschnittliche Konzepte geändert |
 | Antwortzeit des Finanzstatus | Neu | Qualitätsanforderung neu |
 | Verfügbarkeit von Finanzstatus und Überweisung | Neu | Qualitätsanforderung neu |
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Architektur: Querschnittliche Konzepte geändert
 - [ ] Antwortzeit des Finanzstatus: Qualitätsanforderung neu
 - [ ] Verfügbarkeit von Finanzstatus und Überweisung: Qualitätsanforderung neu
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-8 implementieren
