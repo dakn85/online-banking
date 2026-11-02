@@ -84,7 +84,7 @@
 **Auslöser:** Die Kundin wählt im Feld „Vorlage“ eine gespeicherte Empfängervorlage. (Schritt 2).  
 **Ablauf:**
 
-1. Das System belegt Empfänger und IBAN des Empfängers aus der Vorlage und, wenn die Vorlage einen Verwendungszweck hat, auch den Verwendungszweck; den Betrag übernimmt es nicht.
+1. Das System belegt Empfänger und IBAN des Empfängers aus der Vorlage und, wenn die Vorlage einen Verwendungszweck hat, auch den Verwendungszweck; den Betrag übernimmt es nicht (BR-0017).
 2. Hat die Vorlage keinen Verwendungszweck, bleibt das Feld Verwendungszweck leer; er bleibt Pflicht und die Kundin füllt ihn.
 3. Die Kundin ergänzt den Betrag, ändert bei Bedarf Angaben und wählt „Weiter“; der Ablauf geht bei Schritt 3 weiter.
 
