@@ -91,7 +91,7 @@
 
 ### A8: Tageslimit des Kalendertags überschritten
 
-**Auslöser:** Der Tagesumsatz der Kundin am selben Kalendertag plus der Betrag übersteigt 5.000,00 EUR (BR-0019). (Schritt 7).  
+**Auslöser:** Der Tagesumsatz der Kundin am selben Kalendertag plus der Betrag übersteigt 5.000,00 EUR (BR-0019). Ist zugleich der verfügbare Betrag des Girokontos überschritten (BR-0004), greift A2. (Schritt 7).  
 **Ablauf:**
 
 1. Der Dienst führt den Auftrag nicht aus; der Saldo des Girokontos bleibt unverändert und es entsteht kein Umsatz.
@@ -171,7 +171,7 @@ Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vo
 
 ### BR-0019: Tageslimit des Kalendertags
 
-Die Summe der Überweisungen, die die Kundin am selben Kalendertag bereits ausgeführt hat, plus der neue Betrag übersteigt 5.000,00 EUR nicht. Die Summe gilt über alle Girokonten der Kundin; Kalendertag ist der Buchungstag der ausgeführten Überweisungen nach BR-0012 in UTC. Abgelehnte Aufträge zählen nicht mit, und eine wiederholte Bestätigung derselben Auftrags-Kennung zählt nicht erneut (BR-0005). Der Dienst prüft zuerst den verfügbaren Betrag (BR-0004) und danach das Tageslimit. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“.
+Die Summe der Überweisungen, die die Kundin am selben Kalendertag bereits ausgeführt hat, plus der neue Betrag übersteigt 5.000,00 EUR nicht. Die Summe gilt über alle Girokonten der Kundin; Kalendertag ist der Buchungstag der ausgeführten Überweisungen nach BR-0012 in UTC. Abgelehnte Aufträge zählen nicht mit, und eine wiederholte Bestätigung derselben Auftrags-Kennung zählt nicht erneut (BR-0005). Der Dienst prüft zuerst den verfügbaren Betrag (BR-0004) und danach das Tageslimit. Ist zugleich der verfügbare Betrag überschritten (BR-0004), bleibt es bei der Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“.
 
 ## Weitere Prüfungen
 

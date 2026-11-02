@@ -44,6 +44,11 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-12 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-12 grün
 
+## Offene Fragen
+
+- [ ] BR-0019 rechnet den Tagesumsatz je Kundin über alle ihre Girokonten, aber ein ausgeführter Auftrag trägt nur auftraggeberIban, betrag und erfasstAm, keine Kundin; im Demo-Bestand sehen alle Kundinnen dieselben Konten (C-001, src/konten.ts), und die Entität Konto hat im Modell eine Kante zu Kunde, im Bestand aber keine Zuordnung. Welche bereits ausgeführten Überweisungen zählen in den Tagesumsatz der angemeldeten Kundin? (POST /api/ueberweisungen, System)
+- [ ] Beide Ablehnungen (verfügbarer Betrag nach BR-0004, Tageslimit nach BR-0019) antworten mit 422, und das Schema Fehler trägt nur das Feld fehler (Text). Woran erkennt die Überweisungsseite, welche der beiden Meldungen sie anzeigt, nachdem sie die Ablehnung erhalten hat? (POST /api/ueberweisungen, fehler)
+
 ## Entscheidungen
 
 - Nach welcher Zeit wird der Kalendertag des Tageslimits bestimmt?
@@ -60,4 +65,7 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
   _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung · 0fac6d9_
 - Wie werden die Akzeptanztests zum Tageslimit mit den Demo-Konten möglich?
   **Antwort:** Ausgangsstand bleibt, damit die bestehenden Szenarien unverändert gelten. Die beiden neuen Szenarien setzen den Saldo des Girokontos vorher über die Testschnittstelle (TEST_MODE) auf 6.000,00 EUR, mit einem eigenen Step, z. B. „Das Girokonto hat einen Saldo von "6.000,00 €"“.
-  _→ eingearbeitet in ADR-002, architektur_
+  _→ eingearbeitet in ADR-002, architektur · 95fd280_
+- POST /api/ueberweisungen: Kommt die Nachricht bei Überweisung.status nicht vorhanden (neue auftragsId) an, nennt die Spezifikation zwei Abläufe (UC-002 A2, UC-002 A8). Welcher gilt? (POST /api/ueberweisungen, Überweisung.status nicht vorhanden (neue auftragsId))
+  **Antwort:** Es gilt keine der Optionen ausschließlich – beide Prüfungen laufen in der Reihenfolge BR-0004 vor BR-0019. Sind beide verletzt, greift UC-002 A2; für den Story-Fall (Tageslimit) ist UC-002 A8 maßgeblich.
+  _→ eingearbeitet in UC-002, BR-0019_
