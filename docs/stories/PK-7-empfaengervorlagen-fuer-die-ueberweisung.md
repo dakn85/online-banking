@@ -40,6 +40,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 - `acceptance/specs/ueberweisung.spec`: Eine gewählte Empfängervorlage belegt Empfänger, IBAN und Verwendungszweck
+- `acceptance/specs/ueberweisung.spec`: Eine Vorlage ohne Verwendungszweck lässt das Feld Verwendungszweck leer
 
 ## Aufgaben für die Umsetzung
 
