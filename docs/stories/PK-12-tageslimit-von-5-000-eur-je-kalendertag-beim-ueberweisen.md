@@ -50,10 +50,6 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-12 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-12 grün
 
-## Offene Fragen
-
-- [ ] Sollen auch 401 und 403 einen code tragen?
-
 ## Entscheidungen
 
 - Nach welcher Zeit wird der Kalendertag des Tageslimits bestimmt?
@@ -82,4 +78,7 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
   _→ eingearbeitet in POST /api/ueberweisungen, Schema Fehler, UC-002, BR-0019 · bf17d56_
 - Passen Feldname und Werte?
   **Antwort:** Ja: code mit IBAN, BETRAG, TAGESLIMIT.
-  _→ eingearbeitet in POST /api/ueberweisungen_
+  _→ eingearbeitet in POST /api/ueberweisungen · 7e5f60e_
+- Sollen auch 401 und 403 einen code tragen?
+  **Antwort:** Nein, code nur bei fachlichen Prüfungen (400, 422).
+  _→ eingearbeitet in POST /api/ueberweisungen · bf17d56_
