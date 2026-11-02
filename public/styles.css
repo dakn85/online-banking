@@ -195,6 +195,22 @@ a { color: var(--tanne); }
 .zusammenfassung dt { color: var(--tinte-2); }
 .zusammenfassung dd { margin: 0; font-weight: 500; text-align: right; }
 
+/* Empfängervorlagen (UC-004) */
+.vorlagen { display: grid; gap: 20px; max-width: 980px; }
+.vorlagen > .meldung { margin: 0; align-items: center; font-weight: 500; }
+.vorlagen__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.vorlagen__kopf .abschnitt { margin: 0; }
+.vorlagen__zahl { margin: 0; color: var(--tinte-2); font-size: 14px; }
+.vorlagen__zahl strong { color: var(--tinte); font-weight: 600; }
+.vorlagen__leer { margin: 0; padding: 20px; background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); color: var(--tinte-2); }
+.vorlagen__tabelle td:last-child { white-space: normal; }
+.vorlagen__raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.vorlagen__spalte { display: grid; gap: 20px; }
+.vorlagen__abfrage { display: grid; gap: 8px; padding: 12px 14px; background: #fdf6e6; border-radius: var(--rund-s); }
+.vorlagen__abfrage p { margin: 0; font-weight: 600; }
+.ueberweisung__vorlage { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.ueberweisung__vorlage a { font-size: 14px; font-weight: 500; }
+
 @media (max-width: 860px) {
   .vermoegen { padding: 24px; }
   .vermoegen__summe { font-size: 34px; }
@@ -212,5 +228,6 @@ a { color: var(--tanne); }
   .vorbereitung { grid-template-columns: 1fr; padding: 32px 24px; }
   .ueberweisung__raster { grid-template-columns: 1fr; }
   .ueberweisung__konto { order: -1; }
+  .vorlagen__raster { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
