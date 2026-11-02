@@ -8,7 +8,14 @@ NFR-004 „Verfügbarkeit von Finanzstatus und Überweisung“ wird im Betrieb g
 
 - Gemessen als Anteil der Antworten ohne Serverfehler (5xx).
 
+## Änderungen
+
+| Element | Änderung | Zusammenfassung |
+|---|---|---|
+| Messpunkt NFR-004: Verfügbarkeit von Finanzstatus und Überweisung | Neu | Messpunkt neu |
+
 ## Aufgaben für die Umsetzung
 
+- [ ] Messpunkt NFR-004: Verfügbarkeit von Finanzstatus und Überweisung: Messpunkt neu
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-11 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-11 grün

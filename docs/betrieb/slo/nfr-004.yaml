@@ -1,0 +1,33 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: nfr-004
+  displayName: Verfügbarkeit von Finanzstatus und Überweisung
+  labels:
+    nfr: NFR-004
+spec:
+  description: "NFR-004: Verfügbarkeit von Finanzstatus und Überweisung"
+  service: Online-Banking
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 28d
+      isRolling: true
+  objectives:
+    - displayName: Verfügbarkeit von Finanzstatus und Überweisung
+      target: 0.995
+  indicator:
+    metadata:
+      name: nfr-004-sli
+    spec:
+      ratioMetric:
+        counter: false
+        good:
+          metricSource:
+            type: Prometheus
+            spec:
+              query: (sum(rate(http_server_request_duration_seconds_count{service_name=~"online-banking", http_route="/api/konten", http_request_method="GET", http_response_status_code!~"5.."}[5m])) or vector(0)) + (sum(rate(http_server_request_duration_seconds_count{service_name=~"online-banking", http_route="/api/ueberweisungen", http_request_method="POST", http_response_status_code!~"5.."}[5m])) or vector(0))
+        total:
+          metricSource:
+            type: Prometheus
+            spec:
+              query: (sum(rate(http_server_request_duration_seconds_count{service_name=~"online-banking", http_route="/api/konten", http_request_method="GET"}[5m])) or vector(0)) + (sum(rate(http_server_request_duration_seconds_count{service_name=~"online-banking", http_route="/api/ueberweisungen", http_request_method="POST"}[5m])) or vector(0))
