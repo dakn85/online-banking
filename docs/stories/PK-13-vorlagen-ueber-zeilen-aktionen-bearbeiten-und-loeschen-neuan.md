@@ -58,10 +58,6 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-13 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-13 grün
 
-## Offene Fragen
-
-- [ ] Zeigt die Seite bei 404 im Löschfall wörtlich „Diese Empfängervorlage gibt es nicht.“?
-
 ## Entscheidungen
 
 - Soll der Dialog „Vorlage bearbeiten“ auch IBAN und Verwendungszweck änderbar machen?
@@ -81,4 +77,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
   _→ eingearbeitet in UC-004, PATCH /api/empfaengervorlagen/{vorlagenId}, empfaengervorlagen · 1606169_
 - Der Dialog „Vorlage löschen“ bestätigt die Vorlage aus der Zeile. Was tut das System, wenn DELETE /api/empfaengervorlagen/{vorlagenId} mit 404 antwortet – die Vorlage wurde inzwischen gelöscht oder die Bestätigung doppelt ausgelöst, oder die Kennung gehört einer anderen Kundin? (DELETE /api/empfaengervorlagen/{vorlagenId}, vorlagenId)
   **Antwort:** Der Knopf „Löschen“ wird nach dem ersten Klick gesperrt, sodass je Bestätigung genau ein DELETE gesendet wird. Antwortet der Dienst dennoch 404, schließt sich der Dialog, die Liste wird neu geladen und die Seite zeigt „Diese Empfängervorlage gibt es nicht.“; „Empfängervorlage gelöscht.“ erscheint nicht.
-  _→ eingearbeitet in UC-004, empfaengervorlagen_
+  _→ eingearbeitet in UC-004, empfaengervorlagen · a07ebfd_
+- Zeigt die Seite bei 404 im Löschfall wörtlich „Diese Empfängervorlage gibt es nicht.“?
+  **Antwort:** Ja, den Text des Dienstes aus dem Feld fehler anzeigen.
+  _→ eingearbeitet in UC-004_

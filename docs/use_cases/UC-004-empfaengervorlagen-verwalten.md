@@ -65,7 +65,7 @@
 1. Das System löscht die Vorlage nicht sofort, sondern fragt im Dialog „Vorlage löschen“ mit „Vorlage löschen?“ nach und nennt darin die gewählte Vorlage mit ihrem Namen.
 2. Der Knopf „Löschen“ im Dialog ist nach dem ersten Klick gesperrt; je Bestätigung sendet die Oberfläche genau ein DELETE /api/empfaengervorlagen/{vorlagenId}.
 3. Bestätigt die Kundin die Abfrage und antwortet der Dienst mit 204, löscht das System die Vorlage endgültig und schließt den Dialog; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
-4. Antwortet der Dienst auf DELETE /api/empfaengervorlagen/{vorlagenId} mit 404, weil die Vorlage inzwischen gelöscht wurde oder die Kennung zu einer anderen Kundin gehört (BR-0016), schließt sich der Dialog, das System lädt die Empfängervorlagen neu und zeigt sie ohne diese Zeile; die Seite zeigt die Meldung des Dienstes „Diese Empfängervorlage gibt es nicht.“, und „Empfängervorlage gelöscht.“ erscheint nicht.
+4. Antwortet der Dienst auf DELETE /api/empfaengervorlagen/{vorlagenId} mit 404, weil die Vorlage inzwischen gelöscht wurde oder die Kennung zu einer anderen Kundin gehört (BR-0016), schließt sich der Dialog, das System lädt die Empfängervorlagen neu und zeigt sie ohne diese Zeile; die Seite zeigt wörtlich den Text des Dienstes aus dem Feld fehler der Fehlerantwort (Schema Fehler), also „Diese Empfängervorlage gibt es nicht.“, und „Empfängervorlage gelöscht.“ erscheint nicht.
 5. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert, der Dialog schließt sich, und das System zeigt die Empfängervorlagen ohne Meldung.
 
 ### A6: Keine gültige Sitzung
