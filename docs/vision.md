@@ -19,7 +19,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-3 | Verfügbarer Betrag des Girokontos sichtbar | Anteil der Girokonten, deren Zeile im Finanzstatus Dispositionsrahmen und verfügbaren Betrag zeigt | 100 % |
 | Z-4 | Einstieg nach der Anmeldung | Anteil der Anmeldungen, nach denen der Finanzstatus erscheint | 100 % |
 | Z-5 | Überweisung vom Girokonto ausführen | Anteil der bestätigten Überweisungen, die genau einmal ausgeführt werden und im neuen Saldo des Finanzstatus sichtbar sind | 100 % |
-| Z-6 | Empfänger aus Vorlage statt Neueingabe | Anteil der Überweisungen, bei denen Empfänger, IBAN des Empfängers und Verwendungszweck nach Wahl einer Empfängervorlage unverändert mit der Vorlage übereinstimmen | 100 % |
+| Z-6 | Empfänger aus Vorlage statt Neueingabe | Anteil der Überweisungen mit gewählter Empfängervorlage, bei denen das System Empfänger und IBAN des Empfängers unverändert aus der Vorlage übernimmt und den Verwendungszweck nur übernimmt, wenn die Vorlage einen hat | 100 % |
 
 ## Abgrenzung
 
