@@ -52,7 +52,6 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 ## Offene Fragen
 
-- [ ] Passen Feldname und Werte?
 - [ ] Sollen auch 401 und 403 einen code tragen?
 
 ## Entscheidungen
@@ -80,4 +79,7 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
   _→ eingearbeitet in UC-002, BR-0019 · a9e5951_
 - Beide Ablehnungen (verfügbarer Betrag nach BR-0004, Tageslimit nach BR-0019) antworten mit 422, und das Schema Fehler trägt nur das Feld fehler (Text). Woran erkennt die Überweisungsseite, welche der beiden Meldungen sie anzeigt, nachdem sie die Ablehnung erhalten hat? (POST /api/ueberweisungen, fehler)
   **Antwort:** Der Dienst bekommt im Schema Fehler ein unterscheidendes Feld (z. B. code = TAGESLIMIT/BETRAG), und die Seite wertet es aus: Folge: openapi.yaml (Schema Fehler und Antwort 422), die 400/422-Meldungszuordnung und der Vertrag ändern sich über die Story hinaus; die Fehlertexte bleiben.
-  _→ eingearbeitet in POST /api/ueberweisungen, Schema Fehler, UC-002, BR-0019_
+  _→ eingearbeitet in POST /api/ueberweisungen, Schema Fehler, UC-002, BR-0019 · bf17d56_
+- Passen Feldname und Werte?
+  **Antwort:** Ja: code mit IBAN, BETRAG, TAGESLIMIT.
+  _→ eingearbeitet in POST /api/ueberweisungen_
