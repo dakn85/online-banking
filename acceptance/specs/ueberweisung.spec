@@ -128,3 +128,18 @@ Tags: UC-002, PK-12
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "2.000,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+
+## Die Tagessumme aller Girokonten im Finanzstatus: eine Kundin ohne eigene Überweisung wird abgelehnt
+
+Tags: UC-002, PK-12, BR-0019
+
+* Testdaten sind zurückgesetzt
+* Das Girokonto hat einen Saldo von "6.000,00 €"
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "1.000,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* "jonas.weber" meldet sich mit der PIN "13579" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "4.100,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung und sieht in der Überweisung die Meldung "Der Betrag übersteigt das Tageslimit von 5.000,00 EUR."

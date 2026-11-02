@@ -24,6 +24,7 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 ## Akzeptanztests
 
+- `acceptance/specs/ueberweisung.spec`: Die Tagessumme aller Girokonten im Finanzstatus: eine Kundin ohne eigene Überweisung wird abgelehnt
 - `acceptance/specs/ueberweisung.spec`: Überweisungen bis genau zum Tageslimit werden am selben Kalendertag ausgeführt
 - `acceptance/specs/ueberweisung.spec`: Zwei Überweisungen am selben Kalendertag über zusammen mehr als das Tageslimit: die zweite wird abgelehnt
 
@@ -46,7 +47,6 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 ## Offene Fragen
 
-- [ ] BR-0019 rechnet den Tagesumsatz je Kundin über alle ihre Girokonten, aber ein ausgeführter Auftrag trägt nur auftraggeberIban, betrag und erfasstAm, keine Kundin; im Demo-Bestand sehen alle Kundinnen dieselben Konten (C-001, src/konten.ts), und die Entität Konto hat im Modell eine Kante zu Kunde, im Bestand aber keine Zuordnung. Welche bereits ausgeführten Überweisungen zählen in den Tagesumsatz der angemeldeten Kundin? (POST /api/ueberweisungen, System)
 - [ ] Beide Ablehnungen (verfügbarer Betrag nach BR-0004, Tageslimit nach BR-0019) antworten mit 422, und das Schema Fehler trägt nur das Feld fehler (Text). Woran erkennt die Überweisungsseite, welche der beiden Meldungen sie anzeigt, nachdem sie die Ablehnung erhalten hat? (POST /api/ueberweisungen, fehler)
 
 ## Entscheidungen
@@ -68,4 +68,7 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
   _→ eingearbeitet in ADR-002, architektur · 95fd280_
 - POST /api/ueberweisungen: Kommt die Nachricht bei Überweisung.status nicht vorhanden (neue auftragsId) an, nennt die Spezifikation zwei Abläufe (UC-002 A2, UC-002 A8). Welcher gilt? (POST /api/ueberweisungen, Überweisung.status nicht vorhanden (neue auftragsId))
   **Antwort:** Es gilt keine der Optionen ausschließlich – beide Prüfungen laufen in der Reihenfolge BR-0004 vor BR-0019. Sind beide verletzt, greift UC-002 A2; für den Story-Fall (Tageslimit) ist UC-002 A8 maßgeblich.
+  _→ eingearbeitet in UC-002, BR-0019 · 697b0db_
+- BR-0019 rechnet den Tagesumsatz je Kundin über alle ihre Girokonten, aber ein ausgeführter Auftrag trägt nur auftraggeberIban, betrag und erfasstAm, keine Kundin; im Demo-Bestand sehen alle Kundinnen dieselben Konten (C-001, src/konten.ts), und die Entität Konto hat im Modell eine Kante zu Kunde, im Bestand aber keine Zuordnung. Welche bereits ausgeführten Überweisungen zählen in den Tagesumsatz der angemeldeten Kundin? (POST /api/ueberweisungen, System)
+  **Antwort:** Alle Überweisungen, die am UTC-Tag von den Girokonten abgingen, die die Kundin in ihrem Finanzstatus sieht (der Demo-Bestand ist gemeinsam): Folge: sobald die gemeinsame Tagessumme 5.000,00 EUR übersteigt, antwortet der Dienst jeder Kundin mit 422 und demselben Text, auch wenn sie selbst an dem Tag nichts überwiesen hat; keine zusätzliche Speicherung nötig.
   _→ eingearbeitet in UC-002, BR-0019_
