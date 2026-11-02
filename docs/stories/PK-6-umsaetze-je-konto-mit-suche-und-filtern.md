@@ -17,7 +17,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst | Neu | Endpunkt neu |
 | Umsaetze | Neu | Schema neu |
 | Umsatz | Neu | Schema neu, Entität neu |
-| Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
+| Zugriffsschutz des Finanzstatus | Geändert | Maß geändert, Gilt für geändert |
 | Demo-Konten statt Kernbank | Geändert | Anforderung geändert, Gilt für geändert |
 | Finanzstatus | Geändert | Use Case UC-003 neu, Aktion Umsätze neu, Skizze geändert |
 | Umsätze | Neu | Maske neu |
@@ -39,6 +39,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 - `acceptance/specs/umsaetze.spec`: Ein Konto, das nicht zur Kundin gehört, zeigt keine Umsätze
 - `acceptance/specs/umsaetze.spec`: Ein Von-Datum nach dem Bis-Datum zeigt die Meldung zum ungültigen Zeitraum
 - `acceptance/specs/umsaetze.spec`: Ein Zeitraum in der Vergangenheit zeigt keine Umsätze
+- `acceptance/specs/umsaetze.spec`: Ohne Anmeldung ist die Umsatzseite nicht erreichbar
 
 ## Aufgaben für die Umsetzung
 
@@ -46,6 +47,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 - [ ] Umsaetze: Schema neu
 - [ ] Umsatz: Schema neu
 - [ ] Umsatz: Entität neu
+- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
 - [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
 - [ ] Demo-Konten statt Kernbank: Anforderung geändert
 - [ ] Demo-Konten statt Kernbank: Gilt für geändert
@@ -96,10 +98,10 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
   _→ eingearbeitet in UC-003, BR-0010, GET /api/konten/{iban}/umsaetze, umsaetze · db621d5_
 - Woran ist bei gleichem Buchungstag die Reihenfolge „zuletzt gebuchter Umsatz oben“ (BR-0008) festgemacht? Die Entität Umsatz trägt weder Buchungszeitpunkt noch laufende Nummer, und das Schema Umsatz liefert kein Feld, das die Reihenfolge zweier Umsätze desselben Tages erkennen lässt — die Nachbedingung „der Auftrag steht als neuester Umsatz“ ist damit nicht prüfbar, und eine am selben Tag wie ein Demo-Umsatz ausgeführte Überweisung stünde nicht sicher oben. (POST /api/ueberweisungen, Überweisung.status ausgefuehrt – erste Bestätigung dieser Auftrags-Kennung)
   **Antwort:** Umsatz wird um gebuchtAm (DateTime, UTC; Pflicht) erweitert: das Schema Umsatz führt gebuchtAm, die Überweisung setzt den Ausführungszeitpunkt als gebuchtAm, die Demo-Umsätze erhalten feste Uhrzeiten; sortiert wird buchungstag absteigend, dann gebuchtAm absteigend — der neue Umsatz steht sicher zuoberst und die Regel ist im Akzeptanztest sichtbar.
-  _→ eingearbeitet in Umsatz, GET /api/konten/{iban}/umsaetze, Schema Umsatz, UC-003, BR-0008, UC-002, BR-0012_
+  _→ eingearbeitet in Umsatz, GET /api/konten/{iban}/umsaetze, Schema Umsatz, UC-003, BR-0008, UC-002, BR-0012 · abc4cfc_
 - Was soll die Beispielzeile der Maske „Umsätze“ zeigen?
   **Antwort:** Einen Demo-Umsatz des Ausgangsstands mit Saldo danach 2.145,30 € und einer Gegenpartei, die in keinem Szenario als Suchtext vorkommt.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Wie sichern die Szenarien zu, dass die Demo-Umsätze des Ausgangsstands die Erwartungen nicht brechen?
   **Antwort:** Szenarien grenzen über den Suchtext ein; die Demo-Umsätze tragen andere Gegenparteien und Verwendungszwecke.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_

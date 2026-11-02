@@ -116,3 +116,11 @@ Tags: UC-003, PK-6, BR-0010
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
 |-------------|------------------|--------|--------------|
+
+## Ohne Anmeldung ist die Umsatzseite nicht erreichbar
+
+Tags: UC-003, PK-6
+
+* Testdaten sind zurückgesetzt
+* Die Umsatzseite ist ohne Anmeldung nicht erreichbar
+* Die Anmeldeseite ist zu sehen
