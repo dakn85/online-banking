@@ -47,7 +47,7 @@ Tags: UC-004, PK-13
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
 * Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Bearbeiten
-* Die Kundin ändert im Dialog "Vorlage bearbeiten" den Namen in "Möbel Nord GmbH (Filiale Süd)", wählt „Umbenennen“ und sieht IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711"
+* Die Kundin ändert im Dialog "Vorlage bearbeiten" den Namen in "Möbel Nord GmbH (Filiale Süd)" und wählt „Umbenennen“
 * Die Empfängervorlagen zeigen die Meldung "Empfängervorlage umbenannt."
 
 ## Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
