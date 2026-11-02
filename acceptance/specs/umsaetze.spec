@@ -113,6 +113,7 @@ Tags: UC-003, PK-6, BR-0010
 |----------|--------------|--------------|--------------|
 |          | 2026-03-31   | 2026-03-01   | Alle         |
 * Die Umsätze zeigen die Meldung "Der Zeitraum ist ungültig: von liegt nach bis."
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
 |-------------|------------------|--------|--------------|
