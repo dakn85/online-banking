@@ -103,7 +103,7 @@ Tags: UC-002, PK-7, BR-0017
 
 ## Zwei Überweisungen am selben Kalendertag über zusammen mehr als das Tageslimit: die zweite wird abgelehnt
 
-Tags: UC-002, PK-12
+Tags: UC-002, PK-12, BR-0019
 
 * Testdaten sind zurückgesetzt
 * Das Girokonto hat einen Saldo von "6.000,00 €"
@@ -117,7 +117,7 @@ Tags: UC-002, PK-12
 
 ## Überweisungen bis genau zum Tageslimit werden am selben Kalendertag ausgeführt
 
-Tags: UC-002, PK-12
+Tags: UC-002, PK-12, BR-0019
 
 * Testdaten sind zurückgesetzt
 * Das Girokonto hat einen Saldo von "6.000,00 €"

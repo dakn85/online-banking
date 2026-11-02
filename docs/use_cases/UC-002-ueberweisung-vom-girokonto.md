@@ -36,7 +36,7 @@
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus, zeigt die Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“ und zeigt keine Zusammenfassung.
-2. Lehnt der Dienst die IBAN beim Bestätigen ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
+2. Lehnt der Dienst die IBAN beim Bestätigen ab (Schritt 7, Status 400 mit code IBAN), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
 3. Die Kundin korrigiert die IBAN; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ### A2: Betrag über dem verfügbaren Betrag
@@ -45,7 +45,7 @@
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
-2. Lehnt der Dienst den Betrag beim Bestätigen ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
+2. Lehnt der Dienst den Betrag beim Bestätigen ab (Schritt 7, Status 422 mit code BETRAG), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ### A3: Mehrfaches Bestätigen
@@ -94,7 +94,7 @@
 **Auslöser:** Der Tagesumsatz der Girokonten, die die Kundin in ihrem Finanzstatus sieht, am selben Kalendertag plus der Betrag übersteigt 5.000,00 EUR (BR-0019); im gemeinsamen Demo-Bestand kann die Tagessumme schon durch Überweisungen anderer Kundinnen erreicht sein. Ist zugleich der verfügbare Betrag des Girokontos überschritten (BR-0004), greift A2. (Schritt 7).  
 **Ablauf:**
 
-1. Der Dienst führt den Auftrag nicht aus; der Saldo des Girokontos bleibt unverändert und es entsteht kein Umsatz.
+1. Der Dienst führt den Auftrag nicht aus und antwortet mit Status 422 und code TAGESLIMIT; der Saldo des Girokontos bleibt unverändert und es entsteht kein Umsatz.
 2. Das System springt auf die Überweisung zurück, zeigt im Formular die Meldung „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“ mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
@@ -171,7 +171,7 @@ Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vo
 
 ### BR-0019: Tageslimit des Kalendertags
 
-Die Summe der Überweisungen, die am selben Kalendertag von den Girokonten abgingen, die die angemeldete Kundin in ihrem Finanzstatus sieht, plus der neue Betrag übersteigt 5.000,00 EUR nicht. Kalendertag ist der Buchungstag der ausgeführten Überweisungen nach BR-0012 in UTC. Da der Demo-Bestand allen Kundinnen gemeinsam ist (C-001), ist die Summe die gemeinsame Tagessumme: Übersteigt sie 5.000,00 EUR, lehnt der Dienst auch den Auftrag einer Kundin ab, die an diesem Tag selbst nichts überwiesen hat, mit Status 422 und derselben Meldung; eine Zuordnung der Überweisung zur Kundin und eine zusätzliche Speicherung sind dafür nicht nötig. Abgelehnte Aufträge zählen nicht mit, und eine wiederholte Bestätigung derselben Auftrags-Kennung zählt nicht erneut (BR-0005). Der Dienst prüft zuerst den verfügbaren Betrag (BR-0004) und danach das Tageslimit. Ist zugleich der verfügbare Betrag überschritten (BR-0004), bleibt es bei der Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“.
+Die Summe der Überweisungen, die am selben Kalendertag von den Girokonten abgingen, die die angemeldete Kundin in ihrem Finanzstatus sieht, plus der neue Betrag übersteigt 5.000,00 EUR nicht. Kalendertag ist der Buchungstag der ausgeführten Überweisungen nach BR-0012 in UTC. Da der Demo-Bestand allen Kundinnen gemeinsam ist (C-001), ist die Summe die gemeinsame Tagessumme: Übersteigt sie 5.000,00 EUR, lehnt der Dienst auch den Auftrag einer Kundin ab, die an diesem Tag selbst nichts überwiesen hat, mit Status 422 und code TAGESLIMIT und derselben Meldung; eine Zuordnung der Überweisung zur Kundin und eine zusätzliche Speicherung sind dafür nicht nötig. Abgelehnte Aufträge zählen nicht mit, und eine wiederholte Bestätigung derselben Auftrags-Kennung zählt nicht erneut (BR-0005). Der Dienst prüft zuerst den verfügbaren Betrag (BR-0004) und danach das Tageslimit. Ist zugleich der verfügbare Betrag überschritten (BR-0004), antwortet der Dienst mit Status 422 und code BETRAG; es bleibt bei der Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“. Sonst führt das System den Auftrag nicht aus, der Dienst antwortet mit Status 422 und code TAGESLIMIT, und das System zeigt „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“.
 
 ## Weitere Prüfungen
 

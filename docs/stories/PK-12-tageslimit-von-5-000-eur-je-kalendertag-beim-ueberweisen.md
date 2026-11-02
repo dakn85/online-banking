@@ -15,11 +15,12 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
-| Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
+| Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 400 geändert, Antwort 422 geändert |
+| Fehler | Geändert | Eigenschaft code neu |
 | Ueberweisungsauftrag | Geändert | Eigenschaft betrag geändert |
 | Architektur | Geändert | Querschnittliche Konzepte geändert |
 | Überweisung | Geändert | Skizze geändert |
-| UC-002 Überweisung vom Girokonto | Geändert | Schritt 7 geändert, A8 neu: Tageslimit des Kalendertags überschritten, BR-0019 neu: Tageslimit des Kalendertags |
+| UC-002 Überweisung vom Girokonto | Geändert | Schritt 7 geändert, A1 geändert, A2 geändert, und 2 weitere |
 | BR-0019 Tageslimit des Kalendertags | Neu | Neu in UC-002 |
 
 ## Akzeptanztests
@@ -34,11 +35,15 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Folgen geändert
 - [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
+- [ ] Überweisung vom Girokonto ausführen: Antwort 400 geändert
 - [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
+- [ ] Fehler: Eigenschaft code neu
 - [ ] Ueberweisungsauftrag: Eigenschaft betrag geändert
 - [ ] Architektur: Querschnittliche Konzepte geändert
 - [ ] Überweisung: Skizze geändert
 - [ ] UC-002: Schritt 7 geändert
+- [ ] UC-002: A1 geändert
+- [ ] UC-002: A2 geändert
 - [ ] UC-002: A8 neu: Tageslimit des Kalendertags überschritten
 - [ ] UC-002: BR-0019 neu: Tageslimit des Kalendertags
 - [ ] BR-0019: Neu in UC-002
@@ -47,7 +52,8 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 ## Offene Fragen
 
-- [ ] Beide Ablehnungen (verfügbarer Betrag nach BR-0004, Tageslimit nach BR-0019) antworten mit 422, und das Schema Fehler trägt nur das Feld fehler (Text). Woran erkennt die Überweisungsseite, welche der beiden Meldungen sie anzeigt, nachdem sie die Ablehnung erhalten hat? (POST /api/ueberweisungen, fehler)
+- [ ] Passen Feldname und Werte?
+- [ ] Sollen auch 401 und 403 einen code tragen?
 
 ## Entscheidungen
 
@@ -71,4 +77,7 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
   _→ eingearbeitet in UC-002, BR-0019 · 697b0db_
 - BR-0019 rechnet den Tagesumsatz je Kundin über alle ihre Girokonten, aber ein ausgeführter Auftrag trägt nur auftraggeberIban, betrag und erfasstAm, keine Kundin; im Demo-Bestand sehen alle Kundinnen dieselben Konten (C-001, src/konten.ts), und die Entität Konto hat im Modell eine Kante zu Kunde, im Bestand aber keine Zuordnung. Welche bereits ausgeführten Überweisungen zählen in den Tagesumsatz der angemeldeten Kundin? (POST /api/ueberweisungen, System)
   **Antwort:** Alle Überweisungen, die am UTC-Tag von den Girokonten abgingen, die die Kundin in ihrem Finanzstatus sieht (der Demo-Bestand ist gemeinsam): Folge: sobald die gemeinsame Tagessumme 5.000,00 EUR übersteigt, antwortet der Dienst jeder Kundin mit 422 und demselben Text, auch wenn sie selbst an dem Tag nichts überwiesen hat; keine zusätzliche Speicherung nötig.
-  _→ eingearbeitet in UC-002, BR-0019_
+  _→ eingearbeitet in UC-002, BR-0019 · a9e5951_
+- Beide Ablehnungen (verfügbarer Betrag nach BR-0004, Tageslimit nach BR-0019) antworten mit 422, und das Schema Fehler trägt nur das Feld fehler (Text). Woran erkennt die Überweisungsseite, welche der beiden Meldungen sie anzeigt, nachdem sie die Ablehnung erhalten hat? (POST /api/ueberweisungen, fehler)
+  **Antwort:** Der Dienst bekommt im Schema Fehler ein unterscheidendes Feld (z. B. code = TAGESLIMIT/BETRAG), und die Seite wertet es aus: Folge: openapi.yaml (Schema Fehler und Antwort 422), die 400/422-Meldungszuordnung und der Vertrag ändern sich über die Story hinaus; die Fehlertexte bleiben.
+  _→ eingearbeitet in POST /api/ueberweisungen, Schema Fehler, UC-002, BR-0019_
