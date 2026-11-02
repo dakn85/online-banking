@@ -81,6 +81,14 @@
 
 1. Das System schließt den Dialog, ohne zu speichern; die Empfängervorlagen bleiben unverändert und es erscheint keine Meldung.
 
+### A8: Vorlage der Zeile gibt es nicht mehr
+
+**Auslöser:** Die Kundin wählt in der Zeile einer Vorlage „Bearbeiten“ und im Dialog „Vorlage bearbeiten“ „Umbenennen“, doch der Dienst antwortet auf PATCH /api/empfaengervorlagen/{vorlagenId} mit 404, weil die Vorlage inzwischen gelöscht wurde oder die Kennung zu einer anderen Kundin gehört (BR-0016). (Schritt 5).  
+**Ablauf:**
+
+1. Das System speichert nichts, schließt den Dialog „Vorlage bearbeiten“ und verwirft die Namenseingabe.
+2. Das System lädt die Empfängervorlagen neu, sodass die Zeile der Vorlage verschwindet, und zeigt die Meldung des Dienstes „Diese Empfängervorlage gibt es nicht.“; „Empfängervorlage umbenannt.“ erscheint nicht.
+
 ## Sequenzdiagramm
 
 ```mermaid
