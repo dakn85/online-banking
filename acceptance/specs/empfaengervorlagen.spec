@@ -18,3 +18,13 @@ Tags: UC-004, PK-7
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE02 5001 0517 5407 3249 31" und Verwendungszweck "Rechnung 4712" an
 * Die Empfängervorlagen zeigen die Meldung "Eine Vorlage mit diesem Namen gibt es bereits."
+
+## Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
+
+Tags: UC-004, PK-7
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen und antwortet auf die Sicherheitsabfrage "Ja"
+* Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gelöscht."

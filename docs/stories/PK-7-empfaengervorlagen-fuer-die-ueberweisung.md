@@ -36,6 +36,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 
 - `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/ueberweisung.spec`: Eine gewählte Empfängervorlage belegt Empfänger, IBAN und Verwendungszweck
 
 ## Aufgaben für die Umsetzung
@@ -70,16 +71,16 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 
 - Wo speichert die Kundin einen Empfänger als Vorlage?
   **Antwort:** Nur in der Maske „Empfängervorlagen“, die Überweisung wählt nur aus.
-  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung · 126f2d4_
 - Darf eine Kundin zwei Vorlagen mit demselben Namen führen?
   **Antwort:** Nein, der Name ist je Kundin eindeutig und eine Doppelung wird abgelehnt.
-  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung · 126f2d4_
 - Wie wird die Höchstzahl durchgesetzt und wie wird sie im Test erreichbar?
   **Antwort:** Der Dienst lehnt die 51. Vorlage ab; der Ausgangsstand führt für jonas.weber 50 Vorlagen.
-  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung · 126f2d4_
 - Bleibt der Verwendungszweck in der Überweisung Pflicht, wenn die Vorlage keinen hat?
   **Antwort:** Ja, der Verwendungszweck bleibt Pflicht; das Feld bleibt leer und wird gefüllt.
-  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung · 126f2d4_
 - Soll das Löschen einer Vorlage ohne Sicherheitsabfrage geschehen?
   **Antwort:** Erst nach einer Sicherheitsabfrage „Vorlage löschen?“.
-  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+  _→ eingearbeitet in UC-004, empfaengervorlagen_

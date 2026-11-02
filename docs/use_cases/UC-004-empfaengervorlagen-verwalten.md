@@ -7,7 +7,7 @@
 **Bereich:** Überweisung  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin legt Empfänger als Vorlage mit Name, IBAN und optional Verwendungszweck an, benennt sie um und löscht sie, damit sie sie bei der Überweisung auswählen kann, statt sie neu einzutippen.  
-**Ziele:** NEU  
+**Ziele:** Z-6  
 **Anforderungen:** NFR-001
 
 ## Vorbedingungen
@@ -61,8 +61,9 @@
 **Auslöser:** Die Kundin wählt unter „Vorlage löschen“ eine Vorlage und wählt „Löschen“. (Schritt 5).  
 **Ablauf:**
 
-1. Das System löscht die Vorlage sofort und endgültig, ohne Rückfrage; eine bereits bestätigte Überweisung bleibt unberührt.
-2. Das System zeigt die verbleibenden Vorlagen und die Meldung „Empfängervorlage gelöscht.“.
+1. Das System löscht die Vorlage nicht sofort, sondern fragt mit „Vorlage löschen?“ nach.
+2. Bestätigt die Kundin die Abfrage, löscht das System die Vorlage endgültig; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
+3. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert und das System zeigt die Empfängervorlagen ohne Meldung.
 
 ### A6: Keine gültige Sitzung
 
@@ -127,4 +128,4 @@ Der Dienst liefert, ändert und löscht nur Empfängervorlagen der angemeldeten 
 
 ## Notizen
 
-Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird sofort; eine bereits bestätigte Überweisung bleibt unberührt. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber 50 Empfängervorlagen, damit die Höchstzahl prüfbar ist, und für lena.hoffmann keine.
+Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird erst nach der Sicherheitsabfrage „Vorlage löschen?“; eine bereits bestätigte Überweisung bleibt unberührt. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber 50 Empfängervorlagen, damit die Höchstzahl prüfbar ist, und für lena.hoffmann keine.

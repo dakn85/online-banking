@@ -13,9 +13,10 @@
     {"name":"vorlageLoeschen","label":"Vorlage zum Löschen","kind":"auswahl","attribute":"Empfaengervorlage.name"}
   ],
   "actions": [
-    {"label":"Speichern","operation":"POST /api/empfaengervorlagen","screen":"empfaengervorlagen"},
-    {"label":"Umbenennen","operation":"PATCH /api/empfaengervorlagen/{vorlagenId}","screen":"empfaengervorlagen"},
-    {"label":"Löschen","operation":"DELETE /api/empfaengervorlagen/{vorlagenId}","screen":"empfaengervorlagen"}
+    {"label":"Speichern","useCase":"UC-004","operation":"POST /api/empfaengervorlagen","screen":"empfaengervorlagen"},
+    {"label":"Umbenennen","useCase":"UC-004","operation":"PATCH /api/empfaengervorlagen/{vorlagenId}","screen":"empfaengervorlagen"},
+    {"label":"Löschen","useCase":"UC-004","operation":"DELETE /api/empfaengervorlagen/{vorlagenId}","screen":"empfaengervorlagen"},
+    {"label":"Abbrechen","useCase":"UC-004","screen":"empfaengervorlagen"}
   ]
 } -->
 <header data-wf="kopf">
@@ -68,10 +69,12 @@
 </section>
 <section data-wf="gruppe" data-merkmal="Vorlage löschen">
   <h2>Vorlage löschen</h2>
+  <p data-wf="meldung" role="status">Vorlage löschen?</p>
   <form data-wf="formular">
     <label data-wf="feld"><span>Vorlage zum Löschen</span><select name="vorlageLoeschen"><option>Möbel Nord GmbH</option><option>Stadtwerke Nord</option></select></label>
     <div data-wf="aktionen">
-      <button>Löschen</button>
+      <button data-wf="primaer">Löschen</button>
+      <button>Abbrechen</button>
     </div>
   </form>
 </section>
