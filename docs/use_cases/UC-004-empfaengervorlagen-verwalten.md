@@ -17,9 +17,9 @@
 ## Standardablauf
 
 1. Die Kundin wählt in der Überweisung „Vorlagen verwalten“.
-2. Das System zeigt die Empfängervorlagen der Kundin mit Name, IBAN des Empfängers und Verwendungszweck, nach Name aufsteigend, und die Zahl der belegten Vorlagen („3 von 50“).
+2. Das System zeigt die Empfängervorlagen der Kundin (BR-0016) mit Name, IBAN des Empfängers und Verwendungszweck, nach Name aufsteigend, und die Zahl der belegten Vorlagen („3 von 50“).
 3. Die Kundin gibt Name, IBAN des Empfängers und bei Bedarf einen Verwendungszweck ein und wählt „Speichern“.
-4. Das System prüft den Namen, die IBAN (BR-0003) und die Höchstzahl und zeigt bei einer Abweichung die Meldung im Formular.
+4. Das System prüft den Namen (BR-0013), die IBAN (BR-0003, BR-0014) und die Höchstzahl (BR-0015) und zeigt bei einer Abweichung die Meldung im Formular.
 5. Das System speichert die Vorlage und zeigt die Empfängervorlagen mit der neuen Vorlage und der Meldung „Empfängervorlage gespeichert.“.
 
 ## Alternativabläufe
