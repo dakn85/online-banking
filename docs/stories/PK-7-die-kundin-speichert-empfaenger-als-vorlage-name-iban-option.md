@@ -6,7 +6,76 @@
 
 Die Kundin speichert Empfänger als Vorlage (Name, IBAN, optional Verwendungszweck) und wählt sie bei der Überweisung aus, statt sie neu einzutippen; Vorlagen lassen sich umbenennen und löschen, höchstens 50 je Kundin.
 
+## Änderungen
+
+| Element | Änderung | Zusammenfassung |
+|---|---|---|
+| Empfängervorlagen der angemeldeten Kundin | Neu | Endpunkt neu |
+| Empfängervorlage anlegen | Neu | Endpunkt neu |
+| Empfängervorlage umbenennen | Neu | Endpunkt neu |
+| Empfängervorlage löschen | Neu | Endpunkt neu |
+| Empfaengervorlage | Neu | Schema neu, Entität neu |
+| NeueEmpfaengervorlage | Neu | Schema neu |
+| EmpfaengervorlageName | Neu | Schema neu |
+| Empfängervorlagen | Neu | Maske neu |
+| Überweisung | Geändert | Feld Vorlage neu, Aktion Vorlagen verwalten neu, Skizze geändert |
+| UC-002 Überweisung vom Girokonto | Geändert | Schritt 2 geändert, A7 neu: Empfänger aus Vorlage wählen, Sequenzdiagramm geändert, und 1 weitere |
+| BR-0017 Empfänger aus Vorlage übernehmen | Neu | Neu in UC-002 |
+| UC-004 Empfängervorlagen verwalten | Neu | Use Case neu |
+| BR-0013 Name der Empfängervorlage | Neu | Neu in UC-004 |
+| BR-0014 IBAN der Empfängervorlage | Neu | Neu in UC-004 |
+| BR-0015 Höchstzahl von 50 Empfängervorlagen | Neu | Neu in UC-004 |
+| BR-0016 Vorlagen der angemeldeten Kundin | Neu | Neu in UC-004 |
+| Vision | Geändert | Abschnitt „Ziele“ geändert |
+
+## Akzeptanztests
+
+- `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
+- `acceptance/specs/ueberweisung.spec`: Eine gewählte Empfängervorlage belegt Empfänger, IBAN und Verwendungszweck
+
 ## Aufgaben für die Umsetzung
 
+- [ ] Empfängervorlagen der angemeldeten Kundin: Endpunkt neu
+- [ ] Empfängervorlage anlegen: Endpunkt neu
+- [ ] Empfängervorlage umbenennen: Endpunkt neu
+- [ ] Empfängervorlage löschen: Endpunkt neu
+- [ ] Empfaengervorlage: Schema neu
+- [ ] NeueEmpfaengervorlage: Schema neu
+- [ ] EmpfaengervorlageName: Schema neu
+- [ ] Empfaengervorlage: Entität neu
+- [ ] Empfängervorlagen: Maske neu
+- [ ] Überweisung: Feld Vorlage neu
+- [ ] Überweisung: Aktion Vorlagen verwalten neu
+- [ ] Überweisung: Skizze geändert
+- [ ] UC-002: Schritt 2 geändert
+- [ ] UC-002: A7 neu: Empfänger aus Vorlage wählen
+- [ ] UC-002: Sequenzdiagramm geändert
+- [ ] UC-002: BR-0017 neu: Empfänger aus Vorlage übernehmen
+- [ ] BR-0017: Neu in UC-002
+- [ ] UC-004: Use Case neu
+- [ ] BR-0013: Neu in UC-004
+- [ ] BR-0014: Neu in UC-004
+- [ ] BR-0015: Neu in UC-004
+- [ ] BR-0016: Neu in UC-004
+- [ ] Vision: Z-6 neu
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-7 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-7 grün
+
+## Entscheidungen
+
+- Wo speichert die Kundin einen Empfänger als Vorlage?
+  **Antwort:** Nur in der Maske „Empfängervorlagen“, die Überweisung wählt nur aus.
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+- Darf eine Kundin zwei Vorlagen mit demselben Namen führen?
+  **Antwort:** Nein, der Name ist je Kundin eindeutig und eine Doppelung wird abgelehnt.
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+- Wie wird die Höchstzahl durchgesetzt und wie wird sie im Test erreichbar?
+  **Antwort:** Der Dienst lehnt die 51. Vorlage ab; der Ausgangsstand führt für jonas.weber 50 Vorlagen.
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+- Bleibt der Verwendungszweck in der Überweisung Pflicht, wenn die Vorlage keinen hat?
+  **Antwort:** Ja, der Verwendungszweck bleibt Pflicht; das Feld bleibt leer und wird gefüllt.
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_
+- Soll das Löschen einer Vorlage ohne Sicherheitsabfrage geschehen?
+  **Antwort:** Erst nach einer Sicherheitsabfrage „Vorlage löschen?“.
+  _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung_

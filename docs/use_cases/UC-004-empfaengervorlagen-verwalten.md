@@ -1,0 +1,130 @@
+# Use Case: Empfängervorlagen verwalten
+
+## Überblick
+
+**Use Case ID:** UC-004  
+**Name:** Empfängervorlagen verwalten  
+**Bereich:** Überweisung  
+**Primärakteur:** Privatkundin  
+**Ziel:** Die Kundin legt Empfänger als Vorlage mit Name, IBAN und optional Verwendungszweck an, benennt sie um und löscht sie, damit sie sie bei der Überweisung auswählen kann, statt sie neu einzutippen.  
+**Ziele:** NEU  
+**Anforderungen:** NFR-001
+
+## Vorbedingungen
+
+- Die Kundin ist angemeldet, es gibt eine gültige Sitzung (NFR-001).
+
+## Standardablauf
+
+1. Die Kundin wählt in der Überweisung „Vorlagen verwalten“.
+2. Das System zeigt die Empfängervorlagen der Kundin mit Name, IBAN des Empfängers und Verwendungszweck, nach Name aufsteigend, und die Zahl der belegten Vorlagen („3 von 50“).
+3. Die Kundin gibt Name, IBAN des Empfängers und bei Bedarf einen Verwendungszweck ein und wählt „Speichern“.
+4. Das System prüft den Namen, die IBAN (BR-0003) und die Höchstzahl und zeigt bei einer Abweichung die Meldung im Formular.
+5. Das System speichert die Vorlage und zeigt die Empfängervorlagen mit der neuen Vorlage und der Meldung „Empfängervorlage gespeichert.“.
+
+## Alternativabläufe
+
+### A1: Name fehlt oder ist schon vergeben
+
+**Auslöser:** Der Name der Vorlage ist leer oder bei dieser Kundin schon vergeben. (Schritt 4).  
+**Ablauf:**
+
+1. Das System speichert die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“, wenn der Name leer ist, sonst „Eine Vorlage mit diesem Namen gibt es bereits.“; die bisherigen Eingaben bleiben stehen.
+2. Die Kundin ändert den Namen; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
+
+### A2: IBAN ungültig oder außerhalb des SEPA-Raums
+
+**Auslöser:** Die IBAN der Vorlage hat keine gültige Prüfziffer, weniger als 15 oder mehr als 34 Stellen oder ihr Länderkennzeichen steht nicht in der SEPA-Länderliste (BR-0003). (Schritt 4).  
+**Ablauf:**
+
+1. Das System speichert die Vorlage nicht und zeigt „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“.
+2. Die Kundin korrigiert die IBAN; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
+
+### A3: Höchstzahl erreicht
+
+**Auslöser:** Die Kundin hat bereits 50 Empfängervorlagen. (Schritt 4).  
+**Ablauf:**
+
+1. Das System legt keine weitere Vorlage an, lässt die bestehenden unverändert und zeigt „Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.“.
+2. Die Kundin löscht eine Vorlage (A5); danach geht der Ablauf bei Schritt 3 weiter, oder sie bricht ab.
+
+### A4: Vorlage umbenennen
+
+**Auslöser:** Die Kundin wählt in der Liste eine Vorlage, trägt unter „Vorlage umbenennen“ einen neuen Namen ein und wählt „Umbenennen“. (Schritt 5).  
+**Ablauf:**
+
+1. Das System prüft den neuen Namen (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig); ist er schon vergeben, bleibt die Vorlage unverändert und das System zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“.
+2. Sonst ändert das System nur den Namen; IBAN des Empfängers und Verwendungszweck bleiben, und das System zeigt die Vorlagen mit dem neuen Namen und der Meldung „Empfängervorlage umbenannt.“.
+
+### A5: Vorlage löschen
+
+**Auslöser:** Die Kundin wählt unter „Vorlage löschen“ eine Vorlage und wählt „Löschen“. (Schritt 5).  
+**Ablauf:**
+
+1. Das System löscht die Vorlage sofort und endgültig, ohne Rückfrage; eine bereits bestätigte Überweisung bleibt unberührt.
+2. Das System zeigt die verbleibenden Vorlagen und die Meldung „Empfängervorlage gelöscht.“.
+
+### A6: Keine gültige Sitzung
+
+**Auslöser:** Es gibt keine gültige Sitzung. (Schritt 1).  
+**Ablauf:**
+
+1. Das System leitet auf die Anmeldeseite um.
+2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
+
+## Sequenzdiagramm
+
+```mermaid
+sequenceDiagram
+    actor kundin as Privatkundin
+    participant banking as Online-Banking
+    kundin->>banking: „Vorlagen verwalten“ in der Überweisung
+    banking->>banking: GET /api/empfaengervorlagen
+    banking-->>kundin: Empfängervorlagen mit Name, IBAN des Empfängers und Verwendungszweck
+    kundin->>banking: Name, IBAN des Empfängers, Verwendungszweck#59; „Speichern“
+    banking->>banking: POST /api/empfaengervorlagen
+    banking-->>kundin: Empfängervorlagen mit der neuen Vorlage, „Empfängervorlage gespeichert.“
+    alt Name schon vergeben
+        banking-->>kundin: „Eine Vorlage mit diesem Namen gibt es bereits.“
+    else IBAN ungültig oder außerhalb des SEPA-Raums
+        banking-->>kundin: „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“
+    else Höchstzahl erreicht
+        banking-->>kundin: „Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.“
+    end
+```
+
+## Nachbedingungen
+
+### Erfolg
+
+- Die Empfängervorlage ist gespeichert, umbenannt oder gelöscht und steht in der Überweisung zur Auswahl.
+
+### Fehlschlag
+
+- Keine Vorlage gespeichert, umbenannt oder gelöscht; die Kundin sieht die Meldung zum Grund und bleibt bei den Empfängervorlagen.
+
+## Geschäftsregeln
+
+### BR-0013: Name der Empfängervorlage
+
+Der Name der Vorlage ist Pflicht, 1 bis 70 Zeichen lang und je Kundin eindeutig, auch nach dem Umbenennen. Ist er leer, speichert das System die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“; ist er schon vergeben, zeigt es „Eine Vorlage mit diesem Namen gibt es bereits.“.
+
+### BR-0014: IBAN der Empfängervorlage
+
+Die IBAN der Vorlage erfüllt BR-0003. Sonst speichert das System die Vorlage nicht und zeigt „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“.
+
+### BR-0015: Höchstzahl von 50 Empfängervorlagen
+
+Eine Kundin hat höchstens 50 Empfängervorlagen. Ist die Höchstzahl erreicht, legt das System keine weitere an, lässt die bestehenden unverändert und zeigt „Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.“; nach dem Löschen einer Vorlage ist wieder Platz.
+
+### BR-0016: Vorlagen der angemeldeten Kundin
+
+Der Dienst liefert, ändert und löscht nur Empfängervorlagen der angemeldeten Kundin. Eine fremde oder unbekannte Vorlagen-Kennung beantwortet er mit 404, ohne gültige Sitzung mit 401.
+
+## Weitere Prüfungen
+
+- **WP-1** (Unit-Test): Länge und Eindeutigkeit des Namens je Kundin sowie die Höchstzahl von 50 Vorlagen je Kundin.
+
+## Notizen
+
+Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird sofort; eine bereits bestätigte Überweisung bleibt unberührt. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber 50 Empfängervorlagen, damit die Höchstzahl prüfbar ist, und für lena.hoffmann keine.
