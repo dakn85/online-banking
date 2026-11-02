@@ -29,9 +29,9 @@
   Aventa.seite('/ueberweisung', {
     titel: 'Überweisung',
     async zeigen(flaeche) {
-      const { konten } = await Aventa.api('/api/konten');
+      const [{ konten }, vorlagen] = await Promise.all([Aventa.api('/api/konten'), Aventa.api('/api/empfaengervorlagen')]);
       const giro = konten.find(k => k.art === 'Girokonto');
-      let eingabe = { empfaenger: '', empfaengerIban: '', betrag: '', verwendungszweck: '' };
+      let eingabe = { vorlage: '', empfaenger: '', empfaengerIban: '', betrag: '', verwendungszweck: '' };
 
       const schritte = aktiv => `<ol class="schritte" aria-label="Schritte">${['Auftrag', 'Bestätigen'].map((s, i) =>
         `<li${i === aktiv ? ' aria-current="step"' : ''}${i < aktiv ? ' class="erledigt"' : ''}><span>${i + 1}</span>${s}</li>`).join('')}</ol>`;
@@ -56,6 +56,9 @@
             <p class="meldung meldung--fehler" role="alert"${meldung ? '' : ' hidden'}>${html(meldung)}</p>
             <div class="feld"><label for="auftraggeberkonto">Auftraggeberkonto</label>
               <input id="auftraggeberkonto" name="auftraggeberkonto" value="${html(giro.kontoname)} · ${gruppiert(giro.iban)}" readonly></div>
+            <div class="feld"><div class="ueberweisung__vorlage"><label for="vorlage">Vorlage</label><a href="/empfaengervorlagen">Vorlagen verwalten</a></div>
+              <select id="vorlage" name="vorlage"><option value="">Keine Vorlage</option>${vorlagen.map(v =>
+                `<option value="${html(v.vorlagenId)}"${v.vorlagenId === eingabe.vorlage ? ' selected' : ''}>${html(v.name)}</option>`).join('')}</select></div>
             ${feld('empfaenger', 'Empfänger', 'autocomplete="off" maxlength="70"')}
             ${feld('empfaengerIban', 'IBAN des Empfängers', 'autocomplete="off" spellcheck="false" maxlength="42"', 'Inland und SEPA-Raum')}
             ${feld('betrag', 'Betrag in Euro', 'inputmode="decimal" autocomplete="off" placeholder="0,00"', `Höchstens ${Aventa.euro(giro.verfuegbarerBetrag)}`)}
@@ -64,9 +67,17 @@
             <div class="ueberweisung__aktionen"><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
           </form>${kontoKarte}</div></div>`;
         const form = flaeche.querySelector('form');
+        // BR-0017: Name, IBAN und, falls vorhanden, Verwendungszweck übernehmen; den Betrag nicht. Alles bleibt änderbar.
+        form.vorlage.addEventListener('change', () => {
+          const v = vorlagen.find(x => x.vorlagenId === form.vorlage.value);
+          if (!v) return;
+          form.empfaenger.value = v.name;
+          form.empfaengerIban.value = gruppiert(v.empfaengerIban);
+          form.verwendungszweck.value = v.verwendungszweck ?? '';
+        });
         form.addEventListener('submit', e => {
           e.preventDefault();
-          eingabe = { empfaenger: form.empfaenger.value.trim(), empfaengerIban: form.empfaengerIban.value.trim(), betrag: form.betrag.value.trim(), verwendungszweck: form.verwendungszweck.value.trim() };
+          eingabe = { vorlage: form.vorlage.value, empfaenger: form.empfaenger.value.trim(), empfaengerIban: form.empfaengerIban.value.trim(), betrag: form.betrag.value.trim(), verwendungszweck: form.verwendungszweck.value.trim() };
           const betrag = alsBetrag(eingabe.betrag);
           if (!eingabe.empfaenger || !eingabe.empfaengerIban || !eingabe.betrag || !eingabe.verwendungszweck) return auftrag('Bitte füllen Sie alle Felder aus.');
           if (!ibanGueltig(eingabe.empfaengerIban)) return auftrag(IBAN_FEHLER, 'empfaengerIban');

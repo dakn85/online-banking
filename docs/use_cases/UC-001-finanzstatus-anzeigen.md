@@ -23,7 +23,8 @@
 5. Das System zeigt die Konten in einer Tabelle mit Kontoname, IBAN und Saldo in Euro.
 6. Das System zeigt in der Zeile des Girokontos Dispositionsrahmen und verfügbaren Betrag (Saldo plus Rahmen).
 7. Das System zeigt in der Zeile des Girokontos den Knopf „Überweisen“; er öffnet die Überweisung mit dem Girokonto als Auftraggeberkonto (UC-002).
-8. Die Kundin liest Salden und Gesamtvermögen ab.
+8. Das System zeigt in jeder Zeile den Knopf „Umsätze“; er öffnet die Umsätze des Kontos (UC-003).
+9. Die Kundin liest Salden und Gesamtvermögen ab.
 
 ## Alternativabläufe
 

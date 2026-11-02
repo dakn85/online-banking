@@ -4,6 +4,7 @@
   "fields": [
     {"name":"auftraggeberkonto","label":"Auftraggeberkonto","kind":"anzeige","attribute":"Konto.iban"},
     {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"},
+    {"name":"vorlage","label":"Vorlage","kind":"auswahl","attribute":"Empfaengervorlage.name"},
     {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Überweisung.empfaenger","rules":{"required":true,"maxLength":70}},
     {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Überweisung.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
     {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Überweisung.betrag","rules":{"required":true,"min":"0.01","max":"Konto.verfuegbarerBetrag"}},
@@ -11,7 +12,8 @@
   ],
   "actions": [
     {"label":"Weiter","screen":"ueberweisung-bestaetigen"},
-    {"label":"Abbrechen","screen":"finanzstatus"}
+    {"label":"Abbrechen","screen":"finanzstatus"},
+    {"label":"Vorlagen verwalten","screen":"empfaengervorlagen"}
   ]
 } -->
 <header data-wf="kopf">
@@ -28,6 +30,7 @@
   <h2>Empfänger und Betrag</h2>
   <label data-wf="feld"><span>Auftraggeberkonto</span><input name="auftraggeberkonto" placeholder="Girokonto · DE02 5001 0517 5407 3249 31"></label>
   <label data-wf="feld"><span>Verfügbarer Betrag</span><input name="verfuegbarerBetrag" placeholder="3.145,30"></label>
+  <label data-wf="feld"><span>Vorlage</span><select name="vorlage"><option>Keine Vorlage</option><option>Möbel Nord GmbH</option><option>Stadtwerke Nord</option></select></label>
   <label data-wf="feld"><span>Empfänger</span><input name="empfaenger" placeholder="Möbel Nord GmbH" required></label>
   <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE02 5001 0517 5407 3249 31" required></label>
   <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="50,00" required></label>
@@ -35,5 +38,6 @@
   <div data-wf="aktionen">
     <button data-wf="primaer">Weiter</button>
     <button>Abbrechen</button>
+    <button>Vorlagen verwalten</button>
   </div>
 </form>

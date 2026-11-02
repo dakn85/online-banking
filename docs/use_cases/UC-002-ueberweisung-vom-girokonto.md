@@ -18,7 +18,7 @@
 ## Standardablauf
 
 1. Das System zeigt die Überweisung mit dem Auftraggeberkonto vorbelegt: Kontoname, IBAN und verfügbarer Betrag des Girokontos.
-2. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro und Verwendungszweck ein.
+2. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro und Verwendungszweck ein oder wählt im Feld „Vorlage“ eine gespeicherte Empfängervorlage (A7).
 3. Die Kundin wählt „Weiter“.
 4. Das System prüft die IBAN (BR-0003) und den Betrag (BR-0004) und zeigt bei einer Abweichung die Meldung im Formular der Überweisung.
 5. Das System zeigt die Zusammenfassung mit Auftraggeberkonto, Empfänger, IBAN, Betrag in Euro und Verwendungszweck.
@@ -26,6 +26,7 @@
 7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003) und den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
 8. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
 9. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
+10. Die Kundin sieht den Auftrag als neuesten Umsatz in den Umsätzen des Girokontos (BR-0012).
 
 ## Alternativabläufe
 
@@ -79,6 +80,15 @@
 2. Das System zeigt die Meldung „Die Überweisung konnte nicht ausgeführt werden.“ und gibt den Knopf „Bestätigen“ wieder frei.
 3. Antwortet der Dienst mit 401, leitet das System auf die Anmeldeseite um (A5); es wird nichts gebucht.
 
+### A7: Empfänger aus Vorlage wählen
+
+**Auslöser:** Die Kundin wählt im Feld „Vorlage“ eine gespeicherte Empfängervorlage. (Schritt 2).  
+**Ablauf:**
+
+1. Das System belegt Empfänger und IBAN des Empfängers aus der Vorlage und, wenn die Vorlage einen Verwendungszweck hat, auch den Verwendungszweck; den Betrag übernimmt es nicht (BR-0017).
+2. Hat die Vorlage keinen Verwendungszweck, bleibt das Feld Verwendungszweck leer; er bleibt Pflicht und die Kundin füllt ihn.
+3. Die Kundin ergänzt den Betrag, ändert bei Bedarf Angaben und wählt „Weiter“; der Ablauf geht bei Schritt 3 weiter.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -90,7 +100,10 @@ sequenceDiagram
     banking-->>kundin: Überweisung, Auftraggeberkonto vorbelegt, verfügbarer Betrag
     kundin->>banking: Empfänger, IBAN, Betrag, Verwendungszweck#59; „Weiter“
     banking->>banking: Prüfung IBAN und Betrag im Formular
-    alt IBAN ungültig oder außerhalb des SEPA-Raums
+    alt Empfänger aus Vorlage gewählt
+        banking->>banking: GET /api/empfaengervorlagen
+        banking-->>kundin: Empfänger, IBAN des Empfängers und Verwendungszweck aus der Vorlage#59; Betrag tippt die Kundin ein
+    else IBAN ungültig oder außerhalb des SEPA-Raums
         banking-->>kundin: Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“
     else Betrag über dem verfügbaren Betrag
         banking-->>kundin: Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“
@@ -111,6 +124,7 @@ sequenceDiagram
 
 - Der Auftrag ist genau einmal ausgeführt; der Saldo des Girokontos ist um den Betrag gemindert.
 - Der Finanzstatus zeigt den neuen Saldo und die Meldung „Überweisung ausgeführt.“.
+- Der Auftrag steht als neuester Umsatz in den Umsätzen des Girokontos.
 
 ### Fehlschlag
 
@@ -137,6 +151,14 @@ Nach der Ausführung ist der Saldo des Girokontos um den Betrag gemindert; das G
 ### BR-0007: Auftraggeberkonto der Kundin
 
 Die auftraggeberIban im Auftrag gehört zu einem Girokonto der angemeldeten Kundin. Sonst führt das System den Auftrag nicht aus.
+
+### BR-0012: Umsatz einer ausgeführten Überweisung
+
+Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchungstag ist der Tag der Ausführung, gebuchtAm der Ausführungszeitpunkt als Zeitpunkt in UTC (erfasstAm des Auftrags), Gegenpartei der eingegebene Empfänger, Verwendungszweck der eingegebene Verwendungszweck, Betrag der Betrag als Ausgang (negativ) und Saldo danach der nach BR-0006 geminderte Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt keinen weiteren Umsatz (BR-0005).
+
+### BR-0017: Empfänger aus Vorlage übernehmen
+
+Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vorlage als Empfänger, ihre IBAN als IBAN des Empfängers und, wenn sie einen Verwendungszweck hat, diesen; den Betrag übernimmt es nicht. Alle Felder bleiben änderbar, der Verwendungszweck bleibt Pflicht, und die Überweisung ändert die Vorlage nicht.
 
 ## Weitere Prüfungen
 

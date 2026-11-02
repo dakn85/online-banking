@@ -1,4 +1,4 @@
-import { AfterScenario, AfterSuite, BeforeSuite, Step } from 'gauge-ts';
+import { AfterScenario, AfterSuite, BeforeSuite, Step, Table } from 'gauge-ts';
 import assert = require('assert');
 import { Browser, chromium, Page } from 'playwright';
 
@@ -193,5 +193,188 @@ export default class StepImplementation {
     // Die Zusammenfassung ist eine Region „Zusammenfassung“, die das Formular ersetzt; darum auf der ganzen Seite suchen.
     const zusammenfassung = page.getByRole('region', { name: 'Zusammenfassung' });
     assert.strictEqual(await zusammenfassung.count(), 0, 'Die Überweisung zeigt unerwartet eine Zusammenfassung');
+  }
+
+  /* ---------------------------------------------------------------- UC-003 Umsätze */
+
+  /** Wartet, bis die Umsätze zur Abfrage `abfrage` stehen (die Seite setzt data-abfrage nach dem Laden). */
+  private async umsaetzeGeladen(abfrage?: string): Promise<Page> {
+    const page = await this.seite();
+    const ergebnis = page.locator('#umsaetze-ergebnis');
+    if (abfrage === undefined) await page.locator('#umsaetze-ergebnis[data-abfrage]').waitFor();
+    else await page.locator(`#umsaetze-ergebnis[data-abfrage="${abfrage.replace(/"/g, '\\"')}"]`).waitFor();
+    return ergebnis.page();
+  }
+
+  @Step('Die Kundin öffnet die Umsätze des Kontos <konto>')
+  public async umsaetzeOeffnen(konto: string) {
+    const page = await this.kontentabelle();
+    await page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`).getByRole('link', { name: 'Umsätze' }).click();
+    await page.waitForURL(/\/umsaetze\?/);
+    await this.umsaetzeGeladen();
+  }
+
+  @Step('Die Kundin öffnet die Umsätze des Kontos mit der IBAN <iban>')
+  public async umsaetzeMitIban(iban: string) {
+    const page = await this.seite();
+    await page.goto(`${basisUrl}/umsaetze?iban=${encodeURIComponent(text(iban))}`, { waitUntil: 'domcontentloaded' });
+    await this.umsaetzeGeladen();
+  }
+
+  /** Füllt Suche und Filter; leere Zellen leeren das Feld. Wartet auf die Umsätze genau dieser Abfrage. */
+  @Step('Die Kundin filtert die Umsätze mit den Einträgen <tabelle>')
+  public async umsaetzeFiltern(tabelle: Table) {
+    const page = await this.umsaetzeGeladen();
+    const [zeile] = tabelle.getTableRows();
+    const zelle = (spalte: string) => text(zeile.getCell(spalte) ?? '').trim();
+    const form = page.getByRole('form', { name: 'Filter' });
+    await form.getByLabel('Suche').fill(zelle('Suchtext'));
+    await form.getByLabel('Zeitraum von').fill(zelle('Zeitraum von'));
+    await form.getByLabel('Zeitraum bis').fill(zelle('Zeitraum bis'));
+    await form.getByLabel('Ein-/Ausgang').selectOption({ label: zelle('Ein-/Ausgang') || 'Alle' });
+    // Dieselbe Abfrage, die die Seite baut: Reihenfolge suchtext, von, bis, richtung; Leeres fehlt.
+    const q = new URLSearchParams();
+    if (zelle('Suchtext')) q.set('suchtext', zelle('Suchtext'));
+    if (zelle('Zeitraum von')) q.set('von', zelle('Zeitraum von'));
+    if (zelle('Zeitraum bis')) q.set('bis', zelle('Zeitraum bis'));
+    const richtung = (zelle('Ein-/Ausgang') || 'Alle').toLowerCase();
+    if (richtung !== 'alle') q.set('richtung', richtung);
+    await this.umsaetzeGeladen(q.toString());
+  }
+
+  @Step('Die Umsätze zeigen die Zeilen <tabelle>')
+  public async umsaetzeZeigen(tabelle: Table) {
+    const page = await this.umsaetzeGeladen();
+    const spalten = tabelle.getColumnNames();
+    const erwartet = tabelle.getTableRows().map(z => spalten.map(s => sichtbar(text(z.getCell(s)))));
+    const tab = page.locator('#umsaetze-ergebnis table');
+    let ist: string[][] = [];
+    if (await tab.count()) {
+      const kopf = (await tab.locator('thead th').allInnerTexts()).map(sichtbar);
+      const index = spalten.map(s => {
+        const i = kopf.indexOf(s);
+        assert.ok(i >= 0, `Spalte „${s}“ fehlt, da sind: ${kopf.join(', ')}`);
+        return i;
+      });
+      const zeilen = tab.locator('tbody tr');
+      for (let n = 0; n < await zeilen.count(); n++) {
+        const zellen = (await zeilen.nth(n).locator('th, td').allInnerTexts()).map(sichtbar);
+        ist.push(index.map(i => zellen[i]));
+      }
+    }
+    assert.deepStrictEqual(ist, erwartet);
+  }
+
+  @Step('Die Umsätze zeigen die Meldung <meldung>')
+  public async umsaetzeMeldung(meldung: string) {
+    const page = await this.umsaetzeGeladen();
+    await page.locator('#umsaetze-ergebnis').getByRole('alert').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Die Umsätze zeigen den Hinweis <hinweis> nicht')
+  public async umsaetzeOhneHinweis(hinweis: string) {
+    const page = await this.umsaetzeGeladen();
+    assert.strictEqual(await page.locator('#umsaetze-ergebnis').getByText(text(hinweis)).count(), 0, `Der Hinweis „${hinweis}“ ist zu sehen`);
+  }
+
+  @Step('Die Umsatzseite ist ohne Anmeldung nicht erreichbar')
+  public async umsaetzeOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const api = await fetch(`${basisUrl}/api/konten/DE02500105175407324931/umsaetze`);
+    assert.strictEqual(api.status, 401, 'GET /api/konten/{iban}/umsaetze ohne Sitzung');
+    await page.goto(`${basisUrl}/umsaetze?iban=DE02500105175407324931`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
+  /* ---------------------------------------------------------------- UC-004 Empfängervorlagen */
+
+  /** Die Seite Empfängervorlagen; ruft sie auf, wenn die Seite woanders steht. */
+  private async vorlagenSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/empfaengervorlagen') await page.goto(`${basisUrl}/empfaengervorlagen`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.vorlagen').waitFor();
+    return page;
+  }
+
+  /** Die Seite zeichnet nach jeder Antwort des Dienstes neu; gewartet wird auf die neu gezeichnete Fläche. */
+  private async nachNeuzeichnen(page: Page, aktion: () => Promise<void>) {
+    await page.locator('.vorlagen').evaluate(e => e.setAttribute('data-alt', ''));
+    await aktion();
+    await page.locator('.vorlagen:not([data-alt])').waitFor();
+  }
+
+  private async vorlageAnlegen(name: string, iban: string, zweck: string) {
+    const page = await this.vorlagenSeite();
+    const form = page.getByRole('form', { name: 'Neue Vorlage' });
+    await form.getByLabel('Name', { exact: true }).fill(text(name));
+    await form.getByLabel('IBAN des Empfängers').fill(text(iban));
+    await form.getByLabel('Verwendungszweck').fill(text(zweck));
+    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Speichern' }).click());
+  }
+
+  @Step('Die Kundin legt die Vorlage <name> mit IBAN <iban> und Verwendungszweck <zweck> an')
+  public async vorlageMitZweck(name: string, iban: string, zweck: string) {
+    await this.vorlageAnlegen(name, iban, zweck);
+  }
+
+  @Step('Die Kundin legt die Vorlage <name> mit IBAN <iban> ohne Verwendungszweck an')
+  public async vorlageOhneZweck(name: string, iban: string) {
+    await this.vorlageAnlegen(name, iban, '');
+  }
+
+  @Step('Die Empfängervorlagen zeigen die Meldung <meldung>')
+  public async vorlagenMelden(meldung: string) {
+    const page = await this.vorlagenSeite();
+    await page.locator('.vorlagen > [role="status"], .vorlagen > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Die Kundin wählt die Vorlage <name> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
+  public async vorlageLoeschen(name: string, antwort: string) {
+    const page = await this.vorlagenSeite();
+    const form = page.getByRole('form', { name: 'Vorlage löschen' });
+    await form.getByLabel('Vorlage zum Löschen').selectOption({ label: text(name) });
+    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
+    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
+    await abfrage.getByText('Vorlage löschen?').waitFor();
+    await this.nachNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
+  }
+
+  @Step('Die Kundin benennt die Vorlage <alt> in <neu> um und sieht IBAN <iban>, Verwendungszweck <zweck> und die Meldung <meldung>')
+  public async vorlageUmbenennen(alt: string, neu: string, iban: string, zweck: string, meldung: string) {
+    const page = await this.vorlagenSeite();
+    const form = page.getByRole('form', { name: 'Vorlage umbenennen' });
+    await form.getByLabel('Vorlage zum Umbenennen').selectOption({ label: text(alt) });
+    await form.getByLabel('Neuer Name').fill(text(neu));
+    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Umbenennen' }).click());
+    await this.vorlagenMelden(meldung);
+    const zeile = page.locator('.vorlagen__tabelle tbody tr').filter({ has: page.getByRole('rowheader', { name: text(neu), exact: true }) });
+    const zellen = (await zeile.locator('td').allInnerTexts()).map(sichtbar);
+    assert.deepStrictEqual(zellen, [text(iban), text(zweck)], `Vorlage „${neu}“`);
+  }
+
+  /** Wählt in der Überweisung die Vorlage und liest die vorbelegten Felder; ruft die Überweisung auf, wenn die Seite woanders steht. */
+  private async vorlageInUeberweisung(name: string): Promise<Record<string, string>> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/ueberweisung') await page.goto(`${basisUrl}/ueberweisung`, { waitUntil: 'domcontentloaded' });
+    const form = page.getByRole('form', { name: 'Überweisung' });
+    await form.getByLabel('Vorlage', { exact: true }).selectOption({ label: text(name) });
+    return {
+      empfaenger: await form.getByLabel('Empfänger', { exact: true }).inputValue(),
+      iban: await form.getByLabel('IBAN des Empfängers').inputValue(),
+      zweck: await form.getByLabel('Verwendungszweck').inputValue(),
+    };
+  }
+
+  @Step('Die Kundin wählt in der Überweisung die Vorlage <name> und sieht Empfänger <empfaenger>, IBAN <iban> und Verwendungszweck <zweck>')
+  public async vorlageWaehlenMitZweck(name: string, empfaenger: string, iban: string, zweck: string) {
+    const felder = await this.vorlageInUeberweisung(name);
+    assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: text(zweck) });
+  }
+
+  @Step('Die Kundin wählt in der Überweisung die Vorlage <name> und sieht Empfänger <empfaenger>, IBAN <iban> und einen leeren Verwendungszweck')
+  public async vorlageWaehlenOhneZweck(name: string, empfaenger: string, iban: string) {
+    const felder = await this.vorlageInUeberweisung(name);
+    assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
   }
 }

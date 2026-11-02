@@ -195,6 +195,22 @@ a { color: var(--tanne); }
 .zusammenfassung dt { color: var(--tinte-2); }
 .zusammenfassung dd { margin: 0; font-weight: 500; text-align: right; }
 
+/* Empfängervorlagen (UC-004) */
+.vorlagen { display: grid; gap: 20px; max-width: 980px; }
+.vorlagen > .meldung { margin: 0; align-items: center; font-weight: 500; }
+.vorlagen__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.vorlagen__kopf .abschnitt { margin: 0; }
+.vorlagen__zahl { margin: 0; color: var(--tinte-2); font-size: 14px; }
+.vorlagen__zahl strong { color: var(--tinte); font-weight: 600; }
+.vorlagen__leer { margin: 0; padding: 20px; background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); color: var(--tinte-2); }
+.vorlagen__tabelle td:last-child { white-space: normal; }
+.vorlagen__raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.vorlagen__spalte { display: grid; gap: 20px; }
+.vorlagen__abfrage { display: grid; gap: 8px; padding: 12px 14px; background: #fdf6e6; border-radius: var(--rund-s); }
+.vorlagen__abfrage p { margin: 0; font-weight: 600; }
+.ueberweisung__vorlage { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.ueberweisung__vorlage a { font-size: 14px; font-weight: 500; }
+
 @media (max-width: 860px) {
   .vermoegen { padding: 24px; }
   .vermoegen__summe { font-size: 34px; }
@@ -212,5 +228,28 @@ a { color: var(--tanne); }
   .vorbereitung { grid-template-columns: 1fr; padding: 32px 24px; }
   .ueberweisung__raster { grid-template-columns: 1fr; }
   .ueberweisung__konto { order: -1; }
+  .vorlagen__raster { grid-template-columns: 1fr; }
 }
+/* UC-003 Umsätze */
+.zurueck { margin: 0 0 16px; font-size: 14px; }
+.zurueck a { color: var(--tanne); text-decoration: none; }
+.kontokopf { display: flex; gap: 32px; margin: 0 0 20px; }
+.kontokopf dt { font-size: 13px; color: var(--tinte-2); }
+.kontokopf dd { margin: 2px 0 0; font-weight: 600; }
+.filter { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin: 0 0 20px; }
+.umsatztabelle { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); overflow: hidden; }
+.umsatztabelle th, .umsatztabelle td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--linie); }
+.umsatztabelle thead th { font-size: 13px; font-weight: 500; color: var(--tinte-2); background: #f7f9f8; }
+.umsatztabelle tbody tr:last-child > * { border-bottom: 0; }
+.umsatztabelle .zahl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.umsatztabelle .minus { color: var(--minus); }
+.umsatztabelle .plus { color: var(--plus); }
+.umsatztabelle .leise { color: var(--tinte-2); }
+.umsaetze .leer { padding: 24px; text-align: center; color: var(--tinte-2); background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); }
+.umsaetze .meldung { background: #fdecea; color: #7a1a12; }
+.kontentabelle .aktion .knopf + .knopf { margin-left: 4px; }
+.knopf--text { background: transparent; border-color: transparent; padding: 0 10px; }
+.knopf--text:hover { background: #e9f1ef; border-color: transparent; }
+.kontentabelle th, .kontentabelle td { padding-left: 10px; padding-right: 10px; }
+@media (max-width: 900px) { .filter { grid-template-columns: 1fr 1fr; } .umsaetze { overflow-x: auto; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

@@ -195,7 +195,7 @@ Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuch
 
 ### Logging und Telemetrie
 
-Der Dienst schreibt eine Startmeldung und protokolliert einen Datenfehler; eigene Metriken, Zugriffsprotokoll und Traces gibt es im Dienst nicht, und er bleibt dafür unverändert. Die Meldung eines Datenfehlers nennt die betroffene IBAN und verstößt damit gegen die Leitplanke zu Kontobezügen in Logs (siehe Risiken). In der Testumgebung läuft er als Image online-banking-otel: Ein Aufsatz außerhalb des Repos instrumentiert den Dienst mit der Autoinstrumentierung von OpenTelemetry für Node und exportiert per OTLP an den Collector der Umgebung; die Metrik http.server.request.duration trägt Route, Methode, Statuscode und service.version, und daraus misst der Betrieb Antwortzeit und 5xx-Anteil je Operation und Version (NFR-003, NFR-004). Ein Produktivbetrieb mit solcher Messung ist im Repo nicht beschrieben.
+Der Dienst schreibt eine Startmeldung und protokolliert einen Datenfehler; eigene Metriken, Zugriffsprotokoll und Traces gibt es im Dienst nicht, und er bleibt dafür unverändert. Die Meldung eines Datenfehlers nennt nur Ort und Art, also den fehlenden Dispositionsrahmen beim Girokonto, und keinen Kontobezug wie die IBAN. In der Testumgebung läuft er als Image online-banking-otel: Ein Aufsatz außerhalb des Repos instrumentiert den Dienst mit der Autoinstrumentierung von OpenTelemetry für Node und exportiert per OTLP an den Collector der Umgebung; die Metrik http.server.request.duration trägt Route, Methode, Statuscode und service.version, und daraus misst der Betrieb Antwortzeit und 5xx-Anteil je Operation und Version (NFR-003, NFR-004). Ein Produktivbetrieb mit solcher Messung ist im Repo nicht beschrieben.
 
 ### Konfiguration
 
@@ -225,7 +225,6 @@ Die Qualitätsanforderungen (NFR-…) stehen in `docs/requirements.md`.
 | Risiko | Wirkung | Maßnahme |
 | --- | --- | --- |
 | Kein TLS im Dienst, kein Secure am Sitzungscookie, kein Zähler und keine Sperre bei der Anmeldung | Kennung, PIN und Sitzung sind im Netz abgreifbar, Anmeldeversuche sind unbegrenzt | TLS vor dem Dienst, Secure am Cookie, Zähler mit Sperre vor einer Öffnung nach außen |
-| Ein Datenfehler wird mit der betroffenen IBAN protokolliert, gegen die Leitplanke zu Kontobezügen in Logs | Kontobezug in einer Ausgabe, die weitergegeben werden kann | Ausgabe ohne IBAN, nur Ort und Art des Fehlers |
 | Zustand nur im Speicher (ADR-002) | Ein Neustart verliert Sitzungen, Salden und den Schutz nach BR-0005; eine zweite Instanz teilt nichts | Persistenz und gemeinsamer Speicher vor einem Produktivbetrieb |
 | Geldbeträge als Gleitkommazahl, gegen die Leitplanke dezimal ohne Gleitkomma (ADR-005) | Rundungsdrift bei vielen Buchungen, Grenzfälle beim Vergleich mit dem verfügbaren Betrag | Dezimalbetrag mit Währung, Umstellung vor dem Anschluss einer Kernbank |
 | Fehlerformat ohne Problem Details, gegen die Leitplanke REST | Clients brauchen eine Sonderbehandlung, ein späterer Wechsel ändert die Schnittstelle | Problem Details in der OpenAPI beschreiben, dann einführen |
