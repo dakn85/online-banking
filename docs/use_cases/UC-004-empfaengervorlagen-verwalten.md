@@ -125,6 +125,7 @@ Der Dienst liefert, ändert und löscht nur Empfängervorlagen der angemeldeten 
 ## Weitere Prüfungen
 
 - **WP-1** (Unit-Test): Länge und Eindeutigkeit des Namens je Kundin sowie die Höchstzahl von 50 Vorlagen je Kundin.
+- **WP-2** (Unit-Test): Der Dienst liefert, ändert und löscht nur Vorlagen der angemeldeten Kundin; eine fremde oder unbekannte Vorlagen-Kennung beantwortet er mit 404, ohne gültige Sitzung mit 401 (BR-0016).
 
 ## Notizen
 

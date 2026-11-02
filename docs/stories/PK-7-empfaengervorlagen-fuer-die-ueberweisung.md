@@ -35,8 +35,10 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 ## Akzeptanztests
 
 - `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 - `acceptance/specs/ueberweisung.spec`: Eine gewählte Empfängervorlage belegt Empfänger, IBAN und Verwendungszweck
 
 ## Aufgaben für die Umsetzung
