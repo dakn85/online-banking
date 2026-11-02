@@ -35,6 +35,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 ## Akzeptanztests
 
 - `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
+- `acceptance/specs/empfaengervorlagen.spec`: Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
@@ -90,7 +91,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
   _→ eingearbeitet in UC-004, empfaengervorlagen · 45d8caa_
 - Wie vergleicht der Dienst den Namen auf Eindeutigkeit je Kundin – gelten „Möbel Nord GmbH“, „möbel nord gmbh“ und „Möbel Nord GmbH “ als derselbe Name, und was wird gespeichert? (POST /api/empfaengervorlagen, name)
   **Antwort:** Vergleich normalisiert: führende und folgende Leerzeichen entfernt, Groß-/Kleinschreibung nicht beachtet; gespeichert und angezeigt wird die Eingabe der Kundin. Bei Gleichheit antwortet der Dienst 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“, die bestehende Vorlage bleibt unverändert; gilt für Anlegen und Umbenennen.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-004, BR-0013, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, Empfaengervorlage_
 - In welcher Reihenfolge prüft der Dienst beim Anlegen, wenn der Name bereits vergeben ist und die Kundin schon 50 Vorlagen hat – 409 oder 422? (POST /api/empfaengervorlagen, name)
   **Antwort:** Pflicht-/Formatprüfungen zuerst (400), dann Eindeutigkeit (409), zuletzt Höchstzahl (422): ein vergebener Name ergibt auch bei 50 Vorlagen 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“
   _→ noch nicht in der Spezifikation_

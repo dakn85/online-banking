@@ -26,10 +26,10 @@
 
 ### A1: Name fehlt oder ist schon vergeben
 
-**Auslöser:** Der Name der Vorlage ist leer oder bei dieser Kundin schon vergeben. (Schritt 4).  
+**Auslöser:** Der Name der Vorlage ist leer oder bei dieser Kundin schon vergeben, auch wenn er sich nur in der Groß-/Kleinschreibung oder in führenden oder folgenden Leerzeichen unterscheidet. (Schritt 4).  
 **Ablauf:**
 
-1. Das System speichert die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“, wenn der Name leer ist, sonst „Eine Vorlage mit diesem Namen gibt es bereits.“; die bisherigen Eingaben bleiben stehen.
+1. Das System speichert die Vorlage nicht, lässt die bestehende Vorlage unverändert und zeigt „Der Name der Vorlage fehlt.“, wenn der Name leer ist, sonst „Eine Vorlage mit diesem Namen gibt es bereits.“; die bisherigen Eingaben bleiben stehen.
 2. Die Kundin ändert den Namen; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
 ### A2: IBAN ungültig oder außerhalb des SEPA-Raums
@@ -53,7 +53,7 @@
 **Auslöser:** Die Kundin wählt in der Liste eine Vorlage, trägt unter „Vorlage umbenennen“ einen neuen Namen ein und wählt „Umbenennen“. (Schritt 5).  
 **Ablauf:**
 
-1. Das System prüft den neuen Namen (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig); ist er schon vergeben, bleibt die Vorlage unverändert und das System zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“.
+1. Das System prüft den neuen Namen nach BR-0013 (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig auch ohne Beachtung der Groß-/Kleinschreibung und ohne führende und folgende Leerzeichen); ist er schon vergeben, bleibt die Vorlage unverändert und das System zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“.
 2. Sonst ändert das System nur den Namen; IBAN des Empfängers und Verwendungszweck bleiben, und das System zeigt die Vorlagen mit dem neuen Namen und der Meldung „Empfängervorlage umbenannt.“.
 
 ### A5: Vorlage löschen
@@ -108,7 +108,7 @@ sequenceDiagram
 
 ### BR-0013: Name der Empfängervorlage
 
-Der Name der Vorlage ist Pflicht, 1 bis 70 Zeichen lang und je Kundin eindeutig, auch nach dem Umbenennen. Ist er leer, speichert das System die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“; ist er schon vergeben, zeigt es „Eine Vorlage mit diesem Namen gibt es bereits.“.
+Der Name der Vorlage ist Pflicht, 1 bis 70 Zeichen lang und je Kundin eindeutig, auch nach dem Umbenennen. Für die Eindeutigkeit vergleicht das System den Namen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert und angezeigt wird die Eingabe der Kundin. Ist er leer, speichert das System die Vorlage nicht und zeigt „Der Name der Vorlage fehlt.“; ist er schon vergeben, antwortet der Dienst mit 409 und zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“, die bestehende Vorlage bleibt unverändert.
 
 ### BR-0014: IBAN der Empfängervorlage
 

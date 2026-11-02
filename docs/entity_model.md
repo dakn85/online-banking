@@ -69,4 +69,4 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE89 3704 0044 0532 0130 00 |
 | verwendungszweck | Verwendungszweck der Vorlage; optional, fehlt, wenn die Vorlage keinen hat | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711 |
 
-**Einschränkungen:** Der Name ist je Kunde eindeutig; höchstens 50 Empfängervorlagen je Kunde.
+**Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
