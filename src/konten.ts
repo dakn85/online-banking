@@ -25,7 +25,7 @@ export function zuruecksetzen(): void {
 }
 zuruecksetzen();
 
-/** Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler (Vertrag: 500). */
+/** Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler (Vertrag: 500). Die Meldung landet im Log und nennt nur Ort und Art, keinen Kontobezug (PK-9). */
 export class Datenfehler extends Error {}
 
 const runden = (betrag: number) => Math.round(betrag * 100) / 100;
@@ -36,7 +36,7 @@ export function finanzstatus(): { gesamtvermoegen: number; konten: (Konto & { ve
     gesamtvermoegen: runden(konten.reduce((summe, k) => summe + k.saldo, 0)),
     konten: konten.map(k => {
       if (k.art !== 'Girokonto') return { ...k };
-      if (k.dispositionsrahmen === undefined) throw new Datenfehler(`Girokonto ${k.iban} ohne Dispositionsrahmen`);
+      if (k.dispositionsrahmen === undefined) throw new Datenfehler('Finanzstatus: Girokonto ohne Dispositionsrahmen');
       return { ...k, verfuegbarerBetrag: runden(k.saldo + k.dispositionsrahmen) };
     }),
   };
