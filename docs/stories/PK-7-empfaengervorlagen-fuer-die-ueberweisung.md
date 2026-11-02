@@ -105,7 +105,10 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
   _→ eingearbeitet in UC-004, BR-0018, Empfaengervorlage, POST /api/empfaengervorlagen, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage · 537cbf3_
 - Was antwortet der Dienst, wenn die Kundin eine Vorlage auf den Namen umbenennt, den sie selbst schon trägt? (PATCH /api/empfaengervorlagen/{vorlagenId}, name)
   **Antwort:** 200 mit der unveränderten Vorlage: die Eindeutigkeitsprüfung schließt die eigene Vorlage aus, Umbenennen auf denselben Namen ist kein Konflikt.
-  _→ eingearbeitet in UC-004, BR-0013, PATCH /api/empfaengervorlagen/{vorlagenId}, Schema EmpfaengervorlageName_
+  _→ eingearbeitet in UC-004, BR-0013, PATCH /api/empfaengervorlagen/{vorlagenId}, Schema EmpfaengervorlageName · a320ed8_
 - Mit welchen Namen führt der Ausgangsstand die 50 Vorlagen von jonas.weber?
   **Antwort:** „Vorlage 1“ bis „Vorlage 50“, fortlaufend nummeriert.
   _→ eingearbeitet in UC-004, BR-0015, POST /api/empfaengervorlagen · d7d23ad_
+- Was gilt, wenn die Kundin eine Vorlage auf ihren eigenen Namen in anderer Schreibweise oder mit anderen Leerzeichen umbenennt?
+  **Antwort:** Die Eingabe wird gespeichert und angezeigt, die Vorlage gilt als umbenannt, Meldung „Empfängervorlage umbenannt.“
+  _→ noch nicht in der Spezifikation_

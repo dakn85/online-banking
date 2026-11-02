@@ -133,4 +133,4 @@ Der Verwendungszweck der Vorlage ist optional und höchstens 140 Zeichen lang. I
 
 ## Notizen
 
-Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird erst nach der Sicherheitsabfrage „Vorlage löschen?“; eine bereits bestätigte Überweisung bleibt unberührt. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber 50 Empfängervorlagen, damit die Höchstzahl prüfbar ist, und für lena.hoffmann keine.
+Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird erst nach der Sicherheitsabfrage „Vorlage löschen?“; eine bereits bestätigte Überweisung bleibt unberührt. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber die Vorlagen „Vorlage 1“ bis „Vorlage 50“, damit Höchstzahl und Namenskonflikt prüfbar sind, und für lena.hoffmann keine.
