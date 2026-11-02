@@ -195,7 +195,7 @@ Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuch
 
 ### Logging und Telemetrie
 
-Der Dienst schreibt eine Startmeldung und protokolliert einen Datenfehler; Zugriffsprotokoll, Metriken und Traces gibt es nicht. Die Meldung eines Datenfehlers nennt nur Ort und Art, also den fehlenden Dispositionsrahmen beim Girokonto, und keinen Kontobezug wie die IBAN. Ein Betriebsbild lässt sich aus diesen Ausgaben nicht ableiten.
+Der Dienst schreibt eine Startmeldung und protokolliert einen Datenfehler; eigene Metriken, Zugriffsprotokoll und Traces gibt es im Dienst nicht, und er bleibt dafür unverändert. Die Meldung eines Datenfehlers nennt nur Ort und Art, also den fehlenden Dispositionsrahmen beim Girokonto, und keinen Kontobezug wie die IBAN. In der Testumgebung läuft er als Image online-banking-otel: Ein Aufsatz außerhalb des Repos instrumentiert den Dienst mit der Autoinstrumentierung von OpenTelemetry für Node und exportiert per OTLP an den Collector der Umgebung; die Metrik http.server.request.duration trägt Route, Methode, Statuscode und service.version, und daraus misst der Betrieb Antwortzeit und 5xx-Anteil je Operation und Version (NFR-003, NFR-004). Ein Produktivbetrieb mit solcher Messung ist im Repo nicht beschrieben.
 
 ### Konfiguration
 
