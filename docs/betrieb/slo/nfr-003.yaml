@@ -1,0 +1,33 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: nfr-003
+  displayName: Antwortzeit von Finanzstatus und Überweisung
+  labels:
+    nfr: NFR-003
+spec:
+  description: "NFR-003: Antwortzeit von Finanzstatus und Überweisung"
+  service: Online-Banking
+  budgetingMethod: Occurrences
+  timeWindow:
+    - duration: 28d
+      isRolling: true
+  objectives:
+    - displayName: Antwortzeit von Finanzstatus und Überweisung
+      target: 0.95
+  indicator:
+    metadata:
+      name: nfr-003-sli
+    spec:
+      ratioMetric:
+        counter: true
+        good:
+          metricSource:
+            type: Prometheus
+            spec:
+              query: (sum(rate(http_server_request_duration_seconds_bucket{service_name=~"online-banking", deployment_environment_name="test", http_route="/api/konten", http_request_method="GET", le="0.5"}[5m])) or vector(0)) + (sum(rate(http_server_request_duration_seconds_bucket{service_name=~"online-banking", deployment_environment_name="test", http_route="/api/ueberweisungen", http_request_method="POST", le="0.5"}[5m])) or vector(0))
+        total:
+          metricSource:
+            type: Prometheus
+            spec:
+              query: (sum(rate(http_server_request_duration_seconds_count{service_name=~"online-banking", deployment_environment_name="test", http_route="/api/konten", http_request_method="GET"}[5m])) or vector(0)) + (sum(rate(http_server_request_duration_seconds_count{service_name=~"online-banking", deployment_environment_name="test", http_route="/api/ueberweisungen", http_request_method="POST"}[5m])) or vector(0))
