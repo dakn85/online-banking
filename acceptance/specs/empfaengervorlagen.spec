@@ -21,12 +21,13 @@ Tags: UC-004, PK-7, BR-0013
 
 ## Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
 
-Tags: UC-004, PK-7
+Tags: UC-004, PK-13
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen und antwortet auf die Sicherheitsabfrage "Ja"
+* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen
+* Die Kundin bestätigt den Dialog "Vorlage löschen"
 * Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gelöscht."
 
 ## Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt

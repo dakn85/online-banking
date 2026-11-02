@@ -21,6 +21,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 
 - `acceptance/specs/empfaengervorlagen.spec`: Der Löschdialog nennt die gewählte Vorlage mit ihrem Namen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine abgebrochene Neuanlage legt keine Vorlage an
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/empfaengervorlagen.spec`: Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
 
 ## Aufgaben für die Umsetzung
