@@ -11,20 +11,16 @@ Als Betrieb der Aventa Bank möchte ich für Finanzstatus und Überweisung messb
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Architektur | Geändert | Querschnittliche Konzepte geändert |
-| Antwortzeit des Finanzstatus | Neu | Qualitätsanforderung neu |
+| Antwortzeit von Finanzstatus und Überweisung | Neu | Qualitätsanforderung neu |
 | Verfügbarkeit von Finanzstatus und Überweisung | Neu | Qualitätsanforderung neu |
 
 ## Aufgaben für die Umsetzung
 
 - [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Antwortzeit des Finanzstatus: Qualitätsanforderung neu
+- [ ] Antwortzeit von Finanzstatus und Überweisung: Qualitätsanforderung neu
 - [ ] Verfügbarkeit von Finanzstatus und Überweisung: Qualitätsanforderung neu
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-8 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-8 grün
-
-## Offene Fragen
-
-- [ ] Welche Antwortzeitgrenze gilt für die Überweisung?
 
 ## Entscheidungen
 
@@ -37,3 +33,6 @@ Als Betrieb der Aventa Bank möchte ich für Finanzstatus und Überweisung messb
 - Soll der Betrieb als Stakeholder in die Vision aufgenommen werden, damit die Herkunft auf STK-n zeigt?
   **Antwort:** Nein, Herkunft bleibt „Betrieb“ mit Verweis auf Story PK-8.
   _→ noch nicht in der Spezifikation_
+- Welche Antwortzeitgrenze gilt für die Überweisung?
+  **Antwort:** Dieselbe Grenze wie beim Finanzstatus: 95 % in höchstens 500 ms über 28 Tage.
+  _→ eingearbeitet in NFR-003_
