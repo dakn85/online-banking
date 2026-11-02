@@ -48,6 +48,13 @@ export function girokonto(iban: string): (Konto & { dispositionsrahmen: number }
   return konto && konto.dispositionsrahmen !== undefined ? konto as Konto & { dispositionsrahmen: number } : undefined;
 }
 
+/** BR-0011: ein Konto der Kundin mit dieser IBAN (Leerzeichen zählen nicht), sonst nichts. */
+export function kontoMitIban(iban: string): Konto | undefined {
+  const gesucht = iban.replace(/\s+/g, '').toUpperCase();
+  const konto = konten.find(k => k.iban === gesucht);
+  return konto && { ...konto };
+}
+
 /** BR-0006: den Saldo eines Kontos um den Betrag mindern. */
 export function belasten(iban: string, betrag: number): void {
   const konto = konten.find(k => k.iban === iban);
