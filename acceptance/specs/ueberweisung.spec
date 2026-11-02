@@ -100,3 +100,29 @@ Tags: UC-002, PK-7, BR-0017
 * Die Kundin legt die Vorlage "Hausverwaltung Weber" mit IBAN "DE44 5001 0517 5407 3249 31" ohne Verwendungszweck an
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin wählt in der Überweisung die Vorlage "Hausverwaltung Weber" und sieht Empfänger "Hausverwaltung Weber", IBAN "DE44 5001 0517 5407 3249 31" und einen leeren Verwendungszweck
+
+## Zwei Überweisungen am selben Kalendertag über zusammen mehr als das Tageslimit: die zweite wird abgelehnt
+
+Tags: UC-002, PK-12, BR-0019
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "3.000,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "2.100,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung und sieht in der Überweisung die Meldung "Der Betrag übersteigt das Tageslimit von 5.000,00 EUR."
+
+## Überweisungen bis genau zum Tageslimit werden am selben Kalendertag ausgeführt
+
+Tags: UC-002, PK-12, BR-0019
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "3.000,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "2.000,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."

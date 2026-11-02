@@ -23,7 +23,7 @@
 4. Das System prüft die IBAN (BR-0003) und den Betrag (BR-0004) und zeigt bei einer Abweichung die Meldung im Formular der Überweisung.
 5. Das System zeigt die Zusammenfassung mit Auftraggeberkonto, Empfänger, IBAN, Betrag in Euro und Verwendungszweck.
 6. Die Kundin bestätigt.
-7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003) und den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
+7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003), den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004) und den Tagesumsatz des Kalendertags (BR-0019).
 8. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
 9. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
 10. Die Kundin sieht den Auftrag als neuesten Umsatz in den Umsätzen des Girokontos (BR-0012).
@@ -88,6 +88,15 @@
 1. Das System belegt Empfänger und IBAN des Empfängers aus der Vorlage und, wenn die Vorlage einen Verwendungszweck hat, auch den Verwendungszweck; den Betrag übernimmt es nicht (BR-0017).
 2. Hat die Vorlage keinen Verwendungszweck, bleibt das Feld Verwendungszweck leer; er bleibt Pflicht und die Kundin füllt ihn.
 3. Die Kundin ergänzt den Betrag, ändert bei Bedarf Angaben und wählt „Weiter“; der Ablauf geht bei Schritt 3 weiter.
+
+### A8: Tageslimit des Kalendertags überschritten
+
+**Auslöser:** Der Tagesumsatz der Kundin am selben Kalendertag plus der Betrag übersteigt 5.000,00 EUR (BR-0019). (Schritt 7).  
+**Ablauf:**
+
+1. Der Dienst führt den Auftrag nicht aus; der Saldo des Girokontos bleibt unverändert und es entsteht kein Umsatz.
+2. Das System springt auf die Überweisung zurück, zeigt im Formular die Meldung „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“ mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
+3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ## Sequenzdiagramm
 
@@ -159,6 +168,10 @@ Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchung
 ### BR-0017: Empfänger aus Vorlage übernehmen
 
 Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vorlage als Empfänger, ihre IBAN als IBAN des Empfängers und, wenn sie einen Verwendungszweck hat, diesen; den Betrag übernimmt es nicht. Alle Felder bleiben änderbar, der Verwendungszweck bleibt Pflicht, und die Überweisung ändert die Vorlage nicht.
+
+### BR-0019: Tageslimit des Kalendertags
+
+Die Summe der Überweisungen, die die Kundin am selben Kalendertag bereits ausgeführt hat, plus der neue Betrag übersteigt 5.000,00 EUR nicht. Die Summe gilt über alle Girokonten der Kundin; Kalendertag ist der Buchungstag der ausgeführten Überweisungen nach BR-0012 in UTC. Abgelehnte Aufträge zählen nicht mit, und eine wiederholte Bestätigung derselben Auftrags-Kennung zählt nicht erneut (BR-0005). Der Dienst prüft zuerst den verfügbaren Betrag (BR-0004) und danach das Tageslimit. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt das Tageslimit von 5.000,00 EUR.“.
 
 ## Weitere Prüfungen
 
