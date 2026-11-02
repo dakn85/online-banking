@@ -63,8 +63,10 @@
 **Ablauf:**
 
 1. Das System löscht die Vorlage nicht sofort, sondern fragt im Dialog „Vorlage löschen“ mit „Vorlage löschen?“ nach und nennt darin die gewählte Vorlage mit ihrem Namen.
-2. Bestätigt die Kundin die Abfrage, löscht das System die Vorlage endgültig und schließt den Dialog; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
-3. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert, der Dialog schließt sich, und das System zeigt die Empfängervorlagen ohne Meldung.
+2. Der Knopf „Löschen“ im Dialog ist nach dem ersten Klick gesperrt; je Bestätigung sendet die Oberfläche genau ein DELETE /api/empfaengervorlagen/{vorlagenId}.
+3. Bestätigt die Kundin die Abfrage und antwortet der Dienst mit 204, löscht das System die Vorlage endgültig und schließt den Dialog; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
+4. Antwortet der Dienst auf DELETE /api/empfaengervorlagen/{vorlagenId} mit 404, weil die Vorlage inzwischen gelöscht wurde oder die Kennung zu einer anderen Kundin gehört (BR-0016), schließt sich der Dialog, das System lädt die Empfängervorlagen neu und zeigt sie ohne diese Zeile; die Seite zeigt die Meldung des Dienstes „Diese Empfängervorlage gibt es nicht.“, und „Empfängervorlage gelöscht.“ erscheint nicht.
+5. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert, der Dialog schließt sich, und das System zeigt die Empfängervorlagen ohne Meldung.
 
 ### A6: Keine gültige Sitzung
 
@@ -149,4 +151,4 @@ Der Verwendungszweck der Vorlage ist optional und höchstens 140 Zeichen lang. I
 
 ## Notizen
 
-Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird erst nach der Sicherheitsabfrage „Vorlage löschen?“; eine bereits bestätigte Überweisung bleibt unberührt. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber die Vorlagen „Vorlage 1“ bis „Vorlage 50“, damit Höchstzahl und Namenskonflikt prüfbar sind, und für lena.hoffmann keine. Die Dialoge „Neue Vorlage“, „Vorlage bearbeiten“ und „Vorlage löschen“ sind in der Maske Empfängervorlagen Gruppen auf der Seite und werden im Bau als Modale umgesetzt, von denen höchstens einer offen ist.
+Umbenennen ändert nur den Namen; IBAN und Verwendungszweck bleiben. Gelöscht wird erst nach der Sicherheitsabfrage „Vorlage löschen?“; eine bereits bestätigte Überweisung bleibt unberührt. Je Bestätigung sendet die Oberfläche genau ein DELETE, der Knopf „Löschen“ ist nach dem ersten Klick gesperrt; die Antwort 404 beendet den Dialog mit „Diese Empfängervorlage gibt es nicht.“ und ohne „Empfängervorlage gelöscht.“. Die Vorlagen liegen wie die Konten nur im Speicher und gehören zum Ausgangsstand von POST /api/test/reset (ADR-002); der Ausgangsstand führt für jonas.weber die Vorlagen „Vorlage 1“ bis „Vorlage 50“, damit Höchstzahl und Namenskonflikt prüfbar sind, und für lena.hoffmann keine. Die Dialoge „Neue Vorlage“, „Vorlage bearbeiten“ und „Vorlage löschen“ sind in der Maske Empfängervorlagen Gruppen auf der Seite und werden im Bau als Modale umgesetzt, von denen höchstens einer offen ist.

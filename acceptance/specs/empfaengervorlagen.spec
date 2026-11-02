@@ -161,3 +161,17 @@ Tags: UC-004, PK-13
 * Die Vorlage "Möbel Nord GmbH" ist inzwischen in einem anderen Tab gelöscht
 * Die Kundin ändert im Dialog "Vorlage bearbeiten" den Namen in "Möbel Nord GmbH (Filiale Süd)" und wählt „Umbenennen“
 * Der Dialog "Vorlage bearbeiten" ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage "Möbel Nord GmbH" und die Meldung "Diese Empfängervorlage gibt es nicht."
+
+## Eine inzwischen gelöschte Vorlage lässt sich nicht löschen
+
+Tags: UC-004, PK-13
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen
+* Die Vorlage "Möbel Nord GmbH" wird über den Dienst gelöscht
+* Die Kundin bestätigt den Dialog "Vorlage löschen"
+* Die Empfängervorlagen zeigen die Meldung "Diese Empfängervorlage gibt es nicht."
+* Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gelöscht." nicht
+* Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen "0 von 50"

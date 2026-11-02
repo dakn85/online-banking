@@ -28,6 +28,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - `acceptance/specs/empfaengervorlagen.spec`: Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
 - `acceptance/specs/empfaengervorlagen.spec`: Ein vergebener Name wird auch bei 50 Vorlagen als Konflikt abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine abgebrochene Neuanlage legt keine Vorlage an
+- `acceptance/specs/empfaengervorlagen.spec`: Eine inzwischen gelöschte Vorlage lässt sich nicht löschen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine inzwischen gelöschte Vorlage lässt sich nicht umbenennen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage lässt sich auf ihren eigenen Namen umbenennen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt
@@ -57,6 +58,10 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-13 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-13 grün
 
+## Offene Fragen
+
+- [ ] Zeigt die Seite bei 404 im Löschfall wörtlich „Diese Empfängervorlage gibt es nicht.“?
+
 ## Entscheidungen
 
 - Soll der Dialog „Vorlage bearbeiten“ auch IBAN und Verwendungszweck änderbar machen?
@@ -73,7 +78,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
   _→ eingearbeitet in UC-004, empfaengervorlagen · b742cd3_
 - Der Dialog „Vorlage bearbeiten“ wird aus der Zeile einer Vorlage geöffnet; die angezeigte Liste kann veraltet sein (Vorlage in einem anderen Tab gelöscht) oder die Zeile stammt aus einer fremden Sitzung. Was tut das System, wenn PATCH /api/empfaengervorlagen/{vorlagenId} mit 404 antwortet („Keine Vorlage der Kundin mit dieser Kennung“)? (PATCH /api/empfaengervorlagen/{vorlagenId}, vorlagenId)
   **Antwort:** Der Dialog schließt sich ohne Speichern, die Liste wird neu geladen (die Zeile verschwindet) und die Seite zeigt die Meldung des Dienstes „Diese Empfängervorlage gibt es nicht.“; die Namenseingabe geht verloren, „Empfängervorlage umbenannt.“ erscheint nicht.
-  _→ eingearbeitet in UC-004, PATCH /api/empfaengervorlagen/{vorlagenId}, empfaengervorlagen_
+  _→ eingearbeitet in UC-004, PATCH /api/empfaengervorlagen/{vorlagenId}, empfaengervorlagen · 1606169_
 - Der Dialog „Vorlage löschen“ bestätigt die Vorlage aus der Zeile. Was tut das System, wenn DELETE /api/empfaengervorlagen/{vorlagenId} mit 404 antwortet – die Vorlage wurde inzwischen gelöscht oder die Bestätigung doppelt ausgelöst, oder die Kennung gehört einer anderen Kundin? (DELETE /api/empfaengervorlagen/{vorlagenId}, vorlagenId)
   **Antwort:** Der Knopf „Löschen“ wird nach dem ersten Klick gesperrt, sodass je Bestätigung genau ein DELETE gesendet wird. Antwortet der Dienst dennoch 404, schließt sich der Dialog, die Liste wird neu geladen und die Seite zeigt „Diese Empfängervorlage gibt es nicht.“; „Empfängervorlage gelöscht.“ erscheint nicht.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-004, empfaengervorlagen_
