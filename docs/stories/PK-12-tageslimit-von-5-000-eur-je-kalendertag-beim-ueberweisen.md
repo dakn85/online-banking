@@ -14,8 +14,10 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
+| Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
 | Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
 | Ueberweisungsauftrag | Geändert | Eigenschaft betrag geändert |
+| Architektur | Geändert | Querschnittliche Konzepte geändert |
 | Überweisung | Geändert | Skizze geändert |
 | UC-002 Überweisung vom Girokonto | Geändert | Schritt 7 geändert, A8 neu: Tageslimit des Kalendertags überschritten, BR-0019 neu: Tageslimit des Kalendertags |
 | BR-0019 Tageslimit des Kalendertags | Neu | Neu in UC-002 |
@@ -27,9 +29,13 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Kontext geändert
+- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
+- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Folgen geändert
 - [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
 - [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
 - [ ] Ueberweisungsauftrag: Eigenschaft betrag geändert
+- [ ] Architektur: Querschnittliche Konzepte geändert
 - [ ] Überweisung: Skizze geändert
 - [ ] UC-002: Schritt 7 geändert
 - [ ] UC-002: A8 neu: Tageslimit des Kalendertags überschritten
@@ -42,16 +48,16 @@ Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des
 
 - Nach welcher Zeit wird der Kalendertag des Tageslimits bestimmt?
   **Antwort:** Buchungstag in UTC, wie BR-0012 (Annahme).
-  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung_
+  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung · 0fac6d9_
 - Gilt das Tageslimit je Kundin über alle Girokonten oder je Girokonto?
   **Antwort:** Je Kundin über alle ihre Girokonten (Annahme).
-  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung_
+  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung · 0fac6d9_
 - Welchen Status und welchen Text trägt die Ablehnung wegen des Tageslimits?
   **Antwort:** 422 wie beim verfügbaren Betrag, mit eigenem Text (Annahme).
-  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung_
+  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung · 0fac6d9_
 - Soll die Oberfläche das Tageslimit schon bei „Weiter“ prüfen?
   **Antwort:** Nein, nur der Dienst prüft (Annahme).
-  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung_
+  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung · 0fac6d9_
 - Wie werden die Akzeptanztests zum Tageslimit mit den Demo-Konten möglich?
   **Antwort:** Ausgangsstand bleibt, damit die bestehenden Szenarien unverändert gelten. Die beiden neuen Szenarien setzen den Saldo des Girokontos vorher über die Testschnittstelle (TEST_MODE) auf 6.000,00 EUR, mit einem eigenen Step, z. B. „Das Girokonto hat einen Saldo von "6.000,00 €"“.
-  _→ eingearbeitet in UC-002, BR-0019, POST /api/ueberweisungen, Schema Ueberweisungsauftrag, ueberweisung_
+  _→ eingearbeitet in ADR-002, architektur_

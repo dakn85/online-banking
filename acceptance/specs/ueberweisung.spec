@@ -103,9 +103,10 @@ Tags: UC-002, PK-7, BR-0017
 
 ## Zwei Überweisungen am selben Kalendertag über zusammen mehr als das Tageslimit: die zweite wird abgelehnt
 
-Tags: UC-002, PK-12, BR-0019
+Tags: UC-002, PK-12
 
 * Testdaten sind zurückgesetzt
+* Das Girokonto hat einen Saldo von "6.000,00 €"
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "3.000,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
@@ -116,9 +117,10 @@ Tags: UC-002, PK-12, BR-0019
 
 ## Überweisungen bis genau zum Tageslimit werden am selben Kalendertag ausgeführt
 
-Tags: UC-002, PK-12, BR-0019
+Tags: UC-002, PK-12
 
 * Testdaten sind zurückgesetzt
+* Das Girokonto hat einen Saldo von "6.000,00 €"
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "3.000,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung

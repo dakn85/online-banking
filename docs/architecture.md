@@ -191,7 +191,7 @@ Die Anmeldung prüft Kennung und PIN gegen die Demo-Kundenliste, ein Zähler und
 
 ### Persistenz und Transaktionen
 
-Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuchte Auftrags-Kennungen liegen im Speicher des Prozesses, ein Neustart setzt alles auf den Ausgangsstand zurück (ADR-002). Im Testbetrieb setzt eine zusätzliche Route den Ausgangsstand zurück und beendet alle Sitzungen; außerhalb des Testbetriebs ist sie nicht vorhanden. Belastung und Idempotenz-Ablage werden ohne Sperre nacheinander im selben Prozess verändert, mehrere Instanzen teilen nichts (siehe Risiken).
+Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuchte Auftrags-Kennungen liegen im Speicher des Prozesses, ein Neustart setzt alles auf den Ausgangsstand zurück (ADR-002). Im Testbetrieb setzen zusätzliche Routen den Ausgangsstand zurück, beenden alle Sitzungen und stellen den Saldo eines Kontos ein; außerhalb des Testbetriebs sind sie nicht vorhanden. Belastung und Idempotenz-Ablage werden ohne Sperre nacheinander im selben Prozess verändert, mehrere Instanzen teilen nichts (siehe Risiken).
 
 ### Logging und Telemetrie
 
@@ -199,7 +199,7 @@ Der Dienst schreibt eine Startmeldung und protokolliert einen Datenfehler; eigen
 
 ### Konfiguration
 
-Der Dienst liest nur Netz-Port, Betriebsart und Version aus der Umgebung, alles andere steht im Image. Die Version kommt beim Bauen ins Image und wird über eine offene Route gemeldet, damit die Akzeptanztests den geprüften Stand erkennen. Der Testbetrieb schaltet die Reset-Route frei; sonst ist sie unbekannt.
+Der Dienst liest nur Netz-Port, Betriebsart und Version aus der Umgebung, alles andere steht im Image. Die Version kommt beim Bauen ins Image und wird über eine offene Route gemeldet, damit die Akzeptanztests den geprüften Stand erkennen. Der Testbetrieb schaltet die Reset-Route und die Saldo-Route frei; sonst sind sie unbekannt.
 
 ### Formate
 
@@ -207,7 +207,7 @@ JSON in camelCase, Beträge als Zahl in Euro mit zwei Nachkommastellen, Zeitpunk
 
 ### Testkonzept
 
-Unit-Tests in `test/` prüfen die Geschäftsregeln am Modul ohne HTTP und setzen den Ausgangsstand je Test zurück; sie laufen als Teil des Baus. Akzeptanztests in `acceptance/` laufen als Gauge-Szenarien über Playwright im Browser gegen eine laufende Testumgebung; ein Szenario prüft ein Akzeptanzkriterium, je Szenario werden Cookies gelöscht und der Ausgangsstand über den Testbetrieb zurückgesetzt. Die Testumgebung entsteht aus dem Arbeitsstand: Image bauen, Container mit Testbetrieb starten, auf die Versionsantwort warten; die Tests starten den Dienst nicht selbst. Vor einem Lauf vergleichen sie die gemeldete Version mit einer freigegebenen Commit-Liste, sofern eine gesetzt ist.
+Unit-Tests in `test/` prüfen die Geschäftsregeln am Modul ohne HTTP und setzen den Ausgangsstand je Test zurück; sie laufen als Teil des Baus. Akzeptanztests in `acceptance/` laufen als Gauge-Szenarien über Playwright im Browser gegen eine laufende Testumgebung; ein Szenario prüft ein Akzeptanzkriterium, je Szenario werden Cookies gelöscht und der Ausgangsstand über den Testbetrieb zurückgesetzt; braucht ein Szenario einen anderen Ausgangssaldo, stellt es ihn über den Testbetrieb her, statt den Ausgangsstand zu ändern. Die Testumgebung entsteht aus dem Arbeitsstand: Image bauen, Container mit Testbetrieb starten, auf die Versionsantwort warten; die Tests starten den Dienst nicht selbst. Vor einem Lauf vergleichen sie die gemeldete Version mit einer freigegebenen Commit-Liste, sofern eine gesetzt ist.
 
 ## 9. Architekturentscheidungen
 
