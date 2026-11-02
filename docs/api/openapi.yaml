@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Online-Banking
   version: 0.1.0
-paths: { /api/konten: { get: { description: "Liefert die Konten der angemeldeten Kundin für den Finanzstatus. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um. Beträge in Euro, negative Salden (Kreditkarte mit offenem Betrag) als negative Zahl. Dispositionsrahmen und verfügbarer Betrag nur beim Girokonto.", operationId: kontenLesen, responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Kontenuebersicht' } } }, description: Konten der Kundin mit Gesamtvermögen }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung }, "500": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Datenfehler; ein Girokonto ohne Dispositionsrahmen } }, summary: Konten der angemeldeten Kundin mit Salden und Gesamtvermögen, tags: [ Finanzstatus ], x-use-cases: [ UC-001 ] } }, /api/ueberweisungen: { post: { description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId bucht nicht erneut. Beträge in Euro.", operationId: ueberweisungAusfuehren, requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }, required: true }, responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }, description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung }, "201": { content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }, description: "Auftrag ausgeführt, Saldo des Girokontos gemindert" }, "400": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: "IBAN ungültig oder gehört zu keinem SEPA-Land" }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung }, "403": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin }, "422": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Betrag nicht größer als 0 oder übersteigt den verfügbaren Betrag des Girokontos } }, summary: Überweisung vom Girokonto ausführen, tags: [ Überweisung ], x-use-cases: [ UC-002 ] } } }
+paths: { /api/konten: { get: { description: "Liefert die Konten der angemeldeten Kundin für den Finanzstatus. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um. Beträge in Euro, negative Salden (Kreditkarte mit offenem Betrag) als negative Zahl. Dispositionsrahmen und verfügbarer Betrag nur beim Girokonto.", operationId: kontenLesen, responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Kontenuebersicht' } } }, description: Konten der Kundin mit Gesamtvermögen }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung }, "500": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Datenfehler; ein Girokonto ohne Dispositionsrahmen } }, summary: Konten der angemeldeten Kundin mit Salden und Gesamtvermögen, tags: [ Finanzstatus ], x-use-cases: [ UC-001 ] } }, /api/ueberweisungen: { post: { description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId bucht nicht erneut. Beträge in Euro.", operationId: ueberweisungAusfuehren, requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }, required: true }, responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }, description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung }, "201": { content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }, description: "Auftrag ausgeführt, Saldo des Girokontos gemindert" }, "400": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: "IBAN ungültig oder gehört zu keinem SEPA-Land" }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung }, "403": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin }, "422": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Betrag nicht größer als 0 oder übersteigt den verfügbaren Betrag des Girokontos } }, summary: Überweisung vom Girokonto ausführen, tags: [ Überweisung ], x-use-cases: [ UC-002 ] } }, "/api/konten/{iban}/umsaetze": { get: { description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010).", operationId: umsaetzeLesen, parameters: [ { description: IBAN des Kontos der Kundin, in: path, name: iban, required: true, schema: { type: string } }, { description: "Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)", in: query, name: suchtext, required: false, schema: { type: string } }, { description: "Nur Umsätze mit Buchungstag ab diesem Tag, einschließlich (BR-0010); liegt dieser Tag nach dem Bis-Datum, antwortet der Dienst mit 400", in: query, name: von, required: false, schema: { format: date, type: string } }, { description: "Nur Umsätze mit Buchungstag bis zu diesem Tag, einschließlich (BR-0010)", in: query, name: bis, required: false, schema: { format: date, type: string } }, { description: Nur Umsätze mit positivem (eingang) oder negativem (ausgang) Betrag; alle schränkt nicht ein (BR-0009), in: query, name: richtung, required: false, schema: { default: alle, enum: [ alle, eingang, ausgang ], type: string } } ], responses: { "200": { content: { application/json: { schema: { $ref: '#/components/schemas/Umsaetze' } } }, description: "Umsätze des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert" }, "400": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: "Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)" }, "401": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Keine gültige Sitzung }, "404": { content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }, description: Die IBAN gehört zu keinem Konto der Kundin } }, summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst", tags: [ Finanzstatus ], x-use-cases: [ UC-003 ] } } }
 components:
   schemas:
     Fehler:
@@ -134,3 +134,48 @@ components:
         - betrag
         - verwendungszweck
       type: object
+    Umsaetze:
+      properties:
+        umsaetze:
+          items:
+            $ref: '#/components/schemas/Umsatz'
+          type: array
+      required:
+        - umsaetze
+      type: object
+    Umsatz:
+      properties:
+        betrag:
+          description: Betrag in Euro; beim Ausgang negativ
+          type: number
+        buchungstag:
+          description: Tag der Buchung
+          format: date
+          type: string
+        gegenpartei:
+          description: Name der Gegenpartei
+          type: string
+        saldoDanach:
+          description: Saldo des Kontos nach dieser Buchung in Euro
+          type: number
+        verwendungszweck:
+          description: Verwendungszweck der Buchung
+          type: string
+        waehrung:
+          enum:
+            - EUR
+          type: string
+        gebuchtAm:
+          description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
+          format: date-time
+          type: string
+      required:
+        - buchungstag
+        - gebuchtAm
+        - gegenpartei
+        - verwendungszweck
+        - betrag
+        - waehrung
+        - saldoDanach
+      type: object
+      x-entity: Umsatz

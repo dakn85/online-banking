@@ -213,4 +213,26 @@ a { color: var(--tanne); }
   .ueberweisung__raster { grid-template-columns: 1fr; }
   .ueberweisung__konto { order: -1; }
 }
+/* UC-003 Umsätze */
+.zurueck { margin: 0 0 16px; font-size: 14px; }
+.zurueck a { color: var(--tanne); text-decoration: none; }
+.kontokopf { display: flex; gap: 32px; margin: 0 0 20px; }
+.kontokopf dt { font-size: 13px; color: var(--tinte-2); }
+.kontokopf dd { margin: 2px 0 0; font-weight: 600; }
+.filter { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin: 0 0 20px; }
+.umsatztabelle { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); overflow: hidden; }
+.umsatztabelle th, .umsatztabelle td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--linie); }
+.umsatztabelle thead th { font-size: 13px; font-weight: 500; color: var(--tinte-2); background: #f7f9f8; }
+.umsatztabelle tbody tr:last-child > * { border-bottom: 0; }
+.umsatztabelle .zahl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.umsatztabelle .minus { color: var(--minus); }
+.umsatztabelle .plus { color: var(--plus); }
+.umsatztabelle .leise { color: var(--tinte-2); }
+.umsaetze .leer { padding: 24px; text-align: center; color: var(--tinte-2); background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); }
+.umsaetze .meldung { background: #fdecea; color: #7a1a12; }
+.kontentabelle .aktion .knopf + .knopf { margin-left: 4px; }
+.knopf--text { background: transparent; border-color: transparent; padding: 0 10px; }
+.knopf--text:hover { background: #e9f1ef; border-color: transparent; }
+.kontentabelle th, .kontentabelle td { padding-left: 10px; padding-right: 10px; }
+@media (max-width: 900px) { .filter { grid-template-columns: 1fr 1fr; } .umsaetze { overflow-x: auto; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

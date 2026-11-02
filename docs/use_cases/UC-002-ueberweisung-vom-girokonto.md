@@ -26,6 +26,7 @@
 7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003) und den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
 8. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
 9. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
+10. Die Kundin sieht den Auftrag als neuesten Umsatz in den Umsätzen des Girokontos (BR-0012).
 
 ## Alternativabläufe
 
@@ -111,6 +112,7 @@ sequenceDiagram
 
 - Der Auftrag ist genau einmal ausgeführt; der Saldo des Girokontos ist um den Betrag gemindert.
 - Der Finanzstatus zeigt den neuen Saldo und die Meldung „Überweisung ausgeführt.“.
+- Der Auftrag steht als neuester Umsatz in den Umsätzen des Girokontos.
 
 ### Fehlschlag
 
@@ -137,6 +139,10 @@ Nach der Ausführung ist der Saldo des Girokontos um den Betrag gemindert; das G
 ### BR-0007: Auftraggeberkonto der Kundin
 
 Die auftraggeberIban im Auftrag gehört zu einem Girokonto der angemeldeten Kundin. Sonst führt das System den Auftrag nicht aus.
+
+### BR-0012: Umsatz einer ausgeführten Überweisung
+
+Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchungstag ist der Tag der Ausführung, gebuchtAm der Ausführungszeitpunkt als Zeitpunkt in UTC (erfasstAm des Auftrags), Gegenpartei der eingegebene Empfänger, Verwendungszweck der eingegebene Verwendungszweck, Betrag der Betrag als Ausgang (negativ) und Saldo danach der nach BR-0006 geminderte Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt keinen weiteren Umsatz (BR-0005).
 
 ## Weitere Prüfungen
 

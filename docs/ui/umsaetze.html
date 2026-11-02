@@ -1,0 +1,44 @@
+<!-- maske: {
+  "title": "Umsätze",
+  "useCases": ["UC-003"],
+  "fields": [
+    {"name":"kontoname","label":"Konto","kind":"anzeige","attribute":"Konto.kontoname"},
+    {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"suchtext","label":"Suche","kind":"text"},
+    {"name":"zeitraumVon","label":"Zeitraum von","kind":"datum"},
+    {"name":"zeitraumBis","label":"Zeitraum bis","kind":"datum"},
+    {"name":"richtung","label":"Ein-/Ausgang","kind":"auswahl"},
+    {"name":"buchungstag","label":"Buchungstag","kind":"anzeige","attribute":"Umsatz.buchungstag"},
+    {"name":"gegenpartei","label":"Gegenpartei","kind":"anzeige","attribute":"Umsatz.gegenpartei"},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Umsatz.verwendungszweck"},
+    {"name":"betrag","label":"Betrag","kind":"anzeige","attribute":"Umsatz.betrag"},
+    {"name":"saldoDanach","label":"Saldo danach","kind":"anzeige","attribute":"Umsatz.saldoDanach"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Umsätze</h1>
+  <p>Die Buchungen Ihres Kontos, die neuesten zuerst.</p>
+</header>
+<dl data-wf="kennzahl">
+  <div><dt>Konto</dt><dd>Girokonto</dd></div>
+  <div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 31</dd></div>
+</dl>
+<div data-wf="filter">
+  <label data-wf="feld"><span>Suche</span><input name="suchtext" placeholder="Gegenpartei oder Verwendungszweck"></label>
+  <label data-wf="feld"><span>Zeitraum von</span><input type="date" name="zeitraumVon"></label>
+  <label data-wf="feld"><span>Zeitraum bis</span><input type="date" name="zeitraumBis"></label>
+  <label data-wf="feld"><span>Ein-/Ausgang</span><select name="richtung"><option>Alle</option><option>Eingang</option><option>Ausgang</option></select></label>
+</div>
+<p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
+<table data-wf="tabelle">
+  <caption>Umsätze Girokonto</caption>
+  <thead>
+    <tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Betrag</th><th>Saldo danach</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>2026-02-12</td><td>Bäckerei Krause</td><td>Einkauf</td><td>-12,00 €</td><td>2.145,30 €</td></tr>
+  </tbody>
+</table>
+<div data-wf="leer">
+  <p>Für diese Auswahl gibt es keine Umsätze.</p>
+</div>

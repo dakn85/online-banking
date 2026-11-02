@@ -23,6 +23,7 @@ Werkzeuge:
 | `warum_rot` {spec, szenario} | Warum ein Szenario auf main bricht: letzter grüner Stand, was seither kam, Nachbarsysteme, Ursache (ohne KI) |
 | `akzeptanztests` {key} | Szenarien der Story mit Schritten und ob sie implementiert sind |
 | `akzeptanztests_starten` {key} | Akzeptanztests der Story auf dem Zweig starten, Stufe Entwicklung; mit Produktcode im Zweig läuft die ganze Suite |
+| `akzeptanztests_melden` {key, commit, bericht} | Lokalen Lauf als Stufe Entwicklung melden: JUnit-Bericht von Gauge, gepushter Kopf des Zweigs |
 | `pull_request_oeffnen` {key} | Umsetzung fertig und in der Entwicklung grün: Pull Request öffnen; Review, Pipeline und Merge im Git |
 | `rueckfrage_stellen` {key, text} | Frage an den Fachbereich; die Antwort erscheint an der Story |
 | `rueckfragen_lesen` {key, id?} | Nur der Stand der Rückfragen (offen/beantwortet) mit Antwort; zum Warten auf eine Antwort |
@@ -42,6 +43,7 @@ Werkzeuge:
 | `technik_lesen` {adr?, teil?, story?} | Technischer Rahmen: docs/architecture.md (arc42), Entscheidungen unter docs/adr/ und Leitplanken des Hauses; was hier steht, gilt beim Bauen und Testen |
 | `betrieb_fehler` {stunden?, umgebung?} | Fehlergruppen im Betrieb mit Zustand, Vorkommen, Nutzern, Ort im Code und Story |
 | `betrieb_fehlergruppe` {id?, story?} | Eine Fehlergruppe mit Befund, Stacktrace, Logzeilen (maskiert), Bezug zu Operation, Use Cases und Stories; Zustand „beobachten“ heißt behoben, noch keine 24 Stunden ohne Vorkommen |
+| `betrieb_story_wirkung` {story} | Nach der Auslieferung: was mit den Operationen der Story geschah (Dauer, Serverfehler, neue Fehler) |
 
 ## Ablauf
 
