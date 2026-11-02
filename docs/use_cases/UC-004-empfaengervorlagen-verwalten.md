@@ -17,10 +17,10 @@
 ## Standardablauf
 
 1. Die Kundin wählt in der Überweisung „Vorlagen verwalten“.
-2. Das System zeigt die Empfängervorlagen der Kundin (BR-0016) mit Name, IBAN des Empfängers und Verwendungszweck, nach Name aufsteigend, und die Zahl der belegten Vorlagen („3 von 50“).
-3. Die Kundin gibt Name, IBAN des Empfängers und bei Bedarf einen Verwendungszweck ein und wählt „Speichern“.
-4. Das System prüft in dieser Reihenfolge: zuerst Pflicht und Format von Name, IBAN und Verwendungszweck (BR-0013, BR-0003, BR-0014, BR-0018; 400), dann die Eindeutigkeit des Namens bei der Kundin (BR-0013; 409) und zuletzt die Höchstzahl (BR-0015; 422); bei einer Abweichung speichert es die Vorlage nicht, lässt die bestehenden unverändert und zeigt die Meldung im Formular.
-5. Das System speichert die Vorlage und zeigt die Empfängervorlagen mit der neuen Vorlage und der Meldung „Empfängervorlage gespeichert.“.
+2. Das System zeigt die Empfängervorlagen der Kundin (BR-0016) mit Name, IBAN des Empfängers und Verwendungszweck, nach Name aufsteigend, in jeder Zeile die Aktionen „Bearbeiten“ und „Löschen“, im Kopf „Neue Vorlage“ und die Zahl der belegten Vorlagen („3 von 50“).
+3. Die Kundin wählt „Neue Vorlage“ und gibt im Dialog „Neue Vorlage“ Name, IBAN des Empfängers und bei Bedarf einen Verwendungszweck ein; sie wählt „Speichern“.
+4. Das System prüft in dieser Reihenfolge: zuerst Pflicht und Format von Name, IBAN und Verwendungszweck (BR-0013, BR-0003, BR-0014, BR-0018; 400), dann die Eindeutigkeit des Namens bei der Kundin (BR-0013; 409) und zuletzt die Höchstzahl (BR-0015; 422); bei einer Abweichung speichert es die Vorlage nicht, lässt die bestehenden unverändert, hält den Dialog offen und zeigt die Meldung im Dialog.
+5. Das System speichert die Vorlage, schließt den Dialog und zeigt die Empfängervorlagen mit der neuen Vorlage und der Meldung „Empfängervorlage gespeichert.“.
 
 ## Alternativabläufe
 
@@ -50,20 +50,20 @@
 
 ### A4: Vorlage umbenennen
 
-**Auslöser:** Die Kundin wählt in der Liste eine Vorlage, trägt unter „Vorlage umbenennen“ einen neuen Namen ein und wählt „Umbenennen“. (Schritt 5).  
+**Auslöser:** Die Kundin wählt in der Zeile einer Vorlage „Bearbeiten“, ändert im Dialog „Vorlage bearbeiten“ den Namen und wählt „Umbenennen“. (Schritt 5).  
 **Ablauf:**
 
-1. Das System prüft den neuen Namen nach BR-0013 (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig auch ohne Beachtung der Groß-/Kleinschreibung und ohne führende und folgende Leerzeichen; die eigene Vorlage zählt dabei nicht mit); ist er bei einer anderen Vorlage der Kundin schon vergeben, bleibt die Vorlage unverändert und das System zeigt „Eine Vorlage mit diesem Namen gibt es bereits.“.
-2. Trägt die Vorlage den eingegebenen Namen nach diesem Vergleich schon, entsteht kein Konflikt und der Dienst antwortet mit 200; sonst ändert das System nur den Namen. IBAN des Empfängers und Verwendungszweck bleiben in beiden Fällen unverändert, gespeichert und angezeigt wird die Eingabe der Kundin, und das System zeigt die Vorlagen mit diesem Namen und der Meldung „Empfängervorlage umbenannt.“.
+1. Das System prüft den neuen Namen nach BR-0013 (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig auch ohne Beachtung der Groß-/Kleinschreibung und ohne führende und folgende Leerzeichen; die eigene Vorlage zählt dabei nicht mit); ist er bei einer anderen Vorlage der Kundin schon vergeben, bleibt die Vorlage unverändert, der Dialog bleibt offen und das System zeigt in ihm „Eine Vorlage mit diesem Namen gibt es bereits.“.
+2. Trägt die Vorlage den eingegebenen Namen nach diesem Vergleich schon, entsteht kein Konflikt und der Dienst antwortet mit 200; sonst ändert das System nur den Namen. IBAN des Empfängers und Verwendungszweck bleiben in beiden Fällen unverändert, gespeichert und angezeigt wird die Eingabe der Kundin, das System schließt den Dialog und zeigt die Vorlagen mit diesem Namen und der Meldung „Empfängervorlage umbenannt.“.
 
 ### A5: Vorlage löschen
 
-**Auslöser:** Die Kundin wählt unter „Vorlage löschen“ eine Vorlage und wählt „Löschen“. (Schritt 5).  
+**Auslöser:** Die Kundin wählt in der Zeile einer Vorlage „Löschen“. (Schritt 5).  
 **Ablauf:**
 
-1. Das System löscht die Vorlage nicht sofort, sondern fragt mit „Vorlage löschen?“ nach.
-2. Bestätigt die Kundin die Abfrage, löscht das System die Vorlage endgültig; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
-3. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert und das System zeigt die Empfängervorlagen ohne Meldung.
+1. Das System löscht die Vorlage nicht sofort, sondern fragt im Dialog „Vorlage löschen“ mit „Vorlage löschen?“ nach und nennt darin die gewählte Vorlage.
+2. Bestätigt die Kundin die Abfrage, löscht das System die Vorlage endgültig und schließt den Dialog; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
+3. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert, der Dialog schließt sich, und das System zeigt die Empfängervorlagen ohne Meldung.
 
 ### A6: Keine gültige Sitzung
 
@@ -72,6 +72,13 @@
 
 1. Das System leitet auf die Anmeldeseite um.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
+
+### A7: Dialog ohne Speichern schließen
+
+**Auslöser:** Die Kundin wählt im Dialog „Neue Vorlage“ oder „Vorlage bearbeiten“ „Abbrechen“. (Schritt 3).  
+**Ablauf:**
+
+1. Das System schließt den Dialog, ohne zu speichern; die Empfängervorlagen bleiben unverändert und es erscheint keine Meldung.
 
 ## Sequenzdiagramm
 

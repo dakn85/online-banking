@@ -10,8 +10,33 @@ Als Privatkundin möchte ich jede Empfängervorlage über Symbole in ihrer Zeile
 
 Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervorlage und an den Endpunkten; kein Bearbeiten von IBAN oder Verwendungszweck; keine Änderung an der Überweisung (BR-0017).
 
+## Änderungen
+
+| Element | Änderung | Zusammenfassung |
+|---|---|---|
+| Empfängervorlagen | Geändert | Feld Vorlage zum Umbenennen entfällt, Feld Neuer Name entfällt, Feld Vorlage zum Löschen entfällt, und 3 weitere |
+| UC-004 Empfängervorlagen verwalten | Geändert | Schritt 2 geändert, Schritt 3 geändert, Schritt 4 geändert, und 4 weitere |
+
+## Akzeptanztests
+
+- `acceptance/specs/empfaengervorlagen.spec`: Eine abgebrochene Neuanlage legt keine Vorlage an
+- `acceptance/specs/empfaengervorlagen.spec`: Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
+
 ## Aufgaben für die Umsetzung
 
+- [ ] Empfängervorlagen: Feld Vorlage zum Umbenennen entfällt
+- [ ] Empfängervorlagen: Feld Neuer Name entfällt
+- [ ] Empfängervorlagen: Feld Vorlage zum Löschen entfällt
+- [ ] Empfängervorlagen: Aktion Neue Vorlage neu
+- [ ] Empfängervorlagen: Aktion Bearbeiten neu
+- [ ] Empfängervorlagen: Skizze geändert
+- [ ] UC-004: Schritt 2 geändert
+- [ ] UC-004: Schritt 3 geändert
+- [ ] UC-004: Schritt 4 geändert
+- [ ] UC-004: Schritt 5 geändert
+- [ ] UC-004: A4 geändert
+- [ ] UC-004: A5 geändert
+- [ ] UC-004: A7 neu: Dialog ohne Speichern schließen
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-13 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-13 grün
 

@@ -83,3 +83,23 @@ Tags: UC-004, PK-7, BR-0013
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
 * Die Kundin benennt die Vorlage "Möbel Nord GmbH" in "Möbel Nord GmbH" um und sieht IBAN "DE89 3704 0044 0532 0130 00", Verwendungszweck "Rechnung 4711" und die Meldung "Empfängervorlage umbenannt."
+
+## Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
+
+Tags: UC-004, PK-13
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Empfängervorlagen zeigen zu jeder Vorlage die Aktionen "Bearbeiten" und "Löschen"
+
+## Eine abgebrochene Neuanlage legt keine Vorlage an
+
+Tags: UC-004, PK-13
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet den Dialog "Neue Vorlage"
+* Die Kundin bricht den Dialog "Neue Vorlage" ab
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gespeichert."
