@@ -1,10 +1,14 @@
-# PK-12: Tageslimit: Vom Girokonto darf eine Kundin an einem Kalendertag zusammen höchstens 5.000 EUR überweisen; darüber …
+# PK-12: Tageslimit von 5.000 EUR je Kalendertag beim Überweisen
 
-**Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Erweiterung · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
-Tageslimit: Vom Girokonto darf eine Kundin an einem Kalendertag zusammen höchstens 5.000 EUR überweisen; darüber lehnt das System den Auftrag ab.
+Als Privatkundin möchte ich, dass das Online-Banking eine Überweisung von meinem Girokonto ablehnt, wenn ich zusammen mit den am selben Kalendertag bereits ausgeführten Überweisungen mehr als 5.000,00 EUR überweisen würde, damit ein Eingabefehler oder ein Missbrauch meinen Bestand nicht an einem Tag über die vereinbarte Grenze hinaus belastet.
+
+## Nicht im Scope
+
+Kein Anheben, Senken oder Sperren des Limits durch die Kundin, keine Anzeige des verbleibenden Tagesbetrags im Finanzstatus oder in der Überweisung, keine Termin- und Daueraufträge, keine Benachrichtigung beim Erreichen der Grenze, keine Änderung an BR-0004, BR-0005 und an der genau einmaligen Ausführung.
 
 ## Änderungen
 
