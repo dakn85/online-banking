@@ -15,7 +15,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Empfängervorlagen | Geändert | Feld Vorlage zum Umbenennen entfällt, Feld Neuer Name entfällt, Feld Vorlage zum Löschen entfällt, und 3 weitere |
-| UC-004 Empfängervorlagen verwalten | Geändert | Schritt 2 geändert, Schritt 3 geändert, Schritt 4 geändert, und 4 weitere |
+| UC-004 Empfängervorlagen verwalten | Geändert | Notizen geändert, Schritt 2 geändert, Schritt 3 geändert, und 5 weitere |
 
 ## Akzeptanztests
 
@@ -31,6 +31,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - [ ] Empfängervorlagen: Aktion Neue Vorlage neu
 - [ ] Empfängervorlagen: Aktion Bearbeiten neu
 - [ ] Empfängervorlagen: Skizze geändert
+- [ ] UC-004: Notizen geändert
 - [ ] UC-004: Schritt 2 geändert
 - [ ] UC-004: Schritt 3 geändert
 - [ ] UC-004: Schritt 4 geändert
@@ -48,10 +49,10 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
   _→ eingearbeitet in UC-004 · 88a26fd_
 - Wie sollen die Dialoge in der Spezifikation geführt werden?
   **Antwort:** Als Gruppen auf der Seite „Empfängervorlagen“, im Bau als Modale.
-  _→ eingearbeitet in empfaengervorlagen · 37840b3_
+  _→ eingearbeitet in UC-004_
 - Wo erscheinen die Fehlermeldungen zu Name, IBAN und Höchstzahl?
   **Antwort:** Im geöffneten Dialog, der offen bleibt.
   _→ eingearbeitet in UC-004 · 37840b3_
 - Soll der Löschdialog die gewählte Vorlage mit Namen nennen?
   **Antwort:** Ja, mit dem Namen der Vorlage.
-  _→ eingearbeitet in UC-004, empfaengervorlagen_
+  _→ eingearbeitet in UC-004, empfaengervorlagen · b742cd3_
