@@ -1,0 +1,28 @@
+openapi: 3.1.0
+info:
+  title: Kernbank
+  version: 0.1.0
+  description: REST-Schnittstelle der Kernbank der Aventa Bank. Konten und Buchungen kommen mit den Stories dazu.
+paths:
+  /api/version:
+    get:
+      operationId: versionLesen
+      summary: Stand des Dienstes
+      description: Nennt den Commit, aus dem der Dienst gebaut ist (Umgebungsvariable VERSION); ohne Angabe "lokal".
+      responses:
+        "200":
+          description: Stand des Dienstes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+components:
+  schemas:
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Kurzer Commit-Hash, bei uncommitteten Änderungen mit "+lokal"
+      required:
+        - version

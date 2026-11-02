@@ -20,3 +20,13 @@ test('Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler', () => {
   assert.throws(() => finanzstatus(), Datenfehler);
   zuruecksetzen();
 });
+
+test('PK-9: Die Meldung eines Datenfehlers nennt keine IBAN', () => {
+  kontenSetzen([{ kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE89370400440532013000', saldo: 10, waehrung: 'EUR' }]);
+  assert.throws(() => finanzstatus(), (fehler: Error) => {
+    assert.equal(fehler.message, 'Finanzstatus: Girokonto ohne Dispositionsrahmen');
+    assert.doesNotMatch(fehler.message, /DE\d{2}/);
+    return true;
+  });
+  zuruecksetzen();
+});

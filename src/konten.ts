@@ -25,7 +25,7 @@ export function zuruecksetzen(): void {
 }
 zuruecksetzen();
 
-/** Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler (Vertrag: 500). */
+/** Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler (Vertrag: 500). Die Meldung landet im Log und nennt nur Ort und Art, keinen Kontobezug (PK-9). */
 export class Datenfehler extends Error {}
 
 const runden = (betrag: number) => Math.round(betrag * 100) / 100;
@@ -36,7 +36,7 @@ export function finanzstatus(): { gesamtvermoegen: number; konten: (Konto & { ve
     gesamtvermoegen: runden(konten.reduce((summe, k) => summe + k.saldo, 0)),
     konten: konten.map(k => {
       if (k.art !== 'Girokonto') return { ...k };
-      if (k.dispositionsrahmen === undefined) throw new Datenfehler(`Girokonto ${k.iban} ohne Dispositionsrahmen`);
+      if (k.dispositionsrahmen === undefined) throw new Datenfehler('Finanzstatus: Girokonto ohne Dispositionsrahmen');
       return { ...k, verfuegbarerBetrag: runden(k.saldo + k.dispositionsrahmen) };
     }),
   };
@@ -46,6 +46,13 @@ export function finanzstatus(): { gesamtvermoegen: number; konten: (Konto & { ve
 export function girokonto(iban: string): (Konto & { dispositionsrahmen: number }) | undefined {
   const konto = konten.find(k => k.art === 'Girokonto' && k.iban === iban);
   return konto && konto.dispositionsrahmen !== undefined ? konto as Konto & { dispositionsrahmen: number } : undefined;
+}
+
+/** BR-0011: ein Konto der Kundin mit dieser IBAN (Leerzeichen zählen nicht), sonst nichts. */
+export function kontoMitIban(iban: string): Konto | undefined {
+  const gesucht = iban.replace(/\s+/g, '').toUpperCase();
+  const konto = konten.find(k => k.iban === gesucht);
+  return konto && { ...konto };
 }
 
 /** BR-0006: den Saldo eines Kontos um den Betrag mindern. */

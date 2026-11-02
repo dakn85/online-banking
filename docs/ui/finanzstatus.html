@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Finanzstatus",
-  "useCases": ["UC-001"],
+  "useCases": ["UC-001","UC-003"],
   "fields": [
     {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
     {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
@@ -11,7 +11,8 @@
     {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"}
   ],
   "actions": [
-    {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"}
+    {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"},
+    {"label":"Umsätze","useCase":"UC-003#1","screen":"umsaetze"}
   ]
 } -->
 <header data-wf="kopf">
@@ -27,7 +28,7 @@
     <tr><th>Kontoname</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
   </thead>
   <tbody>
-    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button data-wf="primaer">Überweisen</button></td></tr>
-    <tr><td>Kreditkarte</td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3249 55</td><td>-387,45 €</td><td></td><td></td><td></td></tr>
+    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button>Umsätze</button> <button data-wf="primaer">Überweisen</button></td></tr>
+    <tr><td>Kreditkarte</td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3249 55</td><td>-387,45 €</td><td></td><td></td><td><button>Umsätze</button></td></tr>
   </tbody>
 </table>
