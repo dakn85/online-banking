@@ -102,8 +102,7 @@ Tags: UC-004, PK-13
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet den Dialog "Neue Vorlage"
 * Die Kundin bricht den Dialog "Neue Vorlage" ab
-* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gespeichert."
+* Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen "0 von 50"
 
 ## Der Löschdialog nennt die gewählte Vorlage mit ihrem Namen
 
