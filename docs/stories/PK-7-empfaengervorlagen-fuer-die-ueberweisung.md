@@ -39,6 +39,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 - `acceptance/specs/empfaengervorlagen.spec`: Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
 - `acceptance/specs/empfaengervorlagen.spec`: Ein vergebener Name wird auch bei 50 Vorlagen als Konflikt abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Ein Verwendungszweck aus Leerzeichen gilt als kein Verwendungszweck
+- `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage lässt sich auf ihren eigenen Namen umbenennen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
@@ -101,10 +102,10 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
   _→ eingearbeitet in UC-004, BR-0015, POST /api/empfaengervorlagen · d7d23ad_
 - Was gilt, wenn die Kundin den Verwendungszweck leer lässt oder nur Leerzeichen eingibt? (POST /api/empfaengervorlagen, verwendungszweck)
   **Antwort:** Leer oder nur Leerzeichen = kein Verwendungszweck: der Dienst speichert keinen Wert, das Feld verwendungszweck fehlt in der Antwort und in der Liste; wird bei der Überweisung aus der Vorlage belegt, bleibt das Feld leer und die Kundin muss es füllen.
-  _→ eingearbeitet in UC-004, BR-0018, Empfaengervorlage, POST /api/empfaengervorlagen, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage_
+  _→ eingearbeitet in UC-004, BR-0018, Empfaengervorlage, POST /api/empfaengervorlagen, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage · 537cbf3_
 - Was antwortet der Dienst, wenn die Kundin eine Vorlage auf den Namen umbenennt, den sie selbst schon trägt? (PATCH /api/empfaengervorlagen/{vorlagenId}, name)
   **Antwort:** 200 mit der unveränderten Vorlage: die Eindeutigkeitsprüfung schließt die eigene Vorlage aus, Umbenennen auf denselben Namen ist kein Konflikt.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-004, BR-0013, PATCH /api/empfaengervorlagen/{vorlagenId}, Schema EmpfaengervorlageName_
 - Mit welchen Namen führt der Ausgangsstand die 50 Vorlagen von jonas.weber?
   **Antwort:** „Vorlage 1“ bis „Vorlage 50“, fortlaufend nummeriert.
   _→ eingearbeitet in UC-004, BR-0015, POST /api/empfaengervorlagen · d7d23ad_
