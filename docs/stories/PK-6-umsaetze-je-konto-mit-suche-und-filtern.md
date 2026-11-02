@@ -18,6 +18,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 | Umsaetze | Neu | Schema neu |
 | Umsatz | Neu | Schema neu, Entität neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
+| Demo-Konten statt Kernbank | Geändert | Anforderung geändert, Gilt für geändert |
 | Finanzstatus | Geändert | Use Case UC-003 neu, Aktion Umsätze neu, Skizze geändert |
 | Umsätze | Neu | Maske neu |
 | UC-001 Finanzstatus anzeigen | Geändert | Schritt 8 neu |
@@ -45,6 +46,8 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 - [ ] Umsatz: Schema neu
 - [ ] Umsatz: Entität neu
 - [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
+- [ ] Demo-Konten statt Kernbank: Anforderung geändert
+- [ ] Demo-Konten statt Kernbank: Gilt für geändert
 - [ ] Finanzstatus: Use Case UC-003 neu
 - [ ] Finanzstatus: Aktion Umsätze neu
 - [ ] Finanzstatus: Skizze geändert

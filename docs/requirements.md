@@ -11,4 +11,4 @@
 
 | ID | Titel | Kategorie | Beschreibung | Herkunft | Gilt für | Priorität | Status |
 |---|---|---|---|---|---|---|---|
-| C-001 | Demo-Konten statt Kernbank | Technisch | Es gibt noch kein Kernbanksystem. Der Dienst führt die Konten der Kundin als Demo-Daten und liefert sie über seine eigene Schnittstelle. | Regulatorik: Story PK-1 | System, GET /api/konten | Mittel | Entwurf |
+| C-001 | Demo-Konten statt Kernbank | Technisch | Es gibt noch kein Kernbanksystem. Der Dienst führt die Konten der Kundin und je Konto einige Demo-Umsätze als Demo-Daten und liefert sie über seine eigene Schnittstelle. | Regulatorik: Story PK-1 | System, GET /api/konten, GET /api/konten/{iban}/umsaetze | Mittel | Entwurf |
