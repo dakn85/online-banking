@@ -49,7 +49,7 @@
                 <td class="zahl${k.saldo < 0 ? ' minus' : ''}">${Aventa.euro(k.saldo)}</td>
                 <td class="zahl leise">${betrag(k.dispositionsrahmen)}</td>
                 <td class="zahl">${betrag(k.verfuegbarerBetrag)}</td>
-                <td class="aktion">${k.art === 'Girokonto' ? '<a class="knopf knopf--klein" href="/ueberweisung">Überweisen</a>' : ''}</td>
+                <td class="aktion"><a class="knopf knopf--klein knopf--text" href="/umsaetze?iban=${encodeURIComponent(k.iban)}">Umsätze</a>${k.art === 'Girokonto' ? ' <a class="knopf knopf--klein" href="/ueberweisung">Überweisen</a>' : ''}</td>
               </tr>`).join('')}
             </tbody>
           </table>

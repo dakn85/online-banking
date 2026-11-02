@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { Datenfehler, finanzstatus, zuruecksetzen } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from './ueberweisung';
+import { Abfragefehler, filterAus, umsaetzeVon, zuruecksetzen as umsaetzeZuruecksetzen } from './umsaetze';
 import { alleBeenden, angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 
 const port = Number(process.env.PORT ?? 8080);
@@ -63,11 +64,25 @@ app.post('/api/ueberweisungen', nurAngemeldet('api'), (req, res) => {
   }
 });
 
+// UC-003: Umsätze eines Kontos der Kundin (BR-0008 bis BR-0011)
+app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
+  let filter;
+  try {
+    filter = filterAus(req.query as Record<string, unknown>);
+  } catch (fehler) {
+    if (!(fehler instanceof Abfragefehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  const liste = umsaetzeVon(req.params.iban, filter);
+  if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  res.json({ umsaetze: liste });
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
-  // Testdaten zurücksetzen: alle Sitzungen beenden, Demo-Konten auf den Ausgangsstand, keine Aufträge.
-  app.post('/api/test/reset', (_req, res) => { alleBeenden(); zuruecksetzen(); auftraegeZuruecksetzen(); res.status(204).end(); });
+  // Testdaten zurücksetzen: alle Sitzungen beenden, Demo-Konten und Demo-Umsätze auf den Ausgangsstand, keine Aufträge.
+  app.post('/api/test/reset', (_req, res) => { alleBeenden(); zuruecksetzen(); auftraegeZuruecksetzen(); umsaetzeZuruecksetzen(); res.status(204).end(); });
 }
 
 // Seiten
@@ -76,7 +91,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 

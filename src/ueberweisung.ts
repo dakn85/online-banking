@@ -1,5 +1,6 @@
 /* UC-002 Überweisung vom Girokonto: Regeln BR-0003 bis BR-0007, ausgeführt im Dienst. */
 import { belasten, girokonto } from './konten';
+import { buchen } from './umsaetze';
 
 /** Länderkennzeichen des SEPA-Raums (EWR, Schweiz, Vereinigtes Königreich, Monaco, San Marino, Andorra, Vatikan). */
 const SEPA = new Set(('AD AT BE BG CH CY CZ DE DK EE ES FI FR GB GI GR HR HU IE IS IT LI LT LU LV MC MT NL NO PL PT RO SE SI SK SM VA').split(' '));
@@ -61,6 +62,12 @@ export function ausfuehren(auftrag: Ueberweisungsauftrag): { neu: boolean; ueber
     ...auftrag, empfaengerIban: ibanNormal(auftrag.empfaengerIban), betrag: cent / 100,
     waehrung: 'EUR', status: 'ausgefuehrt', erfasstAm: new Date().toISOString(),
   };
+  // BR-0012: genau ein Umsatz je Auftrag; Buchungstag ist der Tag der Ausführung (UTC), Saldo danach der geminderte Saldo.
+  buchen(konto.iban, {
+    buchungstag: ueberweisung.erfasstAm.slice(0, 10), gebuchtAm: ueberweisung.erfasstAm,
+    gegenpartei: ueberweisung.empfaenger, verwendungszweck: ueberweisung.verwendungszweck,
+    betrag: -ueberweisung.betrag, saldoDanach: girokonto(konto.iban)!.saldo,
+  });
   ausgefuehrt.set(auftrag.auftragsId, ueberweisung);
   return { neu: true, ueberweisung };
 }
