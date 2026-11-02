@@ -65,3 +65,12 @@ Tags: UC-004, PK-7, BR-0013, BR-0015
 * "jonas.weber" meldet sich mit der PIN "13579" an
 * Die Kundin legt die Vorlage "Vorlage 1" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
 * Die Empfängervorlagen zeigen die Meldung "Eine Vorlage mit diesem Namen gibt es bereits."
+
+## Ein Verwendungszweck aus Leerzeichen gilt als kein Verwendungszweck
+
+Tags: UC-004, PK-7
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck " " an
+* Die Kundin wählt in der Überweisung die Vorlage "Möbel Nord GmbH" und sieht Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00" und einen leeren Verwendungszweck

@@ -122,6 +122,10 @@ Eine Kundin hat höchstens 50 Empfängervorlagen. Ist die Höchstzahl erreicht, 
 
 Der Dienst liefert, ändert und löscht nur Empfängervorlagen der angemeldeten Kundin. Eine fremde oder unbekannte Vorlagen-Kennung beantwortet er mit 404, ohne gültige Sitzung mit 401.
 
+### BR-0018: Verwendungszweck der Empfängervorlage
+
+Der Verwendungszweck der Vorlage ist optional und höchstens 140 Zeichen lang. Ist er leer oder enthält er nur Leerzeichen, gilt er als nicht angegeben: der Dienst speichert keinen Wert, das Feld verwendungszweck fehlt in der Antwort und in der Liste, und es entsteht kein Fehler. Wird die Vorlage in der Überweisung gewählt, bleibt das Feld Verwendungszweck leer; dort bleibt er Pflicht und die Kundin füllt ihn (BR-0017).
+
 ## Weitere Prüfungen
 
 - **WP-1** (Unit-Test): Länge und Eindeutigkeit des Namens je Kundin sowie die Höchstzahl von 50 Vorlagen je Kundin.
