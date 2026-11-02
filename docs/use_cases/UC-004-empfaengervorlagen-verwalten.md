@@ -62,7 +62,7 @@
 **Auslöser:** Die Kundin wählt in der Zeile einer Vorlage „Löschen“. (Schritt 5).  
 **Ablauf:**
 
-1. Das System löscht die Vorlage nicht sofort, sondern fragt im Dialog „Vorlage löschen“ mit „Vorlage löschen?“ nach und nennt darin die gewählte Vorlage.
+1. Das System löscht die Vorlage nicht sofort, sondern fragt im Dialog „Vorlage löschen“ mit „Vorlage löschen?“ nach und nennt darin die gewählte Vorlage mit ihrem Namen.
 2. Bestätigt die Kundin die Abfrage, löscht das System die Vorlage endgültig und schließt den Dialog; eine bereits bestätigte Überweisung bleibt unberührt, und das System zeigt die verbleibenden Vorlagen mit der Meldung „Empfängervorlage gelöscht.“.
 3. Bricht die Kundin die Abfrage ab, bleibt die Vorlage unverändert, der Dialog schließt sich, und das System zeigt die Empfängervorlagen ohne Meldung.
 

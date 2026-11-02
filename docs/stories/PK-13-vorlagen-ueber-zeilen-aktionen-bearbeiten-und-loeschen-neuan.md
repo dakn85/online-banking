@@ -19,6 +19,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 
 ## Akzeptanztests
 
+- `acceptance/specs/empfaengervorlagen.spec`: Der Löschdialog nennt die gewählte Vorlage mit ihrem Namen
 - `acceptance/specs/empfaengervorlagen.spec`: Eine abgebrochene Neuanlage legt keine Vorlage an
 - `acceptance/specs/empfaengervorlagen.spec`: Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
 
@@ -40,16 +41,17 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-13 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-13 grün
 
-## Offene Fragen
-
-- [ ] Wo erscheinen die Fehlermeldungen zu Name, IBAN und Höchstzahl?
-- [ ] Soll der Löschdialog die gewählte Vorlage mit Namen nennen?
-
 ## Entscheidungen
 
 - Soll der Dialog „Vorlage bearbeiten“ auch IBAN und Verwendungszweck änderbar machen?
   **Antwort:** Nur der Name ist änderbar, PATCH bleibt wie heute.
-  _→ eingearbeitet in UC-004_
+  _→ eingearbeitet in UC-004 · 88a26fd_
 - Wie sollen die Dialoge in der Spezifikation geführt werden?
   **Antwort:** Als Gruppen auf der Seite „Empfängervorlagen“, im Bau als Modale.
   _→ eingearbeitet in empfaengervorlagen · 37840b3_
+- Wo erscheinen die Fehlermeldungen zu Name, IBAN und Höchstzahl?
+  **Antwort:** Im geöffneten Dialog, der offen bleibt.
+  _→ eingearbeitet in UC-004 · 37840b3_
+- Soll der Löschdialog die gewählte Vorlage mit Namen nennen?
+  **Antwort:** Ja, mit dem Namen der Vorlage.
+  _→ eingearbeitet in UC-004, empfaengervorlagen_
