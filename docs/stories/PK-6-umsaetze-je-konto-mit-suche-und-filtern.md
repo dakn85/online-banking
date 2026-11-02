@@ -17,6 +17,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst | Neu | Endpunkt neu |
 | Umsaetze | Neu | Schema neu |
 | Umsatz | Neu | Schema neu, Entität neu |
+| Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
 | Finanzstatus | Geändert | Use Case UC-003 neu, Aktion Umsätze neu, Skizze geändert |
 | Umsätze | Neu | Maske neu |
 | UC-001 Finanzstatus anzeigen | Geändert | Schritt 8 neu |
@@ -43,6 +44,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 - [ ] Umsaetze: Schema neu
 - [ ] Umsatz: Schema neu
 - [ ] Umsatz: Entität neu
+- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
 - [ ] Finanzstatus: Use Case UC-003 neu
 - [ ] Finanzstatus: Aktion Umsätze neu
 - [ ] Finanzstatus: Skizze geändert
