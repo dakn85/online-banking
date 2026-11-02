@@ -4,7 +4,7 @@
 
 ## Story
 
-Als Privatkundin möchte ich jede Empfängervorlage über Symbole in ihrer Zeile bearbeiten und löschen und neue Vorlagen über „Neue Vorlage“ in einem Dialog anlegen, damit ich nicht mit Auswahlfeldern und drei Formularen auf der Seite arbeiten muss.
+Als Privatkundin möchte ich jede Empfängervorlage über Symbole in ihrer Zeile bearbeiten und löschen und neue Vorlagen über „Neue Vorlage“ in einem Dialog anlegen, damit ich nicht mit Auswahlfeldern und drei Formularen auf der Seite arbeiten muss. In der Maske Empfängervorlagen entfallen dafür der Abschnitt „Vorlage umbenennen“ mit den Feldern „Vorlage zum Umbenennen“ und „Neuer Name“ und das Feld „Vorlage zum Löschen“.
 
 ## Nicht im Scope
 
