@@ -56,3 +56,12 @@ Tags: UC-004, PK-7, BR-0013
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
 * Die Kundin legt die Vorlage "möbel nord gmbh" mit IBAN "DE02 5001 0517 5407 3249 31" und Verwendungszweck "Rechnung 4712" an
 * Die Empfängervorlagen zeigen die Meldung "Eine Vorlage mit diesem Namen gibt es bereits."
+
+## Ein vergebener Name wird auch bei 50 Vorlagen als Konflikt abgelehnt
+
+Tags: UC-004, PK-7, BR-0013, BR-0015
+
+* Testdaten sind zurückgesetzt
+* "jonas.weber" meldet sich mit der PIN "13579" an
+* Die Kundin legt die Vorlage "Vorlage 1" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
+* Die Empfängervorlagen zeigen die Meldung "Eine Vorlage mit diesem Namen gibt es bereits."

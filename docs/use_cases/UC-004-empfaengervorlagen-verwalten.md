@@ -19,7 +19,7 @@
 1. Die Kundin wählt in der Überweisung „Vorlagen verwalten“.
 2. Das System zeigt die Empfängervorlagen der Kundin (BR-0016) mit Name, IBAN des Empfängers und Verwendungszweck, nach Name aufsteigend, und die Zahl der belegten Vorlagen („3 von 50“).
 3. Die Kundin gibt Name, IBAN des Empfängers und bei Bedarf einen Verwendungszweck ein und wählt „Speichern“.
-4. Das System prüft den Namen (BR-0013), die IBAN (BR-0003, BR-0014) und die Höchstzahl (BR-0015) und zeigt bei einer Abweichung die Meldung im Formular.
+4. Das System prüft in dieser Reihenfolge: zuerst Pflicht und Format von Name, IBAN und Verwendungszweck (BR-0013, BR-0003, BR-0014; 400), dann die Eindeutigkeit des Namens bei der Kundin (BR-0013; 409) und zuletzt die Höchstzahl (BR-0015; 422); bei einer Abweichung speichert es die Vorlage nicht, lässt die bestehenden unverändert und zeigt die Meldung im Formular.
 5. Das System speichert die Vorlage und zeigt die Empfängervorlagen mit der neuen Vorlage und der Meldung „Empfängervorlage gespeichert.“.
 
 ## Alternativabläufe
@@ -42,7 +42,7 @@
 
 ### A3: Höchstzahl erreicht
 
-**Auslöser:** Die Kundin hat bereits 50 Empfängervorlagen. (Schritt 4).  
+**Auslöser:** Die Kundin hat bereits 50 Empfängervorlagen und der Name der neuen Vorlage ist bei ihr noch nicht vergeben; die Höchstzahl prüft das System erst nach Pflicht, Format und Eindeutigkeit (BR-0015). (Schritt 4).  
 **Ablauf:**
 
 1. Das System legt keine weitere Vorlage an, lässt die bestehenden unverändert und zeigt „Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.“.
@@ -116,7 +116,7 @@ Die IBAN der Vorlage erfüllt BR-0003. Sonst speichert das System die Vorlage ni
 
 ### BR-0015: Höchstzahl von 50 Empfängervorlagen
 
-Eine Kundin hat höchstens 50 Empfängervorlagen. Ist die Höchstzahl erreicht, legt das System keine weitere an, lässt die bestehenden unverändert und zeigt „Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.“; nach dem Löschen einer Vorlage ist wieder Platz.
+Eine Kundin hat höchstens 50 Empfängervorlagen. Ist die Höchstzahl erreicht, legt das System keine weitere an, lässt die bestehenden unverändert, antwortet mit 422 und zeigt „Sie haben die Höchstzahl von 50 Empfängervorlagen erreicht.“; nach dem Löschen einer Vorlage ist wieder Platz. Beim Anlegen prüft das System in dieser Reihenfolge: Pflicht und Format (400), dann die Eindeutigkeit des Namens je Kundin (409, BR-0013), zuletzt die Höchstzahl (422). Ein vergebener Name ergibt daher auch bei 50 Vorlagen 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“; die bestehende Vorlage bleibt unverändert und die Höchstzahl wird nicht mehr geprüft.
 
 ### BR-0016: Vorlagen der angemeldeten Kundin
 

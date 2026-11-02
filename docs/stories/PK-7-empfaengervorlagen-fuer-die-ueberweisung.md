@@ -36,6 +36,7 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
 
 - `acceptance/specs/empfaengervorlagen.spec`: Die Höchstzahl von 50 Empfängervorlagen wird beim Anlegen geprüft
 - `acceptance/specs/empfaengervorlagen.spec`: Ein Name, der sich nur in der Groß-/Kleinschreibung unterscheidet, gilt als vergeben
+- `acceptance/specs/empfaengervorlagen.spec`: Ein vergebener Name wird auch bei 50 Vorlagen als Konflikt abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage mit schon vergebenem Namen wird abgelehnt
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
@@ -91,13 +92,16 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
   _→ eingearbeitet in UC-004, empfaengervorlagen · 45d8caa_
 - Wie vergleicht der Dienst den Namen auf Eindeutigkeit je Kundin – gelten „Möbel Nord GmbH“, „möbel nord gmbh“ und „Möbel Nord GmbH “ als derselbe Name, und was wird gespeichert? (POST /api/empfaengervorlagen, name)
   **Antwort:** Vergleich normalisiert: führende und folgende Leerzeichen entfernt, Groß-/Kleinschreibung nicht beachtet; gespeichert und angezeigt wird die Eingabe der Kundin. Bei Gleichheit antwortet der Dienst 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“, die bestehende Vorlage bleibt unverändert; gilt für Anlegen und Umbenennen.
-  _→ eingearbeitet in UC-004, BR-0013, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, Empfaengervorlage_
+  _→ eingearbeitet in UC-004, BR-0013, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, Empfaengervorlage · f64ef47_
 - In welcher Reihenfolge prüft der Dienst beim Anlegen, wenn der Name bereits vergeben ist und die Kundin schon 50 Vorlagen hat – 409 oder 422? (POST /api/empfaengervorlagen, name)
   **Antwort:** Pflicht-/Formatprüfungen zuerst (400), dann Eindeutigkeit (409), zuletzt Höchstzahl (422): ein vergebener Name ergibt auch bei 50 Vorlagen 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-004, BR-0015, POST /api/empfaengervorlagen_
 - Was gilt, wenn die Kundin den Verwendungszweck leer lässt oder nur Leerzeichen eingibt? (POST /api/empfaengervorlagen, verwendungszweck)
   **Antwort:** Leer oder nur Leerzeichen = kein Verwendungszweck: der Dienst speichert keinen Wert, das Feld verwendungszweck fehlt in der Antwort und in der Liste; wird bei der Überweisung aus der Vorlage belegt, bleibt das Feld leer und die Kundin muss es füllen.
   _→ noch nicht in der Spezifikation_
 - Was antwortet der Dienst, wenn die Kundin eine Vorlage auf den Namen umbenennt, den sie selbst schon trägt? (PATCH /api/empfaengervorlagen/{vorlagenId}, name)
   **Antwort:** 200 mit der unveränderten Vorlage: die Eindeutigkeitsprüfung schließt die eigene Vorlage aus, Umbenennen auf denselben Namen ist kein Konflikt.
   _→ noch nicht in der Spezifikation_
+- Mit welchen Namen führt der Ausgangsstand die 50 Vorlagen von jonas.weber?
+  **Antwort:** „Vorlage 1“ bis „Vorlage 50“, fortlaufend nummeriert.
+  _→ eingearbeitet in UC-004, BR-0015, POST /api/empfaengervorlagen_
