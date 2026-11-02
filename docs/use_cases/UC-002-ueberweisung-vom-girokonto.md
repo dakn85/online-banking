@@ -142,7 +142,7 @@ Die auftraggeberIban im Auftrag gehört zu einem Girokonto der angemeldeten Kund
 
 ### BR-0012: Umsatz einer ausgeführten Überweisung
 
-Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchungstag ist der Tag der Ausführung, Gegenpartei der eingegebene Empfänger, Verwendungszweck der eingegebene Verwendungszweck, Betrag der Betrag als Ausgang (negativ) und Saldo danach der nach BR-0006 geminderte Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt keinen weiteren Umsatz (BR-0005).
+Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchungstag ist der Tag der Ausführung, gebuchtAm der Ausführungszeitpunkt als Zeitpunkt in UTC (erfasstAm des Auftrags), Gegenpartei der eingegebene Empfänger, Verwendungszweck der eingegebene Verwendungszweck, Betrag der Betrag als Ausgang (negativ) und Saldo danach der nach BR-0006 geminderte Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt keinen weiteren Umsatz (BR-0005).
 
 ## Weitere Prüfungen
 

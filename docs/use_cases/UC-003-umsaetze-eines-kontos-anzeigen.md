@@ -91,7 +91,7 @@ sequenceDiagram
 
 ### BR-0008: Reihenfolge der Umsätze und Saldo danach
 
-Die Umsätze eines Kontos stehen mit dem neuesten Buchungstag zuerst; bei gleichem Buchungstag steht der zuletzt gebuchte Umsatz oben. Der Saldo danach eines Umsatzes ist der Saldo des Kontos unmittelbar nach dieser Buchung; der jüngste Umsatz eines Kontos trägt daher den aktuellen Saldo des Kontos.
+Die Umsätze eines Kontos stehen mit dem neuesten Buchungstag zuerst; sortiert wird nach Buchungstag absteigend und bei gleichem Buchungstag nach gebuchtAm absteigend, sodass der zuletzt gebuchte Umsatz oben steht. Der Saldo danach eines Umsatzes ist der Saldo des Kontos unmittelbar nach dieser Buchung; der jüngste Umsatz eines Kontos trägt daher den aktuellen Saldo des Kontos.
 
 ### BR-0009: Ein- und Ausgang
 

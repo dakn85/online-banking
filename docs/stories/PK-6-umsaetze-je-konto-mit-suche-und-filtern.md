@@ -93,10 +93,10 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
   _→ ohne Änderung: Vorschlag abgelehnt: Der Bau wählt die festen Buchungstage, UC-003 sagt nur, dass sie fest sind._
 - Was tut der Dienst, wenn der Zeitraum mit von nach bis übergeben wird (Von-Datum liegt nach dem Bis-Datum)? BR-0010 regelt nur die beiden geschlossenen Grenzen, der Vertrag nennt 400 nur für Format- und Richtungsfehler. (GET /api/konten/{iban}/umsaetze, bis)
   **Antwort:** 400 mit { fehler: „Der Zeitraum ist ungültig: von liegt nach bis.“ }, keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keines Hinweises nach UC-003 A2. BR-0010 wird um diese Grenzprüfung ergänzt.
-  _→ eingearbeitet in UC-003, BR-0010, GET /api/konten/{iban}/umsaetze, umsaetze_
+  _→ eingearbeitet in UC-003, BR-0010, GET /api/konten/{iban}/umsaetze, umsaetze · db621d5_
 - Woran ist bei gleichem Buchungstag die Reihenfolge „zuletzt gebuchter Umsatz oben“ (BR-0008) festgemacht? Die Entität Umsatz trägt weder Buchungszeitpunkt noch laufende Nummer, und das Schema Umsatz liefert kein Feld, das die Reihenfolge zweier Umsätze desselben Tages erkennen lässt — die Nachbedingung „der Auftrag steht als neuester Umsatz“ ist damit nicht prüfbar, und eine am selben Tag wie ein Demo-Umsatz ausgeführte Überweisung stünde nicht sicher oben. (POST /api/ueberweisungen, Überweisung.status ausgefuehrt – erste Bestätigung dieser Auftrags-Kennung)
   **Antwort:** Umsatz wird um gebuchtAm (DateTime, UTC; Pflicht) erweitert: das Schema Umsatz führt gebuchtAm, die Überweisung setzt den Ausführungszeitpunkt als gebuchtAm, die Demo-Umsätze erhalten feste Uhrzeiten; sortiert wird buchungstag absteigend, dann gebuchtAm absteigend — der neue Umsatz steht sicher zuoberst und die Regel ist im Akzeptanztest sichtbar.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in Umsatz, GET /api/konten/{iban}/umsaetze, Schema Umsatz, UC-003, BR-0008, UC-002, BR-0012_
 - Was soll die Beispielzeile der Maske „Umsätze“ zeigen?
   **Antwort:** Einen Demo-Umsatz des Ausgangsstands mit Saldo danach 2.145,30 € und einer Gegenpartei, die in keinem Szenario als Suchtext vorkommt.
   _→ noch nicht in der Spezifikation_
