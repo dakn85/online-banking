@@ -83,4 +83,16 @@ Termin- und Daueraufträge; Adressbuch mit mehreren Konten je Empfänger; Teilen
   _→ eingearbeitet in vision, UC-004, BR-0013, BR-0014, BR-0015, BR-0016, UC-002, BR-0017, Empfaengervorlage, GET /api/empfaengervorlagen, POST /api/empfaengervorlagen, PATCH /api/empfaengervorlagen/{vorlagenId}, DELETE /api/empfaengervorlagen/{vorlagenId}, Schema Empfaengervorlage, Schema NeueEmpfaengervorlage, Schema EmpfaengervorlageName, empfaengervorlagen, ueberweisung · 126f2d4_
 - Soll das Löschen einer Vorlage ohne Sicherheitsabfrage geschehen?
   **Antwort:** Erst nach einer Sicherheitsabfrage „Vorlage löschen?“.
-  _→ eingearbeitet in UC-004, empfaengervorlagen_
+  _→ eingearbeitet in UC-004, empfaengervorlagen · 45d8caa_
+- Wie vergleicht der Dienst den Namen auf Eindeutigkeit je Kundin – gelten „Möbel Nord GmbH“, „möbel nord gmbh“ und „Möbel Nord GmbH “ als derselbe Name, und was wird gespeichert? (POST /api/empfaengervorlagen, name)
+  **Antwort:** Vergleich normalisiert: führende und folgende Leerzeichen entfernt, Groß-/Kleinschreibung nicht beachtet; gespeichert und angezeigt wird die Eingabe der Kundin. Bei Gleichheit antwortet der Dienst 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“, die bestehende Vorlage bleibt unverändert; gilt für Anlegen und Umbenennen.
+  _→ noch nicht in der Spezifikation_
+- In welcher Reihenfolge prüft der Dienst beim Anlegen, wenn der Name bereits vergeben ist und die Kundin schon 50 Vorlagen hat – 409 oder 422? (POST /api/empfaengervorlagen, name)
+  **Antwort:** Pflicht-/Formatprüfungen zuerst (400), dann Eindeutigkeit (409), zuletzt Höchstzahl (422): ein vergebener Name ergibt auch bei 50 Vorlagen 409 mit „Eine Vorlage mit diesem Namen gibt es bereits.“
+  _→ noch nicht in der Spezifikation_
+- Was gilt, wenn die Kundin den Verwendungszweck leer lässt oder nur Leerzeichen eingibt? (POST /api/empfaengervorlagen, verwendungszweck)
+  **Antwort:** Leer oder nur Leerzeichen = kein Verwendungszweck: der Dienst speichert keinen Wert, das Feld verwendungszweck fehlt in der Antwort und in der Liste; wird bei der Überweisung aus der Vorlage belegt, bleibt das Feld leer und die Kundin muss es füllen.
+  _→ noch nicht in der Spezifikation_
+- Was antwortet der Dienst, wenn die Kundin eine Vorlage auf den Namen umbenennt, den sie selbst schon trägt? (PATCH /api/empfaengervorlagen/{vorlagenId}, name)
+  **Antwort:** 200 mit der unveränderten Vorlage: die Eindeutigkeitsprüfung schließt die eigene Vorlage aus, Umbenennen auf denselben Namen ist kein Konflikt.
+  _→ noch nicht in der Spezifikation_
