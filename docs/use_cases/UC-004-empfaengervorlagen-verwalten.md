@@ -53,8 +53,9 @@
 **Auslöser:** Die Kundin wählt in der Zeile einer Vorlage „Bearbeiten“, ändert im Dialog „Vorlage bearbeiten“ den Namen und wählt „Umbenennen“. (Schritt 5).  
 **Ablauf:**
 
-1. Das System prüft den neuen Namen nach BR-0013 (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig auch ohne Beachtung der Groß-/Kleinschreibung und ohne führende und folgende Leerzeichen; die eigene Vorlage zählt dabei nicht mit); ist er bei einer anderen Vorlage der Kundin schon vergeben, bleibt die Vorlage unverändert, der Dialog bleibt offen und das System zeigt in ihm „Eine Vorlage mit diesem Namen gibt es bereits.“.
-2. Trägt die Vorlage den eingegebenen Namen nach diesem Vergleich schon, entsteht kein Konflikt und der Dienst antwortet mit 200; sonst ändert das System nur den Namen. IBAN des Empfängers und Verwendungszweck bleiben in beiden Fällen unverändert, gespeichert und angezeigt wird die Eingabe der Kundin, das System schließt den Dialog und zeigt die Vorlagen mit diesem Namen und der Meldung „Empfängervorlage umbenannt.“.
+1. Der Dialog „Vorlage bearbeiten“ führt nur das Feld Name; IBAN des Empfängers und Verwendungszweck sind dort nicht änderbar, die Operation PATCH /api/empfaengervorlagen/{vorlagenId} ändert weiterhin nur den Namen.
+2. Das System prüft den neuen Namen nach BR-0013 (Pflicht, 1 bis 70 Zeichen, je Kundin eindeutig auch ohne Beachtung der Groß-/Kleinschreibung und ohne führende und folgende Leerzeichen; die eigene Vorlage zählt dabei nicht mit); ist er bei einer anderen Vorlage der Kundin schon vergeben, bleibt die Vorlage unverändert, der Dialog bleibt offen und das System zeigt in ihm „Eine Vorlage mit diesem Namen gibt es bereits.“.
+3. Trägt die Vorlage den eingegebenen Namen nach diesem Vergleich schon, entsteht kein Konflikt und der Dienst antwortet mit 200; sonst ändert das System nur den Namen. IBAN des Empfängers und Verwendungszweck bleiben in beiden Fällen unverändert, gespeichert und angezeigt wird die Eingabe der Kundin, das System schließt den Dialog und zeigt die Vorlagen mit diesem Namen und der Meldung „Empfängervorlage umbenannt.“.
 
 ### A5: Vorlage löschen
 

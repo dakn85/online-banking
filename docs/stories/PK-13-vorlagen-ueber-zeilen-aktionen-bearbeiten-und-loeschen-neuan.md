@@ -42,7 +42,6 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 
 ## Offene Fragen
 
-- [ ] Wie sollen die Dialoge in der Spezifikation geführt werden?
 - [ ] Wo erscheinen die Fehlermeldungen zu Name, IBAN und Höchstzahl?
 - [ ] Soll der Löschdialog die gewählte Vorlage mit Namen nennen?
 
@@ -50,4 +49,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 
 - Soll der Dialog „Vorlage bearbeiten“ auch IBAN und Verwendungszweck änderbar machen?
   **Antwort:** Nur der Name ist änderbar, PATCH bleibt wie heute.
-  _→ eingearbeitet in UC-004, empfaengervorlagen_
+  _→ eingearbeitet in UC-004_
+- Wie sollen die Dialoge in der Spezifikation geführt werden?
+  **Antwort:** Als Gruppen auf der Seite „Empfängervorlagen“, im Bau als Modale.
+  _→ eingearbeitet in empfaengervorlagen · 37840b3_
