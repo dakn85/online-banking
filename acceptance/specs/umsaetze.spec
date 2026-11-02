@@ -88,3 +88,15 @@ Tags: UC-003, PK-6, BR-0009
 | Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
 |-----------------|------------------|----------|--------------|
 | Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
+
+## Ein Konto, das nicht zur Kundin gehört, zeigt keine Umsätze
+
+Tags: UC-003, PK-6, BR-0011
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos mit der IBAN "DE00 1234 5678 9012 3456 78"
+* Die Umsätze zeigen die Meldung "Das Konto wurde nicht gefunden."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
+|-------------|------------------|--------|--------------|

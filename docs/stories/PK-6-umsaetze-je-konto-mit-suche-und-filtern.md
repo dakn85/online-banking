@@ -34,6 +34,7 @@ Export oder Ausdruck von Umsätzen, Beleg-Download, Storno und Umbuchung, Umsät
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Die Textsuche zeigt nur Umsätze mit dem Suchtext
 - `acceptance/specs/umsaetze.spec`: Die Umsätze zeigen die Buchungen mit Betrag und Saldo danach, neueste zuerst
+- `acceptance/specs/umsaetze.spec`: Ein Konto, das nicht zur Kundin gehört, zeigt keine Umsätze
 - `acceptance/specs/umsaetze.spec`: Ein Zeitraum in der Vergangenheit zeigt keine Umsätze
 
 ## Aufgaben für die Umsetzung
