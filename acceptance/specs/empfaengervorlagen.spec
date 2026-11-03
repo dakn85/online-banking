@@ -105,7 +105,7 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet den Dialog "Neue Vorlage"
-* Die Kundin bricht den Dialog "Neue Vorlage" ab
+* Die Kundin wählt im Dialog "Neue Vorlage" die Aktion "Abbrechen"
 * Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen "0 von 50"
 
 ## Der Löschdialog nennt die gewählte Vorlage mit ihrem Namen
@@ -115,7 +115,7 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen
+* Die Kundin öffnet in der Zeile der Vorlage "Möbel Nord GmbH" den Dialog "Vorlage löschen"
 * Der Dialog "Vorlage löschen" nennt die Vorlage "Möbel Nord GmbH"
 
 ## Der Dialog „Vorlage bearbeiten“ führt nur das Feld Name
@@ -125,7 +125,7 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Bearbeiten
+* Die Kundin öffnet in der Zeile der Vorlage "Möbel Nord GmbH" den Dialog "Vorlage bearbeiten"
 * Der Dialog "Vorlage bearbeiten" führt nur das Feld "Name"
 
 ## Der Abbruch der Löschabfrage lässt die Vorlage bestehen
@@ -135,8 +135,8 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen
-* Die Kundin bricht den Dialog "Vorlage löschen" ab
+* Die Kundin öffnet in der Zeile der Vorlage "Möbel Nord GmbH" den Dialog "Vorlage löschen"
+* Die Kundin wählt im Dialog "Vorlage löschen" die Aktion "Abbrechen"
 * Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen "1 von 50"
 
 ## Der Abbruch im Dialog „Vorlage bearbeiten“ ändert den Namen nicht
@@ -146,8 +146,8 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Bearbeiten
-* Die Kundin bricht den Dialog "Vorlage bearbeiten" ab
+* Die Kundin öffnet in der Zeile der Vorlage "Möbel Nord GmbH" den Dialog "Vorlage bearbeiten"
+* Die Kundin wählt im Dialog "Vorlage bearbeiten" die Aktion "Abbrechen"
 * Die Kundin wählt in der Überweisung die Vorlage "Möbel Nord GmbH" und sieht Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711"
 
 ## Eine inzwischen gelöschte Vorlage lässt sich nicht umbenennen
@@ -157,7 +157,7 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Bearbeiten
+* Die Kundin öffnet in der Zeile der Vorlage "Möbel Nord GmbH" den Dialog "Vorlage bearbeiten"
 * Die Vorlage "Möbel Nord GmbH" ist inzwischen in einem anderen Tab gelöscht
 * Die Kundin ändert im Dialog "Vorlage bearbeiten" den Namen in "Möbel Nord GmbH (Filiale Süd)" und wählt „Umbenennen“
 * Der Dialog "Vorlage bearbeiten" ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage "Möbel Nord GmbH" und die Meldung "Diese Empfängervorlage gibt es nicht."
@@ -169,9 +169,9 @@ Tags: UC-004, PK-13
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
-* Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Löschen
+* Die Kundin öffnet in der Zeile der Vorlage "Möbel Nord GmbH" den Dialog "Vorlage löschen"
 * Die Vorlage "Möbel Nord GmbH" wird über den Dienst gelöscht
-* Die Kundin bestätigt den Dialog "Vorlage löschen"
+* Die Kundin wählt im Dialog "Vorlage löschen" die Aktion "Löschen"
 * Die Empfängervorlagen zeigen die Meldung "Diese Empfängervorlage gibt es nicht."
 * Die Empfängervorlagen zeigen die Meldung "Empfängervorlage gelöscht." nicht
 * Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen "0 von 50"
