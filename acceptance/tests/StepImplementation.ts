@@ -558,9 +558,10 @@ export default class StepImplementation {
     }
   }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Empfängervorlagen")
-    public async empfaengervorlagen(): Promise<void> {
-        throw new Error("Noch nicht implementiert: Empfängervorlagen");
-    }
+  /** Öffnet die Seite Empfängervorlagen und prüft, dass sie mit ihrer Überschrift steht. */
+  @Step('Empfängervorlagen')
+  public async empfaengervorlagen(): Promise<void> {
+    const page = await this.vorlagenSeite();
+    await page.getByRole('heading', { name: 'Empfängervorlagen' }).waitFor();
+  }
 }
