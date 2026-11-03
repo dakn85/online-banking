@@ -332,12 +332,11 @@ export default class StepImplementation {
   @Step('Die Kundin wählt die Vorlage <name> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
   public async vorlageLoeschen(name: string, antwort: string) {
     const page = await this.vorlagenSeite();
-    const form = page.getByRole('form', { name: 'Vorlage löschen' });
-    await form.getByLabel('Vorlage zum Löschen').selectOption({ label: text(name) });
-    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
-    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
-    await abfrage.getByText('Vorlage löschen?').waitFor();
-    await this.nachNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
+    const zeile = page.locator('.vorlagen__tabelle tbody tr').filter({ has: page.getByRole('rowheader', { name: text(name), exact: true }) });
+    await zeile.getByRole('button', { name: 'Löschen', exact: true }).click();
+    const dialog = page.getByRole('form', { name: 'Vorlage löschen' });
+    await dialog.getByText('Vorlage löschen?').waitFor();
+    await this.nachNeuzeichnen(page, () => dialog.getByRole('button', { name: text(antwort), exact: true }).click());
   }
 
   @Step('Die Kundin benennt die Vorlage <alt> in <neu> um und sieht IBAN <iban>, Verwendungszweck <zweck> und die Meldung <meldung>')
