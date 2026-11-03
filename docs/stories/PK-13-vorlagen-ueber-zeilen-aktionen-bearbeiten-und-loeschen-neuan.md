@@ -38,6 +38,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 - `acceptance/specs/empfaengervorlagen.spec`: Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
+- `acceptance/specs/umsaetze.spec`: Die Umsätze der Kreditkarte zeigen drei Buchungen
 
 ## Aufgaben für die Umsetzung
 
