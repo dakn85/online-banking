@@ -544,7 +544,7 @@ export default class StepImplementation {
     assert.strictEqual(await bereich.count(), 0, `Der Abschnitt „${abschnitt}“ ist zu sehen`);
   }
 
-  @Step('Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht <table>')
+  @Step('Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht')
   public async dieEmpfaengervorlagenZeigenDieFelderMit(tabelle: string, table: Table): Promise<void> {
     const page = await this.vorlagenSeite();
     const form = page.getByRole('form', { name: text(tabelle) });
