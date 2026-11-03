@@ -557,4 +557,10 @@ export default class StepImplementation {
       }
     }
   }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Empfängervorlagen")
+    public async empfaengervorlagen(): Promise<void> {
+        throw new Error("Noch nicht implementiert: Empfängervorlagen");
+    }
 }
