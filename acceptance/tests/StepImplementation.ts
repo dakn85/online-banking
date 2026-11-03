@@ -329,6 +329,12 @@ export default class StepImplementation {
     await page.locator('.vorlagen > [role="status"], .vorlagen > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
   }
 
+  @Step('Der Dialog <dialog> zeigt die Meldung <meldung>')
+  public async dialogMelden(dialog: string, meldung: string) {
+    const page = await this.vorlagenSeite();
+    await page.getByRole('form', { name: text(dialog) }).getByRole('alert').filter({ hasText: text(meldung) }).waitFor();
+  }
+
   @Step('Die Kundin wählt die Vorlage <name> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
   public async vorlageLoeschen(name: string, antwort: string) {
     const page = await this.vorlagenSeite();
