@@ -382,10 +382,4 @@ export default class StepImplementation {
     const felder = await this.vorlageInUeberweisung(name);
     assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
   }
-
-    // angefordert von specs/umsaetze.spec
-    @Step("Die Umsätze zeigen genau <genau> Buchungen")
-    public async dieUmsaetzeZeigenGenauBuchungen(genau: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Umsätze zeigen genau <genau> Buchungen");
-    }
 }
