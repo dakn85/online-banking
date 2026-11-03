@@ -383,105 +383,178 @@ export default class StepImplementation {
     assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
   }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin wählt die Vorlage <vorlage> zum Löschen")
-    public async dieKundinWaehltDieVorlageZum(vorlage: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin wählt die Vorlage <vorlage> zum Löschen");
-    }
+  /* ---------------------------------------------------------------- PK-13 Zeilen-Aktionen und Dialoge */
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin bestätigt den Dialog <dialog>")
-    public async dieKundinBestaetigtDenDialog(dialog: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin bestätigt den Dialog <dialog>");
-    }
+  /** Die Zeile der Vorlage in der Vorlagentabelle; der Name steht als Zeilenkopf. */
+  private async vorlagenZeile(page: Page, vorlage: string) {
+    const zeile = page.locator('.vorlagen__tabelle tbody tr').filter({ has: page.getByRole('rowheader', { name: text(vorlage), exact: true }) });
+    await zeile.waitFor();
+    return zeile;
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin wählt die Vorlage <vorlage> zum Bearbeiten")
-    public async dieKundinWaehltDieVorlageZum2(vorlage: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin wählt die Vorlage <vorlage> zum Bearbeiten");
-    }
+  /** Der Dialog mit dem zugänglichen Namen `dialog`; Dialoge sind als Formular ausgezeichnet. */
+  private async dialog(page: Page, dialog: string) {
+    const form = page.getByRole('form', { name: text(dialog) });
+    await form.waitFor();
+    return form;
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin ändert im Dialog <dialog> den Namen in <in> und wählt „Umbenennen“")
-    public async dieKundinAendertImDialogDen(dialog: string, inWert: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin ändert im Dialog <dialog> den Namen in <in> und wählt „Umbenennen“");
-    }
+  @Step('Die Kundin wählt die Vorlage <vorlage> zum Löschen')
+  public async dieKundinWaehltDieVorlageZum(vorlage: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const zeile = await this.vorlagenZeile(page, vorlage);
+    await zeile.getByRole('button', { name: 'Löschen', exact: true }).click();
+    await this.dialog(page, 'Vorlage löschen');
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Empfängervorlagen zeigen zu jeder Vorlage die Aktionen <aktionen> und <und>")
-    public async dieEmpfaengervorlagenZeigenZuJederVorlage(aktionen: string, und: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen zu jeder Vorlage die Aktionen <aktionen> und <und>");
-    }
+  @Step('Die Kundin bestätigt den Dialog <dialog>')
+  public async dieKundinBestaetigtDenDialog(dialog: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const form = await this.dialog(page, dialog);
+    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen', exact: true }).click());
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin öffnet den Dialog <dialog>")
-    public async dieKundinOeffnetDenDialog(dialog: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin öffnet den Dialog <dialog>");
-    }
+  @Step('Die Kundin wählt die Vorlage <vorlage> zum Bearbeiten')
+  public async dieKundinWaehltDieVorlageZum2(vorlage: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const zeile = await this.vorlagenZeile(page, vorlage);
+    await zeile.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
+    await this.dialog(page, 'Vorlage bearbeiten');
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin wählt im Dialog <dialog> die Aktion <aktion>")
-    public async dieKundinWaehltImDialogDie(dialog: string, aktion: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin wählt im Dialog <dialog> die Aktion <aktion>");
-    }
+  @Step('Die Kundin ändert im Dialog <dialog> den Namen in <in> und wählt „Umbenennen“')
+  public async dieKundinAendertImDialogDen(dialog: string, inWert: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const form = await this.dialog(page, dialog);
+    await form.getByLabel('Name', { exact: true }).fill(text(inWert));
+    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Umbenennen', exact: true }).click());
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen <vorlagen>")
-    public async dieEmpfaengervorlagenZeigenDieZahlDer(vorlagen: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen <vorlagen>");
+  @Step('Die Empfängervorlagen zeigen zu jeder Vorlage die Aktionen <aktionen> und <und>')
+  public async dieEmpfaengervorlagenZeigenZuJederVorlage(aktionen: string, und: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const zeilen = page.locator('.vorlagen__tabelle tbody tr');
+    const anzahl = await zeilen.count();
+    assert.ok(anzahl > 0, 'Die Empfängervorlagen zeigen keine Vorlagen');
+    for (let n = 0; n < anzahl; n++) {
+      const zeile = zeilen.nth(n);
+      const name = sichtbar(await zeile.getByRole('rowheader').first().textContent());
+      for (const aktion of [aktionen, und]) {
+        assert.ok(await zeile.getByRole('button', { name: text(aktion), exact: true }).isVisible(), `Vorlage „${name}“ zeigt die Aktion „${aktion}“ nicht`);
+      }
     }
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Kundin öffnet in der Zeile der Vorlage <vorlage> den Dialog <dialog>")
-    public async dieKundinOeffnetInDerZeile(vorlage: string, dialog: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Kundin öffnet in der Zeile der Vorlage <vorlage> den Dialog <dialog>");
-    }
+  @Step('Die Kundin öffnet den Dialog <dialog>')
+  public async dieKundinOeffnetDenDialog(dialog: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    await page.getByRole('button', { name: text(dialog), exact: true }).click();
+    await this.dialog(page, dialog);
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Der Dialog <dialog> nennt die Vorlage <vorlage>")
-    public async derDialogNenntDieVorlage(dialog: string, vorlage: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Der Dialog <dialog> nennt die Vorlage <vorlage>");
-    }
+  @Step('Die Kundin wählt im Dialog <dialog> die Aktion <aktion>')
+  public async dieKundinWaehltImDialogDie(dialog: string, aktion: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const form = await this.dialog(page, dialog);
+    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: text(aktion), exact: true }).click());
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Der Dialog <dialog> führt nur das Feld <feld>")
-    public async derDialogFuehrtNurDasFeld(dialog: string, feld: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Der Dialog <dialog> führt nur das Feld <feld>");
-    }
+  @Step('Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen <vorlagen>')
+  public async dieEmpfaengervorlagenZeigenDieZahlDer(vorlagen: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    await page.locator('.vorlagen').getByText(text(vorlagen), { exact: true }).waitFor();
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Vorlage <vorlage> ist inzwischen in einem anderen Tab gelöscht")
-    public async dieVorlageIstInzwischenInEinem(vorlage: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Vorlage <vorlage> ist inzwischen in einem anderen Tab gelöscht");
-    }
+  @Step('Die Kundin öffnet in der Zeile der Vorlage <vorlage> den Dialog <dialog>')
+  public async dieKundinOeffnetInDerZeile(vorlage: string, dialog: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const zeile = await this.vorlagenZeile(page, vorlage);
+    // Die Aktion trägt den Dialognamen („Vorlage löschen“/„Vorlage bearbeiten“); sonst den Kurznamen probieren.
+    const knopf = zeile.getByRole('button', { name: text(dialog), exact: true });
+    if (await knopf.count()) await knopf.click();
+    else await zeile.getByRole('button', { name: text(dialog).replace(/^Vorlage\s+/, ''), exact: true }).click();
+    await this.dialog(page, dialog);
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Der Dialog <dialog> ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage <vorlage> und die Meldung <meldung>")
-    public async derDialogIstGeschlossenUndDie(dialog: string, vorlage: string, meldung: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Der Dialog <dialog> ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage <vorlage> und die Meldung <meldung>");
-    }
+  @Step('Der Dialog <dialog> nennt die Vorlage <vorlage>')
+  public async derDialogNenntDieVorlage(dialog: string, vorlage: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const form = await this.dialog(page, dialog);
+    await form.getByText(text(vorlage), { exact: false }).first().waitFor();
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Vorlage <vorlage> wird über den Dienst gelöscht")
-    public async dieVorlageWirdUeberDenDienst(vorlage: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Vorlage <vorlage> wird über den Dienst gelöscht");
+  @Step('Der Dialog <dialog> führt nur das Feld <feld>')
+  public async derDialogFuehrtNurDasFeld(dialog: string, feld: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const form = await this.dialog(page, dialog);
+    const felder = form.locator('input:not([type="hidden"]), select, textarea');
+    const namen: string[] = [];
+    for (let n = 0; n < await felder.count(); n++) {
+      const element = felder.nth(n);
+      const id = await element.getAttribute('id');
+      const label = id ? form.locator(`label[for="${id}"]`) : form.locator('label').filter({ has: element });
+      namen.push(sichtbar(await label.first().textContent()));
     }
+    assert.deepStrictEqual(namen, [text(feld)], `Der Dialog „${dialog}“ führt die Felder ${namen.join(', ')}`);
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Empfängervorlagen zeigen die Meldung <meldung> nicht")
-    public async dieEmpfaengervorlagenZeigenDieMeldungNicht(meldung: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen die Meldung <meldung> nicht");
-    }
+  @Step('Die Vorlage <vorlage> ist inzwischen in einem anderen Tab gelöscht')
+  public async dieVorlageIstInzwischenInEinem(vorlage: string): Promise<void> {
+    // Der andere Tab löscht über den Dienst; der offene Dialog dieser Seite bleibt stehen.
+    await this.vorlageUeberDienstLoeschen(vorlage);
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Empfängervorlagen zeigen den Abschnitt <abschnitt> nicht")
-    public async dieEmpfaengervorlagenZeigenDenAbschnittNicht(abschnitt: string): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen den Abschnitt <abschnitt> nicht");
-    }
+  @Step('Der Dialog <dialog> ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage <vorlage> und die Meldung <meldung>')
+  public async derDialogIstGeschlossenUndDie(dialog: string, vorlage: string, meldung: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    assert.strictEqual(await page.getByRole('form', { name: text(dialog) }).count(), 0, `Der Dialog „${dialog}“ ist noch offen`);
+    const zeile = page.locator('.vorlagen__tabelle tbody tr').filter({ has: page.getByRole('rowheader', { name: text(vorlage), exact: true }) });
+    assert.strictEqual(await zeile.count(), 0, `Die Vorlage „${vorlage}“ ist noch zu sehen`);
+    await page.locator('.vorlagen > [role="status"], .vorlagen > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+  }
 
-    // angefordert von specs/empfaengervorlagen.spec
-    @Step("Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht <table>")
-    public async dieEmpfaengervorlagenZeigenDieFelderMit(tabelle: string, table: Table): Promise<void> {
-        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht <table>");
+  /** Löscht eine Vorlage über den Dienst; die Kennung wird über die Liste der Vorlagen ermittelt. */
+  private async vorlageUeberDienstLoeschen(vorlage: string) {
+    const liste = await fetch(`${basisUrl}/api/empfaengervorlagen`);
+    assert.strictEqual(liste.status, 200, 'GET /api/empfaengervorlagen');
+    const eintraege = await liste.json() as Array<{ id: string | number; name: string }>;
+    const treffer = eintraege.find(e => e.name === text(vorlage));
+    assert.ok(treffer, `Die Vorlage „${vorlage}“ gibt es im Dienst nicht`);
+    const antwort = await fetch(`${basisUrl}/api/empfaengervorlagen/${encodeURIComponent(String(treffer.id))}`, { method: 'DELETE' });
+    assert.ok(antwort.ok, `DELETE /api/empfaengervorlagen/${treffer.id} antwortete ${antwort.status}`);
+  }
+
+  @Step('Die Vorlage <vorlage> wird über den Dienst gelöscht')
+  public async dieVorlageWirdUeberDenDienst(vorlage: string): Promise<void> {
+    await this.vorlageUeberDienstLoeschen(vorlage);
+  }
+
+  @Step('Die Empfängervorlagen zeigen die Meldung <meldung> nicht')
+  public async dieEmpfaengervorlagenZeigenDieMeldungNicht(meldung: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    assert.strictEqual(await page.locator('.vorlagen > [role="status"], .vorlagen > [role="alert"]').filter({ hasText: text(meldung) }).count(), 0, `Die Meldung „${meldung}“ ist zu sehen`);
+  }
+
+  @Step('Die Empfängervorlagen zeigen den Abschnitt <abschnitt> nicht')
+  public async dieEmpfaengervorlagenZeigenDenAbschnittNicht(abschnitt: string): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const bereich = page.locator('.vorlagen').getByRole('region', { name: text(abschnitt) })
+      .or(page.locator('.vorlagen').getByRole('form', { name: text(abschnitt) }))
+      .or(page.locator('.vorlagen').getByRole('heading', { name: text(abschnitt) }));
+    assert.strictEqual(await bereich.count(), 0, `Der Abschnitt „${abschnitt}“ ist zu sehen`);
+  }
+
+  @Step('Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht <table>')
+  public async dieEmpfaengervorlagenZeigenDieFelderMit(tabelle: string, table: Table): Promise<void> {
+    const page = await this.vorlagenSeite();
+    const form = page.getByRole('form', { name: text(tabelle) });
+    assert.strictEqual(await form.count(), 0, `Der Bereich „${tabelle}“ ist zu sehen`);
+    for (const zeile of table.getTableRows()) {
+      for (const spalte of table.getColumnNames()) {
+        const wert = text(zeile.getCell(spalte) ?? '').trim();
+        if (!wert) continue;
+        assert.strictEqual(await page.locator('.vorlagen').getByText(wert, { exact: true }).count(), 0, `Der Eintrag „${wert}“ (${spalte}) ist zu sehen`);
+      }
     }
+  }
 }
