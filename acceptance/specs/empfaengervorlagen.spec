@@ -41,7 +41,7 @@ Tags: UC-004, PK-13, BR-0014
 
 ## Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 
-Tags: UC-004, PK-13
+Tags: UC-004, PK-13, BR-0013
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
