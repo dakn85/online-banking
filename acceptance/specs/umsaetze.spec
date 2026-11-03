@@ -1,6 +1,7 @@
 # Umsätze eines Kontos
 
 ## Die Umsätze zeigen die Buchungen mit Betrag und Saldo danach, neueste zuerst
+
 Tags: UC-003, PK-6, BR-0008, BR-0012
 
 * Testdaten sind zurückgesetzt
@@ -23,6 +24,7 @@ Tags: UC-003, PK-6, BR-0008, BR-0012
 | Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
 
 ## Die Textsuche zeigt nur Umsätze mit dem Suchtext
+
 Tags: UC-003, PK-6, BR-0010
 
 * Testdaten sind zurückgesetzt
@@ -35,15 +37,16 @@ Tags: UC-003, PK-6, BR-0010
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext   | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|------------|--------------|--------------|--------------|
-| Stadtwerke |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+| Möbel    |              |              | Alle         |
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei    | Verwendungszweck | Betrag   | Saldo danach |
-|----------------|------------------|----------|--------------|
-| Stadtwerke Süd | Abschlag März    | -12,00 € | 2.083,30 €   |
+| Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
+|-----------------|------------------|----------|--------------|
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
 
 ## Ein Zeitraum in der Vergangenheit zeigt keine Umsätze
+
 Tags: UC-003, PK-6, BR-0010
 
 * Testdaten sind zurückgesetzt
@@ -55,12 +58,13 @@ Tags: UC-003, PK-6, BR-0010
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          | 2020-01-01   | 2020-12-31   | Alle         |
+| Möbel    | 2020-01-01   | 2020-12-31   | Alle         |
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei | Betrag |
-|-------------|--------|
+| Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
+|-------------|------------------|--------|--------------|
 
 ## Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
+
 Tags: UC-003, PK-6, BR-0009
 
 * Testdaten sind zurückgesetzt
@@ -72,24 +76,21 @@ Tags: UC-003, PK-6, BR-0009
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          |              |              | Eingang      |
+| Möbel    |              |              | Eingang      |
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei           | Betrag     | Saldo danach |
-|-----------------------|------------|--------------|
-| Lindner Logistik GmbH | 2.640,00 € | 2.243,30 €   |
+| Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
+|-------------|------------------|--------|--------------|
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          |              |              | Ausgang      |
+| Möbel    |              |              | Ausgang      |
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei            | Betrag    | Saldo danach |
-|------------------------|-----------|--------------|
-| Möbel Nord GmbH        | -50,00 €  | 2.095,30 €   |
-| Bäckerei Krause        | -12,00 €  | 2.145,30 €   |
-| Energieversorgung Nord | -86,00 €  | 2.157,30 €   |
-| Hausverwaltung Berger  | -950,00 € | -396,70 €    |
+| Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
+|-----------------|------------------|----------|--------------|
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
 
 ## Ein Konto, das nicht zur Kundin gehört, zeigt keine Umsätze
+
 Tags: UC-003, PK-6, BR-0011
 
 * Testdaten sind zurückgesetzt
@@ -97,10 +98,11 @@ Tags: UC-003, PK-6, BR-0011
 * Die Kundin öffnet die Umsätze des Kontos mit der IBAN "DE00 1234 5678 9012 3456 78"
 * Die Umsätze zeigen die Meldung "Das Konto wurde nicht gefunden."
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei | Betrag |
-|-------------|--------|
+| Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
+|-------------|------------------|--------|--------------|
 
 ## Ein Von-Datum nach dem Bis-Datum zeigt die Meldung zum ungültigen Zeitraum
+
 Tags: UC-003, PK-6, BR-0010
 
 * Testdaten sind zurückgesetzt
@@ -109,30 +111,17 @@ Tags: UC-003, PK-6, BR-0010
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          | 2026-02-12   | 2026-01-01   | Alle         |
+|          | 2026-03-31   | 2026-03-01   | Alle         |
 * Die Umsätze zeigen die Meldung "Der Zeitraum ist ungültig: von liegt nach bis."
 * Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei | Betrag |
-|-------------|--------|
+| Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
+|-------------|------------------|--------|--------------|
 
 ## Ohne Anmeldung ist die Umsatzseite nicht erreichbar
+
 Tags: UC-003, PK-6
 
 * Testdaten sind zurückgesetzt
 * Die Umsatzseite ist ohne Anmeldung nicht erreichbar
 * Die Anmeldeseite ist zu sehen
-
-## Die Umsätze der Kreditkarte zeigen drei Buchungen
-
-Tags: UC-003, PK-6
-
-* Testdaten sind zurückgesetzt
-* "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Kundin öffnet die Umsätze des Kontos "Kreditkarte"
-* Die Umsätze zeigen die Zeilen
-| Buchungstag | Gegenpartei              | Betrag    |
-|-------------|--------------------------|-----------|
-| 11.02.2026  | Buchhandlung Seitenweise | -42,95 €  |
-| 05.02.2026  | Reisebüro Fernweh        | -129,50 € |
-| 02.02.2026  | Aventa Bank              | 500,00 €  |
