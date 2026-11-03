@@ -125,3 +125,18 @@ Tags: UC-003, PK-6
 * Testdaten sind zurückgesetzt
 * Die Umsatzseite ist ohne Anmeldung nicht erreichbar
 * Die Anmeldeseite ist zu sehen
+
+## Der Finanzstatus-Saldo der Kreditkarte entspricht dem Saldo danach ihres jüngsten Umsatzes
+Tags: UC-003, BR-0008, BR-0009, PK-13
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Zeile "Kreditkarte" zeigt "Saldo" "-387,45 €"
+* Die Zeile "Kreditkarte" zeigt "IBAN" "DE44 5001 0517 5407 3249 55"
+* Die Kundin öffnet die Umsätze des Kontos "Kreditkarte"
+* Die Umsätze zeigen die Zeilen
+| Buchungstag | Gegenpartei              | Verwendungszweck            | Betrag    | Saldo danach |
+|-------------|--------------------------|-----------------------------|-----------|--------------|
+| 11.02.2026  | Buchhandlung Seitenweise | Kartenzahlung               | -42,95 €  | -387,45 €    |
+| 05.02.2026  | Reisebüro Fernweh        | Bahnticket                  | -129,50 € | -344,50 €    |
+| 02.02.2026  | Aventa Bank              | Ausgleich Abrechnung Januar | 500,00 €  | -215,00 €    |

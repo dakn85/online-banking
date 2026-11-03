@@ -39,6 +39,7 @@ Keine Änderung an den Regeln BR-0013 bis BR-0018, an der Entität Empfaengervor
 - `acceptance/specs/empfaengervorlagen.spec`: Eine Vorlage wird umbenannt und behält IBAN und Verwendungszweck
 - `acceptance/specs/empfaengervorlagen.spec`: Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
 - `acceptance/specs/kreditkartenumsaetze.spec`: Die Kreditkarte zeigt genau drei Umsätze mit ihren Buchungen
+- `acceptance/specs/umsaetze.spec`: Der Finanzstatus-Saldo der Kreditkarte entspricht dem Saldo danach ihres jüngsten Umsatzes
 
 ## Aufgaben für die Umsetzung
 
