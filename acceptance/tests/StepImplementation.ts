@@ -382,4 +382,106 @@ export default class StepImplementation {
     const felder = await this.vorlageInUeberweisung(name);
     assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
   }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin wählt die Vorlage <vorlage> zum Löschen")
+    public async dieKundinWaehltDieVorlageZum(vorlage: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin wählt die Vorlage <vorlage> zum Löschen");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin bestätigt den Dialog <dialog>")
+    public async dieKundinBestaetigtDenDialog(dialog: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin bestätigt den Dialog <dialog>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin wählt die Vorlage <vorlage> zum Bearbeiten")
+    public async dieKundinWaehltDieVorlageZum2(vorlage: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin wählt die Vorlage <vorlage> zum Bearbeiten");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin ändert im Dialog <dialog> den Namen in <in> und wählt „Umbenennen“")
+    public async dieKundinAendertImDialogDen(dialog: string, inWert: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin ändert im Dialog <dialog> den Namen in <in> und wählt „Umbenennen“");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Empfängervorlagen zeigen zu jeder Vorlage die Aktionen <aktionen> und <und>")
+    public async dieEmpfaengervorlagenZeigenZuJederVorlage(aktionen: string, und: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen zu jeder Vorlage die Aktionen <aktionen> und <und>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin öffnet den Dialog <dialog>")
+    public async dieKundinOeffnetDenDialog(dialog: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin öffnet den Dialog <dialog>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin wählt im Dialog <dialog> die Aktion <aktion>")
+    public async dieKundinWaehltImDialogDie(dialog: string, aktion: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin wählt im Dialog <dialog> die Aktion <aktion>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen <vorlagen>")
+    public async dieEmpfaengervorlagenZeigenDieZahlDer(vorlagen: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen die Zahl der belegten Vorlagen <vorlagen>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Kundin öffnet in der Zeile der Vorlage <vorlage> den Dialog <dialog>")
+    public async dieKundinOeffnetInDerZeile(vorlage: string, dialog: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Kundin öffnet in der Zeile der Vorlage <vorlage> den Dialog <dialog>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Der Dialog <dialog> nennt die Vorlage <vorlage>")
+    public async derDialogNenntDieVorlage(dialog: string, vorlage: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Der Dialog <dialog> nennt die Vorlage <vorlage>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Der Dialog <dialog> führt nur das Feld <feld>")
+    public async derDialogFuehrtNurDasFeld(dialog: string, feld: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Der Dialog <dialog> führt nur das Feld <feld>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Vorlage <vorlage> ist inzwischen in einem anderen Tab gelöscht")
+    public async dieVorlageIstInzwischenInEinem(vorlage: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Vorlage <vorlage> ist inzwischen in einem anderen Tab gelöscht");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Der Dialog <dialog> ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage <vorlage> und die Meldung <meldung>")
+    public async derDialogIstGeschlossenUndDie(dialog: string, vorlage: string, meldung: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Der Dialog <dialog> ist geschlossen und die Empfängervorlagen zeigen nicht mehr die Vorlage <vorlage> und die Meldung <meldung>");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Vorlage <vorlage> wird über den Dienst gelöscht")
+    public async dieVorlageWirdUeberDenDienst(vorlage: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Vorlage <vorlage> wird über den Dienst gelöscht");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Empfängervorlagen zeigen die Meldung <meldung> nicht")
+    public async dieEmpfaengervorlagenZeigenDieMeldungNicht(meldung: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen die Meldung <meldung> nicht");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Empfängervorlagen zeigen den Abschnitt <abschnitt> nicht")
+    public async dieEmpfaengervorlagenZeigenDenAbschnittNicht(abschnitt: string): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen den Abschnitt <abschnitt> nicht");
+    }
+
+    // angefordert von specs/empfaengervorlagen.spec
+    @Step("Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht <table>")
+    public async dieEmpfaengervorlagenZeigenDieFelderMit(tabelle: string, table: Table): Promise<void> {
+        throw new Error("Noch nicht implementiert: Die Empfängervorlagen zeigen die Felder mit den Einträgen <tabelle> nicht <table>");
+    }
 }
