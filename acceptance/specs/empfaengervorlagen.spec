@@ -80,13 +80,13 @@ Tags: UC-004, PK-7
 
 ## Eine Vorlage lässt sich auf ihren eigenen Namen umbenennen
 
-Tags: UC-004, PK-13
+Tags: UC-004, PK-13, BR-0013
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt die Vorlage "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711" an
 * Die Kundin wählt die Vorlage "Möbel Nord GmbH" zum Bearbeiten
-* Die Kundin ändert im Dialog "Vorlage bearbeiten" den Namen in "Möbel Nord GmbH", wählt „Umbenennen“ und sieht IBAN "DE89 3704 0044 0532 0130 00" und Verwendungszweck "Rechnung 4711"
+* Die Kundin ändert im Dialog "Vorlage bearbeiten" den Namen in "Möbel Nord GmbH" und wählt „Umbenennen“
 * Die Empfängervorlagen zeigen die Meldung "Empfängervorlage umbenannt."
 
 ## Jede Empfängervorlage zeigt die Aktionen Bearbeiten und Löschen in ihrer Zeile
