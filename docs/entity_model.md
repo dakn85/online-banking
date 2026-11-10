@@ -8,6 +8,7 @@ erDiagram
     "Überweisung" }o--|| Konto : "geht ab von"
     Umsatz }o--|| Konto : "gehört zu"
     Empfaengervorlage }o--|| Kunde : "gehört zu"
+    Dauerauftrag }o--|| Konto : "geht ab von"
 ```
 
 ## Entitäten
@@ -89,3 +90,21 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | verwendungszweck | Verwendungszweck der Vorlage; optional; leer oder nur Leerzeichen ergibt keinen Wert, dann fehlt das Feld | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711; leer oder nur Leerzeichen = kein Wert, das Feld fehlt in Antwort und Liste |
 
 **Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
+
+### Dauerauftrag
+
+**Bereich:** Dauerauftrag  
+
+Ein monatlicher Zahlungsauftrag vom Girokonto an einen Empfänger im SEPA-Raum, wie ihn die Daueraufträge anlegen, auflisten und löschen; die Ausführung des Termins erzeugt in dieser Story keine Buchung.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| dauerauftragsId | Kennung des Dauerauftrags, vom Dienst vergeben | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel DA-2026-00001 |
+| auftraggeberIban | IBAN des Girokontos, von dem der Dauerauftrag ausgeht | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02 5001 0517 5407 3249 31 |
+| empfaenger | Name des Empfängers | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
+| empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE89 3704 0044 0532 0130 00 |
+| betrag | Betrag je Ausführung in Euro | Decimal |  | Pflicht; Wertebereich 0.01..; Beispiel 50.00 |
+| waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
+| ausfuehrungstag | Tag im Monat, an dem der Dauerauftrag ausgeführt wird | Integer |  | Pflicht; Wertebereich 1..28; Beispiel 15 |
+| ersteAusfuehrung | Datum der ersten Ausführung | Date |  | Pflicht; Beispiel 2026-03-15; nicht vor dem heutigen Tag |
+| verwendungszweck | Verwendungszweck jeder Ausführung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Miete März |

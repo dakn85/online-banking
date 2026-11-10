@@ -1,0 +1,45 @@
+<!-- maske: {
+  "title": "Daueraufträge",
+  "useCases": ["UC-005"],
+  "fields": [
+    {"name":"empfaengerAnzeige","label":"Empfänger","kind":"anzeige","attribute":"Dauerauftrag.empfaenger"},
+    {"name":"ibanAnzeige","label":"IBAN","kind":"anzeige","attribute":"Dauerauftrag.empfaengerIban"},
+    {"name":"betragAnzeige","label":"Betrag","kind":"anzeige","attribute":"Dauerauftrag.betrag"},
+    {"name":"ausfuehrungstagAnzeige","label":"Ausführungstag","kind":"anzeige","attribute":"Dauerauftrag.ausfuehrungstag"},
+    {"name":"ersteAusfuehrungAnzeige","label":"Erste Ausführung","kind":"anzeige","attribute":"Dauerauftrag.ersteAusfuehrung"},
+    {"name":"zweckAnzeige","label":"Verwendungszweck","kind":"anzeige","attribute":"Dauerauftrag.verwendungszweck"},
+    {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Dauerauftrag.empfaenger","rules":{"required":true,"maxLength":70}},
+    {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Dauerauftrag.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
+    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Dauerauftrag.betrag","rules":{"required":true,"min":"0.01"}},
+    {"name":"ausfuehrungstag","label":"Ausführungstag im Monat","kind":"zahl","attribute":"Dauerauftrag.ausfuehrungstag","rules":{"required":true}},
+    {"name":"ersteAusfuehrung","label":"Erste Ausführung","kind":"datum","attribute":"Dauerauftrag.ersteAusfuehrung","rules":{"required":true}},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Dauerauftrag.verwendungszweck","rules":{"required":true,"maxLength":140}},
+    {"name":"dauerauftragLoeschen","label":"Dauerauftrag zum Löschen","kind":"auswahl","attribute":"Dauerauftrag.empfaenger"}
+  ],
+  "actions": [
+    {"label":"Anlegen","useCase":"UC-005#3","operation":"POST /api/dauerauftraege","screen":"dauerauftraege"},
+    {"label":"Löschen","useCase":"UC-005#A7","operation":"DELETE /api/dauerauftraege/{dauerauftragsId}","screen":"dauerauftraege"}
+  ]
+} -->
+<header data-wf="kopf"><h1>Daueraufträge</h1><p>Monatliche Zahlungen vom Girokonto einrichten, ansehen und löschen.</p></header>
+<p data-wf="meldung" role="status">Dauerauftrag angelegt.</p>
+<p data-wf="meldung" role="alert">Der Ausführungstag liegt zwischen 1 und 28.</p>
+<table data-wf="tabelle"><caption>Ihre Daueraufträge</caption><thead><tr><th>Empfänger</th><th>IBAN</th><th>Betrag</th><th>Ausführungstag</th><th>Erste Ausführung</th><th>Verwendungszweck</th></tr></thead><tbody><tr><td>Möbel Nord GmbH</td><td>DE89 3704 0044 0532 0130 00</td><td>50,00</td><td>15</td><td>2026-03-15</td><td>Miete März</td></tr></tbody></table>
+<section data-wf="gruppe" data-merkmal="Dauerauftrag"><h2>Neuer Dauerauftrag</h2>
+<form data-wf="formular">
+<label data-wf="feld"><span>Empfänger</span><input name="empfaenger" required placeholder="Möbel Nord GmbH"></label>
+<label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" required placeholder="DE89 3704 0044 0532 0130 00"></label>
+<label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" required placeholder="50.00"></label>
+<label data-wf="feld"><span>Ausführungstag im Monat</span><input type="number" name="ausfuehrungstag" required placeholder="15"></label>
+<label data-wf="feld"><span>Erste Ausführung</span><input type="date" name="ersteAusfuehrung" required></label>
+<label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" required placeholder="Miete März"></textarea></label>
+<div data-wf="aktionen"><button data-wf="primaer">Anlegen</button></div>
+</form>
+</section>
+<section data-wf="gruppe" data-merkmal="Löschen"><h2>Dauerauftrag löschen</h2>
+<p data-wf="meldung" role="status">Dauerauftrag löschen?</p>
+<form data-wf="formular">
+<label data-wf="feld"><span>Dauerauftrag zum Löschen</span><select name="dauerauftragLoeschen"><option>Möbel Nord GmbH</option></select></label>
+<div data-wf="aktionen"><button data-wf="primaer">Löschen</button></div>
+</form>
+</section>

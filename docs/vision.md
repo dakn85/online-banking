@@ -21,14 +21,16 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-5 | Überweisung vom Girokonto ausführen | Anteil der bestätigten Überweisungen, die genau einmal ausgeführt werden, im neuen Saldo des Finanzstatus und als neuester Umsatz des Girokontos sichtbar sind | 100 % |
 | Z-6 | Umsätze je Konto einsehen | Anteil der Umsätze eines Kontos, die die Umsatzliste mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigt, den neuesten zuerst | 100 % |
 | Z-7 | Empfänger aus Vorlage statt Neueingabe | Anteil der Überweisungen mit gewählter Empfängervorlage, bei denen das System Empfänger und IBAN des Empfängers unverändert aus der Vorlage übernimmt und den Verwendungszweck nur übernimmt, wenn die Vorlage einen hat | 100 % |
+| Z-8 | Dauerauftrag vom Girokonto einrichten | Anteil der angelegten Daueraufträge, die die Liste der Daueraufträge mit Empfänger, IBAN des Empfängers, Betrag, Ausführungstag im Monat, erster Ausführung und Verwendungszweck zeigt | 100 % |
 
 ## Abgrenzung
 
-- Überweisung: nur als einmalige Überweisung vom Girokonto; Termin- und Daueraufträge folgen später.
+- Überweisung: nur als einmalige Überweisung vom Girokonto; Terminaufträge folgen später.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
 - Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später.
 - Empfängervorlagen: ein Empfänger je Vorlage mit genau einer IBAN, kein Adressbuch mit mehreren Konten je Empfänger, kein Teilen von Vorlagen zwischen Kundinnen, kein Import und Export und keine Vorlagen aus einer Kernbank.
+- Daueraufträge: nur monatlich vom Girokonto an einen Empfänger mit genau einer IBAN; kein anderer Rhythmus (wöchentlich, vierteljährlich), kein Ändern eines bestehenden Dauerauftrags, kein Aussetzen und keine termingerechte Ausführung mit Buchung, Saldo und Umsatz.
 
 ## Systemkontext
 
