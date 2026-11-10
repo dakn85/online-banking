@@ -16,6 +16,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 | Dauerauftrag | Neu | Schema neu, Entität neu |
 | DauerauftragAnlegen | Neu | Schema neu |
 | Daueraufträge | Neu | Maske neu |
+| Finanzstatus | Geändert | Aktion Daueraufträge neu, Skizze geändert |
 | UC-005 Dauerauftrag einrichten, ansehen und löschen | Neu | Use Case neu |
 | BR-0020 IBAN des Empfängers im Dauerauftrag | Neu | Neu in UC-005 |
 | BR-0021 Betrag des Dauerauftrags | Neu | Neu in UC-005 |
@@ -26,6 +27,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 
 ## Akzeptanztests
 
+- `acceptance/specs/dauerauftraege.spec`: Die Daueraufträge sind über den Knopf in der Zeile des Girokontos erreichbar
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit Ausführungstag außerhalb von 1 bis 28 wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
@@ -40,6 +42,8 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - [ ] DauerauftragAnlegen: Schema neu
 - [ ] Dauerauftrag: Entität neu
 - [ ] Daueraufträge: Maske neu
+- [ ] Finanzstatus: Aktion Daueraufträge neu
+- [ ] Finanzstatus: Skizze geändert
 - [ ] UC-005: Use Case neu
 - [ ] BR-0020: Neu in UC-005
 - [ ] BR-0021: Neu in UC-005
@@ -55,16 +59,16 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 
 - Welchen Bereich soll der Ausführungstag im Monat haben?
   **Antwort:** 1 bis 28, damit der Termin in jedem Monat vorkommt
-  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege_
+  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege · 0d1e631_
 - Soll der Betrag eines Dauerauftrags beim Anlegen gegen den verfügbaren Betrag des Girokontos geprüft werden?
   **Antwort:** Nein, nur größer als 0, weil die Ausführung erst später fällig wird
-  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege_
+  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege · 0d1e631_
 - Wie soll sich die erste Ausführung zum Ausführungstag im Monat verhalten?
   **Antwort:** Frei wählbares Datum ab heute, darf vom Ausführungstag abweichen
-  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege_
+  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege · 0d1e631_
 - Soll ein fälliger Dauerauftrag in dieser Story schon buchen (Saldo und Umsatz)?
   **Antwort:** Nein, nur Einrichten, Anzeigen und Löschen; die Ausführung folgt in einer eigenen Story
-  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege_
+  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege · 0d1e631_
 - Wo soll die Kundin die Daueraufträge öffnen?
   **Antwort:** Über einen Knopf „Daueraufträge“ in der Zeile des Girokontos im Finanzstatus
-  _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege_
+  _→ eingearbeitet in finanzstatus, UC-005_

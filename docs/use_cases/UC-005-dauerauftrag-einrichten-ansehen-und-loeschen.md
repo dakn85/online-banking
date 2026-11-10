@@ -17,7 +17,7 @@
 
 ## Standardablauf
 
-1. Die Kundin öffnet die Daueraufträge.
+1. Die Kundin wählt im Finanzstatus in der Zeile des Girokontos den Knopf „Daueraufträge“.
 2. Das System zeigt die Daueraufträge der Kundin (BR-0024) mit Empfänger, IBAN des Empfängers, Betrag in Euro, Ausführungstag im Monat, erster Ausführung und Verwendungszweck, geordnet nach erster Ausführung aufsteigend; hat sie noch keinen, zeigt es den Hinweis „Sie haben noch keinen Dauerauftrag.“ (A2).
 3. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro, Ausführungstag im Monat, erste Ausführung und Verwendungszweck ein und wählt „Anlegen“.
 4. Das System prüft in dieser Reihenfolge: IBAN des Empfängers (BR-0020, BR-0003), Betrag (BR-0021), Ausführungstag im Monat (BR-0022) und erste Ausführung (BR-0023); bei einer Abweichung legt es keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt die Meldung im Formular.
