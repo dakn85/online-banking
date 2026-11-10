@@ -20,7 +20,7 @@
 1. Die Kundin wählt im Finanzstatus in der Zeile des Girokontos den Knopf „Daueraufträge“.
 2. Das System zeigt die Daueraufträge der Kundin (BR-0024) mit Empfänger, IBAN des Empfängers, Betrag in Euro, Ausführungstag im Monat, erster Ausführung und Verwendungszweck, geordnet nach erster Ausführung aufsteigend; hat sie noch keinen, zeigt es den Hinweis „Sie haben noch keinen Dauerauftrag.“ (A2).
 3. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro, Ausführungstag im Monat, erste Ausführung und Verwendungszweck ein und wählt „Anlegen“.
-4. Das System prüft in dieser Reihenfolge: IBAN des Empfängers (BR-0020, BR-0003), Betrag (BR-0021), Ausführungstag im Monat (BR-0022) und erste Ausführung (BR-0023); bei einer Abweichung legt es keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt die Meldung im Formular.
+4. Das System prüft in dieser Reihenfolge: Empfänger (BR-0025), Verwendungszweck (BR-0026), IBAN des Empfängers (BR-0020, BR-0003), Betrag (BR-0021), Ausführungstag im Monat (BR-0022) und erste Ausführung (BR-0023); bei einer Abweichung legt es keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt die Meldung im Formular.
 5. Der Dienst prüft, dass das Auftraggeberkonto ein Girokonto der angemeldeten Kundin ist (BR-0007, BR-0024, A8).
 6. Das System speichert den Dauerauftrag und zeigt die Daueraufträge mit dem neuen Dauerauftrag und der Meldung „Dauerauftrag angelegt.“.
 7. Die Kundin sieht den Dauerauftrag mit Empfänger, IBAN des Empfängers, Betrag, Ausführungstag im Monat, erster Ausführung und Verwendungszweck in der Liste.
@@ -94,6 +94,22 @@
 2. Antwortet der Dienst dennoch mit 403, legt das System keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt die allgemeine Fehlermeldung „Der Dauerauftrag konnte nicht angelegt werden.“; die bisherigen Eingaben bleiben stehen.
 3. Antwortet der Dienst mit 401, leitet das System auf die Anmeldeseite um (A1); es wird nichts angelegt.
 
+### A9: Empfänger fehlt oder ist zu lang
+
+**Auslöser:** Der Empfänger ist leer oder enthält nur Leerzeichen, oder er ist länger als 70 Zeichen (BR-0025). (Schritt 4).  
+**Ablauf:**
+
+1. Das System legt keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt „Der Empfänger ist ein Pflichtfeld.“, wenn er leer ist, sonst „Der Empfänger darf höchstens 70 Zeichen lang sein.“; die bisherigen Eingaben bleiben stehen.
+2. Die Kundin korrigiert den Empfänger; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
+
+### A10: Verwendungszweck fehlt oder ist zu lang
+
+**Auslöser:** Der Verwendungszweck ist leer oder enthält nur Leerzeichen, oder er ist länger als 140 Zeichen (BR-0026). (Schritt 4).  
+**Ablauf:**
+
+1. Das System legt keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt „Der Verwendungszweck ist ein Pflichtfeld.“, wenn er leer ist, sonst „Der Verwendungszweck darf höchstens 140 Zeichen lang sein.“; die bisherigen Eingaben bleiben stehen.
+2. Die Kundin korrigiert den Verwendungszweck; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -149,6 +165,14 @@ Die erste Ausführung ist ein Datum ab dem heutigen Tag; sie darf vom Ausführun
 ### BR-0024: Daueraufträge der angemeldeten Kundin
 
 Der Dienst liefert und löscht nur Daueraufträge der angemeldeten Kundin. Eine fremde oder unbekannte Dauerauftrags-Kennung beantwortet er mit 404, ohne gültige Sitzung mit 401. Beim Anlegen beantwortet er ein Auftraggeberkonto, das kein Girokonto der angemeldeten Kundin ist, mit 403; in der Oberfläche tritt dieser Fall nicht auf, weil das Auftraggeberkonto fest das Girokonto der Kundin ist, und die Seite zeigt dann die allgemeine Fehlermeldung „Der Dauerauftrag konnte nicht angelegt werden.“.
+
+### BR-0025: Empfänger des Dauerauftrags
+
+Der Empfänger ist Pflicht und 1 bis 70 Zeichen lang; ein Empfänger aus lauter Leerzeichen gilt als leer, die Länge zählt ohne führende und folgende Leerzeichen, gespeichert und angezeigt wird die Eingabe der Kundin. Ist er leer, legt das System den Dauerauftrag nicht an, antwortet mit 400 und zeigt „Der Empfänger ist ein Pflichtfeld.“; ist er länger als 70 Zeichen, legt es ihn nicht an, antwortet mit 400 und zeigt „Der Empfänger darf höchstens 70 Zeichen lang sein.“. Die Prüfung läuft vor der IBAN des Empfängers (BR-0020).
+
+### BR-0026: Verwendungszweck des Dauerauftrags
+
+Der Verwendungszweck ist Pflicht und 1 bis 140 Zeichen lang; ein Verwendungszweck aus lauter Leerzeichen gilt als leer, die Länge zählt ohne führende und folgende Leerzeichen, gespeichert und angezeigt wird die Eingabe der Kundin. Ist er leer, legt das System den Dauerauftrag nicht an, antwortet mit 400 und zeigt „Der Verwendungszweck ist ein Pflichtfeld.“; ist er länger als 140 Zeichen, legt es ihn nicht an, antwortet mit 400 und zeigt „Der Verwendungszweck darf höchstens 140 Zeichen lang sein.“. Die Prüfung läuft vor der IBAN des Empfängers (BR-0020).
 
 ## Weitere Prüfungen
 

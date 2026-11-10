@@ -24,6 +24,8 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 | BR-0022 Ausführungstag im Monat | Neu | Neu in UC-005 |
 | BR-0023 Erste Ausführung des Dauerauftrags | Neu | Neu in UC-005 |
 | BR-0024 Daueraufträge der angemeldeten Kundin | Neu | Neu in UC-005 |
+| BR-0025 Empfänger des Dauerauftrags | Neu | Neu in UC-005 |
+| BR-0026 Verwendungszweck des Dauerauftrags | Neu | Neu in UC-005 |
 | Vision | Geändert | Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
 
 ## Akzeptanztests
@@ -34,6 +36,8 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit einem Betrag unter 0,01 Euro wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit einer ersten Ausführung in der Vergangenheit wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
+- `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag ohne Empfänger wird abgelehnt
+- `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag ohne Verwendungszweck wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/dauerauftraege.spec`: Ein monatlicher Dauerauftrag wird angelegt
 - `acceptance/specs/dauerauftraege.spec`: Eine erste Ausführung am heutigen Kalendertag in UTC wird angenommen
@@ -92,4 +96,4 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
   _→ ohne Änderung: Vorschlag abgelehnt, die Frage ist gegenstandslos._
 - BR-0023 und UC-005 A6 nennen den „heutigen Tag“, sagen aber nicht, in welcher Zeitzone er gilt (docs/use_cases/UC-005-dauerauftrag-einrichten-ansehen-und-loeschen.md, BR-0023; docs/entity_model.md, Dauerauftrag.ersteAusfuehrung „nicht vor dem heutigen Tag“). Zwischen 0:00 und 1:00 Uhr (Sommerzeit: 2:00 Uhr) deutscher Zeit ist der UTC-Tag noch der Vortag. Welcher Kalendertag ist „heute“ für die erste Ausführung?
   **Antwort:** Kalendertag in UTC, wie der Buchungstag in BR-0012 und die Leitplanke „Zeiten in UTC“
-  _→ eingearbeitet in UC-005, BR-0023, Dauerauftrag, POST /api/dauerauftraege, Schema DauerauftragAnlegen_
+  _→ eingearbeitet in UC-005, BR-0023, Dauerauftrag, POST /api/dauerauftraege, Schema DauerauftragAnlegen · 676859c_

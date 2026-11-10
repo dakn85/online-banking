@@ -83,3 +83,21 @@ Tags: UC-005, PK-14, BR-0023
 * Die Kundin legt den Dauerauftrag an den Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00", Ausführungstag "15", erster Ausführung "heute" und Verwendungszweck "Miete März" an
 * Die Daueraufträge zeigen die Meldung "Dauerauftrag angelegt."
 * Die Daueraufträge zeigen den Dauerauftrag "Möbel Nord GmbH" mit der ersten Ausführung "heute"
+
+## Ein Dauerauftrag ohne Empfänger wird abgelehnt
+
+Tags: UC-005, PK-14, BR-0025
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt den Dauerauftrag an den Empfänger "" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00", Ausführungstag "15", erster Ausführung "in 5 Tagen" und Verwendungszweck "Miete März" an
+* Die Daueraufträge zeigen die Meldung "Der Empfänger ist ein Pflichtfeld."
+
+## Ein Dauerauftrag ohne Verwendungszweck wird abgelehnt
+
+Tags: UC-005, PK-14, BR-0026
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt den Dauerauftrag an den Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00", Ausführungstag "15", erster Ausführung "in 5 Tagen" und Verwendungszweck "" an
+* Die Daueraufträge zeigen die Meldung "Der Verwendungszweck ist ein Pflichtfeld."
