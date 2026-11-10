@@ -37,28 +37,22 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/dauerauftraege.spec`: Ein monatlicher Dauerauftrag wird angelegt
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Daueraufträge der angemeldeten Kundin: Endpunkt neu
-- [ ] Dauerauftrag einrichten: Endpunkt neu
-- [ ] Dauerauftrag löschen: Endpunkt neu
-- [ ] Dauerauftrag: Schema neu
-- [ ] DauerauftragAnlegen: Schema neu
-- [ ] Dauerauftrag: Entität neu
-- [ ] Daueraufträge: Maske neu
-- [ ] Finanzstatus: Aktion Daueraufträge neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] UC-001: Schritt 8 neu
-- [ ] UC-005: Use Case neu
-- [ ] BR-0020: Neu in UC-005
-- [ ] BR-0021: Neu in UC-005
-- [ ] BR-0022: Neu in UC-005
-- [ ] BR-0023: Neu in UC-005
-- [ ] BR-0024: Neu in UC-005
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-14 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-14 grün
+_Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
+
+**Bausteine:** Online-Banking-Dienst: neue Component „Dauerauftrag“ in `src/dauerauftraege.ts`, Routen und Seitenadresse in `src/main.ts` (Seitenauslieferung); Oberfläche: neue Seite `public/seiten/dauerauftraege.js`, Knopf in `public/seiten/finanzstatus.js`, Einbindung in `public/app.html`, Klassen in `public/styles.css`; Tests: `test/dauerauftraege.test.ts`, `acceptance/tests/StepImplementation.ts`.
+
+**Schritte**
+1. Entität Dauerauftrag, BR-0024, ADR-002: `src/dauerauftraege.ts` hält die Daueraufträge je Kennung der Kundin im Speicher; `zuruecksetzen()` leert sie und hängt an `POST /api/test/reset` (Ausgangsstand: keine Daueraufträge). Die `dauerauftragsId` vergibt der Dienst als `DA-<Jahr>-<laufende Nummer>` (Beispiel des Datenmodells).
+2. UC-005 Schritt 4 und 5, `POST /api/dauerauftraege`: Der Dienst prüft in der Reihenfolge des Use Case: IBAN des Empfängers (BR-0020, mit `ibanGueltig` aus `src/ueberweisung.ts`, BR-0003), Betrag mindestens 0,01 Euro und auf Cent gerundet (BR-0021, ADR-005), Ausführungstag ganze Zahl 1 bis 28 (BR-0022), erste Ausführung nicht vor heute (BR-0023), jeweils 400 mit der Meldung der Regel; danach das Auftraggeberkonto über `girokonto()` (BR-0007, BR-0024), sonst 403. Ergebnis 201 mit dem Schema Dauerauftrag. „Heute“ ist der Kalendertag in UTC (Leitplanke Zeiten, wie der Buchungstag in BR-0012).
+3. `GET /api/dauerauftraege` liefert die Daueraufträge der Kundin nach erster Ausführung aufsteigend; `DELETE /api/dauerauftraege/{dauerauftragsId}` löscht mit 204, fremde oder unbekannte Kennung 404 „Der Dauerauftrag wurde nicht gefunden.“ (BR-0024, UC-005 A7). Alle drei Routen hinter `nurAngemeldet('api')` (401, NFR-001).
+4. Maske `dauerauftraege`, UC-005 Schritte 2, 3, 6, 7 und A2 bis A8: Seite `/dauerauftraege` mit Tabelle (Empfänger, IBAN, Betrag, Ausführungstag, Erste Ausführung, Verwendungszweck) oder dem Hinweis „Sie haben noch keinen Dauerauftrag.“, Formular „Neuer Dauerauftrag“ und „Dauerauftrag löschen“ mit Sicherheitsabfrage „Dauerauftrag löschen?“. Das Auftraggeberkonto ist fest das Girokonto aus `GET /api/konten`. Die Seite zeigt bei 400 die Meldung des Dienstes im Formular, bei jedem anderen Status „Der Dauerauftrag konnte nicht angelegt werden.“ (A8); die Eingaben bleiben stehen. Die Auswahl zum Löschen trägt die `dauerauftragsId` als Wert und zeigt den Empfänger.
+5. Maske `finanzstatus`, UC-001 Schritt 8: Knopf „Daueraufträge“ in der Zeile des Girokontos zwischen „Umsätze“ und „Überweisen“, öffnet `/dauerauftraege`.
+6. WP-1, WP-2: Unit-Tests am Modul für IBAN, Betrag, Ausführungstag, erste Ausführung, Reihenfolge der Prüfungen, 403, 404 für fremde und unbekannte Kennung und 401 ohne Sitzung (an `nurAngemeldet`).
+7. Akzeptanztests PK-14: sechs fehlende Steps. Relative Angaben („in 5 Tagen“, „gestern“) rechnet der Step ab dem heutigen UTC-Tag in ein Datum um. Für „Der Dienst antwortet auf das Anlegen mit dem Status 403“ tauscht der Step im abgehenden Aufruf das Auftraggeberkonto gegen die Kreditkarte, sodass der echte Dienst mit 403 antwortet; ein Testdoppel ist nicht nötig.
+
+**Änderung am Rahmen:** keine neue Bibliothek und kein neues Muster. Der Dienst erhält eine fünfte Component „Dauerauftrag“; `docs/architecture.md` nennt bisher vier und ist nachzuziehen. ADR-004 (Prüfungen doppelt) wende ich nur dort an, wo die Seite eine Eingabe nicht in den Vertrag umwandeln kann (Betrag, Ausführungstag); sonst zeigt die Seite die Meldung des Dienstes, wie bei den Empfängervorlagen (UC-004).
 
 ## Entscheidungen
 
