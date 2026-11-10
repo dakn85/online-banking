@@ -30,6 +30,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - `acceptance/specs/dauerauftraege.spec`: Die Daueraufträge sind über den Knopf in der Zeile des Girokontos erreichbar
 - `acceptance/specs/dauerauftraege.spec`: Ein abgelehntes Auftraggeberkonto zeigt die allgemeine Fehlermeldung
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit Ausführungstag außerhalb von 1 bis 28 wird abgelehnt
+- `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit einem Betrag unter 0,01 Euro wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/dauerauftraege.spec`: Ein monatlicher Dauerauftrag wird angelegt
@@ -79,3 +80,9 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - Was zeigt das System, wenn der Dienst beim Anlegen mit 403 antwortet, weil das Auftraggeberkonto kein Girokonto der Kundin ist?
   **Antwort:** Der Fall tritt in der Oberfläche nicht auf, weil das Auftraggeberkonto fest das Girokonto der Kundin ist; der Dienst antwortet 403, die Seite zeigt die allgemeine Fehlermeldung.
   _→ eingearbeitet in UC-005, BR-0024, dauerauftraege · c884c2c_
+- Soll der Vertrag den Betrag auf mindestens 0.01 festlegen (wie das Datenmodell) oder bei „größer als 0“ bleiben?
+  **Antwort:** Mindestens 0.01, also 0.01 zulässig und 0.00 abgelehnt.
+  _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen_
+- Welche Meldung zeigt das System, wenn der Betrag zwischen 0 und 0,01 liegt?
+  **Antwort:** Meldung aus BR-0021 beibehalten: „Der Betrag muss größer als 0 sein.“
+  _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen_

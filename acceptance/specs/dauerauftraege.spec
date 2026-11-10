@@ -55,3 +55,12 @@ Tags: UC-005, PK-14, BR-0024
 * Die Kundin öffnet die Daueraufträge vom Girokonto
 * Der Dienst antwortet auf das Anlegen mit dem Status "403"
 * Die Daueraufträge zeigen die Meldung "Der Dauerauftrag konnte nicht angelegt werden."
+
+## Ein Dauerauftrag mit einem Betrag unter 0,01 Euro wird abgelehnt
+
+Tags: UC-005, PK-14, BR-0021
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt den Dauerauftrag an den Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "0,00", Ausführungstag "15", erster Ausführung "2026-03-15" und Verwendungszweck "Miete März" an
+* Die Daueraufträge zeigen die Meldung "Der Betrag muss größer als 0 sein."
