@@ -28,6 +28,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 ## Akzeptanztests
 
 - `acceptance/specs/dauerauftraege.spec`: Die Daueraufträge sind über den Knopf in der Zeile des Girokontos erreichbar
+- `acceptance/specs/dauerauftraege.spec`: Ein abgelehntes Auftraggeberkonto zeigt die allgemeine Fehlermeldung
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit Ausführungstag außerhalb von 1 bis 28 wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
@@ -55,11 +56,6 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-14 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-14 grün
 
-## Offene Fragen
-
-- [ ] Woran erkennt das System beim Löschen den gewählten Dauerauftrag, wenn zwei Daueraufträge denselben Empfänger haben?
-- [ ] Was zeigt das System, wenn der Dienst beim Anlegen mit 403 antwortet, weil das Auftraggeberkonto kein Girokonto der Kundin ist?
-
 ## Entscheidungen
 
 - Welchen Bereich soll der Ausführungstag im Monat haben?
@@ -77,3 +73,9 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - Wo soll die Kundin die Daueraufträge öffnen?
   **Antwort:** Über einen Knopf „Daueraufträge“ in der Zeile des Girokontos im Finanzstatus
   _→ eingearbeitet in finanzstatus, UC-005 · fccbabc_
+- Woran erkennt das System beim Löschen den gewählten Dauerauftrag, wenn zwei Daueraufträge denselben Empfänger haben?
+  **Antwort:** Die Liste und das Auswahlfeld führen je Dauerauftrag die dauerauftragsId als Wert mit; die Aktion Löschen übergibt sie im Pfad, die Anzeige bleibt der Empfänger.
+  _→ noch nicht in der Spezifikation_
+- Was zeigt das System, wenn der Dienst beim Anlegen mit 403 antwortet, weil das Auftraggeberkonto kein Girokonto der Kundin ist?
+  **Antwort:** Der Fall tritt in der Oberfläche nicht auf, weil das Auftraggeberkonto fest das Girokonto der Kundin ist; der Dienst antwortet 403, die Seite zeigt die allgemeine Fehlermeldung.
+  _→ eingearbeitet in UC-005, BR-0024, dauerauftraege_

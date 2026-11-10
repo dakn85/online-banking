@@ -45,3 +45,13 @@ Tags: UC-005, PK-14
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Daueraufträge vom Girokonto
 * Die Daueraufträge zeigen den Hinweis "Sie haben noch keinen Dauerauftrag."
+
+## Ein abgelehntes Auftraggeberkonto zeigt die allgemeine Fehlermeldung
+
+Tags: UC-005, PK-14, BR-0024
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Daueraufträge vom Girokonto
+* Der Dienst antwortet auf das Anlegen mit dem Status "403"
+* Die Daueraufträge zeigen die Meldung "Der Dauerauftrag konnte nicht angelegt werden."
