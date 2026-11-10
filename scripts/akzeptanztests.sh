@@ -4,7 +4,7 @@
 #   scripts/akzeptanztests.sh specs/ueberweisung.spec  nur diese
 # Voraussetzung: Node 22, Gauge (die Plugins aus acceptance/manifest.json installiert Gauge beim ersten Lauf),
 # Docker (sonst startet der Dienst mit Node).
-# Ergebnis: acceptance/reports/xml-report/result.xml (JUnit); KnippQAi nimmt es mit akzeptanztests_melden an.
+# Ergebnis: acceptance/reports/xml-report/result.xml (JUnit); KnippQAi nimmt es mit report_acceptance_tests an.
 set -e
 cd "$(dirname "$0")/.."
 command -v gauge >/dev/null || { echo "Gauge fehlt: https://docs.gauge.org/getting_started/installing-gauge" >&2; exit 2; }
