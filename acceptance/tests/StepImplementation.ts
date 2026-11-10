@@ -400,7 +400,7 @@ export default class StepImplementation {
 
   /**
    * Die erste Ausführung als Datum JJJJ-MM-TT. Die Szenarien nennen sie relativ zum heutigen Tag, weil der Dienst mit der
-   * echten Uhr prüft (BR-0023): „heute“, „gestern“, „morgen“, „in 5 Tagen“, „vor 2 Tagen“. Heute ist der UTC-Tag, wie im Dienst.
+   * echten Uhr prüft: „heute“, „gestern“, „morgen“, „in 5 Tagen“, „vor 2 Tagen“. Heute ist der Kalendertag in UTC (BR-0023).
    */
   private ersteAusfuehrung(angabe: string): string {
     const a = text(angabe).trim().toLowerCase();
@@ -425,7 +425,7 @@ export default class StepImplementation {
   }
 
   /** Die Daueraufträge der angemeldeten Kundin, wie der Dienst sie liefert (mit der Sitzung des Browsers). */
-  private async dauerauftraegeImDienst(page: Page): Promise<{ dauerauftragsId: string; empfaenger: string }[]> {
+  private async dauerauftraegeImDienst(page: Page): Promise<{ dauerauftragsId: string; empfaenger: string; ersteAusfuehrung: string }[]> {
     const antwort = await page.context().request.get(`${basisUrl}/api/dauerauftraege`);
     assert.strictEqual(antwort.status(), 200, 'GET /api/dauerauftraege');
     return antwort.json();
@@ -451,6 +451,24 @@ export default class StepImplementation {
     const meldungen = page.locator('.dauerauftraege').locator('[role="status"], [role="alert"]').filter({ visible: true });
     await meldungen.filter({ hasText: text(meldung) }).waitFor();
     assert.deepStrictEqual((await meldungen.allInnerTexts()).map(sichtbar), [text(meldung)], 'Meldungen der Daueraufträge');
+  }
+
+  /** Die Liste zeigt die erste Ausführung als TT.MM.JJJJ, der Dienst liefert sie als JJJJ-MM-TT; geprüft wird beides. */
+  @Step('Die Daueraufträge zeigen den Dauerauftrag <empfaenger> mit der ersten Ausführung <erste>')
+  public async dauerauftragMitErsterAusfuehrung(empfaenger: string, erste: string) {
+    const page = await this.dauerauftraegeSeite();
+    const datum = this.ersteAusfuehrung(erste);
+    const tabelle = page.locator('.dauerauftraege table');
+    await tabelle.waitFor();
+    const kopf = (await tabelle.locator('thead th').allInnerTexts()).map(sichtbar);
+    const spalte = kopf.indexOf('Erste Ausführung');
+    assert.ok(spalte >= 0, `Spalte „Erste Ausführung“ fehlt, da sind: ${kopf.join(', ')}`);
+    const zeilen = tabelle.locator('tbody tr').filter({ has: page.getByRole('rowheader', { name: text(empfaenger), exact: true }) });
+    assert.strictEqual(await zeilen.count(), 1, `Daueraufträge an „${empfaenger}“ in der Liste`);
+    const zellen = (await zeilen.locator('th, td').allInnerTexts()).map(sichtbar);
+    assert.strictEqual(zellen[spalte], datum.split('-').reverse().join('.'), `Erste Ausführung von „${empfaenger}“ in der Liste`);
+    const imDienst = (await this.dauerauftraegeImDienst(page)).filter(d => d.empfaenger === text(empfaenger)).map(d => d.ersteAusfuehrung);
+    assert.deepStrictEqual(imDienst, [datum], `Erste Ausführung von „${empfaenger}“ im Dienst`);
   }
 
   @Step('Die Daueraufträge zeigen den Hinweis <hinweis>')

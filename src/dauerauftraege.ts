@@ -45,7 +45,7 @@ export function zuruecksetzen(): void {
   laufendeNummer = 0;
 }
 
-/** Der heutige Kalendertag in UTC als JJJJ-MM-TT (Leitplanke Zeiten; wie der Buchungstag in BR-0012). */
+/** BR-0023: Heute ist der Kalendertag in UTC, wie der Buchungstag in BR-0012; als JJJJ-MM-TT. */
 export const heuteUtc = () => new Date().toISOString().slice(0, 10);
 
 /** Ein Kalendertag JJJJ-MM-TT, den es gibt (kein 2026-02-30). */
