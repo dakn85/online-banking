@@ -55,6 +55,11 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-14 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-14 grün
 
+## Offene Fragen
+
+- [ ] Woran erkennt das System beim Löschen den gewählten Dauerauftrag, wenn zwei Daueraufträge denselben Empfänger haben?
+- [ ] Was zeigt das System, wenn der Dienst beim Anlegen mit 403 antwortet, weil das Auftraggeberkonto kein Girokonto der Kundin ist?
+
 ## Entscheidungen
 
 - Welchen Bereich soll der Ausführungstag im Monat haben?
@@ -71,4 +76,4 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
   _→ eingearbeitet in vision, UC-005, BR-0020, BR-0021, BR-0022, BR-0023, BR-0024, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, DELETE /api/dauerauftraege/{dauerauftragsId}, Schema Dauerauftrag, Schema DauerauftragAnlegen, dauerauftraege · 0d1e631_
 - Wo soll die Kundin die Daueraufträge öffnen?
   **Antwort:** Über einen Knopf „Daueraufträge“ in der Zeile des Girokontos im Finanzstatus
-  _→ eingearbeitet in finanzstatus, UC-005_
+  _→ eingearbeitet in finanzstatus, UC-005 · fccbabc_

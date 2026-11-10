@@ -14,7 +14,7 @@
     {"name":"ausfuehrungstag","label":"Ausführungstag im Monat","kind":"zahl","attribute":"Dauerauftrag.ausfuehrungstag","rules":{"required":true}},
     {"name":"ersteAusfuehrung","label":"Erste Ausführung","kind":"datum","attribute":"Dauerauftrag.ersteAusfuehrung","rules":{"required":true}},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Dauerauftrag.verwendungszweck","rules":{"required":true,"maxLength":140}},
-    {"name":"dauerauftragLoeschen","label":"Dauerauftrag zum Löschen","kind":"auswahl","attribute":"Dauerauftrag.empfaenger"}
+    {"name":"dauerauftragLoeschen","label":"Dauerauftrag zum Löschen","kind":"auswahl","attribute":"Dauerauftrag.dauerauftragsId"}
   ],
   "actions": [
     {"label":"Anlegen","useCase":"UC-005#3","operation":"POST /api/dauerauftraege","screen":"dauerauftraege"},
