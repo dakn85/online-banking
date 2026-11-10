@@ -75,7 +75,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
   _→ eingearbeitet in finanzstatus, UC-005 · fccbabc_
 - Woran erkennt das System beim Löschen den gewählten Dauerauftrag, wenn zwei Daueraufträge denselben Empfänger haben?
   **Antwort:** Die Liste und das Auswahlfeld führen je Dauerauftrag die dauerauftragsId als Wert mit; die Aktion Löschen übergibt sie im Pfad, die Anzeige bleibt der Empfänger.
-  _→ noch nicht in der Spezifikation_
+  _→ ohne Änderung: Steht schon in der Maske dauerauftraege: Der übernommene Blocker-Vorschlag bindet die Löschauswahl an die dauerauftragsId._
 - Was zeigt das System, wenn der Dienst beim Anlegen mit 403 antwortet, weil das Auftraggeberkonto kein Girokonto der Kundin ist?
   **Antwort:** Der Fall tritt in der Oberfläche nicht auf, weil das Auftraggeberkonto fest das Girokonto der Kundin ist; der Dienst antwortet 403, die Seite zeigt die allgemeine Fehlermeldung.
-  _→ eingearbeitet in UC-005, BR-0024, dauerauftraege_
+  _→ eingearbeitet in UC-005, BR-0024, dauerauftraege · c884c2c_
