@@ -32,6 +32,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - `acceptance/specs/dauerauftraege.spec`: Ein abgelehntes Auftraggeberkonto zeigt die allgemeine Fehlermeldung
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit Ausführungstag außerhalb von 1 bis 28 wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit einem Betrag unter 0,01 Euro wird abgelehnt
+- `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit einer ersten Ausführung in der Vergangenheit wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/dauerauftraege.spec`: Ein monatlicher Dauerauftrag wird angelegt

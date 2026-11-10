@@ -64,3 +64,12 @@ Tags: UC-005, PK-14, BR-0021
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin legt den Dauerauftrag an den Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "0,00", Ausführungstag "15", erster Ausführung "2026-03-15" und Verwendungszweck "Miete März" an
 * Die Daueraufträge zeigen die Meldung "Der Betrag muss größer als 0 sein."
+
+## Ein Dauerauftrag mit einer ersten Ausführung in der Vergangenheit wird abgelehnt
+
+Tags: UC-005, PK-14, BR-0023
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin legt den Dauerauftrag an den Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00", Ausführungstag "15", erster Ausführung "gestern" und Verwendungszweck "Miete März" an
+* Die Daueraufträge zeigen die Meldung "Die erste Ausführung darf nicht in der Vergangenheit liegen."
