@@ -89,3 +89,9 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - Welche Meldung zeigt das System, wenn der Betrag zwischen 0 und 0,01 liegt?
   **Antwort:** Meldung aus BR-0021 beibehalten: „Der Betrag muss größer als 0 sein.“
   _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen · 13d231b_
+- In welchem Format zeigt die Liste die erste Ausführung?
+  **Antwort:** Entfällt: Der Vorschlag, zu dem die Frage gehörte, ist abgelehnt.
+  _→ ohne Änderung: Vorschlag abgelehnt, die Frage ist gegenstandslos._
+- Mit welcher Antwort bricht die Kundin die Sicherheitsabfrage ab?
+  **Antwort:** Entfällt: Der Vorschlag, zu dem die Frage gehörte, ist abgelehnt.
+  _→ ohne Änderung: Vorschlag abgelehnt, die Frage ist gegenstandslos._

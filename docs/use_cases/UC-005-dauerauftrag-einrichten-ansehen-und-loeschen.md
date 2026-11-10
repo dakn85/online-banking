@@ -51,12 +51,12 @@
 1. Das System legt keinen Dauerauftrag an, lässt die bestehenden unverändert und zeigt „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“; die bisherigen Eingaben bleiben stehen.
 2. Die Kundin korrigiert die IBAN; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
-### A4: Betrag nicht größer als 0
+### A4: Betrag kleiner als 0,01 Euro
 
-**Auslöser:** Der Betrag ist nicht größer als 0 (BR-0021). (Schritt 4).  
+**Auslöser:** Der Betrag ist kleiner als 0,01 Euro (BR-0021). (Schritt 4).  
 **Ablauf:**
 
-1. Das System legt keinen Dauerauftrag an und zeigt „Der Betrag muss größer als 0 sein.“.
+1. Das System legt keinen Dauerauftrag an und zeigt „Der Betrag muss mindestens 0,01 Euro betragen.“.
 2. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
 ### A5: Ausführungstag außerhalb von 1 bis 28
@@ -136,7 +136,7 @@ Die IBAN des Empfängers im Dauerauftrag erfüllt BR-0003: 15 bis 34 Stellen, g�
 
 ### BR-0021: Betrag des Dauerauftrags
 
-Der Betrag ist größer als 0, lautet auf Euro und ist auf Cent gerundet (ADR-005). Beim Anlegen vergleicht das System ihn nicht mit dem verfügbaren Betrag des Girokontos, weil die erste Ausführung erst zu einem späteren Termin erfolgt. Ist er nicht größer als 0, legt das System den Dauerauftrag nicht an und zeigt „Der Betrag muss größer als 0 sein.“.
+Der Betrag beträgt mindestens 0,01 Euro, lautet auf Euro und ist auf Cent gerundet (ADR-005). Beim Anlegen vergleicht das System ihn nicht mit dem verfügbaren Betrag des Girokontos, weil die erste Ausführung erst zu einem späteren Termin erfolgt. Ist er kleiner als 0,01 Euro, legt das System den Dauerauftrag nicht an und zeigt „Der Betrag muss mindestens 0,01 Euro betragen.“.
 
 ### BR-0022: Ausführungstag im Monat
 
@@ -152,7 +152,7 @@ Der Dienst liefert und löscht nur Daueraufträge der angemeldeten Kundin. Eine 
 
 ## Weitere Prüfungen
 
-- **WP-1** (Unit-Test): IBAN-Prüfziffer nach ISO 7064 MOD 97-10, Betrag größer als 0 und Ausführungstag im Bereich 1 bis 28 beim Anlegen eines Dauerauftrags.
+- **WP-1** (Unit-Test): IBAN-Prüfziffer nach ISO 7064 MOD 97-10, Betrag mindestens 0,01 Euro und Ausführungstag im Bereich 1 bis 28 beim Anlegen eines Dauerauftrags.
 - **WP-2** (Unit-Test): Der Dienst liefert und löscht nur Daueraufträge der angemeldeten Kundin; eine fremde oder unbekannte Dauerauftrags-Kennung beantwortet er mit 404, ohne gültige Sitzung mit 401 (BR-0024).
 
 ## Notizen
