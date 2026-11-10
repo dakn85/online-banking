@@ -97,3 +97,9 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
 - BR-0023 und UC-005 A6 nennen den „heutigen Tag“, sagen aber nicht, in welcher Zeitzone er gilt (docs/use_cases/UC-005-dauerauftrag-einrichten-ansehen-und-loeschen.md, BR-0023; docs/entity_model.md, Dauerauftrag.ersteAusfuehrung „nicht vor dem heutigen Tag“). Zwischen 0:00 und 1:00 Uhr (Sommerzeit: 2:00 Uhr) deutscher Zeit ist der UTC-Tag noch der Vortag. Welcher Kalendertag ist „heute“ für die erste Ausführung?
   **Antwort:** Kalendertag in UTC, wie der Buchungstag in BR-0012 und die Leitplanke „Zeiten in UTC“
   _→ eingearbeitet in UC-005, BR-0023, Dauerauftrag, POST /api/dauerauftraege, Schema DauerauftragAnlegen · 676859c_
+- Soll der Betrag im Formular mit Komma eingegeben werden?
+  **Antwort:** Mit Komma im deutschen Format, z. B. „50,00“, wie die Szenarien es tippen.
+  _→ eingearbeitet in dauerauftraege_
+- Was zeigt das System, wenn die Kundin den Betrag mit Punkt statt mit Komma eingibt?
+  **Antwort:** Die Meldung aus BR-0021 („Der Betrag muss mindestens 0,01 Euro betragen.“).
+  _→ eingearbeitet in dauerauftraege_
