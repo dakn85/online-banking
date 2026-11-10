@@ -36,6 +36,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/dauerauftraege.spec`: Ein monatlicher Dauerauftrag wird angelegt
+- `acceptance/specs/dauerauftraege.spec`: Eine erste Ausführung am heutigen Kalendertag in UTC wird angenommen
 
 ## Technischer Entwurf
 
@@ -53,10 +54,6 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
 7. Akzeptanztests PK-14: sechs fehlende Steps. Relative Angaben („in 5 Tagen“, „gestern“) rechnet der Step ab dem heutigen UTC-Tag in ein Datum um. Für „Der Dienst antwortet auf das Anlegen mit dem Status 403“ tauscht der Step im abgehenden Aufruf das Auftraggeberkonto gegen die Kreditkarte, sodass der echte Dienst mit 403 antwortet; ein Testdoppel ist nicht nötig.
 
 **Änderung am Rahmen:** keine neue Bibliothek und kein neues Muster. Der Dienst erhält eine fünfte Component „Dauerauftrag“; `docs/architecture.md` nennt bisher vier und ist nachzuziehen. ADR-004 (Prüfungen doppelt) wende ich hier nicht an: „Anlegen“ ruft den Dienst direkt, er prüft in der Reihenfolge des Use Case, und die Seite zeigt seine Meldung, wie bei den Empfängervorlagen (UC-004). Eine Eingabe, die sich nicht in den Vertrag umwandeln lässt (Betrag „abc“), schickt die Seite als null; der Dienst lehnt sie mit der Meldung der Regel ab. Im Finanzstatus stehen am Girokonto jetzt drei Knöpfe; bei 1440 px Breite rückt „Überweisen“ in eine zweite Zeile, damit die Tabelle nicht breiter als die Seite wird.
-
-## Offene Fragen
-
-- [ ] BR-0023 und UC-005 A6 nennen den „heutigen Tag“, sagen aber nicht, in welcher Zeitzone er gilt (docs/use_cases/UC-005-dauerauftrag-einrichten-ansehen-und-loeschen.md, BR-0023; docs/entity_model.md, Dauerauftrag.ersteAusfuehrung „nicht vor dem heutigen Tag“). Zwischen 0:00 und 1:00 Uhr (Sommerzeit: 2:00 Uhr) deutscher Zeit ist der UTC-Tag noch der Vortag. Welcher Kalendertag ist „heute“ für die erste Ausführung?
 
 ## Entscheidungen
 
@@ -93,3 +90,6 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
 - Mit welcher Antwort bricht die Kundin die Sicherheitsabfrage ab?
   **Antwort:** Entfällt: Der Vorschlag, zu dem die Frage gehörte, ist abgelehnt.
   _→ ohne Änderung: Vorschlag abgelehnt, die Frage ist gegenstandslos._
+- BR-0023 und UC-005 A6 nennen den „heutigen Tag“, sagen aber nicht, in welcher Zeitzone er gilt (docs/use_cases/UC-005-dauerauftrag-einrichten-ansehen-und-loeschen.md, BR-0023; docs/entity_model.md, Dauerauftrag.ersteAusfuehrung „nicht vor dem heutigen Tag“). Zwischen 0:00 und 1:00 Uhr (Sommerzeit: 2:00 Uhr) deutscher Zeit ist der UTC-Tag noch der Vortag. Welcher Kalendertag ist „heute“ für die erste Ausführung?
+  **Antwort:** Kalendertag in UTC, wie der Buchungstag in BR-0012 und die Leitplanke „Zeiten in UTC“
+  _→ eingearbeitet in UC-005, BR-0023, Dauerauftrag, POST /api/dauerauftraege, Schema DauerauftragAnlegen_

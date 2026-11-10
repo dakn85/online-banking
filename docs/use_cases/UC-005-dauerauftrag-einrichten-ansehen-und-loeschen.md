@@ -69,7 +69,7 @@
 
 ### A6: Erste Ausführung in der Vergangenheit
 
-**Auslöser:** Die erste Ausführung liegt vor dem heutigen Tag (BR-0023). (Schritt 4).  
+**Auslöser:** Die erste Ausführung liegt vor dem heutigen Tag, dem Kalendertag in UTC (BR-0023). (Schritt 4).  
 **Ablauf:**
 
 1. Das System legt keinen Dauerauftrag an und zeigt „Die erste Ausführung darf nicht in der Vergangenheit liegen.“.
@@ -144,7 +144,7 @@ Der Ausführungstag im Monat ist eine ganze Zahl von 1 bis 28, damit der Termin 
 
 ### BR-0023: Erste Ausführung des Dauerauftrags
 
-Die erste Ausführung ist ein Datum ab dem heutigen Tag; sie darf vom Ausführungstag im Monat abweichen. Liegt sie vor dem heutigen Tag, legt das System den Dauerauftrag nicht an und zeigt „Die erste Ausführung darf nicht in der Vergangenheit liegen.“.
+Die erste Ausführung ist ein Datum ab dem heutigen Tag; sie darf vom Ausführungstag im Monat abweichen. Heute ist der Kalendertag in UTC, wie der Buchungstag in BR-0012. Liegt die erste Ausführung vor dem heutigen Tag, legt das System den Dauerauftrag nicht an und zeigt „Die erste Ausführung darf nicht in der Vergangenheit liegen.“.
 
 ### BR-0024: Daueraufträge der angemeldeten Kundin
 

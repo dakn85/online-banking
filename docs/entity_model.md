@@ -106,5 +106,5 @@ Ein monatlicher Zahlungsauftrag vom Girokonto an einen Empfänger im SEPA-Raum, 
 | betrag | Betrag je Ausführung in Euro | Decimal |  | Pflicht; Wertebereich 0.01..; Beispiel 50.00 |
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | ausfuehrungstag | Tag im Monat, an dem der Dauerauftrag ausgeführt wird | Integer |  | Pflicht; Wertebereich 1..28; Beispiel 15 |
-| ersteAusfuehrung | Datum der ersten Ausführung | Date |  | Pflicht; Beispiel 2026-03-15; nicht vor dem heutigen Tag |
+| ersteAusfuehrung | Datum der ersten Ausführung | Date |  | Pflicht; Beispiel 2026-03-15; nicht vor dem heutigen Tag, dem Kalendertag in UTC (BR-0023) |
 | verwendungszweck | Verwendungszweck jeder Ausführung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Miete März |
