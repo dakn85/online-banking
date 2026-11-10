@@ -15,6 +15,11 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 | Dauerauftrag löschen | Neu | Endpunkt neu |
 | Dauerauftrag | Neu | Schema neu, Entität neu |
 | DauerauftragAnlegen | Neu | Schema neu |
+| Messpunkt NFR-003: Antwortzeit von Finanzstatus und Überweisung | Geändert | Messpunkt geändert |
+| Messpunkt NFR-004: Verfügbarkeit von Finanzstatus und Überweisung | Geändert | Messpunkt geändert |
+| Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
+| Antwortzeit von Finanzstatus und Überweisung | Geändert | Maß geändert, Gilt für geändert |
+| Verfügbarkeit von Finanzstatus und Überweisung | Geändert | Maß geändert, Gilt für geändert |
 | Daueraufträge | Neu | Maske neu |
 | Finanzstatus | Geändert | Aktion Daueraufträge neu, Skizze geändert |
 | UC-001 Finanzstatus anzeigen | Geändert | Schritt 8 neu |
@@ -58,10 +63,6 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
 7. Akzeptanztests PK-14: Die beiden neuen Szenarien (ohne Empfänger, ohne Verwendungszweck) laufen mit den vorhandenen Steps. Relative Angaben („in 5 Tagen“, „gestern“) rechnet der Step ab dem heutigen UTC-Tag in ein Datum um. Für „Der Dienst antwortet auf das Anlegen mit dem Status 403“ tauscht der Step im abgehenden Aufruf das Auftraggeberkonto gegen die Kreditkarte, sodass der echte Dienst mit 403 antwortet; ein Testdoppel ist nicht nötig.
 
 **Änderung am Rahmen:** keine neue Bibliothek und kein neues Muster. Der Dienst erhält eine fünfte Component „Dauerauftrag“; `docs/architecture.md` nennt bisher vier und ist nachzuziehen. ADR-004 (Prüfungen doppelt) wende ich hier nicht an: „Anlegen“ ruft den Dienst direkt, er prüft in der Reihenfolge des Use Case, und die Seite zeigt seine Meldung, wie bei den Empfängervorlagen (UC-004). Eine Eingabe, die sich nicht in den Vertrag umwandeln lässt (Betrag „abc“), schickt die Seite als null; der Dienst lehnt sie mit der Meldung der Regel ab. Für eine erste Ausführung, die kein Datum ist, und ein fehlendes Auftraggeberkonto nennt die Spezifikation keine Meldung; der Dienst antwortet an der Stelle von BR-0023 beziehungsweise von Schritt 5 mit 400 „Der Dauerauftrag ist unvollständig.“. Im Finanzstatus stehen am Girokonto drei Knöpfe; bei 1440 px Breite rückt „Überweisen“ in eine zweite Zeile, damit die Tabelle nicht breiter als die Seite wird.
-
-## Offene Fragen
-
-- [ ] Unter welchen http_route-Werten erscheinen die Dauerauftrags-Operationen in der Metrik?
 
 ## Entscheidungen
 
@@ -107,6 +108,9 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
 - Was zeigt das System, wenn die Kundin den Betrag mit Punkt statt mit Komma eingibt?
   **Antwort:** Die Meldung aus BR-0021 („Der Betrag muss mindestens 0,01 Euro betragen.“).
   _→ eingearbeitet in dauerauftraege · 262b082_
+- Unter welchen http_route-Werten erscheinen die Dauerauftrags-Operationen in der Metrik?
+  **Antwort:** Keine der drei Formen. In Prometheus gemessen: Der Dienst meldet Pfadparameter als {id}, zum Beispiel /api/empfaengervorlagen/{id} und /api/konten/{id}/umsaetze, also weder mit dem Namen aus der OpenAPI noch mit Doppelpunkt. Der Messpunkt soll den Parameter deshalb unter jedem Namen treffen. Für DELETE steht im Summanden http_route=~"/api/dauerauftraege/[^/]+", für GET und POST bleibt http_route="/api/dauerauftraege" wie bei den vorhandenen Einträgen.
+  _→ eingearbeitet in NFR-001, NFR-003, NFR-004, slo:nfr-003, slo:nfr-004_
 - Soll NFR-001 die Dauerauftragsseite auch im Maß mitzählen oder nur unter Gilt für führen?
   **Antwort:** Nur unter Gilt für führen, das Maß bleibt unverändert
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in NFR-001, NFR-003, NFR-004, slo:nfr-003, slo:nfr-004_
