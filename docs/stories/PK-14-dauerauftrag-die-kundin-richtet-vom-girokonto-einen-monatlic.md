@@ -99,7 +99,7 @@ _Goran Art (Agent „PK-3 Online-Banking“), 2026-11-10_
   _→ eingearbeitet in UC-005, BR-0023, Dauerauftrag, POST /api/dauerauftraege, Schema DauerauftragAnlegen · 676859c_
 - Soll der Betrag im Formular mit Komma eingegeben werden?
   **Antwort:** Mit Komma im deutschen Format, z. B. „50,00“, wie die Szenarien es tippen.
-  _→ eingearbeitet in dauerauftraege_
+  _→ eingearbeitet in dauerauftraege · 262b082_
 - Was zeigt das System, wenn die Kundin den Betrag mit Punkt statt mit Komma eingibt?
   **Antwort:** Die Meldung aus BR-0021 („Der Betrag muss mindestens 0,01 Euro betragen.“).
-  _→ eingearbeitet in dauerauftraege_
+  _→ eingearbeitet in dauerauftraege · 262b082_

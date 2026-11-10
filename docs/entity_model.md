@@ -100,7 +100,7 @@ Ein monatlicher Zahlungsauftrag vom Girokonto an einen Empfänger im SEPA-Raum, 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
 | dauerauftragsId | Kennung des Dauerauftrags, vom Dienst vergeben | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel DA-2026-00001 |
-| auftraggeberIban | IBAN des Girokontos, von dem der Dauerauftrag ausgeht | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02 5001 0517 5407 3249 31 |
+| auftraggeberIban | IBAN des Girokontos, von dem der Dauerauftrag ausgeht; der Dienst übernimmt sie ohne Leerzeichen in Großbuchstaben und liefert sie so | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02500105175407324931 |
 | empfaenger | Name des Empfängers | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
 | empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE89 3704 0044 0532 0130 00 |
 | betrag | Betrag je Ausführung in Euro | Decimal |  | Pflicht; Wertebereich 0.01..; Beispiel 50.00 |
