@@ -17,6 +17,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 | DauerauftragAnlegen | Neu | Schema neu |
 | Daueraufträge | Neu | Maske neu |
 | Finanzstatus | Geändert | Aktion Daueraufträge neu, Skizze geändert |
+| UC-001 Finanzstatus anzeigen | Geändert | Schritt 8 neu |
 | UC-005 Dauerauftrag einrichten, ansehen und löschen | Neu | Use Case neu |
 | BR-0020 IBAN des Empfängers im Dauerauftrag | Neu | Neu in UC-005 |
 | BR-0021 Betrag des Dauerauftrags | Neu | Neu in UC-005 |
@@ -46,6 +47,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
 - [ ] Daueraufträge: Maske neu
 - [ ] Finanzstatus: Aktion Daueraufträge neu
 - [ ] Finanzstatus: Skizze geändert
+- [ ] UC-001: Schritt 8 neu
 - [ ] UC-005: Use Case neu
 - [ ] BR-0020: Neu in UC-005
 - [ ] BR-0021: Neu in UC-005
@@ -82,7 +84,7 @@ Dauerauftrag: Die Kundin richtet vom Girokonto einen monatlichen Dauerauftrag an
   _→ eingearbeitet in UC-005, BR-0024, dauerauftraege · c884c2c_
 - Soll der Vertrag den Betrag auf mindestens 0.01 festlegen (wie das Datenmodell) oder bei „größer als 0“ bleiben?
   **Antwort:** Mindestens 0.01, also 0.01 zulässig und 0.00 abgelehnt.
-  _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen_
+  _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen · 13d231b_
 - Welche Meldung zeigt das System, wenn der Betrag zwischen 0 und 0,01 liegt?
   **Antwort:** Meldung aus BR-0021 beibehalten: „Der Betrag muss größer als 0 sein.“
-  _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen_
+  _→ eingearbeitet in POST /api/dauerauftraege, Schema DauerauftragAnlegen · 13d231b_
