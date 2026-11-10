@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { Request, Response } from 'express';
 import {
-  anlegen, BETRAG_FEHLER, Dauerauftragsfehler, Eingabe, ERSTE_AUSFUEHRUNG_FEHLER, liste, loeschen, NICHT_GEFUNDEN, TAG_FEHLER, zuruecksetzen,
+  anlegen, BETRAG_FEHLER, Dauerauftragsfehler, Eingabe, EMPFAENGER_FEHLT, EMPFAENGER_ZU_LANG, ERSTE_AUSFUEHRUNG_FEHLER, liste, loeschen, NICHT_GEFUNDEN,
+  TAG_FEHLER, zuruecksetzen, ZWECK_FEHLT, ZWECK_ZU_LANG,
 } from '../src/dauerauftraege';
 import { finanzstatus, zuruecksetzen as kontenZuruecksetzen } from '../src/konten';
 import { nurAngemeldet } from '../src/sitzung';
@@ -72,9 +73,13 @@ test('BR-0023: erste Ausführung ab dem heutigen Tag, sie darf vom Ausführungst
   }
 });
 
-test('UC-005 Schritt 4 und 5: Reihenfolge IBAN, Betrag, Ausführungstag, erste Ausführung, zuletzt das Auftraggeberkonto (403)', () => {
+test('UC-005 Schritt 4 und 5: Reihenfolge Empfänger, Verwendungszweck, IBAN, Betrag, Ausführungstag, erste Ausführung, zuletzt das Auftraggeberkonto (403)', () => {
   vorher();
   const alles = { ...gut, auftraggeberIban: KREDITKARTE, empfaengerIban: 'TR33 0006 1005 1978 6457 8413 26', betrag: 0, ausfuehrungstag: 31, ersteAusfuehrung: '2026-11-09' };
+  assert.equal(antwort('lena.hoffmann', { ...alles, empfaenger: '', verwendungszweck: '' }), `400 ${EMPFAENGER_FEHLT}`, 'BR-0025 zuerst');
+  assert.equal(antwort('lena.hoffmann', { ...alles, empfaenger: 'x'.repeat(71), verwendungszweck: '' }), `400 ${EMPFAENGER_ZU_LANG}`, 'BR-0025 vor BR-0026');
+  assert.equal(antwort('lena.hoffmann', { ...alles, verwendungszweck: '' }), `400 ${ZWECK_FEHLT}`, 'BR-0026 vor der IBAN (BR-0020)');
+  assert.equal(antwort('lena.hoffmann', { ...alles, verwendungszweck: 'z'.repeat(141) }), `400 ${ZWECK_ZU_LANG}`, 'BR-0026 vor der IBAN (BR-0020)');
   assert.equal(antwort('lena.hoffmann', alles), `400 ${IBAN_FEHLER}`);
   assert.equal(antwort('lena.hoffmann', { ...alles, empfaengerIban: gut.empfaengerIban }), `400 ${BETRAG_FEHLER}`);
   assert.equal(antwort('lena.hoffmann', { ...alles, empfaengerIban: gut.empfaengerIban, betrag: 50 }), `400 ${TAG_FEHLER}`);
@@ -84,14 +89,47 @@ test('UC-005 Schritt 4 und 5: Reihenfolge IBAN, Betrag, Ausführungstag, erste A
   assert.deepEqual(liste('lena.hoffmann'), [], 'bei einer Abweichung wird nichts angelegt');
 });
 
-test('Pflichtangaben und Längen des Schemas DauerauftragAnlegen', () => {
+test('BR-0025, UC-005 A9: der Empfänger ist Pflicht und höchstens 70 Zeichen lang', () => {
   vorher();
-  assert.match(antwort('lena.hoffmann', { ...gut, empfaenger: '  ' }), /^400 /);
-  assert.match(antwort('lena.hoffmann', { ...gut, verwendungszweck: undefined }), /^400 /);
+  for (const empfaenger of ['', '   ', null, undefined, 70]) {
+    assert.equal(antwort('lena.hoffmann', { ...gut, empfaenger }), `400 ${EMPFAENGER_FEHLT}`, `leer: ${JSON.stringify(empfaenger)}`);
+  }
+  assert.equal(antwort('lena.hoffmann', { ...gut, empfaenger: 'x'.repeat(71) }), `400 ${EMPFAENGER_ZU_LANG}`);
+  assert.deepEqual(liste('lena.hoffmann'), [], 'nichts angelegt');
+  assert.equal(antwort('lena.hoffmann', { ...gut, empfaenger: 'x' }), '201', 'ein Zeichen');
+  assert.equal(antwort('lena.hoffmann', { ...gut, empfaenger: 'x'.repeat(70) }), '201', '70 Zeichen');
+});
+
+test('BR-0026, UC-005 A10: der Verwendungszweck ist Pflicht und höchstens 140 Zeichen lang', () => {
+  vorher();
+  for (const verwendungszweck of ['', ' \n ', null, undefined, 140]) {
+    assert.equal(antwort('lena.hoffmann', { ...gut, verwendungszweck }), `400 ${ZWECK_FEHLT}`, `leer: ${JSON.stringify(verwendungszweck)}`);
+  }
+  assert.equal(antwort('lena.hoffmann', { ...gut, verwendungszweck: 'z'.repeat(141) }), `400 ${ZWECK_ZU_LANG}`);
+  assert.deepEqual(liste('lena.hoffmann'), [], 'nichts angelegt');
+  assert.equal(antwort('lena.hoffmann', { ...gut, verwendungszweck: 'z' }), '201', 'ein Zeichen');
+  assert.equal(antwort('lena.hoffmann', { ...gut, verwendungszweck: 'z'.repeat(140) }), '201', '140 Zeichen');
+});
+
+test('BR-0025, BR-0026: die Länge zählt ohne Leerzeichen am Rand, gespeichert wird die Eingabe der Kundin', () => {
+  vorher();
+  const empfaenger = `  ${'x'.repeat(70)} `;
+  const verwendungszweck = ` ${'z'.repeat(140)}  `;
+  const d = anlegen('lena.hoffmann', { ...gut, empfaenger, verwendungszweck }, HEUTE);
+  assert.equal(d.empfaenger, empfaenger);
+  assert.equal(d.verwendungszweck, verwendungszweck);
+  assert.deepEqual(liste('lena.hoffmann'), [d]);
+  assert.equal(antwort('lena.hoffmann', { ...gut, empfaenger: ` ${'x'.repeat(71)} ` }), `400 ${EMPFAENGER_ZU_LANG}`);
+  assert.equal(antwort('lena.hoffmann', { ...gut, verwendungszweck: ` ${'z'.repeat(141)} ` }), `400 ${ZWECK_ZU_LANG}`);
+});
+
+test('Ohne Auftraggeberkonto oder ohne Datum der ersten Ausführung wird nichts angelegt (400, Meldung nicht spezifiziert)', () => {
+  vorher();
   assert.match(antwort('lena.hoffmann', { ...gut, auftraggeberIban: undefined }), /^400 /);
-  assert.match(antwort('lena.hoffmann', { ...gut, empfaenger: 'x'.repeat(71) }), /^400 /);
-  assert.match(antwort('lena.hoffmann', { ...gut, verwendungszweck: 'z'.repeat(141) }), /^400 /);
-  assert.equal(antwort('lena.hoffmann', { ...gut, empfaenger: 'x'.repeat(70), verwendungszweck: 'z'.repeat(140) }), '201');
+  assert.match(antwort('lena.hoffmann', { ...gut, auftraggeberIban: '  ' }), /^400 /);
+  assert.match(antwort('lena.hoffmann', { ...gut, ersteAusfuehrung: '' }), /^400 /);
+  assert.equal(antwort('lena.hoffmann', { ...gut, ersteAusfuehrung: '', ausfuehrungstag: 31 }), `400 ${TAG_FEHLER}`, 'das Datum kommt nach dem Ausführungstag an die Reihe');
+  assert.deepEqual(liste('lena.hoffmann'), []);
 });
 
 test('UC-005 Schritt 2: Liste nach erster Ausführung aufsteigend', () => {

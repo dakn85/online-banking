@@ -98,7 +98,7 @@ app.delete('/api/empfaengervorlagen/:vorlagenId', nurAngemeldet('api'), (req, re
   try { vorlagen.loeschen(res.locals.kunde.kennung, req.params.vorlagenId); res.status(204).end(); } catch (fehler) { vorlagenfehler(res, fehler); }
 });
 
-// UC-005: Daueraufträge der angemeldeten Kundin (BR-0020 bis BR-0024)
+// UC-005: Daueraufträge der angemeldeten Kundin (BR-0020 bis BR-0026)
 const dauerauftragsfehler = (res: express.Response, fehler: unknown) => {
   if (!(fehler instanceof dauerauftraege.Dauerauftragsfehler)) throw fehler;
   res.status(fehler.status).json({ fehler: fehler.message });

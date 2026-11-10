@@ -1,5 +1,5 @@
 /* UC-005 Dauerauftrag einrichten, ansehen und löschen. Maske: docs/ui/dauerauftraege.html.
-   Die Regeln prüft der Dienst in der Reihenfolge des Use Case (BR-0020 bis BR-0024); die Seite wandelt die Eingaben
+   Die Regeln prüft der Dienst in der Reihenfolge des Use Case (BR-0020 bis BR-0026); die Seite wandelt die Eingaben
    in den Vertrag um und zeigt seine Meldung. Was sich nicht umwandeln lässt, geht als null hin und wird dort abgelehnt. */
 (function () {
   const ABGELEHNT = 'Der Dauerauftrag konnte nicht angelegt werden.';
@@ -52,14 +52,14 @@
             <form class="ueberweisung__form" id="neu" novalidate aria-label="Neuer Dauerauftrag">
               <h2>Neuer Dauerauftrag</h2>
               <p class="meldung meldung--fehler" role="alert"${formularfehler ? '' : ' hidden'}>${html(formularfehler)}</p>
-              <div class="feld"><label for="empfaenger">Empfänger</label><input id="empfaenger" name="empfaenger" maxlength="70" autocomplete="off" value="${html(neu.empfaenger)}"></div>
+              <div class="feld"><label for="empfaenger">Empfänger</label><input id="empfaenger" name="empfaenger" autocomplete="off" value="${html(neu.empfaenger)}"></div>
               <div class="feld"><label for="empfaengerIban">IBAN des Empfängers</label><input id="empfaengerIban" name="empfaengerIban" maxlength="42" autocomplete="off" spellcheck="false" value="${html(neu.empfaengerIban)}"></div>
               <div class="dauerauftraege__paar">
-                <div class="feld"><label for="betrag">Betrag in Euro</label><input id="betrag" name="betrag" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${html(neu.betrag)}"></div>
+                <div class="feld"><label for="betrag">Betrag in Euro</label><input id="betrag" name="betrag" inputmode="decimal" autocomplete="off" placeholder="50,00" value="${html(neu.betrag)}"></div>
                 <div class="feld"><label for="ausfuehrungstag">Ausführungstag im Monat</label><input id="ausfuehrungstag" name="ausfuehrungstag" inputmode="numeric" autocomplete="off" maxlength="4" value="${html(neu.ausfuehrungstag)}"></div>
               </div>
               <div class="feld"><label for="ersteAusfuehrung">Erste Ausführung</label><input type="date" id="ersteAusfuehrung" name="ersteAusfuehrung" value="${html(neu.ersteAusfuehrung)}"></div>
-              <div class="feld"><label for="verwendungszweck">Verwendungszweck</label><textarea id="verwendungszweck" name="verwendungszweck" maxlength="140" rows="2">${html(neu.verwendungszweck)}</textarea></div>
+              <div class="feld"><label for="verwendungszweck">Verwendungszweck</label><textarea id="verwendungszweck" name="verwendungszweck" rows="2">${html(neu.verwendungszweck)}</textarea></div>
               <div class="ueberweisung__aktionen"><button class="knopf knopf--haupt" type="submit">Anlegen</button></div>
             </form>
             <form class="ueberweisung__form" id="loeschen" novalidate aria-label="Dauerauftrag löschen">
@@ -91,7 +91,7 @@
               ersteAusfuehrung: neu.ersteAusfuehrung, verwendungszweck: neu.verwendungszweck,
             }) });
           } catch (fehler) {
-            // UC-005 Schritt 4: die Meldung der Regel im Formular; A8: bei 403 und allem anderen die allgemeine Meldung.
+            // UC-005 Schritt 4, A3 bis A6, A9, A10: die Meldung der Regel im Formular; A8: bei 403 und allem anderen die allgemeine Meldung.
             return zeigen({ formularfehler: fehler.status === 400 ? fehler.message : ABGELEHNT });
           }
           neu = { ...LEER };
