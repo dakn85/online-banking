@@ -211,6 +211,15 @@ a { color: var(--tanne); }
 .ueberweisung__vorlage { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .ueberweisung__vorlage a { font-size: 14px; font-weight: 500; }
 
+/* Daueraufträge (UC-005): nutzt die Bausteine der Empfängervorlagen */
+.dauerauftraege .zurueck, .dauerauftraege .abschnitt { margin: 0; }
+.dauerauftraege__unter { margin: 0; color: var(--tinte-2); }
+.dauerauftraege .ueberweisung__form .meldung { margin: 0; }
+.dauerauftraege__tabelle td:last-child { white-space: normal; }
+.dauerauftraege__tabelle tbody tr { cursor: pointer; }
+.dauerauftraege__tabelle tbody tr.gewaehlt > * { background: #f1f6f4; }
+.dauerauftraege__paar { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
 @media (max-width: 860px) {
   .vermoegen { padding: 24px; }
   .vermoegen__summe { font-size: 34px; }
@@ -248,6 +257,9 @@ a { color: var(--tanne); }
 .umsaetze .leer { padding: 24px; text-align: center; color: var(--tinte-2); background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); }
 .umsaetze .meldung { background: #fdecea; color: #7a1a12; }
 .kontentabelle .aktion .knopf + .knopf { margin-left: 4px; }
+/* Drei Knöpfe am Girokonto (UC-001 Schritt 8): Reicht die Breite nicht, rückt „Überweisen“ in die zweite Zeile statt aus dem Bild. */
+.kontentabelle .aktion { white-space: normal; min-width: 226px; }
+.aktion__knoepfe { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px 0; }
 .knopf--text { background: transparent; border-color: transparent; padding: 0 10px; }
 .knopf--text:hover { background: #e9f1ef; border-color: transparent; }
 .kontentabelle th, .kontentabelle td { padding-left: 10px; padding-right: 10px; }

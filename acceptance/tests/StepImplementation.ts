@@ -377,4 +377,126 @@ export default class StepImplementation {
     const felder = await this.vorlageInUeberweisung(name);
     assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
   }
+
+  /* ---------------------------------------------------------------- UC-005 Daueraufträge */
+
+  /** Die Seite Daueraufträge; steht die Seite woanders, geht es wie die Kundin über die Zeile des Girokontos im Finanzstatus. */
+  private async dauerauftraegeSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/dauerauftraege') {
+      await (await this.kontentabelle()).locator('.kontentabelle tbody tr[data-konto="Girokonto"]').getByRole('link', { name: 'Daueraufträge' }).click();
+      await page.waitForURL(/\/dauerauftraege$/);
+    }
+    await page.locator('.dauerauftraege').waitFor();
+    return page;
+  }
+
+  /** Die Seite zeichnet nach jeder Antwort des Dienstes neu; gewartet wird auf die neu gezeichnete Fläche. */
+  private async dauerauftraegeNeuGezeichnet(page: Page, aktion: () => Promise<void>) {
+    await page.locator('.dauerauftraege').evaluate(e => e.setAttribute('data-alt', ''));
+    await aktion();
+    await page.locator('.dauerauftraege:not([data-alt])').waitFor();
+  }
+
+  /**
+   * Die erste Ausführung als Datum JJJJ-MM-TT. Die Szenarien nennen sie relativ zum heutigen Tag, weil der Dienst mit der
+   * echten Uhr prüft (BR-0023): „heute“, „gestern“, „morgen“, „in 5 Tagen“, „vor 2 Tagen“. Heute ist der UTC-Tag, wie im Dienst.
+   */
+  private ersteAusfuehrung(angabe: string): string {
+    const a = text(angabe).trim().toLowerCase();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(a)) return a;
+    const fest: Record<string, number> = { heute: 0, gestern: -1, morgen: 1 };
+    const relativ = /^(in|vor) (\d+) tag(en)?$/.exec(a);
+    assert.ok(a in fest || relativ, `Erste Ausführung „${angabe}“: erwartet JJJJ-MM-TT, heute, gestern, morgen, „in N Tagen“ oder „vor N Tagen“`);
+    const tage = a in fest ? fest[a] : Number(relativ![2]) * (relativ![1] === 'in' ? 1 : -1);
+    return new Date(Date.now() + tage * 86_400_000).toISOString().slice(0, 10);
+  }
+
+  /** Füllt „Neuer Dauerauftrag“ und wählt „Anlegen“; fertig ist der Step, wenn die Seite die Antwort des Dienstes zeigt. */
+  private async dauerauftragErfassen(page: Page, empfaenger: string, iban: string, betrag: string, tag: string, erste: string, zweck: string) {
+    const form = page.getByRole('form', { name: 'Neuer Dauerauftrag' });
+    await form.getByLabel('Empfänger', { exact: true }).fill(text(empfaenger));
+    await form.getByLabel('IBAN des Empfängers').fill(text(iban));
+    await form.getByLabel('Betrag in Euro').fill(text(betrag));
+    await form.getByLabel('Ausführungstag im Monat').fill(text(tag));
+    await form.getByLabel('Erste Ausführung').fill(this.ersteAusfuehrung(erste));
+    await form.getByLabel('Verwendungszweck').fill(text(zweck));
+    await this.dauerauftraegeNeuGezeichnet(page, () => form.getByRole('button', { name: 'Anlegen' }).click());
+  }
+
+  /** Die Daueraufträge der angemeldeten Kundin, wie der Dienst sie liefert (mit der Sitzung des Browsers). */
+  private async dauerauftraegeImDienst(page: Page): Promise<{ dauerauftragsId: string; empfaenger: string }[]> {
+    const antwort = await page.context().request.get(`${basisUrl}/api/dauerauftraege`);
+    assert.strictEqual(antwort.status(), 200, 'GET /api/dauerauftraege');
+    return antwort.json();
+  }
+
+  @Step('Die Kundin öffnet die Daueraufträge vom Girokonto')
+  public async dauerauftraegeOeffnen() {
+    const page = await this.kontentabelle();
+    await page.locator('.kontentabelle tbody tr[data-konto="Girokonto"]').getByRole('link', { name: 'Daueraufträge' }).click();
+    await page.waitForURL(/\/dauerauftraege$/);
+    await page.locator('.dauerauftraege').waitFor();
+    await page.getByRole('heading', { name: 'Daueraufträge', exact: true, level: 1 }).waitFor();
+  }
+
+  @Step('Die Kundin legt den Dauerauftrag an den Empfänger <empfaenger> mit IBAN <iban>, Betrag <betrag>, Ausführungstag <tag>, erster Ausführung <erste> und Verwendungszweck <zweck> an')
+  public async dauerauftragAnlegen(empfaenger: string, iban: string, betrag: string, tag: string, erste: string, zweck: string) {
+    await this.dauerauftragErfassen(await this.dauerauftraegeSeite(), empfaenger, iban, betrag, tag, erste, zweck);
+  }
+
+  @Step('Die Daueraufträge zeigen die Meldung <meldung>')
+  public async dauerauftraegeMelden(meldung: string) {
+    const page = await this.dauerauftraegeSeite();
+    const meldungen = page.locator('.dauerauftraege').locator('[role="status"], [role="alert"]').filter({ visible: true });
+    await meldungen.filter({ hasText: text(meldung) }).waitFor();
+    assert.deepStrictEqual((await meldungen.allInnerTexts()).map(sichtbar), [text(meldung)], 'Meldungen der Daueraufträge');
+  }
+
+  @Step('Die Daueraufträge zeigen den Hinweis <hinweis>')
+  public async dauerauftraegeHinweis(hinweis: string) {
+    const page = await this.dauerauftraegeSeite();
+    await page.locator('.dauerauftraege').getByText(text(hinweis), { exact: true }).waitFor();
+    assert.strictEqual(await page.locator('.dauerauftraege table').count(), 0, 'Der Hinweis steht an Stelle der Tabelle (UC-005 A2)');
+  }
+
+  /** Bis zur Antwort auf die Sicherheitsabfrage bleibt der Dauerauftrag bestehen; erst „Ja“ löscht ihn (UC-005 A7). */
+  @Step('Die Kundin wählt den Dauerauftrag <empfaenger> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
+  public async dauerauftragLoeschen(empfaenger: string, antwort: string) {
+    const page = await this.dauerauftraegeSeite();
+    const form = page.getByRole('form', { name: 'Dauerauftrag löschen' });
+    const auswahl = form.getByLabel('Dauerauftrag zum Löschen');
+    await auswahl.selectOption({ label: text(empfaenger) });
+    const dauerauftragsId = await auswahl.inputValue();
+    await this.dauerauftraegeNeuGezeichnet(page, () => form.getByRole('button', { name: 'Löschen' }).click());
+    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
+    await abfrage.getByText('Dauerauftrag löschen?', { exact: true }).waitFor();
+    const vorhanden = async () => (await this.dauerauftraegeImDienst(page)).some(d => d.dauerauftragsId === dauerauftragsId);
+    assert.ok(await vorhanden(), 'Der Dauerauftrag ist schon vor der Antwort auf die Sicherheitsabfrage gelöscht');
+    await this.dauerauftraegeNeuGezeichnet(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
+    assert.strictEqual(await vorhanden(), text(antwort) !== 'Ja', `Dauerauftrag nach der Antwort „${antwort}“ im Dienst`);
+  }
+
+  /**
+   * UC-005 A8: In der Oberfläche tritt die Ablehnung nicht auf, weil das Auftraggeberkonto fest das Girokonto ist. Der Step
+   * tauscht es darum im abgehenden Aufruf gegen die Kreditkarte, füllt das Formular sonst gültig und prüft, dass der Dienst
+   * selbst mit dem Status antwortet (BR-0024).
+   */
+  @Step('Der Dienst antwortet auf das Anlegen mit dem Status <status>')
+  public async anlegenAbgelehnt(status: string) {
+    assert.strictEqual(text(status), '403', 'Beschrieben ist nur die Ablehnung des Auftraggeberkontos mit 403 (UC-005 A8)');
+    const page = await this.dauerauftraegeSeite();
+    const adresse = '**/api/dauerauftraege';
+    await page.route(adresse, route => route.request().method() === 'POST'
+      ? route.continue({ postData: JSON.stringify({ ...route.request().postDataJSON(), auftraggeberIban: 'DE44500105175407324955' }) })
+      : route.continue());
+    try {
+      const antwort = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/dauerauftraege');
+      await this.dauerauftragErfassen(page, 'Möbel Nord GmbH', 'DE89 3704 0044 0532 0130 00', '50,00', '15', 'in 5 Tagen', 'Miete März');
+      assert.strictEqual((await antwort).status(), Number(status), 'Status des Dienstes auf POST /api/dauerauftraege');
+    } finally {
+      await page.unroute(adresse);
+    }
+    assert.deepStrictEqual(await this.dauerauftraegeImDienst(page), [], 'Es wurde kein Dauerauftrag angelegt');
+  }
 }
