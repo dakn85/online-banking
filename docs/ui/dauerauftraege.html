@@ -1,0 +1,80 @@
+<!-- maske: {
+  "title": "Daueraufträge",
+  "useCases": ["UC-007"],
+  "fields": [
+    {"name":"empfaengerAnzeige","label":"Empfänger","kind":"anzeige","attribute":"Dauerauftrag.empfaenger"},
+    {"name":"ibanAnzeige","label":"IBAN des Empfängers","kind":"anzeige","attribute":"Dauerauftrag.empfaengerIban"},
+    {"name":"betragAnzeige","label":"Betrag","kind":"anzeige","attribute":"Dauerauftrag.betrag"},
+    {"name":"ausfuehrungstagAnzeige","label":"Ausführungstag","kind":"anzeige","attribute":"Dauerauftrag.ausfuehrungstag"},
+    {"name":"ersteAusfuehrungAnzeige","label":"Erste Ausführung","kind":"anzeige","attribute":"Dauerauftrag.ersteAusfuehrung"},
+    {"name":"verwendungszweckAnzeige","label":"Verwendungszweck","kind":"anzeige","attribute":"Dauerauftrag.verwendungszweck"},
+    {"name":"auftraggeberkonto","label":"Auftraggeberkonto","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Dauerauftrag.empfaenger","rules":{"required":true,"maxLength":70}},
+    {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Dauerauftrag.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
+    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Dauerauftrag.betrag","rules":{"required":true}},
+    {"name":"ausfuehrungstag","label":"Ausführungstag im Monat","kind":"zahl","attribute":"Dauerauftrag.ausfuehrungstag","rules":{"required":true}},
+    {"name":"ersteAusfuehrung","label":"Erste Ausführung","kind":"datum","attribute":"Dauerauftrag.ersteAusfuehrung","rules":{"required":true}},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Dauerauftrag.verwendungszweck","rules":{"maxLength":140}},
+    {"name":"dauerauftragLoeschen","label":"Dauerauftrag zum Löschen","kind":"auswahl","attribute":"Dauerauftrag.empfaenger"}
+  ],
+  "actions": [
+    {"label":"Speichern","useCase":"UC-007","operation":"POST /api/dauerauftraege","screen":"dauerauftraege"},
+    {"label":"Löschen","useCase":"UC-007","operation":"DELETE /api/dauerauftraege/{dauerauftragsId}","screen":"dauerauftraege"},
+    {"label":"Abbrechen","useCase":"UC-007","screen":"dauerauftraege"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Daueraufträge</h1>
+  <p>Monatliche Zahlungen vom Girokonto einrichten und löschen.</p>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#">Überweisung</a>
+  <a href="#">Empfängervorlagen</a>
+  <a href="#" aria-current="page">Daueraufträge</a>
+</nav>
+<p data-wf="meldung" role="status">Dauerauftrag angelegt.</p>
+<p data-wf="meldung" role="status">Dauerauftrag gelöscht.</p>
+<p data-wf="meldung" role="alert">Der Betrag muss größer als 0 Euro sein.</p>
+<p data-wf="meldung" role="alert">Der Ausführungstag im Monat liegt zwischen 1 und 28.</p>
+<p data-wf="meldung" role="alert">Die erste Ausführung darf nicht vor heute liegen.</p>
+<p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
+<div data-wf="leer">
+  <p>Sie haben noch keinen Dauerauftrag.</p>
+</div>
+<table data-wf="tabelle">
+  <caption>Ihre Daueraufträge</caption>
+  <thead>
+    <tr><th>Empfänger</th><th>IBAN des Empfängers</th><th>Betrag</th><th>Ausführungstag</th><th>Erste Ausführung</th><th>Verwendungszweck</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Hausverwaltung Weber</td><td>DE44 5001 0517 5407 3249 31</td><td>950,00 €</td><td>1</td><td>01.12.2026</td><td>Miete Dezember</td></tr>
+    <tr><td>Stadtwerke Nord</td><td>DE02 5001 0517 5407 3249 31</td><td>85,00 €</td><td>15</td><td>15.11.2026</td><td>Abschlag Strom</td></tr>
+  </tbody>
+</table>
+<section data-wf="gruppe" data-merkmal="Neuer Dauerauftrag">
+  <h2>Neuer Dauerauftrag</h2>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Auftraggeberkonto</span><input name="auftraggeberkonto" placeholder="Girokonto · DE02 5001 0517 5407 3249 31"></label>
+    <label data-wf="feld"><span>Empfänger</span><input name="empfaenger" placeholder="Hausverwaltung Weber" required></label>
+    <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE44 5001 0517 5407 3249 31" required></label>
+    <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="950,00" required></label>
+    <label data-wf="feld"><span>Ausführungstag im Monat</span><input type="number" name="ausfuehrungstag" placeholder="1" required></label>
+    <label data-wf="feld"><span>Erste Ausführung</span><input type="date" name="ersteAusfuehrung" required></label>
+    <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Miete Dezember"></textarea></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Speichern</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Dauerauftrag löschen">
+  <h2>Dauerauftrag löschen</h2>
+  <p data-wf="meldung" role="status">Dauerauftrag löschen?</p>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Dauerauftrag zum Löschen</span><select name="dauerauftragLoeschen"><option>Hausverwaltung Weber</option><option>Stadtwerke Nord</option></select></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Löschen</button>
+      <button>Abbrechen</button>
+    </div>
+  </form>
+</section>

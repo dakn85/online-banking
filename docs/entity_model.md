@@ -89,3 +89,20 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | verwendungszweck | Verwendungszweck der Vorlage; optional; leer oder nur Leerzeichen ergibt keinen Wert, dann fehlt das Feld | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711; leer oder nur Leerzeichen = kein Wert, das Feld fehlt in Antwort und Liste |
 
 **Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
+
+### Dauerauftrag
+
+**Bereich:** Dauerauftrag  
+
+Ein monatlich wiederkehrender Auftrag der Kundin, vom Girokonto an einen Empfänger im SEPA-Raum zu zahlen. In dieser Story wird er nur angelegt, angezeigt und gelöscht, nie ausgeführt.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| dauerauftragsId | Kennung des Dauerauftrags im Dienst | String | 1..36 | vom Dienst vergeben, je Dauerauftrag eindeutig |
+| kontoIban | IBAN des Girokontos der Kundin, von dem der Dauerauftrag ausgeht (BR-0032) | String | 15..34 | IBAN eines Girokontos der angemeldeten Kundin |
+| empfaenger | Name des Empfängers | String | 1..70 | Pflicht |
+| empfaengerIban | IBAN des Empfängers im SEPA-Raum (BR-0036, BR-0003) | String | 15..34 | gültige Prüfziffer, Länderkennzeichen in der SEPA-Länderliste |
+| betrag | Betrag je Ausführung in Euro, auf Cent gerundet (BR-0033, ADR-005) | Decimal |  | größer als 0 |
+| ausfuehrungstag | Tag im Monat, an dem der Dauerauftrag fällig wäre (BR-0034) | Integer |  | 1 bis 28 |
+| ersteAusfuehrung | Datum der ersten Ausführung (BR-0035) | Date |  | nicht vor dem heutigen Tag |
+| verwendungszweck | Verwendungszweck des Dauerauftrags; fehlt, wenn die Kundin keinen angegeben hat (BR-0039) | String | 0..140 | optional; leer oder nur Leerzeichen gilt als nicht angegeben |

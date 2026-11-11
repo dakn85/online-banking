@@ -2,7 +2,7 @@
 
 ## Zweck
 
-Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze und überweist von ihrem Girokonto.
+Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze und überweist von ihrem Girokonto. Sie richtet außerdem monatliche Daueraufträge vom Girokonto ein, sieht ihre Daueraufträge in einer Liste und löscht einen Dauerauftrag.
 
 ## Stakeholder
 
@@ -24,7 +24,8 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 
 ## Abgrenzung
 
-- Überweisung: nur als einmalige Überweisung vom Girokonto; Termin- und Daueraufträge folgen später.
+- Überweisung: nur als einmalige Überweisung vom Girokonto; Terminaufträge folgen später.
+- Dauerauftrag: nur einrichten, ansehen und löschen; der Dienst führt keinen Dauerauftrag aus, bucht nichts und erzeugt keinen Umsatz, und beim Einrichten prüft er den Betrag nicht gegen den verfügbaren Betrag des Girokontos.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
 - Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später.
