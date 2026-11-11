@@ -1,0 +1,75 @@
+<!-- maske: {
+  "title": "Daueraufträge",
+  "useCases": ["UC-006"],
+  "fields": [
+    {"name":"empfaengerZeile","label":"Empfänger","kind":"anzeige","attribute":"Dauerauftrag.empfaenger"},
+    {"name":"ibanZeile","label":"IBAN","kind":"anzeige","attribute":"Dauerauftrag.empfaengerIban"},
+    {"name":"betragZeile","label":"Betrag","kind":"anzeige","attribute":"Dauerauftrag.betrag"},
+    {"name":"ausfuehrungstagZeile","label":"Ausführungstag","kind":"anzeige","attribute":"Dauerauftrag.ausfuehrungstag"},
+    {"name":"ersteAusfuehrungZeile","label":"Erste Ausführung","kind":"anzeige","attribute":"Dauerauftrag.ersteAusfuehrung"},
+    {"name":"zweckZeile","label":"Verwendungszweck","kind":"anzeige","attribute":"Dauerauftrag.verwendungszweck"},
+    {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Dauerauftrag.empfaenger","rules":{"required":true,"maxLength":70}},
+    {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Dauerauftrag.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
+    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Dauerauftrag.betrag","rules":{"required":true}},
+    {"name":"ausfuehrungstag","label":"Ausführungstag im Monat","kind":"zahl","attribute":"Dauerauftrag.ausfuehrungstag","rules":{"required":true,"min":"1","max":"28"}},
+    {"name":"ersteAusfuehrung","label":"Erste Ausführung","kind":"datum","attribute":"Dauerauftrag.ersteAusfuehrung","rules":{"required":true}},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Dauerauftrag.verwendungszweck","rules":{"required":true,"maxLength":140}},
+    {"name":"dauerauftragLoeschen","label":"Dauerauftrag zum Löschen","kind":"auswahl","attribute":"Dauerauftrag.empfaenger"}
+  ],
+  "actions": [
+    {"label":"Speichern","useCase":"UC-006","operation":"POST /api/dauerauftraege","screen":"dauerauftraege"},
+    {"label":"Löschen","useCase":"UC-006","operation":"DELETE /api/dauerauftraege/{dauerauftragId}","screen":"dauerauftraege"},
+    {"label":"Abbrechen","useCase":"UC-006","screen":"dauerauftraege"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Daueraufträge</h1>
+  <p>Monatliche Zahlung vom Girokonto DE02 5001 0517 5407 3249 31 einrichten und löschen.</p>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#">Überweisung</a>
+  <a href="#" aria-current="page">Daueraufträge</a>
+</nav>
+<p data-wf="meldung" role="status">Dauerauftrag eingerichtet.</p>
+<p data-wf="meldung" role="status">Dauerauftrag gelöscht.</p>
+<p data-wf="meldung" role="alert">Der Ausführungstag muss zwischen 1 und 28 liegen.</p>
+<p data-wf="meldung" role="alert">Die erste Ausführung darf nicht vor heute liegen.</p>
+<p data-wf="meldung" role="alert">Der Betrag muss größer als 0 sein.</p>
+<p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
+<p data-wf="meldung" role="alert">Bitte füllen Sie alle Pflichtfelder aus.</p>
+<table data-wf="tabelle">
+  <caption>Ihre Daueraufträge</caption>
+  <thead>
+    <tr><th>Empfänger</th><th>IBAN</th><th>Betrag</th><th>Ausführungstag</th><th>Erste Ausführung</th><th>Verwendungszweck</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Möbel Nord GmbH</td><td>DE89 3704 0044 0532 0130 00</td><td>50,00 €</td><td>15.</td><td>01.12.2026</td><td>Miete</td></tr>
+    <tr><td>Stadtwerke Nord</td><td>DE02 5001 0517 5407 3249 31</td><td>89,00 €</td><td>1.</td><td>01.12.2026</td><td>Abschlag Strom</td></tr>
+  </tbody>
+</table>
+<section data-wf="gruppe" data-merkmal="Neuer Dauerauftrag">
+  <h2>Neuer Dauerauftrag</h2>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Empfänger</span><input name="empfaenger" placeholder="Möbel Nord GmbH" required></label>
+    <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
+    <label data-wf="feld"><span>Betrag in Euro</span><input name="betrag" type="number" step="0.01" placeholder="50,00" required></label>
+    <label data-wf="feld"><span>Ausführungstag im Monat</span><input name="ausfuehrungstag" type="number" placeholder="15" required></label>
+    <label data-wf="feld"><span>Erste Ausführung</span><input name="ersteAusfuehrung" type="date" placeholder="01.12.2026" required></label>
+    <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Miete" required></textarea></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Speichern</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Dauerauftrag löschen">
+  <h2>Dauerauftrag löschen</h2>
+  <p data-wf="meldung" role="status">Dauerauftrag löschen?</p>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Dauerauftrag zum Löschen</span><select name="dauerauftragLoeschen"><option>Möbel Nord GmbH, 15., 50,00 €</option><option>Stadtwerke Nord, 1., 89,00 €</option></select></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Löschen</button>
+      <button>Abbrechen</button>
+    </div>
+  </form>
+</section>

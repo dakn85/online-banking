@@ -8,6 +8,8 @@ erDiagram
     "Überweisung" }o--|| Konto : "geht ab von"
     Umsatz }o--|| Konto : "gehört zu"
     Empfaengervorlage }o--|| Kunde : "gehört zu"
+    Dauerauftrag }o--|| Konto : "geht ab von"
+    Dauerauftrag }o--|| Kunde : "gehört"
 ```
 
 ## Entitäten
@@ -89,3 +91,21 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | verwendungszweck | Verwendungszweck der Vorlage; optional; leer oder nur Leerzeichen ergibt keinen Wert, dann fehlt das Feld | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711; leer oder nur Leerzeichen = kein Wert, das Feld fehlt in Antwort und Liste |
 
 **Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
+
+### Dauerauftrag
+
+**Bereich:** Überweisung  
+
+Ein monatlicher Auftrag der Kundin, von ihrem Girokonto an einen Empfänger im SEPA-Raum zu zahlen. Der Dienst führt ihn in dieser Ausbaustufe nicht aus und bucht nichts.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| dauerauftragId | Kennung des Dauerauftrags, vom Dienst vergeben | String | 1..36 | Pflicht; Eindeutig; Beispiel D-2026-00001 |
+| auftraggeberIban | IBAN des Girokontos der Kundin, von dem der Dauerauftrag ausgeht | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE02 5001 0517 5407 3249 31 |
+| empfaenger | Empfänger des Dauerauftrags, wie ihn die Kundin eingibt | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
+| empfaengerIban | IBAN des Empfängers; ihr Länderkennzeichen steht in der SEPA-Länderliste (BR-0003) | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE89 3704 0044 0532 0130 00 |
+| betrag | Betrag des Dauerauftrags in Euro, monatlich; beim Einrichten nicht gegen den verfügbaren Betrag geprüft (BR-0029) | Decimal |  | Pflicht; Wertebereich 0,01..999999999,99; Beispiel 50.00 |
+| waehrung | Währung des Betrags | String | 3 | Pflicht; Werte EUR; Standard EUR |
+| ausfuehrungstag | Tag im Monat, an dem der Dauerauftrag ausgeführt wird; 1 bis 28, damit er in jedem Monat existiert (BR-0027) | Integer |  | Pflicht; Wertebereich 1..28; Beispiel 15 |
+| ersteAusfuehrung | Datum der ersten Ausführung; ab dem Tag des Einrichtens frei wählbar und darf vom Ausführungstag abweichen (BR-0028) | Date |  | Pflicht; Beispiel 2026-12-01 |
+| verwendungszweck | Verwendungszweck des Dauerauftrags | String | 1..140 | Pflicht; Länge 1..140; Beispiel Miete |
