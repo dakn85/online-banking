@@ -24,7 +24,8 @@ if (!basisUrl) {
 }
 
 const kundinnen = new SharedArray('kundinnen', () => {
-  return open('../data/kundinnen.csv')
+  // k6 löst open() relativ zum Projektwurzelverzeichnis auf.
+  return open('load/data/kundinnen.csv')
     .split(/\r?\n/)
     .map((zeile) => zeile.trim())
     .filter((zeile) => zeile.length > 0)
