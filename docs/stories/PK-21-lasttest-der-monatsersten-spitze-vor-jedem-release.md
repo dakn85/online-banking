@@ -14,16 +14,12 @@ Eigene Lastumgebung; Produktivbetrieb und Monitoring im Betrieb; Lastspitzen aus
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
-| Lasttest der Monatsersten-Spitze als eigene Prüfstufe vor dem Release | Neu | Entscheidung neu |
-| Architektur | Geändert | Querschnittliche Konzepte geändert |
 | Antwortzeit von Finanzstatus und Überweisung | Geändert | Anforderung geändert, Maß geändert, Prüfung geändert |
 | Verfügbarkeit von Finanzstatus und Überweisung | Geändert | Anforderung geändert, Maß geändert, Prüfung geändert |
 | Lasttest auf der gemeinsamen Testumgebung | Neu | Randbedingung neu |
 
 ## Aufgaben für die Umsetzung
 
-- [ ] Lasttest der Monatsersten-Spitze als eigene Prüfstufe vor dem Release: Entscheidung neu
-- [ ] Architektur: Querschnittliche Konzepte geändert
 - [ ] Antwortzeit von Finanzstatus und Überweisung: Anforderung geändert
 - [ ] Antwortzeit von Finanzstatus und Überweisung: Maß geändert
 - [ ] Antwortzeit von Finanzstatus und Überweisung: Prüfung geändert
@@ -53,16 +49,16 @@ Eigene Lastumgebung; Produktivbetrieb und Monitoring im Betrieb; Lastspitzen aus
   _→ noch nicht in der Spezifikation_
 - Woher kommen die 300 Demo-Kennungen und der Kontobestand für den Lasttest?
   **Antwort:** Vorerst teilen sich die virtuellen Kundinnen die vorhandenen Demo-Kennungen, mehrere Sitzungen je Kennung. Ein eigener Lastbestand mit 300 Kennungen folgt in einer eigenen Story, bevor der Nachweis für ein Release zählt.
-  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur_
+  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur · e06a231_
 - Womit und wodurch ausgelöst läuft der Lasttest?
   **Antwort:** Mit den Lastläufen der Plattform: ein k6-Skript mit Lastprofil im Testprojekt, vor jedem Release auf der Seite Last gestartet. Der Lauf ist der Nachweis an der Anforderung. Kein eigenes Werkzeug und keine ADR dafür.
-  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur_
+  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur · e06a231_
 - Welcher Betrag, Empfänger und Verwendungszweck gelten für die Überweisungen im Lasttest?
   **Antwort:** 0,01 € an einen festen Empfänger, damit der verfügbare Betrag sicher reicht.
-  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur_
+  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur · e06a231_
 - Was zählt als Beharrungszustand, und welche Aufrufe gehen in die Messung ein?
   **Antwort:** 15 Minuten nach vollständiger Anmeldung; gemessen werden Finanzstatus und Überweisung, die Anmeldung wird belastet, aber nicht gegen 500 ms geprüft.
-  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur_
+  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur · e06a231_
 - Was passiert, wenn der Lasttest einen Zielwert verfehlt?
   **Antwort:** Der Lasttest blockiert das Release; eine Ausnahme wird schriftlich entschieden.
-  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur_
+  _→ eingearbeitet in NFR-003, NFR-004, C-002, ADR-007, architektur · e06a231_
