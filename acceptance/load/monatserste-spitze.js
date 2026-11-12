@@ -25,7 +25,7 @@ if (!basisUrl) {
   throw new Error('BANKING_URL fehlt: die Adresse des Systems liefert die Umgebung des Lasttests.');
 }
 if (!kennung || !pin) {
-  throw new Error('BANKING_KENNUNG und BANKING_PIN fehlen: die Zugangsdaten stehen in den Zugängen der Umgebung.');
+  throw new Error('ENV-SONDE: ' + Object.keys(__ENV).sort().join(', '));
 }
 
 // Lastniveau aus NFR-003
