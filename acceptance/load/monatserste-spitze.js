@@ -26,7 +26,7 @@ if (!basisUrl) {
 }
 if (!kennung || !pin) {
   const verdacht = Object.keys(__ENV).filter((name) => /BANK|KENN|PIN|ZUGANG|KUND|USER|LOGIN|PASS|CRED|TOKEN|SECRET|TEST/i.test(name));
-  throw new Error('ENV-SONDE: ' + verdacht.sort().join(', '));
+  throw new Error('ENV-SONDE: URL=' + basisUrl + ' · Namen: ' + verdacht.sort().join(', '));
 }
 
 // Lastniveau aus NFR-003
