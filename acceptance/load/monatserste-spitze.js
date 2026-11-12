@@ -10,7 +10,7 @@
 // Finanzstatus-Aufrufe je Sekunde entstehen. Jede zehnte Runde eines VU enthält zusätzlich eine
 // Überweisung, also rund 2 Überweisungen je Sekunde. Anlauf, 15 Minuten Beharrung, Ablauf.
 //
-// Prüfgröße je Aufrufart: p95 der Antwortzeit ≤ 500 ms (Threshold auf den Namen des Aufrufs).
+// Prüfgröße je Aufrufart: p95 der Antwortzeit <= 500 ms (Threshold auf den Namen des Aufrufs).
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
@@ -112,11 +112,11 @@ function anmelden() {
   return girokontoAus(probe.body);
 }
 
-function girokontoAus(rumpf: string): string {
+function girokontoAus(rumpf) {
   try {
-    const uebersicht = JSON.parse(rumpf) as { konten?: Array<{ art?: string; iban?: string }> };
-    const girokonto = (uebersicht.konten || []).find((konto) => konto.art === 'Girokonto');
-    return girokonto?.iban || '';
+    const uebersicht = JSON.parse(rumpf);
+    const girokonto = (uebersicht.konten || []).filter((konto) => konto.art === 'Girokonto')[0];
+    return girokonto && girokonto.iban ? girokonto.iban : '';
   } catch (fehler) {
     console.error(`Antwort des Finanzstatus nicht lesbar: ${fehler}`);
     return '';
