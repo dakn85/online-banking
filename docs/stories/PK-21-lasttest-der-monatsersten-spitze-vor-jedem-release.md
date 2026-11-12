@@ -10,8 +10,27 @@ Als Betrieb möchte ich vor jedem Release mit einem Lasttest nachweisen, dass Fi
 
 Eigene Lastumgebung; Produktivbetrieb und Monitoring im Betrieb; Lastspitzen aus anderen Anlässen als dem Monatsersten; Skalierung des Dienstes über eine Instanz hinaus; Aufbewahrung und Vergleich der Lasttestergebnisse über Releases hinweg; neue oder geänderte Abläufe, Regeln, Felder und Operationen.
 
+## Änderungen
+
+| Element | Änderung | Zusammenfassung |
+|---|---|---|
+| Lasttest der Monatsersten-Spitze als eigene Prüfstufe vor dem Release | Neu | Entscheidung neu |
+| Architektur | Geändert | Querschnittliche Konzepte geändert |
+| Antwortzeit von Finanzstatus und Überweisung | Geändert | Anforderung geändert, Maß geändert, Prüfung geändert |
+| Verfügbarkeit von Finanzstatus und Überweisung | Geändert | Anforderung geändert, Maß geändert, Prüfung geändert |
+| Lasttest auf der gemeinsamen Testumgebung | Neu | Randbedingung neu |
+
 ## Aufgaben für die Umsetzung
 
+- [ ] Lasttest der Monatsersten-Spitze als eigene Prüfstufe vor dem Release: Entscheidung neu
+- [ ] Architektur: Querschnittliche Konzepte geändert
+- [ ] Antwortzeit von Finanzstatus und Überweisung: Anforderung geändert
+- [ ] Antwortzeit von Finanzstatus und Überweisung: Maß geändert
+- [ ] Antwortzeit von Finanzstatus und Überweisung: Prüfung geändert
+- [ ] Verfügbarkeit von Finanzstatus und Überweisung: Anforderung geändert
+- [ ] Verfügbarkeit von Finanzstatus und Überweisung: Maß geändert
+- [ ] Verfügbarkeit von Finanzstatus und Überweisung: Prüfung geändert
+- [ ] Lasttest auf der gemeinsamen Testumgebung: Randbedingung neu
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-21 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-21 grün
 

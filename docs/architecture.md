@@ -209,6 +209,8 @@ JSON in camelCase, Beträge als Zahl in Euro mit zwei Nachkommastellen, Zeitpunk
 
 Unit-Tests in `test/` prüfen die Geschäftsregeln am Modul ohne HTTP und setzen den Ausgangsstand je Test zurück; sie laufen als Teil des Baus. Akzeptanztests in `acceptance/` laufen als Gauge-Szenarien über Playwright im Browser gegen eine laufende Testumgebung; ein Szenario prüft ein Akzeptanzkriterium, je Szenario werden Cookies gelöscht und der Ausgangsstand über den Testbetrieb zurückgesetzt. Die Testumgebung entsteht aus dem Arbeitsstand: Image bauen, Container mit Testbetrieb starten, auf die Versionsantwort warten; die Tests starten den Dienst nicht selbst. Vor einem Lauf vergleichen sie die gemeldete Version mit einer freigegebenen Commit-Liste, sofern eine gesetzt ist.
 
+Vor jedem Release tritt der Lasttest der Monatsersten-Spitze als eigene Prüfstufe hinzu. Er läuft nicht als Akzeptanzszenario, weil ein Szenario je Lauf eine Kundin prüft, sondern als eigenes Werkzeug, das den Dienst über seine HTTP-Schnittstelle mit 300 gleichzeitigen Sitzungen fährt und die Last 15 Minuten im Beharrungszustand hält; Lastprofil, Umgebung und Daten stehen in C-002, die Zielwerte in NFR-003 und NFR-004. Er läuft gegen die laufende Testumgebung, nicht im Bau, und sein Bericht wird zum Release festgehalten.
+
 ## 9. Architekturentscheidungen
 
 Die Entscheidungen stehen einzeln unter `docs/adr/`.
