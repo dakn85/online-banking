@@ -11,31 +11,41 @@
 // Überweisung, also rund 2 Überweisungen je Sekunde. Anlauf, 15 Minuten Beharrung, Ablauf.
 //
 // Prüfgröße je Aufrufart: p95 der Antwortzeit <= 500 ms (Threshold auf den Namen des Aufrufs).
+// Kundinnen und Zugänge stehen als Testdaten in load/data/kundinnen.csv, je VU eine Zeile.
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Counter, Rate } from 'k6/metrics';
+import { SharedArray } from 'k6/data';
 
 const basisUrl = (__ENV.BANKING_URL || __ENV.BASE_URL || '').replace(/\/$/, '');
-// Zugangsdaten kommen aus den Zugängen der Umgebung, nie aus dem Skript.
-const kennung = __ENV.BANKING_KENNUNG || __ENV.KENNUNG;
-const pin = __ENV.BANKING_PIN || __ENV.PIN;
-
 if (!basisUrl) {
   throw new Error('BANKING_URL fehlt: die Adresse des Systems liefert die Umgebung des Lasttests.');
 }
-if (!kennung || !pin) {
-  const verdacht = Object.keys(__ENV).filter((name) => /BANK|KENN|PIN|ZUGANG|KUND|USER|LOGIN|PASS|CRED|TOKEN|SECRET|TEST/i.test(name));
-  throw new Error('ENV-SONDE: URL=' + basisUrl + ' · Namen: ' + verdacht.sort().join(', '));
+
+const kundinnen = new SharedArray('kundinnen', () => {
+  return open('../data/kundinnen.csv')
+    .split(/\r?\n/)
+    .map((zeile) => zeile.trim())
+    .filter((zeile) => zeile.length > 0)
+    .slice(1)
+    .map((zeile) => {
+      const [kennung, pin] = zeile.split(',').map((feld) => feld.trim());
+      return { kennung, pin };
+    });
+});
+
+if (kundinnen.length === 0) {
+  throw new Error('load/data/kundinnen.csv enthält keine Kundin (Kopfzeile kennung,pin, dann eine Zeile je Kundin).');
 }
 
 // Lastniveau aus NFR-003
-const KUNDINNEN = 3;
+const KUNDINNEN = 300;
 const AUFRUFE_JE_SEKUNDE = 20;
 const UEBERWEISUNG_JEDE = 10;
 const DENKZEIT_SEKUNDEN = KUNDINNEN / AUFRUFE_JE_SEKUNDE;
 
-// Empfängerin der Lastüberweisungen: Testdaten des Projekts, kein Zugangsdatum.
+// Empfängerin der Lastüberweisungen: Testdaten des Projekts.
 const EMPFAENGER = 'Lasttest Monatserste';
 const EMPFAENGER_IBAN = __ENV.LASTTEST_EMPFAENGER_IBAN || 'DE89370400440532013000';
 const BETRAG = 0.01;
@@ -50,9 +60,9 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '5s', target: KUNDINNEN },
-        { duration: '40s', target: KUNDINNEN },
-        { duration: '5s', target: 0 },
+        { duration: '2m', target: KUNDINNEN },
+        { duration: '15m', target: KUNDINNEN },
+        { duration: '1m', target: 0 },
       ],
       gracefulRampDown: '30s',
       tags: { nfr: 'NFR-003' },
@@ -94,12 +104,13 @@ export default function () {
   sleep(rest > 0 ? rest / 1000 : 0);
 }
 
-/** Meldet die Kundin über das Anmeldeformular an und gibt die IBAN ihres Girokontos zurück. */
+/** Meldet die Kundin dieses VU über das Anmeldeformular an und gibt die IBAN ihres Girokontos zurück. */
 function anmelden() {
+  const kundin = kundinnen[(__VU - 1) % kundinnen.length];
   http.get(`${basisUrl}/anmelden`, { tags: { name: 'anmelden' } });
   const antwort = http.post(
     `${basisUrl}/anmelden`,
-    { kennung, pin },
+    { kennung: kundin.kennung, pin: kundin.pin },
     { tags: { name: 'anmelden' }, redirects: 0 },
   );
   // Die Sitzung wird am Dienst geprüft; dieser Aufruf zählt nicht als Messung des Finanzstatus.

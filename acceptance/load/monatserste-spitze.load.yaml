@@ -1,5 +1,10 @@
+# Lastprofil der Monatsersten-Spitze: misst NFR-003 mit load/monatserste-spitze.js.
+# Das Lastniveau steht im Skript (300 gleichzeitig angemeldete Kundinnen, rund 20 Finanzstatus-Aufrufe
+# je Sekunde, jede zehnte Überweisung, 15 Minuten Beharrungszustand), hier nur Werkzeug und Zuordnung.
 tool: k6
 script: load/monatserste-spitze.js
-zugang: probe
+# proof: false, weil heute nur der Demo-Zugang aus load/data/kundinnen.csv zur Verfügung steht; alle 300
+# VUs arbeiten also als dieselbe Kundin. Nachweis erst mit 300 eigenen Testkundinnen.
+proof: false
 measures:
   - nfr: NFR-003
