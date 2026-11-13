@@ -1,5 +1,6 @@
 /* UC-004 Empfängervorlagen verwalten: Regeln BR-0013 bis BR-0016 und BR-0018, je Kundin im Speicher (ADR-002). */
 import { randomUUID } from 'node:crypto';
+import { Auswahl, istDemokunde } from './kunden';
 import { IBAN_FEHLER, ibanGueltig, ibanNormal } from './ueberweisung';
 
 export interface Empfaengervorlage {
@@ -24,13 +25,19 @@ export class Vorlagenfehler extends Error {
 }
 
 /** Je Kennung der Kundin ihre Vorlagen (BR-0016). */
-let vorlagen = new Map<string, Empfaengervorlage[]>();
+const vorlagen = new Map<string, Empfaengervorlage[]>();
 
-/** Ausgangsstand: jonas.weber hat „Vorlage 1“ bis „Vorlage 50“, damit Höchstzahl und Namenskonflikt prüfbar sind; lena.hoffmann keine. */
-export function zuruecksetzen(): void {
-  vorlagen = new Map([['jonas.weber', Array.from({ length: HOECHSTZAHL }, (_, i) => ({
+/** Ausgangsstand: jonas.weber hat „Vorlage 1“ bis „Vorlage 50“, damit Höchstzahl und Namenskonflikt prüfbar sind; alle anderen keine. */
+const AUSGANGSSTAND: Record<string, () => Empfaengervorlage[]> = {
+  'jonas.weber': () => Array.from({ length: HOECHSTZAHL }, (_, i) => ({
     vorlagenId: `jw-${i + 1}`, name: `Vorlage ${i + 1}`, empfaengerIban: 'DE89370400440532013000',
-  }))]]);
+  })),
+};
+
+/** Setzt die Vorlagen der ausgewählten Kennungen auf den Ausgangsstand; ohne Auswahl die der Demo-Kundinnen. */
+export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
+  for (const kennung of [...vorlagen.keys()]) if (auswahl(kennung)) vorlagen.delete(kennung);
+  for (const [kennung, erzeugen] of Object.entries(AUSGANGSSTAND)) if (auswahl(kennung)) vorlagen.set(kennung, erzeugen());
 }
 zuruecksetzen();
 

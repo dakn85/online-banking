@@ -94,8 +94,8 @@ C4Component
 | Component | Verantwortung | Regeln |
 | --- | --- | --- |
 | Seitenauslieferung | Nimmt jede Anfrage von außen an, prüft die Pflichtfelder eines Auftrags und liefert Seiten und Dateien aus | keine |
-| Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden, legt Sitzungen an und schützt Seiten wie API | keine |
-| Konten und Finanzstatus | Führt den Demo-Kontenbestand mit Salden und verfügbarem Betrag und bucht Belastungen | BR-0001, BR-0002, BR-0006 |
+| Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
+| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
 | Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007 |
 
 Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag kennt Konten und Finanzstatus, aber nicht umgekehrt.
@@ -128,6 +128,8 @@ sequenceDiagram
 ```
 
 Der Ablauf zeigt, dass die Sitzung im Dienst entsteht und jede angemeldete Seite sie erneut prüft; ohne gültige Sitzung sieht die Kundin nur die Anmeldung (NFR-001).
+
+Die Anmeldung ist `POST /api/anmeldung` mit JSON `{kennung, pin}`. Passt beides, antwortet der Dienst mit 200 und `{name}` und setzt das Cookie `aventa_sitzung`; sonst kommt 401 mit `{fehler: "Kennung oder PIN ist falsch."}`, gleich ob die Kennung unbekannt oder die PIN falsch ist. `GET /api/sitzung` nennt Name und Kundennummer für den Rahmen, `POST /api/abmeldung` beendet die Sitzung und antwortet immer mit 204. Jeder geschützte Endpunkt holt die Kundin aus der Sitzung; Konten, Umsätze, Überweisungen und Empfängervorlagen gehen nur über ihre Kennung, eine Kennung im Auftrag oder in der Adresse gibt es nicht.
 
 ### Überweisung mit genau einmaliger Ausführung
 
@@ -175,7 +177,7 @@ C4Deployment
 
 - **Bauen:** Mehrstufig; die Baustufe übersetzt die Quellen und prüft die Typen, die Laufzeitstufe enthält nur die Produktionsabhängigkeiten, die Seiten kommen unverändert aus dem Arbeitsstand.
 - **Ausliefern:** Ein Image, ein Container je Umgebung; Oberfläche und API kommen aus demselben Prozess.
-- **Konfiguration:** Netz-Port, Betriebsart und Version kommen aus der Umgebung, sonst ist nichts einstellbar.
+- **Konfiguration:** Netz-Port, Betriebsart, Version und im Testbetrieb die PIN der Lastkunden kommen aus der Umgebung, sonst ist nichts einstellbar.
 - **Skalierung:** Ein Container, der Zustand liegt im Prozess; eine zweite Instanz teilt nichts (siehe Risiken).
 - Ein Produktivbetrieb ist im Repo nicht beschrieben.
 
@@ -187,11 +189,24 @@ Der Dienst antwortet auf jeden erwarteten Fehlerfall mit einem HTTP-Status und e
 
 ### Sicherheit
 
-Die Anmeldung prüft Kennung und PIN gegen die Demo-Kundenliste, ein Zähler und eine Sperre fehlen. Eine Sitzung ist eine Zufallskennung im Speicher des Dienstes, die über ein HttpOnly-Cookie mit SameSite Lax gefunden wird; das Cookie trägt kein Secure, weil der Dienst kein TLS beendet. Der Zugriffsschutz sitzt an einer Stelle: Seiten werden ohne Sitzung auf die Anmeldung umgeleitet, API-Aufrufe mit 401 beantwortet (NFR-001). Eine Autorisierung je Konto gibt es nicht (siehe Risiken).
+Die Anmeldung prüft Kennung und PIN gegen die Demo-Kundenliste, ein Zähler und eine Sperre fehlen. Eine Sitzung ist eine Zufallskennung im Speicher des Dienstes, die über ein HttpOnly-Cookie mit SameSite Lax gefunden wird; das Cookie trägt kein Secure, weil der Dienst kein TLS beendet. Der Zugriffsschutz sitzt an einer Stelle: Seiten werden ohne Sitzung auf die Anmeldung umgeleitet, API-Aufrufe mit 401 beantwortet (NFR-001). Jedes Konto gehört genau einer Kennung, und der Dienst sucht Konten nur unter der Kennung der Sitzung: Ein fremdes Konto ist für die Kundin nicht vorhanden, als Auftraggeberkonto antwortet der Dienst mit 403, bei den Umsätzen mit 404 (BR-0007, BR-0011). Auch die Auftrags-Kennungen gelten je Kundin, eine fremde Kennung liefert keinen fremden Auftrag zurück.
 
 ### Persistenz und Transaktionen
 
-Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuchte Auftrags-Kennungen liegen im Speicher des Prozesses, ein Neustart setzt alles auf den Ausgangsstand zurück (ADR-002). Im Testbetrieb setzt eine zusätzliche Route den Ausgangsstand zurück und beendet alle Sitzungen; außerhalb des Testbetriebs ist sie nicht vorhanden. Belastung und Idempotenz-Ablage werden ohne Sperre nacheinander im selben Prozess verändert, mehrere Instanzen teilen nichts (siehe Risiken).
+Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuchte Auftrags-Kennungen liegen im Speicher des Prozesses, ein Neustart setzt alles auf den Ausgangsstand zurück (ADR-002). Im Testbetrieb setzen zwei zusätzliche Routen getrennt die Demo-Daten und die Lastdaten zurück (siehe Testbetrieb und Daten je Kundin); außerhalb des Testbetriebs sind sie nicht vorhanden. Belastung und Idempotenz-Ablage werden ohne Sperre nacheinander im selben Prozess verändert, mehrere Instanzen teilen nichts (siehe Risiken).
+
+### Testbetrieb und Daten je Kundin
+
+Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eigenen Konten), Idempotenz-Ablage, Empfängervorlagen und Sitzungen gehören je einer Kundin. Es gibt zwei Gruppen von Kundinnen:
+
+| Gruppe | Kennungen | Bestand | Zurückgesetzt von |
+| --- | --- | --- | --- |
+| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen | `POST /api/test/reset` |
+| Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `97531`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
+
+Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage und Empfängervorlagen nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.
+
+Speicher: Jede Überweisung legt einen Umsatz und einen Eintrag in der Idempotenz-Ablage an. Für Lastkunden hält der Dienst je Konto nur die jüngsten 200 Umsätze und je Kundin die jüngsten 200 Auftrags-Kennungen, ältere fallen weg; bei 300 Lastkunden bleibt der Bestand damit bei höchstens je 60.000 Umsätzen und Aufträgen. Eine Wiederholung derselben Auftrags-Kennung kommt im Lasttest sofort und liegt damit im Fenster. Die Demo-Kundinnen haben keine Grenze, ihr Bestand wächst nur in Akzeptanzläufen und wird je Szenario zurückgesetzt. Sitzungen laufen nicht ab: Ein Lastskript meldet sich je virtuellem Nutzer einmal an und nicht je Iteration, sonst wächst die Sitzungsablage bis zum nächsten Last-Reset.
 
 ### Logging und Telemetrie
 
@@ -199,7 +214,7 @@ Der Dienst schreibt eine Startmeldung und protokolliert einen Datenfehler; eigen
 
 ### Konfiguration
 
-Der Dienst liest nur Netz-Port, Betriebsart und Version aus der Umgebung, alles andere steht im Image. Die Version kommt beim Bauen ins Image und wird über eine offene Route gemeldet, damit die Akzeptanztests den geprüften Stand erkennen. Der Testbetrieb schaltet die Reset-Route frei; sonst ist sie unbekannt.
+Der Dienst liest nur Netz-Port, Betriebsart, Version und im Testbetrieb die PIN der Lastkunden (`LASTTEST_PIN`) aus der Umgebung, alles andere steht im Image. Die Version kommt beim Bauen ins Image und wird über eine offene Route gemeldet, damit die Akzeptanztests den geprüften Stand erkennen. Der Testbetrieb (`TEST_MODE=1`) legt die Lastkunden an und schaltet die beiden Reset-Routen frei; sonst sind sie unbekannt und eine Anmeldung als Lastkunde scheitert.
 
 ### Formate
 
@@ -228,17 +243,21 @@ Die Qualitätsanforderungen (NFR-…) stehen in `docs/requirements.md`.
 | Zustand nur im Speicher (ADR-002) | Ein Neustart verliert Sitzungen, Salden und den Schutz nach BR-0005; eine zweite Instanz teilt nichts | Persistenz und gemeinsamer Speicher vor einem Produktivbetrieb |
 | Geldbeträge als Gleitkommazahl, gegen die Leitplanke dezimal ohne Gleitkomma (ADR-005) | Rundungsdrift bei vielen Buchungen, Grenzfälle beim Vergleich mit dem verfügbaren Betrag | Dezimalbetrag mit Währung, Umstellung vor dem Anschluss einer Kernbank |
 | Fehlerformat ohne Problem Details, gegen die Leitplanke REST | Clients brauchen eine Sonderbehandlung, ein späterer Wechsel ändert die Schnittstelle | Problem Details in der OpenAPI beschreiben, dann einführen |
-| Die Auftrags-Kennung kommt vom Browser ohne Bindung an die Sitzung | Eine geratene Kennung liefert fremde Auftragsdaten zurück | Kennung im Dienst ausstellen oder an die Sitzung binden |
+| Die Auftrags-Kennung kommt vom Browser | Sie gilt je Kundin; doppelte Kennungen einer Kundin aus zwei Fenstern buchen nur einmal | Kennung im Dienst ausstellen |
 | Demo-PINs stehen im Klartext im Repo, gegen die Leitplanke zu Geheimnissen | Für den Demo-Betrieb nach C-001 hinnehmbar, für eine echte Anmeldung unzulässig | Anmeldung über eine Kernbank, PINs nur aus der Umgebung |
-| Kein Bezug zwischen Konto und angemeldeter Kundin | Jede Kundin sieht denselben Demo-Bestand, fachlich falsch bei mehr als einer Kundin | Zuordnung von Konto zu Kundin mit der Kernbank einführen |
+| Die Zuordnung von Konto zu Kundin steht im Dienst statt in einer Kernbank | Für Demo und Test richtig, für echte Kundinnen keine Quelle | Zuordnung aus der Kernbank übernehmen |
+| Lastkunden mit öffentlicher PIN, sobald `TEST_MODE=1` gesetzt ist | Wer einen Dienst im Testbetrieb erreicht, meldet sich als Lastkunde an und setzt Daten zurück | Testbetrieb nur in der Testumgebung; `LASTTEST_PIN` dort setzen, wo die Vorgabe nicht reicht |
+| Sitzungen laufen nicht ab | Ein Lastskript, das sich je Iteration neu anmeldet, füllt den Speicher bis zum nächsten Reset | Einmal je virtuellem Nutzer anmelden; Ablauf der Sitzung vor einem Produktivbetrieb |
 
 ## 12. Glossar
 
 | Begriff | Bedeutung |
 | --- | --- |
 | Sitzung | Zufallskennung im Speicher des Dienstes, über ein HttpOnly-Cookie gefunden; maßgeblich für den Zugriffsschutz |
-| Testbetrieb | Betriebsart, in der eine zusätzliche Route den Ausgangsstand zurücksetzt |
-| Ausgangsstand | Fester Anfangsbestand an Konten und Kunden, auf den Tests zurücksetzen |
+| Testbetrieb | Betriebsart (`TEST_MODE=1`) mit Lastkunden und den Routen für Demo-Reset und Last-Reset |
+| Ausgangsstand | Fester Anfangsbestand an Konten und Kunden je Kennung, auf den Tests zurücksetzen |
+| Lastkunde | Kundin `lasttest-001` bis `lasttest-300`, nur im Testbetrieb, mit eigenem Girokonto für Lasttests |
+| Demo-Reset, Last-Reset | Zurücksetzen nur der Demo-Kundinnen (`/api/test/reset`) oder nur der Lastkunden (`/api/test/lasttest/reset`) |
 | Auftrags-Kennung | Zufallskennung der Oberfläche je Zusammenfassung, Schlüssel der genau einmaligen Ausführung |
 | Idempotenz-Ablage | Zuordnung einer Auftrags-Kennung zum ersten Ergebnis, im Speicher des Dienstes |
 | Datenfehler | Fehlender Dispositionsrahmen im Kontenbestand, der den Finanzstatus als Ganzes scheitern lässt |

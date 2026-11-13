@@ -1,11 +1,12 @@
 import express from 'express';
 import { join } from 'node:path';
-import { Datenfehler, finanzstatus, zuruecksetzen } from './konten';
+import { Datenfehler, finanzstatus } from './konten';
 import { kundeMitKennung } from './kunden';
-import { Ablehnung, ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from './ueberweisung';
-import { Abfragefehler, filterAus, umsaetzeVon, zuruecksetzen as umsaetzeZuruecksetzen } from './umsaetze';
+import { Ablehnung, ausfuehren } from './ueberweisung';
+import { Abfragefehler, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
-import { alleBeenden, angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
+import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
+import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
 const port = Number(process.env.PORT ?? 8080);
 const testbetrieb = process.env.TEST_MODE === '1';
@@ -15,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use('/assets', express.static(oeffentlich, { index: false }));
 
-// Anmeldung (Dummy: feste Demo-Kunden, siehe kunden.ts)
+// Anmeldung (Dummy: feste Demo-Kunden, siehe kunden.ts; im Testbetrieb auch die Lastkunden, siehe testdaten.ts)
 app.post('/api/anmeldung', (req, res) => {
   const kunde = kundeMitKennung(String(req.body?.kennung ?? ''));
   if (!kunde || String(req.body?.pin ?? '') !== kunde.pin) {
@@ -35,10 +36,10 @@ app.get('/api/sitzung', nurAngemeldet('api'), (_req, res) => {
   res.json({ vorname: k.vorname, nachname: k.nachname, kundennummer: k.kundennummer });
 });
 
-// UC-001: Finanzstatus der angemeldeten Kundin
+// UC-001: Finanzstatus der angemeldeten Kundin, nur ihre Konten
 app.get('/api/konten', nurAngemeldet('api'), (_req, res) => {
   try {
-    res.json(finanzstatus());
+    res.json(finanzstatus(res.locals.kunde.kennung));
   } catch (fehler) {
     if (!(fehler instanceof Datenfehler)) throw fehler;
     console.error(fehler.message);
@@ -54,7 +55,7 @@ app.post('/api/ueberweisungen', nurAngemeldet('api'), (req, res) => {
     return res.status(400).json({ fehler: 'Der Auftrag ist unvollständig.' });
   }
   try {
-    const { neu, ueberweisung } = ausfuehren({
+    const { neu, ueberweisung } = ausfuehren(res.locals.kunde, {
       auftragsId: b.auftragsId, auftraggeberIban: b.auftraggeberIban, empfaenger: b.empfaenger.trim(),
       empfaengerIban: b.empfaengerIban, betrag: b.betrag, verwendungszweck: b.verwendungszweck.trim(),
     });
@@ -74,7 +75,7 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
     if (!(fehler instanceof Abfragefehler)) throw fehler;
     return res.status(400).json({ fehler: fehler.message });
   }
-  const liste = umsaetzeVon(req.params.iban, filter);
+  const liste = umsaetzeVon(res.locals.kunde.kennung, req.params.iban, filter);
   if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
   res.json({ umsaetze: liste });
 });
@@ -100,8 +101,12 @@ app.delete('/api/empfaengervorlagen/:vorlagenId', nurAngemeldet('api'), (req, re
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
-  // Testdaten zurücksetzen: alle Sitzungen beenden, Demo-Konten und Demo-Umsätze sowie Empfängervorlagen auf den Ausgangsstand, keine Aufträge.
-  app.post('/api/test/reset', (_req, res) => { alleBeenden(); zuruecksetzen(); auftraegeZuruecksetzen(); umsaetzeZuruecksetzen(); vorlagen.zuruecksetzen(); res.status(204).end(); });
+  // Lastkunden lasttest-001 bis lasttest-300, alle mit der PIN aus LASTTEST_PIN (öffentliche Testdaten, Vorgabe in testdaten.ts).
+  lastkundenAnlegen(process.env.LASTTEST_PIN || undefined);
+  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze und Empfängervorlagen auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
+  app.post('/api/test/reset', (_req, res) => { demoZuruecksetzen(); res.status(204).end(); });
+  // Lastdaten zurücksetzen: dasselbe nur für die Lastkunden. Demo-Kundinnen bleiben.
+  app.post('/api/test/lasttest/reset', (_req, res) => { lastdatenZuruecksetzen(); res.status(204).end(); });
 }
 
 // Seiten
