@@ -91,9 +91,9 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '2m', target: KUNDINNEN },
-        { duration: '15m', target: KUNDINNEN },
-        { duration: '1m', target: 0 },
+        { duration: '20s', target: KUNDINNEN },
+        { duration: '60s', target: KUNDINNEN },
+        { duration: '5s', target: 0 },
       ],
       gracefulRampDown: '30s',
       tags: { nfr: 'NFR-003' },
