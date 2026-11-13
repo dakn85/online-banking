@@ -8,3 +8,13 @@ tests:
         value: Jede VU meldet sich über POST /api/anmeldung mit einem eigenen Lastkunden an (lasttest-001 bis lasttest-300, PIN aus der Umgebungsvariable LASTTEST_PIN, Liste in kundinnen.csv)
         by: Test User One
         at: 2026-11-13T14:09:19.848Z
+      - questionId: randbedingungen.aufraeumen
+        question: Dürfen Lastläufe Daten auf default liegen lassen?
+        value: Es gibt einen Reset, die Beschreibung liegt im Kontext.
+        by: Test User One
+        at: 2026-11-13T14:09:30.164Z
+      - questionId: randbedingungen.testdaten
+        question: Reichen die Testnutzer für 300 gleichzeitige Nutzer?
+        value: Jeder virtuelle Nutzer bekommt eigene Zugangsdaten; die Liste liegt als CSV im Kontext.
+        by: Test User One
+        at: 2026-11-13T14:09:46.518Z
