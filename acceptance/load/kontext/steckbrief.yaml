@@ -23,6 +23,11 @@ tests:
         value: Jeder virtuelle Nutzer bekommt eigene Zugangsdaten; die Liste liegt als CSV im Kontext.
         by: Test User One
         at: 2026-11-13T14:09:46.518Z
+      - questionId: frage-1
+        question: Womit soll der Lauf die 300 VUs anmelden? Die CSV load/data/kundinnen.csv enthält nur „lena.hoffmann“, der Steckbrief sagt aber 300 eigene Lastkundinnen (lasttest-001 bis lasttest-300) zu.
+        value: Die CSV wird auf die 300 Lastkundinnen lasttest-001 bis lasttest-300 ergänzt; bis dahin bleibt der Lauf eine Technikprobe ohne Nachweis.
+        by: Test User One
+        at: 2026-11-13T14:33:35.820Z
     questions:
       - id: frage-1
         need: randbedingungen
