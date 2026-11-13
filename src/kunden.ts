@@ -1,5 +1,5 @@
 /* Demo-Kunden für die Anmeldung. Es gibt noch kein Kernbanksystem: Kennung und PIN sind feste Testwerte.
-   Im Testbetrieb kommen die Lastkunden lasttest-001 bis lasttest-300 dazu (lastdaten.ts). */
+   Im Testbetrieb kommen die Lastkunden lasttest-001 bis lasttest-300 dazu (testdaten.ts). */
 
 export interface Kunde {
   kennung: string;
