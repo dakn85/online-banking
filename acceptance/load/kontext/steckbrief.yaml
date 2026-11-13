@@ -2,6 +2,11 @@
 # Antworten auf Fragen, die für das Projekt gelten, gelten für jeden Lasttest des Projekts.
 tests:
   load/monatserste-spitze.load.yaml:
+    needs:
+      anfragen:
+        value: 'POST /api/anmeldung nimmt JSON {"kennung", "pin"} und setzt das HttpOnly-Cookie aventa_sitzung; alle /api-Aufrufe brauchen dieses Cookie, sonst 401. GET /anmelden liefert nur die HTML-Seite mit dem Formular. anmeldung-formular ist kein Topic, sondern der Rückfallweg des Skripts: das Formular der Anmeldeseite per HTTP POST. POST /api/test/lasttest/reset (ohne Rumpf, 204) setzt die Lastkunden zurück.'
+        by: Test User One
+        at: 2026-11-13T14:11:12.623Z
     answers:
       - questionId: anfragen.anmeldung
         question: Wie meldet sich der Test an?
@@ -18,8 +23,19 @@ tests:
         value: Jeder virtuelle Nutzer bekommt eigene Zugangsdaten; die Liste liegt als CSV im Kontext.
         by: Test User One
         at: 2026-11-13T14:09:46.518Z
-    needs:
-      anfragen:
-        value: 'POST /api/anmeldung nimmt JSON {"kennung", "pin"} und setzt das HttpOnly-Cookie aventa_sitzung; alle /api-Aufrufe brauchen dieses Cookie, sonst 401. GET /anmelden liefert nur die HTML-Seite mit dem Formular. anmeldung-formular ist kein Topic, sondern der Rückfallweg des Skripts: das Formular der Anmeldeseite per HTTP POST. POST /api/test/lasttest/reset (ohne Rumpf, 204) setzt die Lastkunden zurück.'
-        by: Test User One
-        at: 2026-11-13T14:11:12.623Z
+    questions:
+      - id: frage-1
+        need: randbedingungen
+        question: Womit soll der Lauf die 300 VUs anmelden? Die CSV load/data/kundinnen.csv enthält nur „lena.hoffmann“, der Steckbrief sagt aber 300 eigene Lastkundinnen (lasttest-001 bis lasttest-300) zu.
+        why: "Davon hängt ab, ob der Lauf NFR-003/NFR-004 wirklich nachweist: Mit einer Kennung teilen sich alle 300 VUs dieselbe Kundin, das Profil steht deshalb auf proof:false."
+        options:
+          - label: CSV auf 300 ergänzen
+            value: Die CSV wird auf die 300 Lastkundinnen lasttest-001 bis lasttest-300 ergänzt; bis dahin bleibt der Lauf eine Technikprobe ohne Nachweis.
+            suggested: true
+          - label: Mit einer Kennung starten
+            value: Der Lauf startet mit der einen vorhandenen Kennung lena.hoffmann; alle 300 VUs arbeiten als diese Kundin, proof bleibt false.
+          - label: Reset legt Lastkunden an
+            value: Die Lastkunden legt der Reset an; die Kennungen liefert die Umgebung, nicht die CSV.
+        by: Testautor
+        at: 2026-11-13T14:30:20.740Z
+        projectWide: true
