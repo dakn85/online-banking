@@ -104,12 +104,30 @@ export const options = {
     'http_req_duration{name:ueberweisung}': ['p(95)<=500'],
     'http_req_failed{name:finanzstatus}': ['rate<0.005'],
     'http_req_failed{name:ueberweisung}': ['rate<0.005'],
+    // Eine schnelle Ablehnung darf das Zeitlimit nicht bestehen: der Erfolg des Aufrufs selbst ist
+    // ebenfalls eine Schwelle, an denselben Namen gebunden wie die Messung.
+    'checks{name:finanzstatus}': ['rate>0.99'],
+    'checks{name:ueberweisung}': ['rate>0.99'],
     'anmeldung_erfolgreich': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '30s' }],
     'sitzung_gueltig': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '60s' }],
     'ueberweisung_ausgefuehrt': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '120s' }],
     'ueberweisungen': ['count>0'],
   },
 };
+
+// Vor dem Lauf: die Lastkunden zurücksetzen, damit der Lauf auf dem vereinbarten Stand startet
+// (Steckbrief, Aufräumen: POST /api/test/lasttest/reset ohne Rumpf, Antwort 204). Der Aufruf ist
+// keine Messung; ein fehlender Reset bricht den Lauf nicht ab, er wird nur gemeldet.
+export function setup() {
+  const antwort = http.post(`${basisUrl}/api/test/lasttest/reset`, null, {
+    tags: { name: 'lasttest-reset' },
+    responseCallback: erwarteteAntwort,
+  });
+  if (antwort.status !== 204) {
+    console.warn(`Reset der Lastkunden antwortete ${antwort.status}; der Lauf startet ohne Zurücksetzen.`);
+  }
+  return {};
+}
 
 // Zustand je VU: einmal anmelden, dann als dieselbe Kundin weiterarbeiten.
 let angemeldet = false;
