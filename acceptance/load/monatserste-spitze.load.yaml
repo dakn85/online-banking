@@ -8,9 +8,10 @@
 # 4xx als fachliche Ablehnung als Erfolg zählt (erwartete Antworten 200–499, Fehler nur 5xx).
 tool: k6
 script: load/monatserste-spitze.js
-# proof: false, weil heute nur der Demo-Zugang aus load/data/kundinnen.csv zur Verfügung steht; alle 300
-# VUs arbeiten also als dieselbe Kundin. Nachweis erst mit 300 eigenen Testkundinnen.
-proof: false
+# proof: true: die 300 VUs melden sich mit den 300 eigenen Lastkundinnen aus load/data/kundinnen.csv an
+# (lasttest-001 bis lasttest-300, eine Zeile je VU). Die PIN kommt ausschließlich aus der Umgebung
+# (LASTTEST_PIN, hinterlegt unter Einstellungen → Zugänge), nie aus dem Repository.
+proof: true
 measures:
   - nfr: NFR-003
   - nfr: NFR-004
