@@ -1,0 +1,35 @@
+# Last aus dem Betrieb, gelernt am 13.11. 16:28 (Spitze 13.11. 00:50–00:55 auf test).
+# Raten sind Anfragen oder Nachrichten je Sekunde, share ist der Anteil an der Spitze (0 bis 1).
+workload:
+  learnedAt: 2026-11-13T15:28:54.779Z
+  environment: test
+  days: 7
+  window:
+    from: 2026-11-12T23:50:00.000Z
+    to: 2026-11-12T23:55:00.000Z
+  peakRate: 881.186
+  routes:
+    - service: online-banking
+      method: GET
+      route: /api/konten
+      rate: 293.73
+      share: 0.3333
+    - service: online-banking
+      method: POST
+      route: /anmelden
+      rate: 293.73
+      share: 0.3333
+    - service: online-banking
+      method: GET
+      route: /anmelden
+      rate: 293.726
+      share: 0.3333
+  ramp:
+    fromRate: 779.341
+    toRate: 881.186
+    seconds: 15
+  sequence: null
+  excluded: Die Messwerte tragen keinen User-Agent; in den 7 Tagen lief kein Lastlauf der Plattform gegen test. Last von außerhalb der Plattform ist darin nicht erkennbar. Gesundheitsprüfungen und Dateiabrufe zählen nicht mit.
+  sources:
+    - "Prometheus: http_server_request_duration_seconds_count je Dienst, Methode und Route, 7 Tage in 5-Minuten-Schritten (online-banking, Umgebung test)."
+    - "Tempo: 10 Spuren gelesen, keine davon ohne Lastwerkzeug, deshalb keine Reihenfolge der Aufrufe."
