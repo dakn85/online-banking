@@ -90,13 +90,10 @@ export const options = {
     },
   },
   thresholds: {
-    // NFR-003: Antwortzeit
     'http_req_duration{name:finanzstatus}': ['p(95)<=500'],
     'http_req_duration{name:ueberweisung}': ['p(95)<=500'],
-    // NFR-004: Verfügbarkeit (Anteil der Antworten ohne 5xx)
     'http_req_failed{name:finanzstatus}': ['rate<0.005'],
     'http_req_failed{name:ueberweisung}': ['rate<0.005'],
-    // Wächter: ohne Anmeldung misst der Lauf nichts, darum bricht er dann selbst ab.
     'anmeldung_erfolgreich': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '30s' }],
     'ueberweisung_ausgefuehrt': ['rate>0.99'],
     'ueberweisungen': ['count>0'],
