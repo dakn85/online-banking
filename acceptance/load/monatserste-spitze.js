@@ -65,7 +65,7 @@ if (kundinnen.length === 0) {
 }
 
 // Lastniveau aus NFR-003
-const KUNDINNEN = 20;
+const KUNDINNEN = 300;
 const AUFRUFE_JE_SEKUNDE = 20;
 const UEBERWEISUNG_JEDE = 10;
 const DENKZEIT_SEKUNDEN = KUNDINNEN / AUFRUFE_JE_SEKUNDE;
@@ -91,9 +91,9 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '20s', target: KUNDINNEN },
-        { duration: '60s', target: KUNDINNEN },
-        { duration: '5s', target: 0 },
+        { duration: '2m', target: KUNDINNEN },
+        { duration: '15m', target: KUNDINNEN },
+        { duration: '1m', target: 0 },
       ],
       gracefulRampDown: '30s',
       tags: { nfr: 'NFR-003' },
