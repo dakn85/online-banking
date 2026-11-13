@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
-import { Kunde, kundeMitKennung } from './kunden';
+import { Auswahl, istDemokunde, Kunde, kundeMitKennung } from './kunden';
 
 /* Sitzungen im Speicher, über ein HttpOnly-Cookie. Nach einem Neustart meldet man sich neu an. */
 
@@ -19,8 +19,16 @@ export function beenden(req: Request, res: Response): void {
   res.clearCookie(COOKIE, { path: '/' });
 }
 
-export function alleBeenden(): void {
-  sitzungen.clear();
+/** Beendet die Sitzungen der ausgewählten Kennungen; ohne Auswahl die der Demo-Kundinnen. */
+export function beendenFuer(auswahl: Auswahl = istDemokunde): void {
+  for (const [id, sitzung] of sitzungen) if (auswahl(sitzung.kennung)) sitzungen.delete(id);
+}
+
+/** Zahl der offenen Sitzungen der ausgewählten Kennungen (für Tests). */
+export function anzahl(auswahl: Auswahl): number {
+  let n = 0;
+  for (const sitzung of sitzungen.values()) if (auswahl(sitzung.kennung)) n++;
+  return n;
 }
 
 export function angemeldeterKunde(req: Request): Kunde | undefined {

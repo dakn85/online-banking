@@ -1,5 +1,6 @@
 /* UC-002 Überweisung vom Girokonto: Regeln BR-0003 bis BR-0007, ausgeführt im Dienst. */
 import { belasten, girokonto } from './konten';
+import { Auswahl, istDemokunde, Kunde } from './kunden';
 import { buchen } from './umsaetze';
 
 /** Länderkennzeichen des SEPA-Raums (EWR, Schweiz, Vereinigtes Königreich, Monaco, San Marino, Andorra, Vatikan). */
@@ -41,23 +42,28 @@ export class Ablehnung extends Error {
   constructor(readonly status: 400 | 403 | 422, meldung: string) { super(meldung); }
 }
 
-/** BR-0005: ausgeführte Aufträge nach Auftrags-Kennung. */
-const ausgefuehrt = new Map<string, Ueberweisung>();
+/** BR-0005: ausgeführte Aufträge je Kennung der Kundin nach Auftrags-Kennung; eine fremde Auftrags-Kennung liefert nichts zurück. */
+const ausgefuehrt = new Map<string, Map<string, Ueberweisung>>();
 
-export function zuruecksetzen(): void {
-  ausgefuehrt.clear();
+/** Vergisst die Aufträge der ausgewählten Kennungen; ohne Auswahl die der Demo-Kundinnen. */
+export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
+  for (const kennung of [...ausgefuehrt.keys()]) if (auswahl(kennung)) ausgefuehrt.delete(kennung);
 }
 
-/** Führt den Auftrag genau einmal aus. `neu` ist false, wenn die Kennung schon gebucht war. */
-export function ausfuehren(auftrag: Ueberweisungsauftrag): { neu: boolean; ueberweisung: Ueberweisung } {
-  const frueher = ausgefuehrt.get(auftrag.auftragsId);
+/**
+ * Führt den Auftrag der Kundin genau einmal aus. `neu` ist false, wenn die Kennung schon gebucht war.
+ * Mit Speichergrenze (nur Lastkunden) merkt sich der Dienst nur die jüngsten so vielen Auftrags-Kennungen.
+ */
+export function ausfuehren(kunde: Pick<Kunde, 'kennung' | 'speichergrenze'>, auftrag: Ueberweisungsauftrag): { neu: boolean; ueberweisung: Ueberweisung } {
+  let eigene = ausgefuehrt.get(kunde.kennung);
+  const frueher = eigene?.get(auftrag.auftragsId);
   if (frueher) return { neu: false, ueberweisung: frueher };
-  const konto = girokonto(auftrag.auftraggeberIban);
+  const konto = girokonto(kunde.kennung, auftrag.auftraggeberIban);
   if (!konto) throw new Ablehnung(403, 'Das Auftraggeberkonto ist kein Girokonto der Kundin.');
   if (!ibanGueltig(auftrag.empfaengerIban)) throw new Ablehnung(400, IBAN_FEHLER);
   const cent = Math.round(auftrag.betrag * 100);
   if (!(cent > 0) || cent > Math.round((konto.saldo + konto.dispositionsrahmen) * 100)) throw new Ablehnung(422, BETRAG_FEHLER);
-  belasten(konto.iban, cent / 100);
+  belasten(kunde.kennung, konto.iban, cent / 100);
   const ueberweisung: Ueberweisung = {
     ...auftrag, empfaengerIban: ibanNormal(auftrag.empfaengerIban), betrag: cent / 100,
     waehrung: 'EUR', status: 'ausgefuehrt', erfasstAm: new Date().toISOString(),
@@ -66,8 +72,10 @@ export function ausfuehren(auftrag: Ueberweisungsauftrag): { neu: boolean; ueber
   buchen(konto.iban, {
     buchungstag: ueberweisung.erfasstAm.slice(0, 10), gebuchtAm: ueberweisung.erfasstAm,
     gegenpartei: ueberweisung.empfaenger, verwendungszweck: ueberweisung.verwendungszweck,
-    betrag: -ueberweisung.betrag, saldoDanach: girokonto(konto.iban)!.saldo,
-  });
-  ausgefuehrt.set(auftrag.auftragsId, ueberweisung);
+    betrag: -ueberweisung.betrag, saldoDanach: girokonto(kunde.kennung, konto.iban)!.saldo,
+  }, kunde.speichergrenze);
+  if (!eigene) ausgefuehrt.set(kunde.kennung, eigene = new Map());
+  eigene.set(auftrag.auftragsId, ueberweisung);
+  if (kunde.speichergrenze !== undefined && eigene.size > kunde.speichergrenze) eigene.delete(eigene.keys().next().value!);
   return { neu: true, ueberweisung };
 }
