@@ -18,3 +18,8 @@ tests:
         value: Jeder virtuelle Nutzer bekommt eigene Zugangsdaten; die Liste liegt als CSV im Kontext.
         by: Test User One
         at: 2026-11-13T14:09:46.518Z
+    needs:
+      anfragen:
+        value: 'POST /api/anmeldung nimmt JSON {"kennung", "pin"} und setzt das HttpOnly-Cookie aventa_sitzung; alle /api-Aufrufe brauchen dieses Cookie, sonst 401. GET /anmelden liefert nur die HTML-Seite mit dem Formular. anmeldung-formular ist kein Topic, sondern der Rückfallweg des Skripts: das Formular der Anmeldeseite per HTTP POST. POST /api/test/lasttest/reset (ohne Rumpf, 204) setzt die Lastkunden zurück.'
+        by: Test User One
+        at: 2026-11-13T14:11:12.623Z
