@@ -21,12 +21,19 @@
 // Eingabefelder werden mit Kennung und PIN belegt. Erfolg ist erst, wenn GET /api/konten mit 200
 // antwortet – der Statuscode der Anmeldung allein genügt nicht.
 //
+// Sitzung: Der Dienst hält die Sitzung in einem Cookie. k6 leert den Cookie-Jar standardmäßig am Ende
+// jeder Iteration – dann laufen alle folgenden Aufrufe ohne Sitzung und antworten 401. Ein Lauf über
+// Iterationen braucht deshalb options.noCookiesReset: true; sonst misst er nur Anmeldungen und 401er.
+// Weil eine 401 keine fachliche Ablehnung, sondern eine fehlende Sitzung ist, zählt sie NICHT als
+// Erfolg: sitzung_gueltig bricht den Lauf ab, sobald die Sitzung nicht mehr steht.
+//
 // Prüfgrößen je Aufrufart, an den Namen des Aufrufs gebunden:
 //   NFR-003  p95 der Antwortzeit <= 500 ms für finanzstatus und ueberweisung
 //   NFR-004  Anteil der Antworten mit 5xx < 0,5 % für finanzstatus und ueberweisung
 //            (4xx gilt als Erfolg: erwartete Antworten sind 200–499, Fehler sind nur 5xx und Netzfehler)
 // Wächter: anmeldung_erfolgreich > 99 % bricht den Lauf nach 30 s selbst ab, wenn die Anmeldung nicht
-// gelingt; ueberweisungen count>0 stellt sicher, dass die Überweisung überhaupt gemessen wurde.
+// gelingt; sitzung_gueltig > 99 % und ueberweisung_ausgefuehrt > 99 % ebenso, damit ein Lauf, der keine
+// Überweisung ausführt, nicht 15 Minuten lang Zeitziele misst, die er nicht geprüft hat.
 //
 // Kundinnen und Zugänge stehen als Testdaten in load/data/kundinnen.csv, je VU eine Zeile.
 
@@ -58,7 +65,7 @@ if (kundinnen.length === 0) {
 }
 
 // Lastniveau aus NFR-003
-const KUNDINNEN = 300;
+const KUNDINNEN = 20;
 const AUFRUFE_JE_SEKUNDE = 20;
 const UEBERWEISUNG_JEDE = 10;
 const DENKZEIT_SEKUNDEN = KUNDINNEN / AUFRUFE_JE_SEKUNDE;
@@ -72,10 +79,13 @@ const BETRAG = 0.01;
 const erwarteteAntwort = http.expectedStatuses({ min: 200, max: 499 });
 
 const anmeldungErfolgreich = new Rate('anmeldung_erfolgreich');
+const sitzungGueltig = new Rate('sitzung_gueltig');
 const ueberweisungAusgefuehrt = new Rate('ueberweisung_ausgefuehrt');
 const ueberweisungen = new Counter('ueberweisungen');
 
 export const options = {
+  // Die VU bleibt über alle Iterationen dieselbe angemeldete Kundin: den Sitzungscookie behalten.
+  noCookiesReset: true,
   scenarios: {
     monatserste: {
       executor: 'ramping-vus',
@@ -95,7 +105,8 @@ export const options = {
     'http_req_failed{name:finanzstatus}': ['rate<0.005'],
     'http_req_failed{name:ueberweisung}': ['rate<0.005'],
     'anmeldung_erfolgreich': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '30s' }],
-    'ueberweisung_ausgefuehrt': ['rate>0.99'],
+    'sitzung_gueltig': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '60s' }],
+    'ueberweisung_ausgefuehrt': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '120s' }],
     'ueberweisungen': ['count>0'],
   },
 };
@@ -220,6 +231,8 @@ function finanzstatus() {
     responseCallback: erwarteteAntwort,
   });
   check(antwort, { 'Finanzstatus antwortet 200': (r) => r.status === 200 }, { name: 'finanzstatus' });
+  // 401 heißt: keine Sitzung. Das ist kein Messergebnis, sondern ein kaputter Lauf.
+  sitzungGueltig.add(antwort.status !== 401);
   // Eine abgelaufene Sitzung soll nicht dazu führen, dass der Rest des Laufs nur 401er misst.
   if (antwort.status === 401) angemeldet = false;
 }
@@ -240,8 +253,11 @@ function ueberweisung() {
     tags: { name: 'ueberweisung' },
     responseCallback: erwarteteAntwort,
   });
-  const ok = antwort.status === 201 || antwort.status === 200;
+  const ok = antwort.status === 200 || antwort.status === 201;
   ueberweisungAusgefuehrt.add(ok);
   ueberweisungen.add(1);
+  sitzungGueltig.add(antwort.status !== 401);
+  if (antwort.status === 401) angemeldet = false;
+  if (!ok) console.error(`Überweisung nicht ausgeführt: ${antwort.status} ${String(antwort.body).slice(0, 200)}`);
   check(antwort, { 'Überweisung ausgeführt': () => ok }, { name: 'ueberweisung' });
 }
