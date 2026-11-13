@@ -35,7 +35,8 @@
 // gelingt; sitzung_gueltig > 99 % und ueberweisung_ausgefuehrt > 99 % ebenso, damit ein Lauf, der keine
 // Überweisung ausführt, nicht 15 Minuten lang Zeitziele misst, die er nicht geprüft hat.
 //
-// Kundinnen und Zugänge stehen als Testdaten in load/data/kundinnen.csv, je VU eine Zeile.
+// Kundinnen stehen als Testdaten in load/data/kundinnen.csv (nur Kennungen, je VU eine Zeile); die PIN
+// kommt für alle aus der Umgebungsvariable LASTTEST_PIN.
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
@@ -47,8 +48,15 @@ if (!basisUrl) {
   throw new Error('BANKING_URL fehlt: die Adresse des Systems liefert die Umgebung des Lasttests.');
 }
 
+// Die PIN kommt ausschließlich aus der Umgebung (Einstellungen → Zugänge); kein literaler Rückfall.
+const pin = __ENV.LASTTEST_PIN;
+if (!pin) {
+  throw new Error('LASTTEST_PIN fehlt: die PIN der Lastkundinnen liefert die Umgebung des Lasttests.');
+}
+
 const kundinnen = new SharedArray('kundinnen', () => {
-  // open() löst relativ zur Skriptdatei auf: load/data/kundinnen.csv.
+  // open() löst relativ zur Skriptdatei auf: load/data/kundinnen.csv. Die Datei nennt nur Kennungen;
+  // das Geheimnis steht nicht im Repository.
   return open('./data/kundinnen.csv')
     .split(/\r?\n/)
     .map((zeile) => zeile.trim())
@@ -56,12 +64,12 @@ const kundinnen = new SharedArray('kundinnen', () => {
     .slice(1)
     .map((zeile) => {
       const felder = zeile.split(',');
-      return { kennung: (felder[0] || '').trim(), pin: (felder[1] || '').trim() };
+      return { kennung: (felder[0] || '').trim(), pin };
     });
 });
 
 if (kundinnen.length === 0) {
-  throw new Error('load/data/kundinnen.csv enthält keine Kundin (Kopfzeile kennung,pin, dann eine Zeile je Kundin).');
+  throw new Error('load/data/kundinnen.csv enthält keine Kundin (Kopfzeile kennung, dann eine Zeile je Kundin).');
 }
 
 // Lastniveau aus NFR-003
