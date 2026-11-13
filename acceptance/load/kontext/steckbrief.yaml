@@ -1,0 +1,10 @@
+# Steckbrief der Lasttests: Antworten und Festlegungen. Gepflegt über die Seite Last und den Testautor.
+# Antworten auf Fragen, die für das Projekt gelten, gelten für jeden Lasttest des Projekts.
+tests:
+  load/monatserste-spitze.load.yaml:
+    answers:
+      - questionId: anfragen.anmeldung
+        question: Wie meldet sich der Test an?
+        value: Jede VU meldet sich über POST /api/anmeldung mit einem eigenen Lastkunden an (lasttest-001 bis lasttest-300, PIN aus der Umgebungsvariable LASTTEST_PIN, Liste in kundinnen.csv)
+        by: Test User One
+        at: 2026-11-13T14:09:19.848Z
