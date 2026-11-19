@@ -230,11 +230,12 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen und Tageslimit auf den Ausgangsstand (Tageslimit gleich Standardlimit); ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund); ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Demo-Testdaten zurückgesetzt } }
+      x-use-cases: [ UC-018 ]
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
@@ -294,6 +295,106 @@ paths:
                 $ref: '#/components/schemas/Fehler'
         "401":
           description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+  /api/konten/{iban}/debitkarte:
+    get:
+      summary: Debitkarte des Girokontos der angemeldeten Kundin abrufen
+      description: "Liefert die Debitkarte zum Girokonto mit dieser IBAN: maskierte Kartennummer, Status und bei endgültiger Sperre den Sperrgrund. Ohne gültige Sitzung 401; eine IBAN, die nicht zu einem Girokonto der angemeldeten Kundin mit Debitkarte gehört, 404."
+      operationId: debitkarteLesen
+      tags:
+        - Debitkarte
+      x-use-cases:
+        - UC-018
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Debitkarte mit Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Debitkarte'
+        "401":
+          description: Keine gültige Sitzung
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Girokonto der Kundin mit Debitkarte
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+    put:
+      summary: "Status der Debitkarte setzen: sperren, entsperren, endgültig sperren"
+      description: "Setzt den Status der Debitkarte des Girokontos auf den Zielstatus im Auftrag: vorübergehend gesperrt sperrt, aktiv entsperrt, endgültig gesperrt sperrt endgültig und verlangt den Sperrgrund Verlust oder Diebstahl. Zulässig sind nur die Wechsel nach BR-0081; jede andere Aktion, auch mit schon erreichtem Zielstatus, beantwortet der Dienst mit 409 und der Meldung zum Status, der Status bleibt unverändert. Ohne gültige Sitzung 401; eine IBAN, die nicht zu einem Girokonto der Kundin mit Debitkarte gehört, 404."
+      operationId: debitkarteStatusSetzen
+      tags:
+        - Debitkarte
+      x-use-cases:
+        - UC-018
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Debitkartenauftrag'
+      responses:
+        "200":
+          description: Status gesetzt, Debitkarte mit neuem Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Debitkarte'
+        "400":
+          description: Zielstatus fehlt oder ist unbekannt, oder beim endgültigen Sperren fehlt der Sperrgrund oder ist weder Verlust noch Diebstahl
+          x-rules:
+            - Debitkarte.status
+            - Debitkarte.sperrgrund
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Girokonto der Kundin mit Debitkarte
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "409":
+          description: Aktion im aktuellen Status nicht möglich, Status unverändert
+          x-rules:
+            - BR-0081
           content:
             application/json:
               schema:
@@ -593,3 +694,38 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Debitkarte:
+      type: object
+      x-entity: Debitkarte
+      properties:
+        kartennummerMaskiert:
+          type: string
+          description: Maskierte Kartennummer, vier Sterne und die letzten vier Stellen
+          minLength: 9
+          maxLength: 9
+          pattern: ^\*\*\*\* [0-9]{4}$
+        status:
+          type: string
+          description: Sperrstatus der Karte
+          enum: [ aktiv, vorübergehend gesperrt, endgültig gesperrt ]
+        sperrgrund:
+          type: string
+          description: Grund der endgültigen Sperre; nur bei Status endgültig gesperrt vorhanden
+          enum: [ Verlust, Diebstahl ]
+      required:
+        - kartennummerMaskiert
+        - status
+    Debitkartenauftrag:
+      type: object
+      x-entity: Debitkarte
+      properties:
+        status:
+          type: string
+          description: "Zielstatus: vorübergehend gesperrt, aktiv oder endgültig gesperrt"
+          enum: [ aktiv, vorübergehend gesperrt, endgültig gesperrt ]
+        sperrgrund:
+          type: string
+          description: Grund der endgültigen Sperre, Verlust oder Diebstahl; Pflicht beim Zielstatus endgültig gesperrt
+          enum: [ Verlust, Diebstahl ]
+      required:
+        - status

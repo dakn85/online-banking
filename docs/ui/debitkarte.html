@@ -1,0 +1,65 @@
+<!-- maske: {
+  "title": "Debitkarte",
+  "useCases": ["UC-018"],
+  "fields": [
+    {"name":"girokonto","label":"Girokonto","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"kartennummer","label":"Kartennummer","kind":"anzeige","attribute":"Debitkarte.kartennummerMaskiert"},
+    {"name":"status","label":"Status","kind":"anzeige","attribute":"Debitkarte.status"},
+    {"name":"sperrgrundAnzeige","label":"Sperrgrund","kind":"anzeige","attribute":"Debitkarte.sperrgrund"},
+    {"name":"sperrgrund","label":"Grund der endgültigen Sperre","kind":"auswahl","attribute":"Debitkarte.sperrgrund"}
+  ],
+  "actions": [
+    {"label":"Vorübergehend sperren","useCase":"UC-018#3","operation":"PUT /api/konten/{iban}/debitkarte","screen":"debitkarte"},
+    {"label":"Entsperren","useCase":"UC-018","operation":"PUT /api/konten/{iban}/debitkarte","screen":"debitkarte"},
+    {"label":"Endgültig sperren","useCase":"UC-018","screen":"debitkarte"},
+    {"label":"Bestätigen","useCase":"UC-018","operation":"PUT /api/konten/{iban}/debitkarte","screen":"debitkarte"},
+    {"label":"Abbrechen","useCase":"UC-018","screen":"debitkarte"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Debitkarte</h1>
+  <p>Debitkarte zu Ihrem Girokonto sperren und entsperren.</p>
+  <div data-wf="aktionen">
+    <button>Vorübergehend sperren</button>
+    <button>Entsperren</button>
+  </div>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#" aria-current="page">Debitkarte</a>
+</nav>
+<p data-wf="meldung" role="status">Die Debitkarte ist vorübergehend gesperrt.</p>
+<p data-wf="meldung" role="status">Die Debitkarte ist wieder aktiv.</p>
+<p data-wf="meldung" role="status">Die Debitkarte ist endgültig gesperrt. Grund: Verlust.</p>
+<p data-wf="meldung" role="alert">Die Debitkarte ist bereits vorübergehend gesperrt.</p>
+<p data-wf="meldung" role="alert">Die Debitkarte ist endgültig gesperrt und lässt sich nicht vorübergehend sperren.</p>
+<p data-wf="meldung" role="alert">Die Debitkarte ist nicht gesperrt.</p>
+<p data-wf="meldung" role="alert">Die Debitkarte ist endgültig gesperrt und lässt sich nicht entsperren.</p>
+<p data-wf="meldung" role="alert">Die Debitkarte ist bereits endgültig gesperrt.</p>
+<p data-wf="meldung" role="alert">Bitte wählen Sie den Sperrgrund Verlust oder Diebstahl.</p>
+<p data-wf="meldung" role="alert">Zu diesem Konto gibt es keine Debitkarte.</p>
+<dl data-wf="kennzahl">
+  <div><dt>Girokonto</dt><dd>DE02 5001 0517 5407 3249 31</dd></div>
+  <div><dt>Kartennummer</dt><dd>**** 4821</dd></div>
+  <div><dt>Status</dt><dd>aktiv</dd></div>
+  <div><dt>Sperrgrund</dt><dd>Verlust</dd></div>
+</dl>
+<section data-wf="gruppe" data-merkmal="Endgültig sperren">
+  <h2>Endgültig sperren</h2>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Grund der endgültigen Sperre</span><select name="sperrgrund"><option></option><option>Verlust</option><option>Diebstahl</option></select></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Endgültig sperren</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Sicherheitsabfrage">
+  <h2>Sicherheitsabfrage</h2>
+  <p data-wf="meldung" role="status">Debitkarte endgültig sperren?</p>
+  <form data-wf="formular">
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Bestätigen</button>
+      <button>Abbrechen</button>
+    </div>
+  </form>
+</section>
