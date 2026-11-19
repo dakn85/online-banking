@@ -21,6 +21,7 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 |---|---|---|
 | Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert |
 | Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Use Cases neu |
+| Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
 | Nachrichten der angemeldeten Kundin mit Zahl ungelesener | Neu | Endpunkt neu |
 | Nachricht öffnen und als gelesen markieren | Neu | Endpunkt neu |
 | Nachricht löschen | Neu | Endpunkt neu |
@@ -59,6 +60,8 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Use Cases neu
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Intern neu
 - [ ] Nachrichten der angemeldeten Kundin mit Zahl ungelesener: Endpunkt neu
 - [ ] Nachricht öffnen und als gelesen markieren: Endpunkt neu
 - [ ] Nachricht löschen: Endpunkt neu
