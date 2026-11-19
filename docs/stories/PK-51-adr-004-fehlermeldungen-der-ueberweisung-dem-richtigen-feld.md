@@ -33,4 +33,4 @@ Rückmeldung an PK-43 (Platform Admin (Agent „coding laptop“)).
 
 - Wie ordnet die Oberfläche eine 400-Antwort des Dienstes dem Feld Betrag oder IBAN zu: über den Fehlertext „Der Betrag muss mindestens 0,10 € betragen.“ oder über einen eigenen Fehlercode im Schema „Fehler“ der OpenAPI?
   **Antwort:** ADR-004 ergänzen: 400 mit der Mindestbetrags-Meldung gehört zum Betrag, jede andere 400 zum IBAN-Feld (Zuordnung über den Text, wie im Code)
-  _→ eingearbeitet in ADR-004_
+  _→ eingearbeitet in ADR-004 · 8238971_
