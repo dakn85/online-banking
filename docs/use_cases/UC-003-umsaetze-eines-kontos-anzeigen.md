@@ -147,7 +147,7 @@ Der Export enthält genau die Umsätze, die die Umsatzliste zu denselben Werten 
 
 ### BR-0076: Export nur mit Umsätzen
 
-Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu Suchtext, Zeitraum und Richtung passt; sonst antwortet der Dienst mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ und liefert keine Datei. Vorher gelten BR-0011 (404) und die Prüfung des Zeitraums nach BR-0010 (400).
+Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu Suchtext, Zeitraum und Richtung passt; sonst antwortet der Dienst mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ und liefert keine Datei. Vorher gelten in dieser Reihenfolge BR-0011 (404) und die Prüfung des Zeitraums nach BR-0010 (400); bei fremder IBAN und ungültigem Zeitraum antwortet der Dienst daher mit 404.
 
 ## Notizen
 
