@@ -25,22 +25,25 @@ Beträge von Daueraufträgen (UC-012) und deren Regeln; ein Höchstbetrag; Rundu
 - `acceptance/specs/ueberweisung.spec`: Ein Betrag unter 0,10 € wird abgelehnt und keine Zusammenfassung gezeigt
 - `acceptance/specs/ueberweisung.spec`: Ein Betrag von genau 0,10 € wird angenommen
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
-- [ ] Überweisung vom Girokonto ausführen: Antwort 400 geändert
-- [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
-- [ ] Ueberweisungsauftrag: Eigenschaft betrag geändert
-- [ ] Überweisung: Attribut betrag geändert
-- [ ] Überweisung: Feld Betrag in Euro geändert
-- [ ] Überweisung: Skizze geändert
-- [ ] UC-002: A2 geändert
-- [ ] UC-002: A8 neu: Betrag unter dem Mindestbetrag
-- [ ] UC-002: Sequenzdiagramm neu
-- [ ] UC-002: BR-0004 geändert
-- [ ] BR-0004: Text geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-43 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-43 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-19_
+
+## Bausteine
+- Online-Banking-Dienst, Component Überweisungsauftrag (`src/ueberweisung.ts`)
+- Oberfläche im Browser, Seite Überweisung (`public/seiten/ueberweisung.js`)
+- Unit-Tests `test/ueberweisung.test.ts`
+
+## Schritte
+1. Dienst (UC-002 A8, Feldregel Überweisung.betrag ≥ 0,10): `ausfuehren` lehnt einen Betrag unter 10 Cent (auch 0, negativ, keine Zahl) mit `Ablehnung(400, 'Der Betrag muss mindestens 0,10 € betragen.')` ab, nach der IBAN-Prüfung und vor der Betragsgrenze; es wird nichts gebucht.
+2. Dienst (BR-0004 neu): 422 nur noch, wenn der Betrag den verfügbaren Betrag übersteigt; die Prüfung „größer als 0“ entfällt dort.
+3. Oberfläche (UC-002 A8.1, Maske ueberweisung, Wertebereich 0.10 bis verfügbarer Betrag): Beim „Weiter“ zeigt ein Betrag unter 0,10 € die Meldung „Der Betrag muss mindestens 0,10 € betragen.“ am Feld Betrag und keine Zusammenfassung; über dem verfügbaren Betrag bleibt BR-0004.
+4. Oberfläche (UC-002 A8.2, ADR-004): Antwortet der Dienst beim Bestätigen mit 400 und dieser Meldung, springt die Seite auf das Formular mit den bisherigen Eingaben, zeigt die Meldung am Betrag und gibt „Bestätigen“ durch Neuaufbau wieder frei; andere 400 bleiben beim IBAN-Feld.
+5. Unit-Tests: 0,09 → 400, 0 → 400, 0,10 → 201, über dem verfügbaren Betrag → 422.
+6. Steps: alle Steps der Szenarien sind schon implementiert; nichts Neues.
+
+## Änderung am Rahmen
+Keine. ADR-004 ordnet 400 bisher pauschal dem IBAN-Feld zu; die Oberfläche unterscheidet jetzt zusätzlich nach dem Fehlertext des Dienstes (Mindestbetrag → Feld Betrag).
 
 ## Offene Fragen
 
