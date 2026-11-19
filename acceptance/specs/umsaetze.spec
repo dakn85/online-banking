@@ -259,6 +259,9 @@ Tags: UC-003, PK-54
 
 Tags: UC-003, PK-54
 
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Der Export-Dienst antwortet mit einem Fehler
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die Umsätze zeigen die Meldung "Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut."
