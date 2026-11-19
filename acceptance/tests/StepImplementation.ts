@@ -377,4 +377,64 @@ export default class StepImplementation {
     const felder = await this.vorlageInUeberweisung(name);
     assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
   }
+
+  /* ---------------------------------------------------------------- UC-015 Tageslimit */
+
+  /** Die Seite Tageslimit; ruft sie auf, wenn die Seite woanders steht. */
+  private async tageslimitSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/tageslimit') await page.goto(`${basisUrl}/tageslimit`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.tageslimit').waitFor();
+    return page;
+  }
+
+  /** UC-015 Schritt 1: „Tageslimit“ im Finanzstatus. */
+  @Step('Die Kundin öffnet das Tageslimit')
+  public async tageslimitOeffnen() {
+    const page = await this.kontentabelle();
+    await page.locator('#kopf-aktion').getByRole('link', { name: 'Tageslimit' }).click();
+    await page.waitForURL(/\/tageslimit$/);
+    await page.locator('.tageslimit').waitFor();
+  }
+
+  /** Gibt den Betrag so ein, wie er im Szenario steht, und wählt „Speichern“; wartet auf die neu gezeichnete Seite. */
+  @Step('Die Kundin setzt das Tageslimit auf <betrag>')
+  public async tageslimitSetzen(betrag: string) {
+    const page = await this.tageslimitSeite();
+    const form = page.getByRole('form', { name: 'Tageslimit ändern' });
+    await form.getByLabel('Neues Tageslimit in Euro').fill(text(betrag));
+    await page.locator('.tageslimit').evaluate(e => e.setAttribute('data-alt', ''));
+    await form.getByRole('button', { name: 'Speichern' }).click();
+    await page.locator('.tageslimit:not([data-alt])').waitFor();
+  }
+
+  @Step('Das Tageslimit zeigt die Meldung <meldung>')
+  public async tageslimitMeldet(meldung: string) {
+    const page = await this.tageslimitSeite();
+    await page.locator('.tageslimit > [role="status"], .tageslimit > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Das Tageslimit zeigt das aktuelle Limit <aktuell> und das Standardlimit <standard>')
+  public async tageslimitZeigt(aktuell: string, standard: string) {
+    const page = await this.tageslimitSeite();
+    const werte = Object.fromEntries(await page.locator('.tageslimit dl > div').evaluateAll(zeilen =>
+      zeilen.map(z => [z.querySelector('dt')!.textContent!.trim(), z.querySelector('dd')!.textContent!])));
+    assert.deepStrictEqual(
+      { aktuell: sichtbar(werte['Aktuelles Tageslimit']), standard: sichtbar(werte['Standardlimit']) },
+      { aktuell: sichtbar(text(aktuell)), standard: sichtbar(text(standard)) });
+  }
+
+  @Step('Das Tageslimit ist ohne Anmeldung nicht erreichbar')
+  public async tageslimitOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const lesen = await fetch(`${basisUrl}/api/tageslimit`);
+    assert.strictEqual(lesen.status, 401, 'GET /api/tageslimit ohne Sitzung');
+    const setzen = await fetch(`${basisUrl}/api/tageslimit`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tageslimit: 1000 }),
+    });
+    assert.strictEqual(setzen.status, 401, 'PUT /api/tageslimit ohne Sitzung');
+    await page.goto(`${basisUrl}/tageslimit`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
 }
