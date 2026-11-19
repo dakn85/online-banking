@@ -298,6 +298,95 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/konten/{iban}/umsaetze/export:
+    get:
+      summary: Umsätze eines Kontos als CSV-Datei exportieren
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Abfrageparametern, derselben Auswahl, Reihenfolge und demselben Saldo danach wie GET /api/konten/{iban}/umsaetze (BR-0075, BR-0008, BR-0009, BR-0010). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); passt kein Umsatz zur Auswahl, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
+      operationId: umsaetzeExportieren
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-003
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Kontos der Kundin
+          schema:
+            type: string
+        - name: suchtext
+          in: query
+          required: false
+          description: Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)
+          schema:
+            type: string
+        - name: von
+          in: query
+          required: false
+          description: Nur Umsätze mit Buchungstag ab diesem Tag, einschließlich (BR-0010); liegt dieser Tag nach dem Bis-Datum, antwortet der Dienst mit 400
+          schema:
+            type: string
+            format: date
+        - name: bis
+          in: query
+          required: false
+          description: Nur Umsätze mit Buchungstag bis zu diesem Tag, einschließlich (BR-0010)
+          schema:
+            type: string
+            format: date
+        - name: richtung
+          in: query
+          required: false
+          description: Nur Umsätze mit positivem (eingang) oder negativem (ausgang) Betrag; alle schränkt nicht ein (BR-0009)
+          schema:
+            type: string
+            default: alle
+            enum:
+              - alle
+              - eingang
+              - ausgang
+      responses:
+        "200":
+          description: CSV-Datei mit den Umsätzen des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert
+          headers:
+            Content-Disposition:
+              description: attachment mit dem Dateinamen umsaetze-<IBAN ohne Leerzeichen>.csv
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+        "400":
+          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)
+          x-rules:
+            - Umsatz.buchungstag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin (BR-0011)
+          x-rules:
+            - BR-0011
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Zur Auswahl passt kein Umsatz (BR-0076)
+          x-rules:
+            - BR-0076
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
 components:
   schemas:
     Anmeldedaten:
