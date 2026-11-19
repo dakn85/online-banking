@@ -30,7 +30,7 @@ Tags: UC-018, PK-55, BR-0081
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Debitkarte des Girokontos
-* Die Kundin sperrt die Debitkarte endgültig wegen "Verlust" und antwortet auf die Sicherheitsabfrage "Ja"
+* Die Kundin sperrt die Debitkarte endgültig wegen "Verlust" und antwortet auf die Sicherheitsabfrage "Bestätigen"
 * Die Debitkarte zeigt die Meldung "Die Debitkarte ist endgültig gesperrt. Grund: Verlust."
 * Die Debitkarte zeigt die Kartennummer "**** 4821" und den Status "endgültig gesperrt"
 
@@ -41,7 +41,7 @@ Tags: UC-018, PK-55
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Debitkarte des Girokontos
-* Die Kundin sperrt die Debitkarte endgültig wegen "Diebstahl" und antwortet auf die Sicherheitsabfrage "Nein"
+* Die Kundin sperrt die Debitkarte endgültig wegen "Diebstahl" und antwortet auf die Sicherheitsabfrage "Abbrechen"
 * Die Debitkarte zeigt die Kartennummer "**** 4821" und den Status "aktiv"
 
 ## PUT Debitkarte 400: Die endgültige Sperre ohne Sperrgrund wird abgelehnt
@@ -51,7 +51,7 @@ Tags: UC-018, PK-55, A3, 400
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Debitkarte des Girokontos
-* Die Kundin sperrt die Debitkarte endgültig wegen "" und antwortet auf die Sicherheitsabfrage "Ja"
+* Die Kundin sperrt die Debitkarte endgültig wegen "" und antwortet auf die Sicherheitsabfrage "Bestätigen"
 * Die Debitkarte zeigt die Meldung "Bitte wählen Sie den Sperrgrund Verlust oder Diebstahl."
 
 ## PUT Debitkarte 409: Eine endgültig gesperrte Debitkarte lässt sich nicht entsperren
@@ -61,7 +61,7 @@ Tags: UC-018, PK-55, A4, 409, BR-0081
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Debitkarte des Girokontos
-* Die Kundin sperrt die Debitkarte endgültig wegen "Verlust" und antwortet auf die Sicherheitsabfrage "Ja"
+* Die Kundin sperrt die Debitkarte endgültig wegen "Verlust" und antwortet auf die Sicherheitsabfrage "Bestätigen"
 * Die Kundin entsperrt die Debitkarte
 * Die Debitkarte zeigt die Meldung "Die Debitkarte ist endgültig gesperrt und lässt sich nicht entsperren."
 * Die Debitkarte zeigt die Kartennummer "**** 4821" und den Status "endgültig gesperrt"
