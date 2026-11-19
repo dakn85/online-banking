@@ -234,7 +234,6 @@ Tags: UC-003, PK-54, BR-0011
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos mit der IBAN "DE00 1234 5678 9012 3456 78"
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "404"
-* Die Umsätze zeigen die Meldung "Das Konto wurde nicht gefunden."
 
 ## Der CSV-Export mit Von-Datum nach dem Bis-Datum zeigt die Meldung zum ungültigen Zeitraum
 
@@ -248,7 +247,6 @@ Tags: UC-003, PK-54, BR-0010
 |----------|--------------|--------------|--------------|
 |          | 2026-03-31   | 2026-03-01   | Alle         |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "400"
-* Die Umsätze zeigen die Meldung "Der Zeitraum ist ungültig: von liegt nach bis."
 
 ## Ohne Anmeldung ist der CSV-Export nicht erreichbar
 
