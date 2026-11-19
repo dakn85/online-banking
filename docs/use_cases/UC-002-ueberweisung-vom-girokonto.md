@@ -41,7 +41,7 @@
 
 ### A2: Betrag über dem verfügbaren Betrag
 
-**Auslöser:** Der Betrag ist nicht größer als 0 oder übersteigt den verfügbaren Betrag des Girokontos (BR-0004). (Schritt 4).  
+**Auslöser:** Der Betrag übersteigt den verfügbaren Betrag des Girokontos (BR-0004). (Schritt 4).  
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
@@ -88,6 +88,15 @@
 1. Das System belegt Empfänger und IBAN des Empfängers aus der Vorlage und, wenn die Vorlage einen Verwendungszweck hat, auch den Verwendungszweck; den Betrag übernimmt es nicht (BR-0017).
 2. Hat die Vorlage keinen Verwendungszweck, bleibt das Feld Verwendungszweck leer; er bleibt Pflicht und die Kundin füllt ihn.
 3. Die Kundin ergänzt den Betrag, ändert bei Bedarf Angaben und wählt „Weiter“; der Ablauf geht bei Schritt 3 weiter.
+
+### A8: Betrag unter dem Mindestbetrag
+
+**Auslöser:** Der Betrag verletzt die Feldregel von Überweisung.betrag im Datenmodell (mindestens 0,10 €). (Schritt 4).  
+**Ablauf:**
+
+1. Das System führt den Auftrag nicht aus, zeigt die Meldung „Der Betrag muss mindestens 0,10 € betragen.“ im Formular und zeigt keine Zusammenfassung.
+2. Lehnt der Dienst den Betrag beim Bestätigen mit 400 ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
+3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ## Sequenzdiagramm
 
@@ -138,7 +147,7 @@ Die IBAN des Empfängers ist gültig: 15 bis 34 Stellen, gültige Prüfziffer na
 
 ### BR-0004: Betragsgrenze des Girokontos
 
-Der Betrag ist größer als 0 und übersteigt den verfügbaren Betrag des Girokontos (Saldo plus Dispositionsrahmen nach BR-0002) nicht. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
+Der Betrag übersteigt den verfügbaren Betrag des Girokontos (Saldo plus Dispositionsrahmen nach BR-0002) nicht. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
 
 ### BR-0005: Genau einmalige Ausführung
 
