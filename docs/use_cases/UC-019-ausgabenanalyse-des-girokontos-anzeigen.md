@@ -48,7 +48,7 @@
 **Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin (BR-0011). (Schritt 2).  
 **Ablauf:**
 
-1. Das System zeigt den Hinweis „Das Konto wurde nicht gefunden.“ und keine Kategorien.
+1. Das System zeigt die Meldung „Das Konto wurde nicht gefunden.“ und keine Kategorien.
 
 ### A4: Konto ist kein Girokonto
 
