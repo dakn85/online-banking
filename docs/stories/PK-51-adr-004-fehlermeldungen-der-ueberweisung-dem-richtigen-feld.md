@@ -1,4 +1,4 @@
-# PK-51: Rückmeldung zu PK-43: ADR-004 sagt, die Oberfläche ordne 400 dem IBAN-Feld und 422 dem Betrag zu. Mit PK-43 antwortet der Dienst auch beim Betrag unter 0,10 € m
+# PK-51: ADR-004: Fehlermeldungen der Überweisung dem richtigen Feld zuordnen
 
 **Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
 
