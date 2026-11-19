@@ -19,7 +19,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
-| Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert |
+| Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert, Folgen geändert |
 | Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Vorgemerkte Aufträge der angemeldeten Kundin | Neu | Endpunkt neu |
@@ -63,6 +63,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 ## Aufgaben für die Umsetzung
 
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
+- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Folgen geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Vorgemerkte Aufträge der angemeldeten Kundin: Endpunkt neu
