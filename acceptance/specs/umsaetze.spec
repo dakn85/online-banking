@@ -125,3 +125,18 @@ Tags: UC-003, PK-6
 * Testdaten sind zurückgesetzt
 * Die Umsatzseite ist ohne Anmeldung nicht erreichbar
 * Die Anmeldeseite ist zu sehen
+
+## Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
+
+Tags: UC-003, PK-47
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Umsätze zeigen die Zeilen
+| Buchungstag | Gegenpartei            |
+|-------------|------------------------|
+| 12.02.2026  | Bäckerei Krause        |
+| 10.02.2026  | Energieversorgung Nord |
+| 01.02.2026  | Lindner Logistik GmbH  |
+| 28.01.2026  | Hausverwaltung Berger  |

@@ -69,7 +69,7 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
-| buchungstag | Tag der Buchung | Date |  | Pflicht; Beispiel 2026-02-14 |
+| buchungstag | Tag der Buchung | Date |  | Pflicht; Beispiel 2026-02-14; Anzeige in der Umsatzliste als TT.MM.JJJJ, Beispiel 14.02.2026 |
 | gegenpartei | Name der Gegenpartei | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
 | verwendungszweck | Verwendungszweck der Buchung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
 | betrag | Betrag in Euro; beim Ausgang negativ | Decimal |  | Pflicht; Beispiel -50.00; negativ beim Ausgang |
