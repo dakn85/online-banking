@@ -301,7 +301,7 @@ paths:
   /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben:
     post:
       summary: Lastschrift zurückgeben und Betrag gutschreiben
-      description: Gibt die SEPA-Lastschrift mit dieser umsatzId auf dem Girokonto mit dieser IBAN zurück und schreibt den Betrag gut (BR-0095). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011), eine unbekannte umsatzId mit 404 (BR-0094). Ist der Umsatz keine SEPA-Lastschrift oder schon zurückgegeben, antwortet er mit 422 (BR-0094), liegt der Buchungstag mehr als 56 Tage zurück, mit 422 (BR-0093); es wird nichts gebucht. Eine zweite Rückgabe derselben Lastschrift bucht nicht erneut. Beträge in Euro.
+      description: Gibt die SEPA-Lastschrift mit dieser umsatzId auf dem Girokonto mit dieser IBAN zurück und schreibt den Betrag gut (BR-0095). Eine umsatzId, die die Feldbedingung des Datenmodells verletzt (Länge 1 bis 36), beantwortet der Dienst mit 400. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011), eine unbekannte umsatzId mit 404 (BR-0094). Ist der Umsatz keine SEPA-Lastschrift oder schon zurückgegeben, antwortet er mit 422 (BR-0094), liegt der Buchungstag mehr als 56 Tage zurück, mit 422 (BR-0093); es wird nichts gebucht. Eine zweite Rückgabe derselben Lastschrift bucht nicht erneut. Beträge in Euro.
       operationId: lastschriftZurueckgeben
       tags:
         - Finanzstatus
@@ -320,6 +320,8 @@ paths:
           description: Kennung der SEPA-Lastschrift
           schema:
             type: string
+            minLength: 1
+            maxLength: 36
       responses:
         "201":
           description: Lastschrift zurückgegeben, Betrag gutgeschrieben
@@ -327,6 +329,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Rueckgabe'
+        "400":
+          description: Die umsatzId verletzt die Feldbedingung (Länge 1 bis 36)
+          x-rules:
+            - Umsatz.umsatzId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
         "401":
           description: Keine gültige Sitzung
           content:
