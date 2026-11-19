@@ -20,7 +20,7 @@
 1. Die Kundin wählt im Finanzstatus „Daueraufträge“.
 2. Das System zeigt die Daueraufträge der Kundin vom Girokonto (BR-0078) mit Empfänger, IBAN, Betrag, Verwendungszweck, Turnus, erstem Ausführungstag und Enddatum, nach erstem Ausführungstag aufsteigend, bei gleichem Tag nach Empfänger aufsteigend.
 3. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro, Verwendungszweck, Turnus, ersten Ausführungstag und bei Bedarf ein Enddatum ein und wählt „Speichern“.
-4. System prüft in dieser Reihenfolge: zuerst die Feldregeln nach dem Datenmodell von Dauerauftrag und die IBAN (BR-0003; 400), dann den ersten Ausführungstag und das Enddatum (BR-0077; 422); bei einer Abweichung speichert es den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt die Meldung im Formular. Die Oberfläche wählt die Meldung nach der Ursache der Abweichung (A1 bis A5), nicht allein nach dem Status: ein 400 zeigt je nach Ursache die Meldung aus A1, A2 oder A3, ein 422 die Meldung aus A4 oder A5; die Zuordnung nach ADR-004 (400 zur IBAN, 422 zum Betrag) gilt für Daueraufträge nicht.
+4. System prüft in dieser Reihenfolge: zuerst die Feldregeln nach dem Datenmodell von Dauerauftrag und die IBAN (BR-0003; 400), dann den ersten Ausführungstag und das Enddatum (BR-0077; 422); bei einer Abweichung speichert es den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt die Meldung im Formular. Die Oberfläche wählt die Meldung nach der Ursache der Abweichung (A1 bis A5), nicht allein nach dem Status: ein 400 zeigt je nach Ursache die Meldung aus A1, A2 oder A3, ein 422 die Meldung aus A4 oder A5; die Zuordnung nach ADR-004 (400 zur IBAN, 422 zum Betrag) gilt für Daueraufträge nicht. Der Dienst liefert bei 400, 422 und 404 im Feld fehler genau den Text aus A1 bis A5 beziehungsweise A10, die Oberfläche zeigt ihn unverändert.
 5. Das System speichert den Dauerauftrag mit dem Girokonto der Kundin als Auftraggeberkonto (BR-0007) und zeigt die Daueraufträge mit dem neuen Dauerauftrag und der Meldung „Dauerauftrag gespeichert.“.
 
 ## Alternativabläufe
@@ -102,7 +102,7 @@
 **Auslöser:** Beim Ändern (A6) oder Löschen (A7) beantwortet der Dienst die Kennung mit 404, zum Beispiel weil der Dauerauftrag in einem anderen Fenster schon gelöscht wurde. (Schritt 5).  
 **Ablauf:**
 
-1. Das System ändert oder löscht nichts und zeigt „Der Dauerauftrag ist nicht mehr vorhanden.“ zusammen mit der aktuellen Liste der Daueraufträge.
+1. Das System ändert oder löscht nichts und zeigt „Der Dauerauftrag existiert nicht mehr.“ (Text im Feld fehler der 404-Antwort) zusammen mit der neu geladenen Liste der Daueraufträge; die Eingaben der Änderung entfallen.
 2. Die Kundin wählt einen vorhandenen Dauerauftrag oder bricht ab.
 
 ### A11: Keine Daueraufträge vorhanden
@@ -156,7 +156,7 @@ Der erste Ausführungstag liegt nicht vor heute; heute ist der aktuelle Kalender
 
 ### BR-0078: Daueraufträge der angemeldeten Kundin
 
-Der Dienst liefert, ändert und löscht nur Daueraufträge der angemeldeten Kundin. Eine fremde oder unbekannte Dauerauftrags-Kennung beantwortet er mit 404, ohne gültige Sitzung mit 401. Prüfart für 404 und 401 der Operationen ist die Unit-Prüfung WP-1; die Maske ohne Sitzung prüft ein Szenario.
+Der Dienst liefert, ändert und löscht nur Daueraufträge der angemeldeten Kundin. Eine fremde oder unbekannte Dauerauftrags-Kennung beantwortet er mit 404 und im Feld fehler mit „Der Dauerauftrag existiert nicht mehr.“, ohne gültige Sitzung mit 401. Prüfart für 404 und 401 der Operationen ist die Unit-Prüfung WP-1; die Maske ohne Sitzung prüft ein Szenario.
 
 ## Weitere Prüfungen
 

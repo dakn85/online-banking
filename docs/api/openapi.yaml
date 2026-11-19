@@ -239,11 +239,12 @@ paths:
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Lastdaten zurückgesetzt } }
+      x-intern: Testbetrieb
   /api/tageslimit:
     get:
       summary: Tageslimit der angemeldeten Kundin
@@ -327,7 +328,7 @@ paths:
         - UC-016
     post:
       summary: Dauerauftrag anlegen
-      description: "Legt einen Dauerauftrag der angemeldeten Kundin an; der Dienst setzt als Auftraggeberkonto das Girokonto der Kundin (BR-0007). Empfänger, IBAN (gültig und SEPA-Land, BR-0003), Betrag (mindestens 0,10), Verwendungszweck, Turnus und erster Ausführungstag sind Pflicht, das Enddatum ist optional. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Eine Prüfung gegen den verfügbaren Betrag gibt es nicht, der Dauerauftrag wird nicht ausgeführt. Ohne gültige Sitzung antwortet der Dienst mit 401."
+      description: "Legt einen Dauerauftrag der angemeldeten Kundin an; der Dienst setzt als Auftraggeberkonto das Girokonto der Kundin (BR-0007). Empfänger, IBAN (gültig und SEPA-Land, BR-0003), Betrag (mindestens 0,10), Verwendungszweck, Turnus und erster Ausführungstag sind Pflicht, das Enddatum ist optional. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Bei 400 und 422 steht im Feld fehler genau der Meldungstext aus UC-016 A1 bis A5, den die Oberfläche unverändert zeigt. Eine Prüfung gegen den verfügbaren Betrag gibt es nicht, der Dauerauftrag wird nicht ausgeführt. Ohne gültige Sitzung antwortet der Dienst mit 401."
       operationId: dauerauftragAnlegen
       tags:
         - Dauerauftrag
@@ -345,7 +346,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Dauerauftrag'
         "400":
-          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land; wird vor dem ersten Ausführungstag und dem Enddatum geprüft
+          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land; wird vor dem ersten Ausführungstag und dem Enddatum geprüft; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3
           content:
             application/json:
               schema:
@@ -367,7 +368,7 @@ paths:
           x-rules:
             - BR-0078
         "422":
-          description: Der erste Ausführungstag liegt vor heute oder das Enddatum liegt vor dem ersten Ausführungstag; es wird nichts gespeichert
+          description: Der erste Ausführungstag liegt vor heute oder das Enddatum liegt vor dem ersten Ausführungstag; es wird nichts gespeichert; das Feld fehler enthält den Text aus UC-016 A4 oder A5
           content:
             application/json:
               schema:
@@ -379,7 +380,7 @@ paths:
   /api/dauerauftraege/{dauerauftragId}:
     put:
       summary: Dauerauftrag ändern
-      description: "Ersetzt die Angaben eines Dauerauftrags der angemeldeten Kundin durch die Eingabe; das Auftraggeberkonto bleibt das Girokonto der Kundin. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Der erste Ausführungstag wird nur dann gegen heute geprüft, wenn er vom gespeicherten Wert abweicht; bleibt er unverändert, lässt sich der Dauerauftrag trotz vergangenem ersten Ausführungstag ändern. Das Enddatum wird immer gegen den geltenden ersten Ausführungstag geprüft. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401."
+      description: "Ersetzt die Angaben eines Dauerauftrags der angemeldeten Kundin durch die Eingabe; das Auftraggeberkonto bleibt das Girokonto der Kundin. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Der erste Ausführungstag wird nur dann gegen heute geprüft, wenn er vom gespeicherten Wert abweicht; bleibt er unverändert, lässt sich der Dauerauftrag trotz vergangenem ersten Ausführungstag ändern. Das Enddatum wird immer gegen den geltenden ersten Ausführungstag geprüft. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401. Bei 400, 422 und 404 steht im Feld fehler genau der Meldungstext aus UC-016 (A1 bis A5, bei 404 A10), den die Oberfläche unverändert zeigt."
       operationId: dauerauftragAendern
       tags:
         - Dauerauftrag
@@ -406,7 +407,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Dauerauftrag'
         "400":
-          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land
+          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3
           content:
             application/json:
               schema:
@@ -428,7 +429,7 @@ paths:
           x-rules:
             - BR-0078
         "404":
-          description: Kein Dauerauftrag der Kundin mit dieser Kennung
+          description: Kein Dauerauftrag der Kundin mit dieser Kennung; das Feld fehler enthält „Der Dauerauftrag existiert nicht mehr.“ (UC-016 A10)
           content:
             application/json:
               schema:
@@ -436,7 +437,7 @@ paths:
           x-rules:
             - BR-0078
         "422":
-          description: Erster Ausführungstag liegt vor heute und weicht vom gespeicherten Wert ab, oder das Enddatum liegt vor dem geltenden ersten Ausführungstag (BR-0077); der Dauerauftrag bleibt unverändert
+          description: Erster Ausführungstag liegt vor heute und weicht vom gespeicherten Wert ab, oder das Enddatum liegt vor dem geltenden ersten Ausführungstag (BR-0077); der Dauerauftrag bleibt unverändert; das Feld fehler enthält den Text aus UC-016 A4 oder A5
           content:
             application/json:
               schema:
@@ -447,7 +448,7 @@ paths:
         - UC-016
     delete:
       summary: Dauerauftrag löschen
-      description: Löscht den Dauerauftrag der angemeldeten Kundin endgültig. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401.
+      description: Löscht den Dauerauftrag der angemeldeten Kundin endgültig. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, im Feld fehler steht dann „Der Dauerauftrag existiert nicht mehr.“ (UC-016 A10); ohne gültige Sitzung antwortet der Dienst mit 401.
       operationId: dauerauftragLoeschen
       tags:
         - Dauerauftrag
@@ -472,7 +473,7 @@ paths:
           x-rules:
             - BR-0078
         "404":
-          description: Kein Dauerauftrag der Kundin mit dieser Kennung
+          description: Kein Dauerauftrag der Kundin mit dieser Kennung; das Feld fehler enthält „Der Dauerauftrag existiert nicht mehr.“ (UC-016 A10)
           content:
             application/json:
               schema:

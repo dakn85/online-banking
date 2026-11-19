@@ -23,6 +23,7 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 |---|---|---|
 | Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert |
 | Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
+| Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
 | Daueraufträge der angemeldeten Kundin | Neu | Endpunkt neu |
 | Dauerauftrag anlegen | Neu | Endpunkt neu |
 | Dauerauftrag ändern | Neu | Endpunkt neu |
@@ -63,6 +64,8 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Intern neu
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Intern neu
 - [ ] Daueraufträge der angemeldeten Kundin: Endpunkt neu
 - [ ] Dauerauftrag anlegen: Endpunkt neu
 - [ ] Dauerauftrag ändern: Endpunkt neu
@@ -88,12 +91,6 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-52 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-52 grün
 
-## Offene Fragen
-
-- [ ] ADR-002 und UC-016 nennen die Daueraufträge im Ausgangsstand von POST /api/test/reset (jonas.weber hat „Hausverwaltung Weber“, lena.hoffmann keinen). Die Beschreibung von POST /api/test/reset im Vertrag nennt sie nicht, und für den Lastbetrieb (POST /api/test/lasttest/reset) ist offen, ob die Lastkunden Daueraufträge anlegen dürfen und ob dieser Reset sie löscht. Was gilt? (Aussage „POST /api/test/reset setzt auch die Daueraufträge der Demo-Kundinnen zurück.“)
-- [ ] Was sieht die Kundin, wenn ein Dauerauftrag beim Ändern oder Löschen nicht mehr existiert (404, zum Beispiel in einer zweiten Sitzung bereits gelöscht)?
-- [ ] Bei Dauerauftrag gibt es unter 400 drei verschiedene Meldungen (allgemein unvollständig oder ungültig, IBAN ungültig, Betrag unter 0,10 €) und unter 422 zwei (erster Ausführungstag, Enddatum). Die Zuordnung 400 gleich IBAN und 422 gleich Betrag aus ADR-004 passt dazu nicht. Woran erkennt die Oberfläche beim Antworten des Dienstes, welche Meldung sie zeigt? (Aussage „Die Oberfläche ordnet eine 400-Antwort dem IBAN-Feld und eine 422-Antwort dem Be“)
-
 ## Entscheidungen
 
 - Ist der Verwendungszweck eines Dauerauftrags Pflicht oder optional?
@@ -105,3 +102,12 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 - Gilt beim Ändern eines Dauerauftrags die Regel „erster Ausführungstag nicht vor heute“ immer oder nur, wenn die Kundin den ersten Ausführungstag selbst ändert? Der gespeicherte erste Ausführungstag kann inzwischen in der Vergangenheit liegen.
   **Antwort:** Nur wenn die Kundin den ersten Ausführungstag ändert; bleibt er unverändert, kann sie Betrag, Verwendungszweck oder Enddatum trotz vergangenem ersten Ausführungstag ändern.
   _→ eingearbeitet in vision, UC-016, BR-0077, BR-0078, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, PUT /api/dauerauftraege/{dauerauftragId}, DELETE /api/dauerauftraege/{dauerauftragId}, Schema Dauerauftrag, Schema NeuerDauerauftrag, dauerauftraege, finanzstatus, NFR-001, architektur, ADR-002 · e5abd35_
+- ADR-002 und UC-016 nennen die Daueraufträge im Ausgangsstand von POST /api/test/reset (jonas.weber hat „Hausverwaltung Weber“, lena.hoffmann keinen). Die Beschreibung von POST /api/test/reset im Vertrag nennt sie nicht, und für den Lastbetrieb (POST /api/test/lasttest/reset) ist offen, ob die Lastkunden Daueraufträge anlegen dürfen und ob dieser Reset sie löscht. Was gilt? (Aussage „POST /api/test/reset setzt auch die Daueraufträge der Demo-Kundinnen zurück.“)
+  **Antwort:** Der Vertrag von POST /api/test/reset nennt Daueraufträge und den Ausgangsstand von jonas.weber; POST /api/test/lasttest/reset löscht zusätzlich die Daueraufträge der Lastkunden, Ausgangsstand ohne Daueraufträge.
+  _→ noch nicht in der Spezifikation_
+- Was sieht die Kundin, wenn ein Dauerauftrag beim Ändern oder Löschen nicht mehr existiert (404, zum Beispiel in einer zweiten Sitzung bereits gelöscht)?
+  **Antwort:** Neue Meldung „Der Dauerauftrag existiert nicht mehr.“, die Liste wird neu geladen, die Eingaben der Änderung entfallen
+  _→ noch nicht in der Spezifikation_
+- Bei Dauerauftrag gibt es unter 400 drei verschiedene Meldungen (allgemein unvollständig oder ungültig, IBAN ungültig, Betrag unter 0,10 €) und unter 422 zwei (erster Ausführungstag, Enddatum). Die Zuordnung 400 gleich IBAN und 422 gleich Betrag aus ADR-004 passt dazu nicht. Woran erkennt die Oberfläche beim Antworten des Dienstes, welche Meldung sie zeigt? (Aussage „Die Oberfläche ordnet eine 400-Antwort dem IBAN-Feld und eine 422-Antwort dem Be“)
+  **Antwort:** Der Dienst liefert im Feld fehler genau den Meldungstext aus UC-016 A1 bis A5, die Oberfläche zeigt ihn unverändert.
+  _→ noch nicht in der Spezifikation_
