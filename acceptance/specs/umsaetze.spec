@@ -262,3 +262,29 @@ Tags: UC-003, PK-54
 * Der Export-Dienst antwortet mit einem Fehler
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die Umsätze zeigen die Meldung "Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut."
+
+## Der CSV-Export berücksichtigt den Filter Ein-/Ausgang
+
+Tags: UC-003, PK-54, BR-0075, BR-0009
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+| Möbel    |              |              | Eingang      |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "422"
+
+## Die CSV-Datei hat den Content-Type text/csv und Zeilenende CRLF
+
+Tags: UC-003, PK-54
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin exportiert die Umsätze als CSV-Datei
+* Die CSV-Datei hat den Content-Type "text/csv" und das Zeilenende "CRLF"

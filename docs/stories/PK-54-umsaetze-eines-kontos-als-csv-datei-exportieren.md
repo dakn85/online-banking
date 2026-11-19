@@ -28,10 +28,12 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 
 ## Akzeptanztests
 
+- `acceptance/specs/umsaetze.spec`: Der CSV-Export berücksichtigt den Filter Ein-/Ausgang
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export einer leeren Auswahl liefert keine Datei und zeigt die Meldung
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export eines fremden Kontos zeigt, dass das Konto nicht gefunden wurde
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export mit Von-Datum nach dem Bis-Datum zeigt die Meldung zum ungültigen Zeitraum
+- `acceptance/specs/umsaetze.spec`: Die CSV-Datei hat den Content-Type text/csv und Zeilenende CRLF
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei ist UTF-8 mit BOM, durch Semikolon getrennt und nach dem Konto benannt
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei schreibt den Buchungstag als TT.MM.JJJJ und Beträge mit Dezimalkomma
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei setzt einen Text mit Semikolon in Anführungszeichen, sodass die Spalten stimmen
