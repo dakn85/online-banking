@@ -32,10 +32,10 @@
 
 ### A1: Nicht angemeldet
 
-**Auslöser:** Es gibt keine gültige Sitzung. (Schritt 1).  
+**Auslöser:** Es gibt keine gültige Sitzung, beim Öffnen der Seite (Schritt 1) oder weil sie bis zum Export abgelaufen ist (Schritt 10, Antwort 401). (Schritt 1).  
 **Ablauf:**
 
-1. Das System leitet auf die Anmeldeseite um.
+1. Das System leitet auf die Anmeldeseite um und liefert beim Export keine Datei.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
 
 ### A2: Keine Umsätze zur Auswahl

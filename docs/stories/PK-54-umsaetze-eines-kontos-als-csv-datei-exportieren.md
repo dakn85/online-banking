@@ -21,7 +21,7 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 | Umsätze eines Kontos als CSV-Datei exportieren | Neu | Endpunkt neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Aktion Als CSV exportieren neu, Skizze geändert |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 9 neu, und 9 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 9 neu, und 10 weitere |
 | BR-0075 Export mit den Umsätzen der Liste | Neu | Neu in UC-003 |
 | BR-0076 Export nur mit Umsätzen | Neu | Neu in UC-003 |
 | Vision | Geändert | Abschnitt „Abgrenzung“ geändert |
@@ -49,6 +49,7 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 - [ ] UC-003: Notizen geändert
 - [ ] UC-003: Schritt 9 neu
 - [ ] UC-003: Schritt 10 neu
+- [ ] UC-003: A1 geändert
 - [ ] UC-003: A5 neu: Keine Umsätze zum Export
 - [ ] UC-003: A6 neu: Konto nicht gefunden beim Export
 - [ ] UC-003: A7 neu: Zeitraum ungültig beim Export
