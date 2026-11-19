@@ -48,6 +48,7 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 - `acceptance/specs/umbuchung.spec`: Ein Betrag unter 0,10 € wird bei der Umbuchung abgelehnt
 - `acceptance/specs/umbuchung.spec`: Ein doppelter Klick auf Umbuchen bucht nur einmal um
 - `acceptance/specs/umbuchung.spec`: Ein Quellkonto, das nicht zur Kundin gehört, wird abgelehnt
+- `acceptance/specs/umbuchung.spec`: Eine abgelehnte Umbuchung zeigt die Meldung und gibt den Knopf wieder frei
 - `acceptance/specs/umbuchung.spec`: Eine Umbuchung erzeugt einen Umsatz auf beiden Konten
 - `acceptance/specs/umbuchung.spec`: Eine Umbuchung vom Girokonto aufs Tagesgeldkonto bucht sofort um
 - `acceptance/specs/umbuchung.spec`: Eine Umbuchung vom Tagesgeldkonto zurück aufs Girokonto bucht sofort um

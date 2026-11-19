@@ -155,3 +155,16 @@ Tags: UC-001, PK-58
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Zeile "Tagesgeldkonto" zeigt "Saldo" "0,00 €"
 * Der Finanzstatus zeigt das Gesamtvermögen "1.757,85 €"
+
+## Eine abgelehnte Umbuchung zeigt die Meldung und gibt den Knopf wieder frei
+
+Tags: UC-021, PK-58
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umbuchung
+* Die Kundin erfasst Quellkonto "Girokonto", Zielkonto "Tagesgeldkonto" und Betrag "50,00 €"
+* Der Dienst antwortet auf die Umbuchung mit dem Status "500"
+* Die Kundin wählt „Umbuchen“ "1" Mal
+* Die Umbuchung zeigt die Meldung "Die Umbuchung konnte nicht ausgeführt werden."
+* Der Knopf „Umbuchen“ ist freigegeben
