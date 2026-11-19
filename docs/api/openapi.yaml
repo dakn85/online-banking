@@ -230,7 +230,7 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze und Empfängervorlagen auf den Ausgangsstand; ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen und Tageslimit auf den Ausgangsstand (Tageslimit gleich Standardlimit); ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -238,11 +238,66 @@ paths:
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze); ihre ausgeführten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Lastdaten zurückgesetzt } }
+  /api/tageslimit:
+    get:
+      summary: Tageslimit der angemeldeten Kundin
+      description: Liefert das aktuelle Tageslimit der angemeldeten Kundin für Überweisungen je Kalendertag und das Standardlimit. Beträge in Euro. Ohne gültige Sitzung 401.
+      operationId: tageslimitLesen
+      tags:
+        - Überweisung
+      x-use-cases:
+        - UC-015
+      responses:
+        "200":
+          description: Aktuelles Tageslimit und Standardlimit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tageslimit'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+    put:
+      summary: Tageslimit der angemeldeten Kundin setzen
+      description: Setzt das Tageslimit der angemeldeten Kundin für Überweisungen je Kalendertag auf den Betrag im Auftrag, von 0 bis zum Standardlimit; 0 sperrt alle Überweisungen. Das Limit gilt ab der nächsten Überweisung. Beträge in Euro. Ohne gültige Sitzung 401.
+      operationId: tageslimitSetzen
+      tags:
+        - Überweisung
+      x-use-cases:
+        - UC-015
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tageslimitauftrag'
+      responses:
+        "200":
+          description: Tageslimit gespeichert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tageslimit'
+        "400":
+          description: Tageslimit fehlt, ist keine Zahl, kleiner als 0, größer als das Standardlimit oder hat mehr als zwei Nachkommastellen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
 components:
   schemas:
     Anmeldedaten:
@@ -510,3 +565,31 @@ components:
           type: string
       required:
         - name
+    Tageslimit:
+      type: object
+      x-entity: Kunde
+      properties:
+        tageslimit:
+          type: number
+          description: Aktuelles Tageslimit in Euro
+          minimum: 0
+          maximum: 5000
+          multipleOf: 0.01
+        standardlimit:
+          type: number
+          description: Standardlimit in Euro, für alle Kundinnen gleich
+      required:
+        - tageslimit
+        - standardlimit
+    Tageslimitauftrag:
+      type: object
+      x-entity: Kunde
+      properties:
+        tageslimit:
+          type: number
+          description: Neues Tageslimit in Euro, von 0 bis zum Standardlimit
+          minimum: 0
+          maximum: 5000
+          multipleOf: 0.01
+      required:
+        - tageslimit
