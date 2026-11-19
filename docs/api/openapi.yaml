@@ -763,8 +763,12 @@ components:
       x-entity: Überweisung
       required:
         - auftragsId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
         - betrag
         - waehrung
+        - verwendungszweck
         - status
         - erfasstAm
         - ausfuehrungstag
