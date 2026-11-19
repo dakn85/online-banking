@@ -86,16 +86,16 @@ test('Lastkunden: 300 Kennungen mit der Test-PIN, je ein Girokonto mit gültiger
   lastkundenAnlegen();
 });
 
-test('Lastkunde: 2.000 Überweisungen zu 0,01 € gehen durch; Umsätze und Auftrags-Kennungen bleiben bei der Speichergrenze', () => {
+test('Lastkunde: 2.000 Überweisungen zu 0,10 € gehen durch; Umsätze und Auftrags-Kennungen bleiben bei der Speichergrenze', () => {
   lastdatenZuruecksetzen();
   const kunde = lastkunde(7);
-  for (let i = 1; i <= 2000; i++) assert.equal(ausfuehren(kunde, auftrag(`l-${i}`, lastIban(7), 0.01)).neu, true);
-  assert.equal(finanzstatus(kunde.kennung).konten[0].saldo, 9980);
+  for (let i = 1; i <= 2000; i++) assert.equal(ausfuehren(kunde, auftrag(`l-${i}`, lastIban(7), 0.1)).neu, true);
+  assert.equal(finanzstatus(kunde.kennung).konten[0].saldo, 9800);
   const liste = umsaetzeVon(kunde.kennung, lastIban(7))!;
   assert.equal(liste.length, LAST_SPEICHERGRENZE);
-  assert.equal(liste[0].saldoDanach, 9980, 'die jüngsten bleiben');
-  assert.equal(ausfuehren(kunde, auftrag('l-2000', lastIban(7), 0.01)).neu, false, 'jüngste Kennung bleibt genau einmal');
-  assert.equal(finanzstatus(kunde.kennung).konten[0].saldo, 9980);
+  assert.equal(liste[0].saldoDanach, 9800, 'die jüngsten bleiben');
+  assert.equal(ausfuehren(kunde, auftrag('l-2000', lastIban(7), 0.1)).neu, false, 'jüngste Kennung bleibt genau einmal');
+  assert.equal(finanzstatus(kunde.kennung).konten[0].saldo, 9800);
 });
 
 test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen stehen', () => {
@@ -104,7 +104,7 @@ test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen steh
   const last = lastkunde(1);
   for (const kunde of [kundeMitKennung(LENA.kennung)!, last, lastkunde(2)]) anlegen(ohneCookie, kunde);
   ausfuehren(LENA, auftrag('d-1', LENA_GIRO));
-  ausfuehren(last, auftrag('d-1', lastIban(1), 0.01));
+  ausfuehren(last, auftrag('d-1', lastIban(1), 0.1));
   vorlagen.anlegen(LENA.kennung, { name: 'Möbel Nord GmbH', empfaengerIban: EMPFAENGER });
   vorlagen.anlegen(last.kennung, { name: 'Lastvorlage', empfaengerIban: EMPFAENGER });
 
@@ -114,10 +114,10 @@ test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen steh
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.3);
   assert.equal(vorlagen.liste(LENA.kennung).length, 0);
   assert.equal(vorlagen.liste(JONAS.kennung).length, 50);
-  assert.equal(finanzstatus(last.kennung).konten[0].saldo, 9999.99, 'Lastkonto unberührt');
+  assert.equal(finanzstatus(last.kennung).konten[0].saldo, 9999.9, 'Lastkonto unberührt');
   assert.equal(umsaetzeVon(last.kennung, lastIban(1))!.length, 1);
   assert.equal(vorlagen.liste(last.kennung).length, 1);
-  assert.equal(ausfuehren(last, auftrag('d-1', lastIban(1), 0.01)).neu, false, 'Auftrags-Kennungen der Lastkunden bleiben');
+  assert.equal(ausfuehren(last, auftrag('d-1', lastIban(1), 0.1)).neu, false, 'Auftrags-Kennungen der Lastkunden bleiben');
 
   anlegen(ohneCookie, kundeMitKennung(LENA.kennung)!);
   ausfuehren(LENA, auftrag('d-2', LENA_GIRO));
@@ -127,7 +127,7 @@ test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen steh
   assert.equal(finanzstatus(last.kennung).konten[0].saldo, 10000);
   assert.deepEqual(umsaetzeVon(last.kennung, lastIban(1)), []);
   assert.equal(vorlagen.liste(last.kennung).length, 0);
-  assert.equal(ausfuehren(last, auftrag('d-1', lastIban(1), 0.01)).neu, true, 'Auftrags-Kennungen der Lastkunden vergessen');
+  assert.equal(ausfuehren(last, auftrag('d-1', lastIban(1), 0.1)).neu, true, 'Auftrags-Kennungen der Lastkunden vergessen');
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2095.3, 'Demo-Konto unberührt');
   assert.equal(ausfuehren(LENA, auftrag('d-2', LENA_GIRO)).neu, false, 'Demo-Auftrag bleibt genau einmal');
   assert.equal(umsaetzeVon(LENA.kennung, LENA_GIRO, { suchtext: 'Möbel' })!.length, 1);

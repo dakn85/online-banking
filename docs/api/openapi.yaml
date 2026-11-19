@@ -22,7 +22,7 @@ paths:
       x-use-cases: [ UC-001 ]
   /api/ueberweisungen:
     post:
-      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
+      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
       operationId: ueberweisungAusfuehren
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }
@@ -36,7 +36,7 @@ paths:
           description: "Auftrag ausgeführt, Saldo des Girokontos gemindert"
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: "IBAN ungültig oder gehört zu keinem SEPA-Land"
+          description: "IBAN ungültig oder gehört zu keinem SEPA-Land, oder Betrag kleiner als 0,10 Euro"
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
@@ -45,7 +45,7 @@ paths:
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
         "422":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: Betrag nicht größer als 0 oder übersteigt den verfügbaren Betrag des Girokontos
+          description: Betrag übersteigt den verfügbaren Betrag des Girokontos
       summary: Überweisung vom Girokonto ausführen
       tags: [ Überweisung ]
       x-use-cases: [ UC-002 ]
@@ -433,9 +433,9 @@ components:
           minLength: 1
           type: string
         betrag:
-          description: Betrag in Euro; höchstens der verfügbare Betrag des Girokontos
-          exclusiveMinimum: 0
+          description: Betrag in Euro, mindestens 0,10; höchstens der verfügbare Betrag des Girokontos
           type: number
+          minimum: 0.1
         empfaenger:
           maxLength: 70
           minLength: 1
