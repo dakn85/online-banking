@@ -41,3 +41,8 @@ Beträge von Daueraufträgen (UC-012) und deren Regeln; ein Höchstbetrag; Rundu
 - [ ] BR-0004: Text geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-43 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-43 grün
+
+## Offene Fragen
+
+- [ ] Gilt der Mindestbetrag für Daueraufträge beim Einrichten und beim Ändern, mit demselben Status und derselben Meldung?
+- [ ] Was passiert mit bestehenden Daueraufträgen unter 0,10 EUR?
