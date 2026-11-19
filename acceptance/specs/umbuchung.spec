@@ -129,7 +129,7 @@ Tags: UC-021, PK-58
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324931" auf die IBAN "DE02500105175407324931" über "0,09 €" mit dem Status "400" ab
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324931" auf die IBAN "<IBAN des Tagesgeldkontos von lena.hoffmann>" über "0,09 €" mit dem Status "400" ab
 
 ## Die Schnittstelle lehnt dasselbe Konto als Quell- und Zielkonto mit 422 ab
 
