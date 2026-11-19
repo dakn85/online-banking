@@ -44,6 +44,7 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 - `acceptance/specs/ausgabenanalyse.spec`: Ein Monat ohne Ausgaben zeigt den Hinweis
 - `acceptance/specs/ausgabenanalyse.spec`: Ein ungültiger Monat zeigt die Meldung zum Monat
 - `acceptance/specs/ausgabenanalyse.spec`: Eine neue Überweisung erscheint in der Kategorie Sonstiges
+- `acceptance/specs/ausgabenanalyse.spec`: Eingänge zählen in der Ausgabenanalyse nicht
 - `acceptance/specs/ausgabenanalyse.spec`: Ohne Anmeldung ist die Ausgabenanalyse nicht erreichbar
 
 ## Aufgaben für die Umsetzung

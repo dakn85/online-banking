@@ -108,3 +108,17 @@ Tags: UC-019, PK-56
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin wählt im Finanzstatus in der Zeile des Kontos "Girokonto" die Ausgabenanalyse
 * Das Feld Monat der Ausgabenanalyse enthält den laufenden Monat
+
+## Eingänge zählen in der Ausgabenanalyse nicht
+
+Tags: UC-019, PK-56, BR-0083
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Ausgabenanalyse des Kontos "Girokonto" für den Monat "2026-02"
+* Die Ausgabenanalyse zeigt die Kategorien
+| Kategorie    | Summe   | Anteil |
+|--------------|---------|--------|
+| Wohnen       | 86,00 € | 87,8 % |
+| Lebensmittel | 12,00 € | 12,2 % |
+* Die Ausgabenanalyse zeigt "Gesamtausgaben" mit dem Text "98,00 €"
