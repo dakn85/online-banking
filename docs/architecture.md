@@ -96,7 +96,7 @@ C4Component
 | Seitenauslieferung | Nimmt jede Anfrage von außen an, prüft die Pflichtfelder eines Auftrags und liefert Seiten und Dateien aus | keine |
 | Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
 | Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
-| Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007 |
+| Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag, Tageslimit und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007, BR-0070 |
 
 Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag kennt Konten und Finanzstatus, aber nicht umgekehrt.
 
@@ -146,7 +146,7 @@ sequenceDiagram
         Auftrag-->>Seiten: erster Vorgang, nicht neu
         Seiten-->>Oberflaeche: 200 mit der Überweisung
     else neuer Auftrag
-        Note over Auftrag: prüft BR-0003, BR-0004, BR-0007
+        Note over Auftrag: prüft BR-0003, BR-0004, BR-0007, BR-0070
         Auftrag->>Konten: Girokonto belasten
         Konten-->>Auftrag: neuer Saldo
         Auftrag-->>Seiten: ausgeführt

@@ -120,3 +120,75 @@ Tags: UC-002, PK-43
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "0,10 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+
+## Eine Überweisung über dem Tageslimit wird abgelehnt und der Saldo bleibt unverändert
+
+Tags: UC-002, PK-60, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Tageslimit
+* Die Kundin setzt das Tageslimit auf "100,00"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "150,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung
+* Die Überweisung zeigt die Meldung "Mit dieser Überweisung würde Ihr Tageslimit überschritten."
+* Die Kundin bricht die Überweisung ab
+* Die Zeile "Girokonto" zeigt "Saldo" "2.145,30 €"
+
+## Heutige Ausgänge zählen zum Tageslimit
+
+Tags: UC-002, PK-60, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Tageslimit
+* Die Kundin setzt das Tageslimit auf "100,00"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "60,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung
+* Die Überweisung zeigt die Meldung "Mit dieser Überweisung würde Ihr Tageslimit überschritten."
+
+## Ein Tageslimit von 0,00 € lehnt jede Überweisung ab
+
+Tags: UC-002, PK-60, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Tageslimit
+* Die Kundin setzt das Tageslimit auf "0,00"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung
+* Die Überweisung zeigt die Meldung "Mit dieser Überweisung würde Ihr Tageslimit überschritten."
+
+## Ein Betrag genau in Höhe des Tageslimits wird ausgeführt
+
+Tags: UC-002, PK-60, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Tageslimit
+* Die Kundin setzt das Tageslimit auf "100,00"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "100,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Zeile "Girokonto" zeigt "Saldo" "2.045,30 €"
+
+## Eine abgelehnte Überweisung zählt nicht zu den Ausgängen des Tages
+
+Tags: UC-002, PK-60, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Tageslimit
+* Die Kundin setzt das Tageslimit auf "100,00"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "150,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung
+* Die Überweisung zeigt die Meldung "Mit dieser Überweisung würde Ihr Tageslimit überschritten."
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "100,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."

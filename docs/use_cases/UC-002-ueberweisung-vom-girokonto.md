@@ -23,7 +23,7 @@
 4. Das System prüft die IBAN (BR-0003) und den Betrag (BR-0004) und zeigt bei einer Abweichung die Meldung im Formular der Überweisung.
 5. Das System zeigt die Zusammenfassung mit Auftraggeberkonto, Empfänger, IBAN, Betrag in Euro und Verwendungszweck.
 6. Die Kundin bestätigt.
-7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003) und den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
+7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003), den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004) und den Betrag zusammen mit den heutigen Überweisungen der Kundin gegen ihr Tageslimit (BR-0070).
 8. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
 9. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
 10. Die Kundin sieht den Auftrag als neuesten Umsatz in den Umsätzen des Girokontos (BR-0012).
@@ -98,6 +98,15 @@
 2. Lehnt der Dienst den Betrag beim Bestätigen mit 400 ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
+### A9: Tageslimit überschritten
+
+**Auslöser:** Der Betrag zusammen mit den am laufenden Kalendertag ausgeführten Überweisungen der Kundin übersteigt ihr Tageslimit (BR-0070), auch bei einem Tageslimit von 0,00 EUR. (Schritt 7).  
+**Ablauf:**
+
+1. Der Dienst führt den Auftrag nicht aus, bucht keinen Umsatz, lässt den Saldo des Girokontos unverändert und antwortet mit Status 422 und der Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“.
+2. Das System springt auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei; die nächste Bestätigung trägt eine neue Auftrags-Kennung (BR-0005).
+3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -122,8 +131,12 @@ sequenceDiagram
         banking-->>kundin: Zusammenfassung
         kundin->>banking: „Bestätigen“
         banking->>banking: POST /api/ueberweisungen
-        banking->>banking: GET /api/konten
-        banking-->>kundin: Finanzstatus, neuer Saldo, „Überweisung ausgeführt.“
+        alt Tageslimit überschritten
+            banking-->>kundin: Überweisung mit Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“, Saldo unverändert
+        else Tageslimit eingehalten
+            banking->>banking: GET /api/konten
+            banking-->>kundin: Finanzstatus, neuer Saldo, „Überweisung ausgeführt.“
+        end
     else mehrfaches Bestätigen
         banking-->>kundin: Finanzstatus, Saldo einmal gemindert
     end
