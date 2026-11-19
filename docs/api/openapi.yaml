@@ -298,6 +298,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/konten/{iban}/ausgabenanalyse:
+    get:
+      summary: Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil
+      description: Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Summen in Euro als positive Zahl, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); die IBAN einer Kreditkarte mit 422 (BR-0084). Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0.
+      operationId: ausgabenanalyseLesen
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-019
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+        - name: monat
+          in: query
+          required: true
+          description: Monat der Auswertung im Format JJJJ-MM, Monat 01 bis 12
+          schema:
+            type: string
+            minLength: 7
+            maxLength: 7
+            pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+      responses:
+        "200":
+          description: Kategorien des Monats, größte Summe zuerst
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ausgabenanalyse'
+        "400":
+          description: Monat ungültig, etwa nicht im Format JJJJ-MM oder Monat außerhalb 01 bis 12
+          x-rules:
+            - Ausgabenanalyse.monat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin
+          x-rules:
+            - BR-0011
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Die IBAN gehört zu einer Kreditkarte; die Ausgabenanalyse gibt es nur für das Girokonto
+          x-rules:
+            - BR-0084
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
 components:
   schemas:
     Anmeldedaten:
@@ -593,3 +655,44 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Ausgabenanalyse:
+      type: object
+      x-entity: Ausgabenanalyse
+      required:
+        - monat
+        - gesamtausgaben
+        - kategorien
+      properties:
+        monat:
+          type: string
+          description: Monat der Auswertung im Format JJJJ-MM
+          minLength: 7
+          maxLength: 7
+          pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+        gesamtausgaben:
+          type: number
+          description: Summe aller Ausgänge im Monat in Euro, positive Zahl
+        kategorien:
+          type: array
+          items:
+            $ref: '#/components/schemas/Kategorieausgabe'
+    Kategorieausgabe:
+      type: object
+      x-entity: Kategorieausgabe
+      required:
+        - kategorie
+        - summe
+        - anteil
+      properties:
+        kategorie:
+          type: string
+          description: Kategorie aus der festen Liste
+          enum: [ Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges ]
+        summe:
+          type: number
+          description: Summe der Ausgänge der Kategorie in Euro, positive Zahl
+        anteil:
+          type: number
+          description: Anteil an den Gesamtausgaben in Prozent, eine Nachkommastelle
+          minimum: 0
+          maximum: 100
