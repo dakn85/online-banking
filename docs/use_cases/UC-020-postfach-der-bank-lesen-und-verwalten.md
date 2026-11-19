@@ -99,7 +99,7 @@ Der Dienst liefert, markiert als gelesen und löscht nur Nachrichten der angemel
 
 ### BR-0086: Zahl ungelesener Nachrichten
 
-Als ungelesen zählt jede Nachricht der angemeldeten Kundin mit Lesestatus false; gelöschte Nachrichten zählen nicht. Der Dienst nennt die Zahl als anzahlUngelesen in der Antwort auf GET /api/nachrichten. Die Navigation zeigt die Zahl am Eintrag „Postfach“ erst ab 1 ungelesenen Nachricht; bei 0 zeigt sie nur den Eintrag ohne Zahl. Die Zahl sinkt beim Öffnen und beim Löschen einer ungelesenen Nachricht.
+Als ungelesen zählt jede Nachricht der angemeldeten Kundin mit Lesestatus false; gelöschte Nachrichten zählen nicht. Der Dienst nennt die Zahl als anzahlUngelesen in der Antwort auf GET /api/nachrichten. Die Zahl sinkt beim Öffnen und beim Löschen einer ungelesenen Nachricht.
 
 ### BR-0087: Lesestatus beim Öffnen
 
