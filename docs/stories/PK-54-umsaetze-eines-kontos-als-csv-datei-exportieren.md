@@ -41,35 +41,25 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 - `acceptance/specs/umsaetze.spec`: Ein fehlgeschlagener Export zeigt die Fehlermeldung
 - `acceptance/specs/umsaetze.spec`: Ohne Anmeldung ist der CSV-Export nicht erreichbar
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Endpunkt neu
-- [ ] Umsatz: Attribut buchungstag geändert
-- [ ] Umsatz: Attribut betrag geändert
-- [ ] Umsatz: Attribut saldoDanach geändert
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Umsätze: Aktion Als CSV exportieren neu
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Ziel geändert
-- [ ] UC-003: Notizen geändert
-- [ ] UC-003: Schritt 9 neu
-- [ ] UC-003: Schritt 10 neu
-- [ ] UC-003: A1 geändert
-- [ ] UC-003: A5 neu: Keine Umsätze zum Export
-- [ ] UC-003: A6 neu: Konto nicht gefunden beim Export
-- [ ] UC-003: A7 neu: Zeitraum ungültig beim Export
-- [ ] UC-003: A8 neu: Export fehlgeschlagen
-- [ ] UC-003: Sequenzdiagramm neu
-- [ ] UC-003: Erfolg 3 neu
-- [ ] UC-003: BR-0075 neu: Export mit den Umsätzen der Liste
-- [ ] UC-003: BR-0076 neu: Export nur mit Umsätzen
-- [ ] BR-0075: Neu in UC-003
-- [ ] BR-0076: Neu in UC-003
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-54 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-54 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-19_
+
+## Bausteine
+- Konten und Finanzstatus (`src/umsaetze.ts`): neue Funktion `exportCsv` baut aus den gefilterten Umsätzen der Liste die CSV-Datei (UC-003, BR-0075). Es gibt keine eigene Auswahl, die Datei nutzt `umsaetzeVon` und damit dieselbe Auswahl, Reihenfolge und denselben Saldo danach (BR-0008, BR-0009, BR-0010).
+- Seitenauslieferung (`src/main.ts`): neue Route `GET /api/konten/:iban/umsaetze/export` hinter `nurAngemeldet('api')` (NFR-001). Die Reihenfolge der Prüfungen ist 404 für eine fremde IBAN (BR-0011), 400 für einen ungültigen Zeitraum (BR-0010), 422 für eine leere Auswahl (BR-0076). Antwort mit `text/csv; charset=utf-8` und `Content-Disposition: attachment; filename="umsaetze-<IBAN>.csv"`. Es wird nichts gespeichert.
+- Oberfläche (`public/seiten/umsaetze.js`): Knopf „Als CSV exportieren“ mit den aktuellen Filterwerten. Die Seite ruft per fetch auf und lädt bei 200 den Blob herunter; bei 401 geht es zur Anmeldung, bei 400, 404 und 422 erscheint die Fehlermeldung des Dienstes, sonst „Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.“ (A1 bis A4).
+- Akzeptanztests (`acceptance/tests/StepImplementation.ts`): die 17 fehlenden Steps. Sie klicken den Knopf, prüfen den Status der Export-Antwort und die Datei. Der Fehlerfall wird per Playwright-Route simuliert.
+
+## Schritte
+1. CSV-Format nach UC-003 Notizen: BOM, Semikolon, CRLF, Kopfzeile, Datum TT.MM.JJJJ, Beträge mit Dezimalkomma ohne Tausenderpunkt, Quoting bei Semikolon, Anführungszeichen und Zeilenumbruch (UC-003).
+2. Route mit Fehlerreihenfolge (BR-0011, BR-0010, BR-0076, NFR-001).
+3. Knopf und Fehleranzeige in der Oberfläche.
+4. Unit-Tests in `test/umsaetze.test.ts` mit BR-0075 und BR-0076 im Namen.
+5. Steps implementieren.
+
+## Rahmenänderung
+Keine neue Bibliothek, das CSV wird von Hand geschrieben.
 
 ## Entscheidungen
 
