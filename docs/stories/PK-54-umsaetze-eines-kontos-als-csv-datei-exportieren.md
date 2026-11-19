@@ -67,7 +67,7 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 
 - Mit welchem Trennzeichen und Zeichensatz soll die CSV-Datei erzeugt werden?
   **Antwort:** Semikolon als Trennzeichen, UTF-8 mit BOM, damit Excel in Deutschland die Datei direkt richtig öffnet
-  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export, umsaetze, vision, NFR-001_
+  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export, umsaetze, vision, NFR-001 · deaed2d_
 - In welcher Schreibweise stehen Buchungstag und Beträge (Betrag, Saldo danach) in der CSV-Datei?
   **Antwort:** Wie in der Umsatzliste: Buchungstag TT.MM.JJJJ, Beträge in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Ausgang negativ (Beispiel -50,00)
-  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export, umsaetze, vision, NFR-001_
+  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export, umsaetze, vision, NFR-001 · deaed2d_
