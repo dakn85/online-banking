@@ -5,6 +5,7 @@ import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren } from './ueberweisung';
 import { Abfragefehler, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
+import * as tageslimit from './tageslimit';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -98,12 +99,25 @@ app.delete('/api/empfaengervorlagen/:vorlagenId', nurAngemeldet('api'), (req, re
   try { vorlagen.loeschen(res.locals.kunde.kennung, req.params.vorlagenId); res.status(204).end(); } catch (fehler) { vorlagenfehler(res, fehler); }
 });
 
+// UC-015: Tageslimit der angemeldeten Kundin lesen und setzen (BR-0070); eine Kennung im Aufruf gibt es nicht.
+app.get('/api/tageslimit', nurAngemeldet('api'), (_req, res) => {
+  res.json(tageslimit.lesen(res.locals.kunde.kennung));
+});
+app.put('/api/tageslimit', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(tageslimit.setzen(res.locals.kunde.kennung, req.body?.tageslimit));
+  } catch (fehler) {
+    if (!(fehler instanceof tageslimit.Tageslimitfehler)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
   // Lastkunden lasttest-001 bis lasttest-300, alle mit der PIN aus LASTTEST_PIN (öffentliche Testdaten, Vorgabe in testdaten.ts).
   lastkundenAnlegen(process.env.LASTTEST_PIN || undefined);
-  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze und Empfängervorlagen auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
+  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
   app.post('/api/test/reset', (_req, res) => { demoZuruecksetzen(); res.status(204).end(); });
   // Lastdaten zurücksetzen: dasselbe nur für die Lastkunden. Demo-Kundinnen bleiben.
   app.post('/api/test/lasttest/reset', (_req, res) => { lastdatenZuruecksetzen(); res.status(204).end(); });
@@ -115,7 +129,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 

@@ -64,7 +64,7 @@
             ${feld('betrag', 'Betrag in Euro', 'inputmode="decimal" autocomplete="off" placeholder="0,00"', `Höchstens ${Aventa.euro(giro.verfuegbarerBetrag)}`)}
             <div class="feld"><label for="verwendungszweck">Verwendungszweck</label>
               <textarea id="verwendungszweck" name="verwendungszweck" maxlength="140" rows="2">${html(eingabe.verwendungszweck)}</textarea></div>
-            <div class="ueberweisung__aktionen"><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
+            <div class="ueberweisung__aktionen"><a class="knopf knopf--still ueberweisung__nebenaktion" href="/tageslimit">Tageslimit</a><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
           </form>${kontoKarte}</div></div>`;
         const form = flaeche.querySelector('form');
         // BR-0017: Name, IBAN und, falls vorhanden, Verwendungszweck übernehmen; den Betrag nicht. Alles bleibt änderbar.

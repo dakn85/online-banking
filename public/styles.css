@@ -211,6 +211,11 @@ a { color: var(--tanne); }
 .ueberweisung__vorlage { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .ueberweisung__vorlage a { font-size: 14px; font-weight: 500; }
 
+/* Tageslimit (UC-015): Kennzahlen als Karte wie das Auftraggeberkonto, daneben das Formular */
+.tageslimit { display: grid; gap: 20px; max-width: 948px; }
+.tageslimit > .meldung { margin: 0; align-items: center; font-weight: 500; }
+.ueberweisung__nebenaktion { margin-right: auto; }
+
 @media (max-width: 860px) {
   .vermoegen { padding: 24px; }
   .vermoegen__summe { font-size: 34px; }
