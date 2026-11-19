@@ -77,7 +77,7 @@ Als Privatkundin möchte ich mein Tageslimit für Überweisungen selbst senken u
 
 - Wie verhält sich PK-46 zu PK-12 („Tageslimit von 5.000 EUR je Kalendertag beim Überweisen“, ready), das die Tageslimit-Prüfung in UC-002 und der Maske ueberweisung schon einführt?
   **Antwort:** PK-46 baut auf PK-12 auf: Standardlimit ist 5.000 EUR je Kalendertag für alle Kundinnen, Prüfung und Meldung kommen aus PK-12, PK-46 ersetzt nur die feste Grenze durch das von der Kundin gesetzte Limit.
-  _→ eingearbeitet in UC-015, BR-0070, UC-002, Kunde, POST /api/test/reset, POST /api/test/lasttest/reset, GET /api/tageslimit, PUT /api/tageslimit, Schema Tageslimit, Schema Tageslimitauftrag, tageslimit, finanzstatus, ueberweisung, NFR-001, architektur, vision_
+  _→ eingearbeitet in UC-015, BR-0070, UC-002, Kunde, POST /api/test/reset, POST /api/test/lasttest/reset, GET /api/tageslimit, PUT /api/tageslimit, Schema Tageslimit, Schema Tageslimitauftrag, tageslimit, finanzstatus, ueberweisung, NFR-001, architektur, vision · 5078028_
 - Welchen kleinsten Wert darf die Kundin als Tageslimit setzen?
   **Antwort:** 0 EUR ist erlaubt: das Limit 0 sperrt alle Überweisungen der Kundin.
-  _→ eingearbeitet in UC-015, BR-0070, UC-002, Kunde, POST /api/test/reset, POST /api/test/lasttest/reset, GET /api/tageslimit, PUT /api/tageslimit, Schema Tageslimit, Schema Tageslimitauftrag, tageslimit, finanzstatus, ueberweisung, NFR-001, architektur, vision_
+  _→ eingearbeitet in UC-015, BR-0070, UC-002, Kunde, POST /api/test/reset, POST /api/test/lasttest/reset, GET /api/tageslimit, PUT /api/tageslimit, Schema Tageslimit, Schema Tageslimitauftrag, tageslimit, finanzstatus, ueberweisung, NFR-001, architektur, vision · 5078028_
