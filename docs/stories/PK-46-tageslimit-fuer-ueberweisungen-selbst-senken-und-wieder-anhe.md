@@ -16,26 +16,6 @@ Als Privatkundin möchte ich mein Tageslimit für Überweisungen selbst senken u
 - Zeitlich befristetes Limit oder automatisches Zurücksetzen: Kein Hintergrundprozess in der Idee genannt.
 - Limit je Konto oder je Empfänger: Die Idee spricht nur von einem Tageslimit der Kundin.
 
-## Änderungen
-
-| Element | Änderung | Zusammenfassung |
-|---|---|---|
-| Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
-| Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
-| Tageslimit der angemeldeten Kundin | Neu | Endpunkt neu |
-| Tageslimit der angemeldeten Kundin setzen | Neu | Endpunkt neu |
-| Tageslimit | Neu | Schema neu, Maske neu |
-| Tageslimitauftrag | Neu | Schema neu |
-| Architektur | Geändert | Querschnittliche Konzepte geändert |
-| Kunde | Geändert | Attribut tageslimit neu, Attribut standardlimit neu, Einschränkungen neu |
-| Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
-| Finanzstatus | Geändert | Use Case UC-015 neu, Aktion Tageslimit neu, Skizze geändert |
-| Überweisung | Geändert | Use Case UC-015 neu, Aktion Tageslimit neu, Skizze geändert |
-| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert |
-| UC-015 Tageslimit für Überweisungen festlegen | Neu | Use Case neu |
-| BR-0070 Tageslimit der Kundin | Neu | Neu in UC-015 |
-| Vision | Geändert | Abschnitt „Abgrenzung“ geändert |
-
 ## Akzeptanztests
 
 - `acceptance/specs/tageslimit.spec`: Das Tageslimit ist ohne Anmeldung nicht erreichbar
@@ -44,34 +24,20 @@ Als Privatkundin möchte ich mein Tageslimit für Überweisungen selbst senken u
 - `acceptance/specs/tageslimit.spec`: Die Kundin senkt ihr Tageslimit
 - `acceptance/specs/tageslimit.spec`: Ein Tageslimit über dem Standardlimit wird abgelehnt
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Tageslimit der angemeldeten Kundin: Endpunkt neu
-- [ ] Tageslimit der angemeldeten Kundin setzen: Endpunkt neu
-- [ ] Tageslimit: Schema neu
-- [ ] Tageslimitauftrag: Schema neu
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Kunde: Attribut tageslimit neu
-- [ ] Kunde: Attribut standardlimit neu
-- [ ] Kunde: Einschränkungen neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Finanzstatus: Use Case UC-015 neu
-- [ ] Finanzstatus: Aktion Tageslimit neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Tageslimit: Maske neu
-- [ ] Überweisung: Use Case UC-015 neu
-- [ ] Überweisung: Aktion Tageslimit neu
-- [ ] Überweisung: Skizze geändert
-- [ ] UC-002: Notizen geändert
-- [ ] UC-015: Use Case neu
-- [ ] BR-0070: Neu in UC-015
-- [ ] Vision: Abgrenzung neu
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-46 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-46 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-19_
+
+**Bausteine:** Online-Banking-Dienst (`src/`), Component „Anmeldung und Sitzung“ (Zugriffsschutz), neue fachliche Component „Tageslimit“ (`src/tageslimit.ts`, ohne HTTP), Seitenauslieferung (`src/main.ts`), Testbetrieb (`src/testdaten.ts`), Oberfläche im Browser (`public/seiten/tageslimit.js`, Rahmen `public/app.html`, Seiten Finanzstatus und Überweisung).
+
+**Schritte**
+1. `src/tageslimit.ts`: Tageslimit je Kennung im Speicher (ADR-002), Standardlimit 5.000,00 EUR für alle gleich; `lesen(kennung)` liefert `{tageslimit, standardlimit}`, `setzen(kennung, wert)` prüft Zahl, 0 bis Standardlimit, höchstens zwei Nachkommastellen über Cent (ADR-005) und lehnt sonst mit 400 „Das Tageslimit muss zwischen 0,00 EUR und 5.000,00 EUR liegen.“ ab (UC-015 Schritt 4, A1, BR-0070). `zuruecksetzen(auswahl)` setzt auf das Standardlimit.
+2. `src/main.ts`: `GET /api/tageslimit` und `PUT /api/tageslimit` hinter `nurAngemeldet('api')`, nur für die Kundin aus der Sitzung (BR-0070, NFR-001, UC-015 A2); Seite `/tageslimit` hinter `nurAngemeldet('seite')`.
+3. `src/testdaten.ts`: Demo-Reset und Last-Reset setzen das Tageslimit ihrer Gruppe zurück (POST /api/test/reset, POST /api/test/lasttest/reset, BR-0070).
+4. Oberfläche: Seite `/tageslimit` nach Maske tageslimit (Kennzahlen „Aktuelles Tageslimit“, „Standardlimit“, Formular „Tageslimit ändern“ mit „Neues Tageslimit in Euro“ und „Speichern“, Meldungen status/alert); Eingabe im deutschen Format wie bei der Überweisung, Vorprüfung im Browser, maßgeblich der Dienst (ADR-004) (UC-015 Schritte 2 bis 5, A1). Aktion „Tageslimit“ im Finanzstatus und in der Überweisung sowie in der Navigation (UC-015 Schritt 1).
+5. Unit-Tests `test/tageslimit.test.ts` zu BR-0070 und Kunde.tageslimit; Gauge-Steps für `acceptance/specs/tageslimit.spec`.
+
+**Rahmen:** keine neue Bibliothek, kein neues Muster. Die Tageslimit-Prüfung bei der Überweisung (PK-12) ist auf main nicht umgesetzt; `src/tageslimit.ts` bietet das Limit je Kundin für sie an (siehe Rückmeldung).
 
 ## Entscheidungen
 
