@@ -41,9 +41,11 @@ Als Privatkundin möchte ich die Debitkarte zu meinem Girokonto vorübergehend s
 - `acceptance/specs/debitkarte.spec`: Die Kundin entsperrt ihre vorübergehend gesperrte Debitkarte
 - `acceptance/specs/debitkarte.spec`: Die Kundin sperrt ihre Debitkarte bei Verlust endgültig
 - `acceptance/specs/debitkarte.spec`: Die Kundin sperrt ihre Debitkarte vorübergehend
+- `acceptance/specs/debitkarte.spec`: Eine vorübergehend gesperrte Debitkarte lässt sich direkt endgültig sperren
 - `acceptance/specs/debitkarte.spec`: GET und PUT Debitkarte 401: Die Debitkarte ist ohne Anmeldung nicht erreichbar
 - `acceptance/specs/debitkarte.spec`: GET und PUT Debitkarte 404: Zu einer Kreditkarte gibt es keine Debitkarte
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 400: Die endgültige Sperre ohne Sperrgrund wird abgelehnt
+- `acceptance/specs/debitkarte.spec`: PUT Debitkarte 409: Eine aktive Debitkarte lässt sich nicht entsperren
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 409: Eine endgültig gesperrte Debitkarte lässt sich nicht entsperren
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 409: Eine vorübergehend gesperrte Debitkarte lässt sich nicht noch einmal sperren
 
