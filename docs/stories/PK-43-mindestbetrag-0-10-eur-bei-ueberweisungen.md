@@ -17,7 +17,7 @@ Beträge von Daueraufträgen (UC-012) und deren Regeln; ein Höchstbetrag; Rundu
 | Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 400 geändert, Antwort 422 geändert |
 | Ueberweisungsauftrag | Geändert | Eigenschaft betrag geändert |
 | Überweisung | Geändert | Attribut betrag geändert, Feld Betrag in Euro geändert, Skizze geändert |
-| UC-002 Überweisung vom Girokonto | Geändert | A2 geändert, A8 neu: Betrag unter dem Mindestbetrag, BR-0004 geändert |
+| UC-002 Überweisung vom Girokonto | Geändert | A2 geändert, A8 neu: Betrag unter dem Mindestbetrag, Sequenzdiagramm neu, und 1 weitere |
 | BR-0004 Betragsgrenze des Girokontos | Geändert | Text geändert |
 
 ## Akzeptanztests
@@ -36,6 +36,7 @@ Beträge von Daueraufträgen (UC-012) und deren Regeln; ein Höchstbetrag; Rundu
 - [ ] Überweisung: Skizze geändert
 - [ ] UC-002: A2 geändert
 - [ ] UC-002: A8 neu: Betrag unter dem Mindestbetrag
+- [ ] UC-002: Sequenzdiagramm neu
 - [ ] UC-002: BR-0004 geändert
 - [ ] BR-0004: Text geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-43 implementieren

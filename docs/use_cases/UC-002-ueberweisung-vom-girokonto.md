@@ -114,6 +114,8 @@ sequenceDiagram
         banking-->>kundin: Empfänger, IBAN des Empfängers und Verwendungszweck aus der Vorlage#59; Betrag tippt die Kundin ein
     else IBAN ungültig oder außerhalb des SEPA-Raums
         banking-->>kundin: Meldung „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“
+    else Betrag unter 0,10 €
+        banking-->>kundin: Meldung „Der Betrag muss mindestens 0,10 € betragen.“, keine Zusammenfassung
     else Betrag über dem verfügbaren Betrag
         banking-->>kundin: Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“
     else Angaben gültig
