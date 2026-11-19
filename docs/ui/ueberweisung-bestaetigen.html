@@ -6,16 +6,17 @@
     {"name":"empfaenger","label":"Empfänger","kind":"anzeige","attribute":"Überweisung.empfaenger"},
     {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"anzeige","attribute":"Überweisung.empfaengerIban"},
     {"name":"betrag","label":"Betrag in Euro","kind":"anzeige","attribute":"Überweisung.betrag"},
-    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Überweisung.verwendungszweck"}
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Überweisung.verwendungszweck"},
+    {"name":"ausfuehrungstag","label":"Ausführungstag","kind":"anzeige","attribute":"Überweisung.ausfuehrungstag"}
   ],
   "actions": [
-    {"label":"Bestätigen","operation":"POST /api/ueberweisungen","screen":"finanzstatus"},
+    {"label":"Bestätigen","useCase":"UC-002","operation":"POST /api/ueberweisungen","screen":"finanzstatus"},
     {"label":"Abbrechen","screen":"finanzstatus"}
   ]
 } -->
 <header data-wf="kopf">
   <h1>Überweisung bestätigen</h1>
-  <p>Bitte prüfen Sie Ihre Angaben.</p>
+  <p>Bitte prüfen Sie Ihre Angaben. Mit einem Ausführungstag wird der Auftrag nur vorgemerkt und noch nicht gebucht.</p>
   <div data-wf="aktionen">
     <button data-wf="primaer">Bestätigen</button>
     <button>Abbrechen</button>
@@ -29,5 +30,6 @@
     <div><dt>IBAN des Empfängers</dt><dd>DE02 5001 0517 5407 3249 31</dd></div>
     <div><dt>Betrag in Euro</dt><dd>50,00 €</dd></div>
     <div><dt>Verwendungszweck</dt><dd>Rechnung 4711</dd></div>
+    <div><dt>Ausführungstag</dt><dd>24.12.2026</dd></div>
   </dl>
 </section>

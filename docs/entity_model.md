@@ -48,7 +48,7 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 
 **Bereich:** Überweisung  
 
-Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisung erfasst und genau einmal ausführt.
+Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisung erfasst und genau einmal ausführt. Ein Auftrag für einen späteren Ausführungstag (Terminüberweisung) ist bis zu seiner Ausführung oder Löschung vorgemerkt und bucht nichts.
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
@@ -58,8 +58,9 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 | betrag | Überweisungsbetrag in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 50.00 |
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | verwendungszweck | Verwendungszweck der Überweisung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
-| status | Stand des Auftrags | String |  | Pflicht; Werte ausgefuehrt; Beispiel ausgefuehrt |
-| erfasstAm | Zeitpunkt der Ausführung | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+| status | Stand des Auftrags: ausgefuehrt nach der Ausführung, vorgemerkt bei einer Terminüberweisung | String |  | Pflicht; Werte ausgefuehrt, vorgemerkt; Beispiel ausgefuehrt |
+| erfasstAm | Zeitpunkt der Ausführung, bei einem vorgemerkten Auftrag der Zeitpunkt der Vormerkung | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+| ausfuehrungstag | Kalendertag, an dem eine Terminüberweisung ausgeführt werden soll; nur bei einem vorgemerkten Auftrag belegt | Date |  | Pflicht bei Status vorgemerkt; Beispiel 2026-12-24; nur bei Status vorgemerkt |
 
 ### Umsatz
 
