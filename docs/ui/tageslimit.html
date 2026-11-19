@@ -1,0 +1,34 @@
+<!-- maske: {
+  "title": "Tageslimit",
+  "useCases": ["UC-015"],
+  "fields": [
+    {"name":"aktuellesTageslimit","label":"Aktuelles Tageslimit","kind":"anzeige","attribute":"Kunde.tageslimit"},
+    {"name":"standardlimit","label":"Standardlimit","kind":"anzeige","attribute":"Kunde.standardlimit"},
+    {"name":"tageslimit","label":"Neues Tageslimit in Euro","kind":"betrag","attribute":"Kunde.tageslimit","rules":{"required":true,"min":"0","max":"Kunde.standardlimit"}}
+  ],
+  "actions": [
+    {"label":"Speichern","useCase":"UC-015#3","operation":"PUT /api/tageslimit","screen":"tageslimit"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Tageslimit</h1>
+  <p>Höchstbetrag Ihrer Überweisungen je Kalendertag.</p>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#">Überweisung</a>
+  <a href="#" aria-current="page">Tageslimit</a>
+</nav>
+<p data-wf="meldung" role="status">Tageslimit gespeichert.</p>
+<p data-wf="meldung" role="alert">Das Tageslimit muss zwischen 0,00 EUR und 5.000,00 EUR liegen.</p>
+<dl data-wf="kennzahl">
+  <div><dt>Aktuelles Tageslimit</dt><dd>5.000,00 €</dd></div>
+  <div><dt>Standardlimit</dt><dd>5.000,00 €</dd></div>
+</dl>
+<form data-wf="formular">
+  <h2>Tageslimit ändern</h2>
+  <label data-wf="feld"><span>Neues Tageslimit in Euro</span><input type="number" step="0.01" name="tageslimit" placeholder="1.000,00" required></label>
+  <div data-wf="aktionen">
+    <button data-wf="primaer">Speichern</button>
+  </div>
+</form>
