@@ -106,7 +106,7 @@ Eine sofortige Umbuchung zwischen dem Girokonto und dem Tagesgeldkonto der Kundi
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
-| auftragsId | Kennung der Umbuchung, von der Seite je Umbuchung vergeben; Träger der Einmalbuchung | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-2026-00007 |
+| auftragsId | Kennung der Umbuchung, von der Seite je Umbuchung vergeben; Träger der Einmalbuchung; eindeutig je Kundin, getrennt von der Kennung der Überweisung geführt | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-2026-00007 |
 | quellIban | IBAN des Quellkontos, das belastet wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02500105175407324931 |
 | zielIban | IBAN des Zielkontos, dem der Betrag gutgeschrieben wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE97500105175407324947 |
 | betrag | Umbuchungsbetrag in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 500.00 |
