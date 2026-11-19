@@ -34,7 +34,7 @@
 **Ablauf:**
 
 1. Das System bucht nicht um und zeigt die Meldung „Der Betrag muss mindestens 0,10 € betragen.“ im Formular.
-2. Lehnt der Dienst den Betrag beim Umbuchen mit 400 ab (Schritt 4), zeigt das System die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Umbuchen“ wieder frei.
+2. Lehnt der Dienst den Betrag beim Umbuchen wegen der Feldregel von Umbuchung.betrag mit 400 ab (Schritt 4), zeigt das System die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Umbuchen“ wieder frei.
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter.
 
 ### A2: Betrag über dem verfügbaren Betrag des Quellkontos
@@ -73,11 +73,11 @@
 
 ### A6: Umbuchung abgelehnt
 
-**Auslöser:** Der Dienst lehnt das Quell- oder Zielkonto ab, weil es nicht zur Kundin gehört (403, BR-0088), oder antwortet mit einem Fehler außerhalb von 400, 401 und 422. (Schritt 4).  
+**Auslöser:** Der Dienst lehnt das Quell- oder Zielkonto ab, weil es nicht zur Kundin gehört (403, BR-0088), lehnt mit 400 wegen einer anderen Feldregel als Umbuchung.betrag ab oder antwortet mit einem Fehler außerhalb von 400, 401 und 422. (Schritt 4).  
 **Ablauf:**
 
 1. Das System bucht nicht um, zeigt die Meldung „Die Umbuchung konnte nicht ausgeführt werden.“ im Formular mit den bisherigen Eingaben und gibt den Knopf „Umbuchen“ wieder frei.
-2. Antwortet der Dienst mit 401, leitet das System auf die Anmeldeseite um (A5); es wird nichts gebucht.
+2. Antwortet der Dienst stattdessen mit 401, leitet das System auf die Anmeldeseite um (A5); es wird nichts gebucht.
 
 ## Sequenzdiagramm
 
