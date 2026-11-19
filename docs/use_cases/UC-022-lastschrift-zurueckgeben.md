@@ -18,7 +18,7 @@
 ## Standardablauf
 
 1. Die Kundin wählt in der Zeile einer SEPA-Lastschrift der Umsätze „Zurückgeben“; die Aktion führt die umsatzId der Zeile mit.
-2. Das System zeigt die Rückfrage „Lastschrift über {Betrag in Euro} von {Gegenpartei} zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.“ mit „Bestätigen“ und „Abbrechen“.
+2. Das System zeigt die Rückfrage „Lastschrift über {Betrag in Euro ohne Vorzeichen, z. B. 29,90 €} von {Gegenpartei} zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.“ mit „Bestätigen“ und „Abbrechen“.
 3. Die Kundin wählt „Bestätigen“.
 4. Das System ruft POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben mit der IBAN des Kontos und der umsatzId der gewählten Zeile auf.
 5. Das System prüft, dass der Umsatz zu einem Konto der Kundin gehört (BR-0011), eine SEPA-Lastschrift ist, noch nicht zurückgegeben wurde (BR-0094) und die Rückgabefrist von 8 Wochen nicht abgelaufen ist (BR-0093).
