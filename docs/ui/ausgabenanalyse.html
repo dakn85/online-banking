@@ -5,7 +5,7 @@
     {"name":"kontoname","label":"Konto","kind":"anzeige","attribute":"Konto.kontoname"},
     {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
     {"name":"gesamtausgaben","label":"Gesamtausgaben","kind":"anzeige","attribute":"Ausgabenanalyse.gesamtausgaben"},
-    {"name":"monat","label":"Monat","kind":"text","attribute":"Ausgabenanalyse.monat","rules":{"required":true,"minLength":7,"maxLength":7}},
+    {"name":"monat","label":"Monat","kind":"text","attribute":"Ausgabenanalyse.monat","rules":{"required":true,"minLength":7,"maxLength":7,"pattern":"^[0-9]{4}-(0[1-9]|1[0-2])$"}},
     {"name":"kategorie","label":"Kategorie","kind":"anzeige","attribute":"Kategorieausgabe.kategorie"},
     {"name":"summe","label":"Summe","kind":"anzeige","attribute":"Kategorieausgabe.summe"},
     {"name":"anteil","label":"Anteil","kind":"anzeige","attribute":"Kategorieausgabe.anteil"}
