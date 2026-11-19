@@ -84,10 +84,10 @@
 
 ### A8: Keine gültige Sitzung
 
-**Auslöser:** Es gibt keine gültige Sitzung. (Schritt 1).  
+**Auslöser:** Es gibt keine gültige Sitzung, beim Einstieg oder während Speichern, Ändern oder Löschen. (Schritt 1).  
 **Ablauf:**
 
-1. Das System leitet auf die Anmeldeseite um; ein API-Aufruf ohne Sitzung wird mit 401 beantwortet (BR-0078).
+1. Das System leitet auf die Anmeldeseite um; ein API-Aufruf ohne Sitzung wird mit 401 beantwortet (BR-0078). Nicht gespeicherte Eingaben und ein nicht ausgeführtes Speichern, Ändern oder Löschen gehen verloren.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
 
 ### A9: Sicherheitsabfrage abgebrochen
@@ -96,6 +96,14 @@
 **Ablauf:**
 
 1. Das System löscht den Dauerauftrag nicht, lässt ihn unverändert und zeigt die Daueraufträge ohne Meldung.
+
+### A10: Dauerauftrag nicht mehr vorhanden
+
+**Auslöser:** Beim Ändern (A6) oder Löschen (A7) beantwortet der Dienst die Kennung mit 404, zum Beispiel weil der Dauerauftrag in einem anderen Fenster schon gelöscht wurde. (Schritt 5).  
+**Ablauf:**
+
+1. Das System ändert oder löscht nichts und zeigt „Der Dauerauftrag ist nicht mehr vorhanden.“ zusammen mit der aktuellen Liste der Daueraufträge.
+2. Die Kundin wählt einen vorhandenen Dauerauftrag oder bricht ab.
 
 ## Sequenzdiagramm
 
