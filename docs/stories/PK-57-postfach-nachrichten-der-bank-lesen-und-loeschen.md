@@ -32,6 +32,10 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 | Empfängervorlagen | Geändert | Skizze geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Postfach | Neu | Maske neu |
+| Tageslimit | Geändert | Skizze geändert |
+| Überweisung bestätigen | Geändert | Skizze geändert |
+| Überweisung | Geändert | Skizze geändert |
+| Umsätze | Geändert | Skizze geändert |
 | UC-020 Postfach der Bank lesen und verwalten | Neu | Use Case neu |
 | BR-0085 Nachrichten der angemeldeten Kundin | Neu | Neu in UC-020 |
 | BR-0086 Zahl ungelesener Nachrichten | Neu | Neu in UC-020 |
@@ -75,6 +79,10 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - [ ] Empfängervorlagen: Skizze geändert
 - [ ] Finanzstatus: Skizze geändert
 - [ ] Postfach: Maske neu
+- [ ] Tageslimit: Skizze geändert
+- [ ] Überweisung bestätigen: Skizze geändert
+- [ ] Überweisung: Skizze geändert
+- [ ] Umsätze: Skizze geändert
 - [ ] UC-020: Use Case neu
 - [ ] BR-0085: Neu in UC-020
 - [ ] BR-0086: Neu in UC-020
