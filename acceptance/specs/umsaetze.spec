@@ -254,3 +254,11 @@ Tags: UC-003, PK-54
 
 * Testdaten sind zurückgesetzt
 * Der CSV-Export antwortet ohne Anmeldung mit dem Status "401"
+
+## Ein fehlgeschlagener Export zeigt die Fehlermeldung
+
+Tags: UC-003, PK-54
+
+* Der Export-Dienst antwortet mit einem Fehler
+* Die Kundin exportiert die Umsätze als CSV-Datei
+* Die Umsätze zeigen die Meldung "Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut."

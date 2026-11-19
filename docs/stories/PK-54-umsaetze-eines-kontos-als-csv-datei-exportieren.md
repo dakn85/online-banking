@@ -35,6 +35,7 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei ist UTF-8 mit BOM, durch Semikolon getrennt und nach dem Konto benannt
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei schreibt den Buchungstag als TT.MM.JJJJ und Beträge mit Dezimalkomma
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei setzt einen Text mit Semikolon in Anführungszeichen, sodass die Spalten stimmen
+- `acceptance/specs/umsaetze.spec`: Ein fehlgeschlagener Export zeigt die Fehlermeldung
 - `acceptance/specs/umsaetze.spec`: Ohne Anmeldung ist der CSV-Export nicht erreichbar
 
 ## Aufgaben für die Umsetzung
