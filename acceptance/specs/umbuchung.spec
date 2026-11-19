@@ -197,3 +197,14 @@ Tags: UC-021, PK-58, BR-0092, BR-0090
 | Gegenpartei | Verwendungszweck | Betrag   | Saldo danach |
 |-------------|------------------|----------|--------------|
 | Girokonto   | Umbuchung        | 500,00 € | 500,00 €     |
+
+## Eine Kundin ohne Tagesgeldkonto wird bei der Umbuchung abgelehnt
+
+Tags: UC-021, PK-58, BR-0088
+
+* Testdaten sind zurückgesetzt
+* "lasttest-001" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umbuchung
+* Die Kundin erfasst Quellkonto "Girokonto", Zielkonto "Tagesgeldkonto" und Betrag "50,00 €"
+* Die Kundin wählt „Umbuchen“ "1" Mal
+* Die Umbuchung zeigt die Meldung "Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich."
