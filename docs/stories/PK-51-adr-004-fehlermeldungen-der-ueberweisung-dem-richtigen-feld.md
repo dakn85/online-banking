@@ -21,13 +21,18 @@ Rückmeldung an PK-43 (Platform Admin (Agent „coding laptop“)).
 |---|---|---|
 | Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Kontext geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-51 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-51 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-19_
+
+**Bausteine:** Oberfläche (public/seiten/ueberweisung.js, Seite Überweisung), Dienst (src/ueberweisung.ts, Ablehnung beim Bestätigen). Keine Änderung an OpenAPI, Datenmodell oder Akzeptanztests.
+
+**Schritte**
+1. Abgleich Oberfläche mit ADR-004 (UC-002 A8.2, BR-0003, BR-0004): Der catch-Zweig in `bestaetigen` ordnet bereits seit PK-43 (Commit a88f4a5, auf main) eine 400 mit „Der Betrag muss mindestens 0,10 € betragen.“ dem Feld Betrag zu, jede andere 400 dem IBAN-Feld, 422 dem Betrag (BR-0004) und jeden anderen Status der allgemeinen Meldung (UC-002 A6). Das entspricht der geänderten Entscheidung, Code-Änderung ist nicht nötig.
+2. Abgleich Dienst (UC-002 A8): `MINDESTBETRAG_FEHLER` in src/ueberweisung.ts hat denselben Text wie die Oberfläche; die Zuordnung über den Text funktioniert also.
+3. Nachweis: `npm test`, `npm run build` und die Akzeptanztests lokal auf dem Zweig (Regression UC-002, Szenarien mit PK-43 für den Mindestbetrag). PK-51 hat keine eigenen Szenarien.
+
+**Rahmenänderung:** keine; die Story ändert nur die Dokumentation (ADR-004).
 
 ## Entscheidungen
 
