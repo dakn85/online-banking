@@ -40,6 +40,7 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 
 ## Akzeptanztests
 
+- `acceptance/specs/dauerauftraege.spec`: Bei gleichem ersten Ausführungstag sind die Daueraufträge nach Empfänger aufsteigend sortiert
 - `acceptance/specs/dauerauftraege.spec`: Bei vergangenem ersten Ausführungstag lässt sich der Betrag trotzdem ändern
 - `acceptance/specs/dauerauftraege.spec`: Bricht die Kundin die Sicherheitsabfrage ab, bleibt der Dauerauftrag bestehen
 - `acceptance/specs/dauerauftraege.spec`: Die Daueraufträge sind nach erstem Ausführungstag aufsteigend sortiert
