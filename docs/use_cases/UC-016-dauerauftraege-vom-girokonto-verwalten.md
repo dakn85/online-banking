@@ -105,6 +105,14 @@
 1. Das System ändert oder löscht nichts und zeigt „Der Dauerauftrag ist nicht mehr vorhanden.“ zusammen mit der aktuellen Liste der Daueraufträge.
 2. Die Kundin wählt einen vorhandenen Dauerauftrag oder bricht ab.
 
+### A11: Keine Daueraufträge vorhanden
+
+**Auslöser:** Die Kundin hat keinen Dauerauftrag. (Schritt 2).  
+**Ablauf:**
+
+1. Das System zeigt statt der Tabelle den Hinweis „Sie haben keine Daueraufträge.“; die Auswahlen zum Ändern und Löschen sind leer, „Änderung speichern“ und „Löschen“ sind nicht bedienbar.
+2. Die Kundin legt einen neuen Dauerauftrag an (Schritt 3), oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid
