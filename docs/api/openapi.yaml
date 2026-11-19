@@ -802,6 +802,7 @@ components:
         betrag:
           type: number
           minimum: 0.1
+          multipleOf: 0.01
         waehrung:
           type: string
           enum:
@@ -828,8 +829,8 @@ components:
         - auftraggeberIban
         - empfaenger
         - empfaengerIban
-        - betrag
         - waehrung
+        - betrag
         - verwendungszweck
         - turnus
         - ersterAusfuehrungstag
@@ -850,6 +851,8 @@ components:
           minimum: 0.1
           multipleOf: 0.01
           description: Höchstens zwei Nachkommastellen; mehr Nachkommastellen lehnt der Dienst mit 400 ab, er rundet nicht
+
+          multipleOf: 0.01
         verwendungszweck:
           type: string
           minLength: 1
