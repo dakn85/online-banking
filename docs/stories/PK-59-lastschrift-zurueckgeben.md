@@ -45,6 +45,7 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine Lastschrift nach Ablauf der Frist von 8 Wochen wird abgelehnt
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine zurückgegebene Lastschrift lässt sich nicht erneut zurückgeben
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Ohne Anmeldung ist die Rückgabe nicht möglich
+- `acceptance/specs/lastschrift-zurueckgeben.spec`: Umsätze der Kreditkarte bieten keine Rückgabe an
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
 ## Aufgaben für die Umsetzung

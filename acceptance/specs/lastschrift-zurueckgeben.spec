@@ -110,3 +110,12 @@ Tags: UC-022, PK-59
 
 * Testdaten sind zurückgesetzt
 * Ohne Anmeldung weist der Dienst die Rückgabe einer Lastschrift mit Status "401" ab
+
+## Umsätze der Kreditkarte bieten keine Rückgabe an
+
+Tags: UC-022, PK-59, BR-0094
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Kreditkarte"
+* Die Umsätze zeigen keine Rückgabe
