@@ -1,4 +1,4 @@
-/* UC-002 Überweisung vom Girokonto: Regeln BR-0003 bis BR-0007, ausgeführt im Dienst. */
+/* UC-002 Überweisung vom Girokonto: Regeln BR-0003 bis BR-0007 und Mindestbetrag (A8), ausgeführt im Dienst. */
 import { belasten, girokonto } from './konten';
 import { Auswahl, istDemokunde, Kunde } from './kunden';
 import { buchen } from './umsaetze';
@@ -8,6 +8,9 @@ const SEPA = new Set(('AD AT BE BG CH CY CZ DE DK EE ES FI FR GB GI GR HR HU IE 
 
 export const IBAN_FEHLER = 'Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.';
 export const BETRAG_FEHLER = 'Der Betrag übersteigt den verfügbaren Betrag des Girokontos.';
+export const MINDESTBETRAG_FEHLER = 'Der Betrag muss mindestens 0,10 € betragen.';
+/** Feldregel Überweisung.betrag: mindestens 0,10 Euro, in Cent. */
+const MINDESTBETRAG_CENT = 10;
 
 export interface Ueberweisungsauftrag {
   auftragsId: string;
@@ -62,7 +65,10 @@ export function ausfuehren(kunde: Pick<Kunde, 'kennung' | 'speichergrenze'>, auf
   if (!konto) throw new Ablehnung(403, 'Das Auftraggeberkonto ist kein Girokonto der Kundin.');
   if (!ibanGueltig(auftrag.empfaengerIban)) throw new Ablehnung(400, IBAN_FEHLER);
   const cent = Math.round(auftrag.betrag * 100);
-  if (!(cent > 0) || cent > Math.round((konto.saldo + konto.dispositionsrahmen) * 100)) throw new Ablehnung(422, BETRAG_FEHLER);
+  // UC-002 A8: Betrag unter dem Mindestbetrag (auch 0, negativ oder keine Zahl)
+  if (!(cent >= MINDESTBETRAG_CENT)) throw new Ablehnung(400, MINDESTBETRAG_FEHLER);
+  // BR-0004: höchstens der verfügbare Betrag des Girokontos
+  if (cent > Math.round((konto.saldo + konto.dispositionsrahmen) * 100)) throw new Ablehnung(422, BETRAG_FEHLER);
   belasten(kunde.kennung, konto.iban, cent / 100);
   const ueberweisung: Ueberweisung = {
     ...auftrag, empfaengerIban: ibanNormal(auftrag.empfaengerIban), betrag: cent / 100,
