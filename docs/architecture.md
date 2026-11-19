@@ -4,7 +4,7 @@
 
 Aufgabe, Ziele und Stakeholder stehen in `docs/vision.md`.
 
-Das Online-Banking der Aventa Bank ist ein einzelner Dienst, der die Oberfläche für Privatkundinnen mit ausliefert: Anmeldung mit Kennung und PIN, Finanzstatus (UC-001) und einmalige Überweisung vom Girokonto (UC-002). Konten und Kunden sind Demo-Daten (C-001), ein Kernbanksystem gibt es nicht. Oberfläche und API liegen in einem Dienst, damit der Demo-Betrieb ohne getrenntes Frontend auskommt (ADR-001).
+Das Online-Banking der Aventa Bank ist ein einzelner Dienst, der die Oberfläche für Privatkundinnen mit ausliefert: Anmeldung mit Kennung und PIN, Finanzstatus (UC-001), einmalige Überweisung vom Girokonto (UC-002) und sofortige Umbuchung zwischen Girokonto und Tagesgeldkonto (UC-021). Konten und Kunden sind Demo-Daten (C-001), ein Kernbanksystem gibt es nicht. Oberfläche und API liegen in einem Dienst, damit der Demo-Betrieb ohne getrenntes Frontend auskommt (ADR-001).
 
 ## 2. Randbedingungen
 
@@ -17,14 +17,14 @@ Die Leitplanken des Hauses stehen in `docs/leitplanken.md`, die Randbedingungen 
 ```mermaid
 C4Context
     title "Systemkontext Online-Banking"
-    Person(kundin, "Privatkundin", "meldet sich mit Kennung und PIN an, sieht ihren Finanzstatus, überweist vom Girokonto")
-    System(banking, "Online-Banking", "Dienst mit ausgelieferter Oberfläche: Anmeldung, Sitzung, Konten, Überweisung")
+    Person(kundin, "Privatkundin", "meldet sich mit Kennung und PIN an, sieht ihren Finanzstatus, überweist vom Girokonto und bucht zwischen Girokonto und Tagesgeldkonto um")
+    System(banking, "Online-Banking", "Dienst mit ausgelieferter Oberfläche: Anmeldung, Sitzung, Konten, Überweisung, Umbuchung")
     Rel(kundin, banking, "nutzt im Browser", "HTTP, HTML und JSON")
 ```
 
 | Gegenüber | Richtung | Daten | Schnittstelle |
 | --- | --- | --- | --- |
-| Privatkundin | beide | Kennung und PIN; Konten, Salden, Gesamtvermögen; Überweisungsauftrag | Browser, HTML und JSON unter /api |
+| Privatkundin | beide | Kennung und PIN; Konten, Salden, Gesamtvermögen; Überweisungsauftrag; Umbuchungsauftrag | Browser, HTML und JSON unter /api |
 
 Es gibt kein Kernbanksystem, keine Marktdatenquelle, kein Messaging und keinen weiteren Dienst; der Dienst arbeitet allein und führt den Kontenbestand selbst.
 

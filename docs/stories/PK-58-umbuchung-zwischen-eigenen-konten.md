@@ -23,7 +23,7 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 | Konto | Geändert | Eigenschaft art geändert, Beschreibung geändert, Attribut art geändert, Einschränkungen neu |
 | Umbuchungsauftrag | Neu | Schema neu |
 | Umbuchung | Neu | Schema neu, Entität neu, Maske neu |
-| Architektur | Geändert | Bausteinsicht geändert, Querschnittliche Konzepte geändert |
+| Architektur | Geändert | Einführung und Ziele geändert, Kontextabgrenzung geändert, Bausteinsicht geändert, und 1 weitere |
 | Umsatz | Geändert | Beschreibung geändert |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Genau einmalige Ausführung einer Überweisung oder Umbuchung | Geändert | Titel geändert, Anforderung geändert, Maß geändert, und 1 weitere |
@@ -63,6 +63,8 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 - [ ] Konto: Eigenschaft art geändert
 - [ ] Umbuchungsauftrag: Schema neu
 - [ ] Umbuchung: Schema neu
+- [ ] Architektur: Einführung und Ziele geändert
+- [ ] Architektur: Kontextabgrenzung geändert
 - [ ] Architektur: Bausteinsicht geändert
 - [ ] Architektur: Querschnittliche Konzepte geändert
 - [ ] Konto: Beschreibung geändert
