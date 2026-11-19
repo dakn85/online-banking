@@ -180,3 +180,23 @@ Tags: UC-016, PK-52
 |-----------------|-----------------------------|---------|----------------|-----------|-----------------------|----------|
 | Möbel Nord GmbH | DE89 3704 0044 0532 0130 00 | 50,00 € | Rechnung 4711  | monatlich | in 5 Tagen            |          |
 | Stadtwerke Nord | DE02 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | monatlich | in 5 Tagen            |          |
+
+## Ein erster Ausführungstag heute wird akzeptiert
+
+Tags: UC-016, PK-52, BR-0077
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Daueraufträge
+* Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711", Turnus "monatlich", erstem Ausführungstag "heute" und Enddatum "" an
+* Die Daueraufträge zeigen die Meldung "Dauerauftrag gespeichert."
+
+## Ein Enddatum gleich dem ersten Ausführungstag wird akzeptiert
+
+Tags: UC-016, PK-52, BR-0077
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Daueraufträge
+* Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "in 5 Tagen" an
+* Die Daueraufträge zeigen die Meldung "Dauerauftrag gespeichert."

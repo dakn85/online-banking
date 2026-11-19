@@ -51,8 +51,10 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird angelegt und in der Liste gezeigt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird geändert
+- `acceptance/specs/dauerauftraege.spec`: Ein Enddatum gleich dem ersten Ausführungstag wird akzeptiert
 - `acceptance/specs/dauerauftraege.spec`: Ein Enddatum vor dem ersten Ausführungstag wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Enddatum vor dem unveränderten ersten Ausführungstag wird beim Ändern abgelehnt
+- `acceptance/specs/dauerauftraege.spec`: Ein erster Ausführungstag heute wird akzeptiert
 - `acceptance/specs/dauerauftraege.spec`: Ein erster Ausführungstag in der Vergangenheit wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein geänderter erster Ausführungstag in der Vergangenheit wird abgelehnt
 
