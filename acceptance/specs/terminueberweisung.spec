@@ -149,3 +149,35 @@ Tags: UC-002, PK-53, BR-0079
 | feld            | wert         |
 |-----------------|--------------|
 | ausfuehrungstag | in 366 Tagen |
+
+## Beim Vormerken gilt das Tageslimit nicht
+
+Tags: UC-002, PK-53, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "PUT /api/tageslimit" mit den Angaben auf und erhält den Status "200"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "500,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung vorgemerkt."
+
+## Nach dem Vormerken entsteht kein Umsatz
+
+Tags: UC-002, PK-53
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung vorgemerkt."
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+
+## Die Zusammenfassung zeigt bei einer Terminüberweisung den Ausführungstag
+
+Tags: UC-002, PK-53
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“

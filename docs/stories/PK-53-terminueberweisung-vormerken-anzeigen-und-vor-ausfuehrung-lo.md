@@ -42,6 +42,8 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 
 ## Akzeptanztests
 
+- `acceptance/specs/terminueberweisung.spec`: Beim Vormerken gilt das Tageslimit nicht
+- `acceptance/specs/terminueberweisung.spec`: Die Zusammenfassung zeigt bei einer Terminüberweisung den Ausführungstag
 - `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag heute wird abgelehnt und keine Zusammenfassung gezeigt
 - `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag heute wird beim Vormerken mit 422 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag in 366 Tagen wird beim Vormerken mit 422 abgelehnt
@@ -54,6 +56,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - `acceptance/specs/terminueberweisung.spec`: Ein ungültiges Datum als Ausführungstag wird beim Vormerken mit 400 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Eine Terminüberweisung wird vorgemerkt und nichts gebucht
 - `acceptance/specs/terminueberweisung.spec`: Eine wiederholte Auftrags-Kennung beim Vormerken legt keinen zweiten Auftrag an
+- `acceptance/specs/terminueberweisung.spec`: Nach dem Vormerken entsteht kein Umsatz
 - `acceptance/specs/terminueberweisung.spec`: Ohne Anmeldung wird das Vormerken mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Bricht die Kundin die Sicherheitsabfrage ab, bleibt der Auftrag vorgemerkt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Der vorgemerkte Auftrag einer Kundin erscheint nicht in der Liste einer anderen Kundin
