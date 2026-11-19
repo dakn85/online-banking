@@ -73,9 +73,8 @@ Tags: UC-019, PK-56
 * Die Kundin öffnet die Ausgabenanalyse des Kontos "Girokonto" für den Monat "2026-13"
 * Die Abfrage der Ausgabenanalyse antwortet mit dem Status "400"
 * Die Ausgabenanalyse zeigt "Meldung" mit dem Text "Der Monat ist ungültig: erwartet JJJJ-MM."
+* Die Ausgabenanalyse zeigt "Hinweis" nicht
 * Die Ausgabenanalyse zeigt die Kategorien
-| Kategorie | Summe | Anteil |
-|-----------|-------|--------|
 
 ## Ein Konto, das nicht zur Kundin gehört, zeigt keine Ausgabenanalyse
 
@@ -86,9 +85,8 @@ Tags: UC-019, PK-56, BR-0011
 * Die Kundin öffnet die Ausgabenanalyse des Kontos "DE00 1234 5678 9012 3456 78" für den Monat "2026-02"
 * Die Abfrage der Ausgabenanalyse antwortet mit dem Status "404"
 * Die Ausgabenanalyse zeigt "Meldung" mit dem Text "Das Konto wurde nicht gefunden."
+* Die Ausgabenanalyse zeigt "Hinweis" nicht
 * Die Ausgabenanalyse zeigt die Kategorien
-| Kategorie | Summe | Anteil |
-|-----------|-------|--------|
 
 ## Die Kreditkarte hat keine Ausgabenanalyse
 
@@ -99,9 +97,8 @@ Tags: UC-019, PK-56, BR-0084
 * Die Kundin öffnet die Ausgabenanalyse des Kontos "Kreditkarte" für den Monat "2026-02"
 * Die Abfrage der Ausgabenanalyse antwortet mit dem Status "422"
 * Die Ausgabenanalyse zeigt "Meldung" mit dem Text "Die Ausgabenanalyse gibt es nur für das Girokonto."
+* Die Ausgabenanalyse zeigt "Hinweis" nicht
 * Die Ausgabenanalyse zeigt die Kategorien
-| Kategorie | Summe | Anteil |
-|-----------|-------|--------|
 
 ## Die Ausgabenanalyse öffnet mit dem laufenden Monat
 
