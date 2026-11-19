@@ -19,7 +19,7 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Umsätze eines Kontos als CSV-Datei exportieren | Neu | Endpunkt neu |
-| Umsatz | Geändert | Attribut buchungstag geändert, Attribut betrag geändert, Attribut saldoDanach neu |
+| Umsatz | Geändert | Attribut buchungstag geändert, Attribut betrag geändert, Attribut saldoDanach geändert |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Aktion Als CSV exportieren neu, Skizze geändert |
 | UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 9 neu, und 10 weitere |
@@ -46,7 +46,7 @@ Als Privatkundin möchte ich die Umsätze eines Kontos mit den Filtern der Umsat
 - [ ] Umsätze eines Kontos als CSV-Datei exportieren: Endpunkt neu
 - [ ] Umsatz: Attribut buchungstag geändert
 - [ ] Umsatz: Attribut betrag geändert
-- [ ] Umsatz: Attribut saldoDanach neu
+- [ ] Umsatz: Attribut saldoDanach geändert
 - [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
 - [ ] Zugriffsschutz des Finanzstatus: Maß geändert
 - [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
