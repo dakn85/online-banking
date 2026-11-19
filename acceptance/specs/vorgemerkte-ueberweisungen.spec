@@ -103,3 +103,36 @@ Tags: UC-017, PK-53, BR-0080
 Tags: UC-017, PK-53
 
 * Die Seite der vorgemerkten Überweisungen ist ohne Anmeldung nicht erreichbar
+
+## Der vorgemerkte Auftrag einer Kundin erscheint nicht in der Liste einer anderen Kundin
+
+Tags: UC-017, PK-53, BR-0080
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung vorgemerkt."
+* Die Kundin meldet sich ab
+* "jonas.weber" meldet sich mit der PIN "13579" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin öffnet in der Überweisung die vorgemerkten Überweisungen
+* Die vorgemerkten Überweisungen zeigen "0" Aufträge
+
+## Ein Auftrag einer anderen Kundin wird beim Löschen mit 404 abgelehnt
+
+Tags: UC-017, PK-53, BR-0080
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
+| feld            | wert       |
+|-----------------|------------|
+| auftragsId      | fremd-1    |
+| ausfuehrungstag | in 5 Tagen |
+* Die Kundin meldet sich ab
+* "jonas.weber" meldet sich mit der PIN "13579" an
+* Die angemeldete Kundin ruft "DELETE /api/terminueberweisungen/{auftragsId}" mit den Angaben auf und erhält den Status "404"
+| feld       | wert    |
+|------------|---------|
+| auftragsId | fremd-1 |

@@ -97,3 +97,55 @@ Tags: UC-002, PK-53, BR-0079
 | feld            | wert  |
 |-----------------|-------|
 | ausfuehrungstag | heute |
+
+## Ein Ausführungstag morgen wird beim Vormerken angenommen
+
+Tags: UC-002, PK-53, BR-0079
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
+| feld            | wert   |
+|-----------------|--------|
+| ausfuehrungstag | morgen |
+
+## Ein ungültiges Datum als Ausführungstag wird beim Vormerken mit 400 abgelehnt
+
+Tags: UC-002, PK-53
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "400"
+| feld            | wert       |
+|-----------------|------------|
+| ausfuehrungstag | 31.02.2027 |
+
+## Eine wiederholte Auftrags-Kennung beim Vormerken legt keinen zweiten Auftrag an
+
+Tags: UC-002, PK-53, BR-0005
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
+| feld            | wert         |
+|-----------------|--------------|
+| auftragsId      | wiederholt-1 |
+| ausfuehrungstag | in 5 Tagen   |
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
+| feld            | wert         |
+|-----------------|--------------|
+| auftragsId      | wiederholt-1 |
+| ausfuehrungstag | in 5 Tagen   |
+* Die Kundin öffnet in der Überweisung die vorgemerkten Überweisungen
+* Die vorgemerkten Überweisungen zeigen "1" Aufträge
+
+## Ein Ausführungstag in 366 Tagen wird beim Vormerken mit 422 abgelehnt
+
+Tags: UC-002, PK-53, BR-0079
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "422"
+| feld            | wert         |
+|-----------------|--------------|
+| ausfuehrungstag | in 366 Tagen |

@@ -44,18 +44,25 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 
 - `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag heute wird abgelehnt und keine Zusammenfassung gezeigt
 - `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag heute wird beim Vormerken mit 422 abgelehnt
+- `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag in 366 Tagen wird beim Vormerken mit 422 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag in genau 365 Tagen wird angenommen
+- `acceptance/specs/terminueberweisung.spec`: Ein Ausführungstag morgen wird beim Vormerken angenommen
 - `acceptance/specs/terminueberweisung.spec`: Ein Betrag über dem verfügbaren Betrag wird beim Vormerken mit 422 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Ein doppelter Klick auf Bestätigen merkt die Terminüberweisung nur einmal vor
 - `acceptance/specs/terminueberweisung.spec`: Ein fremdes Auftraggeberkonto wird beim Vormerken mit 403 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Ein Terminüberweisungsauftrag mit ungültiger IBAN wird mit 400 abgelehnt
+- `acceptance/specs/terminueberweisung.spec`: Ein ungültiges Datum als Ausführungstag wird beim Vormerken mit 400 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Eine Terminüberweisung wird vorgemerkt und nichts gebucht
+- `acceptance/specs/terminueberweisung.spec`: Eine wiederholte Auftrags-Kennung beim Vormerken legt keinen zweiten Auftrag an
 - `acceptance/specs/terminueberweisung.spec`: Ohne Anmeldung wird das Vormerken mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Bricht die Kundin die Sicherheitsabfrage ab, bleibt der Auftrag vorgemerkt
+- `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Der vorgemerkte Auftrag einer Kundin erscheint nicht in der Liste einer anderen Kundin
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Die vorgemerkten Aufträge stehen nach Ausführungstag aufsteigend
+- `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ein Auftrag einer anderen Kundin wird beim Löschen mit 404 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ein vorgemerkter Auftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Eine unbekannte Auftrags-Kennung wird beim Löschen mit 404 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Eine vorgemerkte Überweisung steht mit Ausführungstag, Empfänger, Betrag und Verwendungszweck in der Liste
+- `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung sind die vorgemerkten Überweisungen nicht erreichbar
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung wird das Löschen eines vorgemerkten Auftrags mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung wird die Liste der vorgemerkten Aufträge mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne vorgemerkten Auftrag zeigt die Maske einen Hinweis statt der Liste
