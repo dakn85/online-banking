@@ -78,13 +78,16 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 
 - Woher bekommt ein Ausgang seine Kategorie, vor allem der Umsatz einer neu ausgeführten Überweisung (BR-0012)? Die Überweisung kennt bisher keine Kategorie.
   **Antwort:** Die Demo-Umsätze bringen ihre Kategorie fest mit; jeder Umsatz einer neuen Überweisung bekommt die Kategorie „Sonstiges“.
-  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001_
+  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001 · fa4130d_
 - Welche Kategorien gibt es? Die Idee nennt nur Beispiele (Wohnen, Lebensmittel, Mobilität).
   **Antwort:** Erweiterte feste Liste, etwa mit Freizeit, Versicherungen und Gesundheit zusätzlich zu den vier.
-  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001_
+  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001 · fa4130d_
 - Wie wird der Anteil je Kategorie an den Gesamtausgaben angezeigt und gerundet?
   **Antwort:** Prozent mit einer Nachkommastelle (z. B. 37,5 %), kaufmännisch gerundet, ohne Ausgleich auf 100 %.
-  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001_
+  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001 · fa4130d_
 - Was antwortet die Abfrage der Ausgabenanalyse, wenn die IBAN zur Kreditkarte der Kundin gehört? Die Idee nennt nur das Girokonto.
   **Antwort:** Eigener Fehler (422) mit der Meldung „Die Ausgabenanalyse gibt es nur für das Girokonto.“
-  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001_
+  _→ eingearbeitet in vision, Umsatz, Ausgabenanalyse, Kategorieausgabe, UC-019, BR-0083, BR-0084, UC-002, BR-0012, GET /api/konten/{iban}/ausgabenanalyse, Schema Ausgabenanalyse, Schema Kategorieausgabe, ausgabenanalyse, finanzstatus, umsaetze, NFR-001 · fa4130d_
+- Welcher Fehler gilt, wenn bei der Abfrage der Ausgabenanalyse mehrere Fälle zugleich zutreffen, etwa ungültiger oder fehlender Monat zusammen mit einer fremden IBAN oder der IBAN der Kreditkarte?
+  **Antwort:** Zuerst Format des Monats (400, „Der Monat ist ungültig: erwartet JJJJ-MM.“), dann Konto nicht gefunden (404), dann Kreditkarte (422). Ein fehlender Monat ist ebenfalls 400 mit derselben Meldung.
+  _→ noch nicht in der Spezifikation_
