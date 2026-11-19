@@ -298,6 +298,188 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/dauerauftraege:
+    get:
+      summary: Daueraufträge der angemeldeten Kundin
+      description: Liefert die Daueraufträge der angemeldeten Kundin vom Girokonto, nach erstem Ausführungstag aufsteigend, bei gleichem Tag nach Empfänger aufsteigend. Das Enddatum fehlt, wenn der Dauerauftrag keines hat. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um.
+      operationId: dauerauftraegeAuflisten
+      tags:
+        - Dauerauftrag
+      responses:
+        "200":
+          description: Daueraufträge der Kundin, nach erstem Ausführungstag aufsteigend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dauerauftrag'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+      x-use-cases:
+        - UC-016
+    post:
+      summary: Dauerauftrag anlegen
+      description: "Legt einen Dauerauftrag der angemeldeten Kundin an; der Dienst setzt als Auftraggeberkonto das Girokonto der Kundin (BR-0007). Empfänger, IBAN (gültig und SEPA-Land, BR-0003), Betrag (mindestens 0,10), Verwendungszweck, Turnus und erster Ausführungstag sind Pflicht, das Enddatum ist optional. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Eine Prüfung gegen den verfügbaren Betrag gibt es nicht, der Dauerauftrag wird nicht ausgeführt. Ohne gültige Sitzung antwortet der Dienst mit 401."
+      operationId: dauerauftragAnlegen
+      tags:
+        - Dauerauftrag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NeuerDauerauftrag'
+      responses:
+        "201":
+          description: Dauerauftrag angelegt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dauerauftrag'
+        "400":
+          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land; wird vor dem ersten Ausführungstag und dem Enddatum geprüft
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - Dauerauftrag.empfaenger
+            - Dauerauftrag.empfaengerIban
+            - Dauerauftrag.betrag
+            - Dauerauftrag.verwendungszweck
+            - Dauerauftrag.turnus
+            - Dauerauftrag.ersterAusfuehrungstag
+            - Dauerauftrag.enddatum
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "422":
+          description: Der erste Ausführungstag liegt vor heute oder das Enddatum liegt vor dem ersten Ausführungstag; es wird nichts gespeichert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0077
+      x-use-cases:
+        - UC-016
+  /api/dauerauftraege/{dauerauftragId}:
+    put:
+      summary: Dauerauftrag ändern
+      description: "Ersetzt die Angaben eines Dauerauftrags der angemeldeten Kundin durch die Eingabe; das Auftraggeberkonto bleibt das Girokonto der Kundin. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401."
+      operationId: dauerauftragAendern
+      tags:
+        - Dauerauftrag
+      parameters:
+        - name: dauerauftragId
+          in: path
+          required: true
+          description: Kennung des Dauerauftrags
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NeuerDauerauftrag'
+      responses:
+        "200":
+          description: Dauerauftrag geändert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dauerauftrag'
+        "400":
+          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - Dauerauftrag.empfaenger
+            - Dauerauftrag.empfaengerIban
+            - Dauerauftrag.betrag
+            - Dauerauftrag.verwendungszweck
+            - Dauerauftrag.turnus
+            - Dauerauftrag.ersterAusfuehrungstag
+            - Dauerauftrag.enddatum
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "404":
+          description: Kein Dauerauftrag der Kundin mit dieser Kennung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "422":
+          description: Erster Ausführungstag oder Enddatum verletzen BR-0077; der Dauerauftrag bleibt unverändert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0077
+      x-use-cases:
+        - UC-016
+    delete:
+      summary: Dauerauftrag löschen
+      description: Löscht den Dauerauftrag der angemeldeten Kundin endgültig. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401.
+      operationId: dauerauftragLoeschen
+      tags:
+        - Dauerauftrag
+      parameters:
+        - name: dauerauftragId
+          in: path
+          required: true
+          description: Kennung des Dauerauftrags
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Dauerauftrag gelöscht
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "404":
+          description: Kein Dauerauftrag der Kundin mit dieser Kennung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+      x-use-cases:
+        - UC-016
 components:
   schemas:
     Anmeldedaten:
@@ -593,3 +775,98 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Dauerauftrag:
+      type: object
+      x-entity: Dauerauftrag
+      properties:
+        dauerauftragId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        auftraggeberIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Girokontos der angemeldeten Kundin (BR-0007); setzt der Dienst
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Empfängers; Länderkennzeichen muss in der SEPA-Länderliste stehen (BR-0003)
+        betrag:
+          type: number
+          minimum: 0.1
+        waehrung:
+          type: string
+          enum:
+            - EUR
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        turnus:
+          type: string
+          enum:
+            - monatlich
+            - vierteljährlich
+            - jährlich
+        ersterAusfuehrungstag:
+          type: string
+          format: date
+        enddatum:
+          type: string
+          format: date
+          description: Fehlt, wenn der Dauerauftrag kein Enddatum hat
+      required:
+        - dauerauftragId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - waehrung
+        - verwendungszweck
+        - turnus
+        - ersterAusfuehrungstag
+    NeuerDauerauftrag:
+      type: object
+      properties:
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Empfängers; Länderkennzeichen muss in der SEPA-Länderliste stehen (BR-0003)
+        betrag:
+          type: number
+          minimum: 0.1
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        turnus:
+          type: string
+          enum:
+            - monatlich
+            - vierteljährlich
+            - jährlich
+        ersterAusfuehrungstag:
+          type: string
+          format: date
+        enddatum:
+          type: string
+          format: date
+          description: Optional; Prüfung gegen den ersten Ausführungstag nach BR-0077
+      required:
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - verwendungszweck
+        - turnus
+        - ersterAusfuehrungstag

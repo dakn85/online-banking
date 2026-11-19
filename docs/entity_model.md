@@ -8,6 +8,8 @@ erDiagram
     "Überweisung" }o--|| Konto : "geht ab von"
     Umsatz }o--|| Konto : "gehört zu"
     Empfaengervorlage }o--|| Kunde : "gehört zu"
+    Dauerauftrag }o--|| Konto : "geht ab von"
+    Dauerauftrag }o--|| Kunde : "gehört zu"
 ```
 
 ## Entitäten
@@ -93,3 +95,24 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | verwendungszweck | Verwendungszweck der Vorlage; optional; leer oder nur Leerzeichen ergibt keinen Wert, dann fehlt das Feld | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711; leer oder nur Leerzeichen = kein Wert, das Feld fehlt in Antwort und Liste |
 
 **Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
+
+### Dauerauftrag
+
+**Bereich:** Dauerauftrag  
+
+Eine wiederkehrende Zahlung vom Girokonto der Kundin an einen Empfänger mit Betrag, Verwendungszweck, Turnus, erstem Ausführungstag und optionalem Enddatum; der Dienst verwaltet sie, führt sie aber nicht aus.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| dauerauftragId | Kennung des Dauerauftrags | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel D-2026-00001 |
+| auftraggeberIban | IBAN des Girokontos der angemeldeten Kundin, von dem der Dauerauftrag abgeht; setzt der Dienst, die Kundin gibt sie nicht ein | String | 15..34 | Pflicht; Länge 15..34 |
+| empfaenger | Name des Empfängers | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
+| empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE89 3704 0044 0532 0130 00 |
+| betrag | Betrag je Ausführung in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 50.00 |
+| waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
+| verwendungszweck | Verwendungszweck der Zahlung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
+| turnus | Wie oft der Dauerauftrag ausgeführt werden soll | String |  | Pflicht; Werte monatlich, vierteljährlich, jährlich; Beispiel monatlich |
+| ersterAusfuehrungstag | Tag der ersten Ausführung, ab dem der Turnus läuft; die Oberfläche zeigt ihn als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
+| enddatum | Letzter Tag, bis zu dem der Dauerauftrag laufen soll; optional, ohne Enddatum läuft er unbefristet; die Oberfläche zeigt es als TT.MM.JJJJ | Date |  | Beispiel 2027-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
+
+**Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht.

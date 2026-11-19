@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Finanzstatus",
-  "useCases": ["UC-001","UC-003","UC-015"],
+  "useCases": ["UC-001","UC-003","UC-015","UC-016"],
   "fields": [
     {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
     {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
@@ -13,13 +13,14 @@
   "actions": [
     {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"},
     {"label":"Umsätze","useCase":"UC-003#1","screen":"umsaetze"},
-    {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"}
+    {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"},
+    {"label":"Daueraufträge","useCase":"UC-016#1","screen":"dauerauftraege"}
   ]
 } -->
 <header data-wf="kopf">
   <h1>Finanzstatus</h1>
   <p>Ihre Konten und Ihr Gesamtvermögen auf einen Blick.</p>
-  <div data-wf="aktionen"><button>Tageslimit</button></div>
+  <div data-wf="aktionen"><button>Tageslimit</button><button>Daueraufträge</button></div>
 </header>
 <dl data-wf="kennzahl">
   <div><dt>Gesamtvermögen</dt><dd>1.757,85 €</dd></div>
