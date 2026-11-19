@@ -4,6 +4,7 @@
   const SEPA = new Set(('AD AT BE BG CH CY CZ DE DK EE ES FI FR GB GI GR HR HU IE IS IT LI LT LU LV MC MT NL NO PL PT RO SE SI SK SM VA').split(' '));
   const IBAN_FEHLER = 'Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.';
   const BETRAG_FEHLER = 'Der Betrag übersteigt den verfügbaren Betrag des Girokontos.';
+  const MINDESTBETRAG_FEHLER = 'Der Betrag muss mindestens 0,10 € betragen.';
   const ABGELEHNT = 'Die Überweisung konnte nicht ausgeführt werden.';
   const normal = wert => wert.replace(/\s+/g, '').toUpperCase();
   const gruppiert = wert => normal(wert).replace(/(.{4})/g, '$1 ').trim();
@@ -81,8 +82,10 @@
           const betrag = alsBetrag(eingabe.betrag);
           if (!eingabe.empfaenger || !eingabe.empfaengerIban || !eingabe.betrag || !eingabe.verwendungszweck) return auftrag('Bitte füllen Sie alle Felder aus.');
           if (!ibanGueltig(eingabe.empfaengerIban)) return auftrag(IBAN_FEHLER, 'empfaengerIban');
-          // BR-0004: größer als 0 und höchstens der verfügbare Betrag
-          if (betrag === null || !(betrag > 0) || Math.round(betrag * 100) > Math.round(giro.verfuegbarerBetrag * 100)) return auftrag(BETRAG_FEHLER, 'betrag');
+          // UC-002 A8: mindestens 0,10 € (Feldregel Überweisung.betrag)
+          if (betrag === null || !(Math.round(betrag * 100) >= 10)) return auftrag(MINDESTBETRAG_FEHLER, 'betrag');
+          // BR-0004: höchstens der verfügbare Betrag
+          if (Math.round(betrag * 100) > Math.round(giro.verfuegbarerBetrag * 100)) return auftrag(BETRAG_FEHLER, 'betrag');
           bestaetigen(betrag);
         });
         if (meldung) (flaeche.querySelector('[aria-invalid="true"]') || flaeche.querySelector('[role="alert"]')).focus?.();
@@ -114,6 +117,8 @@
             });
             location.href = '/finanzstatus?ausgefuehrt=1';
           } catch (fehler) {
+            // UC-002 A8.2: den Mindestbetrag lehnt der Dienst ebenfalls mit 400 ab, erkennbar an der Meldung
+            if (fehler.status === 400 && fehler.message === MINDESTBETRAG_FEHLER) return auftrag(MINDESTBETRAG_FEHLER, 'betrag');
             if (fehler.status === 400) return auftrag(IBAN_FEHLER, 'empfaengerIban');
             if (fehler.status === 422) return auftrag(BETRAG_FEHLER, 'betrag');
             auftrag(ABGELEHNT); // A6

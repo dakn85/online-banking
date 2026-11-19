@@ -33,8 +33,17 @@ test('BR-0003, BR-0004, BR-0007: Ablehnungen buchen nichts', () => {
   frisch();
   assert.equal(status(() => ausfuehren(LENA, auftrag({ empfaengerIban: 'DE00123456789012345678' }))), 400);
   assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-2', betrag: 3145.31 }))), 422);
-  assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-3', betrag: 0 }))), 422);
   assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-4', auftraggeberIban: 'DE44500105175407324955' }))), 403);
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.3);
   assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-5', betrag: 3145.3 }))), 0, 'genau der verfügbare Betrag geht');
+});
+
+test('UC-002 A8: ein Betrag unter 0,10 € wird mit 400 abgelehnt und bucht nichts, 0,10 € geht', () => {
+  frisch();
+  for (const [auftragsId, betrag] of [['m-1', 0.09], ['m-2', 0], ['m-3', -5], ['m-4', Number.NaN]] as const) {
+    assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId, betrag }))), 400, `Betrag ${betrag}`);
+  }
+  assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.3);
+  assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'm-5', betrag: 0.1 }))), 0, 'genau 0,10 € geht');
+  assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.2);
 });
