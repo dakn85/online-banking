@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Umsätze",
-  "useCases": ["UC-003"],
+  "useCases": ["UC-003","UC-022"],
   "fields": [
     {"name":"kontoname","label":"Konto","kind":"anzeige","attribute":"Konto.kontoname"},
     {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
@@ -12,7 +12,13 @@
     {"name":"gegenpartei","label":"Gegenpartei","kind":"anzeige","attribute":"Umsatz.gegenpartei"},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Umsatz.verwendungszweck"},
     {"name":"betrag","label":"Betrag","kind":"anzeige","attribute":"Umsatz.betrag"},
-    {"name":"saldoDanach","label":"Saldo danach","kind":"anzeige","attribute":"Umsatz.saldoDanach"}
+    {"name":"saldoDanach","label":"Saldo danach","kind":"anzeige","attribute":"Umsatz.saldoDanach"},
+    {"name":"rueckgabe","label":"Rückgabe","kind":"anzeige","attribute":"Umsatz.zurueckgegeben"}
+  ],
+  "actions": [
+    {"label":"Zurückgeben","useCase":"UC-022#1","screen":"umsaetze"},
+    {"label":"Bestätigen","useCase":"UC-022#3","operation":"POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben","screen":"umsaetze"},
+    {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"}
   ]
 } -->
 <header data-wf="kopf">
@@ -30,15 +36,28 @@
   <label data-wf="feld"><span>Ein-/Ausgang</span><select name="richtung"><option>Alle</option><option>Eingang</option><option>Ausgang</option></select></label>
 </div>
 <p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
+<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+<p data-wf="meldung" role="alert">Der Umsatz wurde nicht gefunden.</p>
+<p data-wf="meldung" role="alert">Dieser Umsatz ist keine SEPA-Lastschrift.</p>
+<p data-wf="meldung" role="alert">Die Lastschrift wurde bereits zurückgegeben.</p>
+<p data-wf="meldung" role="alert">Die Rückgabefrist von 8 Wochen ist abgelaufen.</p>
+<p data-wf="meldung" role="status">Lastschrift zurückgegeben: 29,90 € gutgeschrieben, neuer Saldo 2.175,20 €.</p>
 <table data-wf="tabelle">
   <caption>Umsätze Girokonto</caption>
   <thead>
-    <tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Betrag</th><th>Saldo danach</th></tr>
+    <tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Betrag</th><th>Saldo danach</th><th>Rückgabe</th></tr>
   </thead>
   <tbody>
-    <tr><td>12.02.2026</td><td>Bäckerei Krause</td><td>Einkauf</td><td>-12,00 €</td><td>2.145,30 €</td></tr>
+    <tr><td>05.11.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td></tr>
   </tbody>
 </table>
 <div data-wf="leer">
   <p>Für diese Auswahl gibt es keine Umsätze.</p>
 </div>
+<section data-wf="gruppe" data-merkmal="Rückgabe">
+  <h2>Lastschrift zurückgeben</h2>
+  <p data-wf="meldung" role="status">Lastschrift über 29,90 € von Fitnessstudio Vital zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.</p>
+  <form data-wf="formular">
+    <div data-wf="aktionen"><button data-wf="primaer">Bestätigen</button><button>Abbrechen</button></div>
+  </form>
+</section>

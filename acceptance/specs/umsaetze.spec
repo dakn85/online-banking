@@ -128,11 +128,15 @@ Tags: UC-003, PK-6
 
 ## Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
-Tags: UC-003, PK-47
+Tags: UC-003, PK-59
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          |              | 2026-02-12   | Alle         |
 * Die Umsätze zeigen die Zeilen
 | Buchungstag | Gegenpartei            |
 |-------------|------------------------|

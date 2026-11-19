@@ -21,13 +21,14 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-5 | Überweisung vom Girokonto ausführen | Anteil der bestätigten Überweisungen, die genau einmal ausgeführt werden, im neuen Saldo des Finanzstatus und als neuester Umsatz des Girokontos sichtbar sind | 100 % |
 | Z-6 | Umsätze je Konto einsehen | Anteil der Umsätze eines Kontos, die die Umsatzliste mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigt, den neuesten zuerst | 100 % |
 | Z-7 | Empfänger aus Vorlage statt Neueingabe | Anteil der Überweisungen mit gewählter Empfängervorlage, bei denen das System Empfänger und IBAN des Empfängers unverändert aus der Vorlage übernimmt und den Verwendungszweck nur übernimmt, wenn die Vorlage einen hat | 100 % |
+| Z-8 | Lastschrift zurückgeben | Anteil der bestätigten Rückgaben einer SEPA-Lastschrift innerhalb der Frist von 8 Wochen, deren Betrag genau einmal gutgeschrieben wird und als Umsatz mit Saldo danach sichtbar ist | 100 % |
 
 ## Abgrenzung
 
 - Überweisung: nur als einmalige Überweisung vom Girokonto; Termin- und Daueraufträge folgen später.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
-- Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später.
+- Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später; ausgenommen ist die Rückgabe einer SEPA-Lastschrift des Girokontos innerhalb von 8 Wochen ohne Rückgabegrund und ohne Abwicklung mit dem Einreicher.
 - Empfängervorlagen: ein Empfänger je Vorlage mit genau einer IBAN, kein Adressbuch mit mehreren Konten je Empfänger, kein Teilen von Vorlagen zwischen Kundinnen, kein Import und Export und keine Vorlagen aus einer Kernbank.
 - Tageslimit: kein Anheben über das Standardlimit, keine Freigabe per TAN oder zweitem Faktor, keine Benachrichtigung und keine Historie der Änderungen, kein befristetes Limit, keine Verwaltung der Standardlimits durch die Bank und kein Limit je Konto oder Empfänger.
 

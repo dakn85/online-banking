@@ -95,7 +95,7 @@ C4Component
 | --- | --- | --- |
 | Seitenauslieferung | Nimmt jede Anfrage von außen an, prüft die Pflichtfelder eines Auftrags und liefert Seiten und Dateien aus | keine |
 | Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
-| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
+| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen und Gutschriften, auch die Gutschrift einer zurückgegebenen SEPA-Lastschrift; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
 | Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007 |
 
 Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag kennt Konten und Finanzstatus, aber nicht umgekehrt.
@@ -201,7 +201,7 @@ Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eige
 
 | Gruppe | Kennungen | Bestand | Zurückgesetzt von |
 | --- | --- | --- | --- |
-| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen | `POST /api/test/reset` |
+| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen, auf dem Girokonto darunter zwei SEPA-Lastschriften mit Buchungstag 14 und 70 Tage vor dem Reset-Tag; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen | `POST /api/test/reset` |
 | Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `97531`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
 
 Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen und Tageslimit nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.

@@ -65,7 +65,7 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 
 **Bereich:** Finanzstatus  
 
-Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist.
+Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001). Das Girokonto trägt dazu zwei SEPA-Lastschriften mit gebuchtAm 08:00:00 UTC und Buchungstag relativ zum Tag des Resets: Fitnessstudio Vital, Mitgliedsbeitrag, -29.90, 14 Tage davor, Saldo danach 2145.30, und Zeitungsverlag Nord, Zeitungsabo, -14.90, 70 Tage davor, Saldo danach 2175.20. Die Lastschrift Fitnessstudio Vital ist damit der jüngste Umsatz; der Kontosaldo bleibt 2145.30, die Salden danach der älteren Demo-Umsätze des Girokontos liegen um 44.80 über den bisherigen. Weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist, und aus der Rückgabe einer Lastschrift (BR-0095).
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
@@ -76,8 +76,11 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | saldoDanach | Saldo des Kontos nach dieser Buchung in Euro | Decimal |  | Pflicht; Beispiel 2095.30 |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+| umsatzId | Kennung des Umsatzes, vom Dienst vergeben; die Zeilenaktion „Zurückgeben“ der Umsätze führt sie mit | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-0007 |
+| sepaLastschrift | Kennzeichen: der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche | Boolean |  | Pflicht; Standard false; Beispiel true |
+| zurueckgegeben | Rückgabestatus der SEPA-Lastschrift (BR-0094). Die Spalte Rückgabe der Umsätze zeigt bei sepaLastschrift true und zurueckgegeben false „Zurückgeben“, bei zurueckgegeben true „Zurückgegeben“, sonst keinen Text | Boolean |  | Pflicht; Standard false; Beispiel false |
 
-**Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009).
+**Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009). Ein Umsatz mit zurueckgegeben true ist eine SEPA-Lastschrift (sepaLastschrift true).
 
 ### Empfaengervorlage
 

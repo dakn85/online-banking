@@ -21,7 +21,7 @@
 2. Das System liest die Umsätze des Kontos (Demo-Daten, C-001).
 3. Das System ordnet die Umsätze mit dem neuesten Buchungstag zuerst (BR-0008).
 4. Das System zeigt Kontoname und IBAN des Kontos sowie die Felder für die Textsuche und die Filter nach Zeitraum und Ein-/Ausgang.
-5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag in Euro und Saldo danach in Euro.
+5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag in Euro, Saldo danach in Euro und Rückgabe; bei einer SEPA-Lastschrift steht dort „Zurückgeben“, bei einer zurückgegebenen „Zurückgegeben“ (UC-022).
 6. Die Kundin gibt einen Suchtext ein, wählt einen Zeitraum oder eine Richtung.
 7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt und deren Betrag zur gewählten Richtung passt (BR-0009, BR-0010).
 8. Die Kundin liest Betrag und Saldo danach der Umsätze ab.
@@ -107,4 +107,4 @@ Umsätze liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldet
 
 ## Notizen
 
-Der Ausgangsstand führt je Konto einige Demo-Umsätze mit festen Buchungstagen; der jüngste Umsatz eines Kontos trägt als Saldo danach den aktuellen Kontosaldo (C-001, BR-0008). Weitere Umsätze entstehen aus einer ausgeführten Überweisung (UC-002, BR-0012). Die Umsatzliste ist eine eigene Seite, die der Knopf „Umsätze“ in der Zeile des Finanzstatus öffnet.
+Der Ausgangsstand führt je Konto einige Demo-Umsätze mit festen Buchungstagen; das Girokonto trägt dazu zwei SEPA-Lastschriften mit Buchungstag relativ zum Tag des Resets (UC-022); der jüngste Umsatz eines Kontos trägt als Saldo danach den aktuellen Kontosaldo (C-001, BR-0008). Weitere Umsätze entstehen aus einer ausgeführten Überweisung (UC-002, BR-0012) und aus der Rückgabe einer Lastschrift (UC-022). Die Umsatzliste ist eine eigene Seite, die der Knopf „Umsätze“ in der Zeile des Finanzstatus öffnet.
