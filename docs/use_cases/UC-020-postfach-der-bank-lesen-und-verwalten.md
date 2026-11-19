@@ -54,6 +54,14 @@
 1. Das System ändert nichts und zeigt das Postfach mit der aktuellen Liste und Zahl neu.
 2. Die Kundin wählt eine andere Nachricht; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
+### A5: Formatfehler der Nachrichten-Kennung
+
+**Auslöser:** Die Kennung der Nachricht verletzt die Feldregeln des Datenmodells (Nachricht.nachrichtId); PATCH und DELETE antworten mit 400. (Schritt 3).  
+**Ablauf:**
+
+1. Das System ändert nichts und zeigt das Postfach mit der aktuellen Liste und Zahl neu.
+2. Die Kundin wählt eine andere Nachricht; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid

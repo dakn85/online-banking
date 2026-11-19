@@ -323,7 +323,7 @@ paths:
   /api/nachrichten/{nachrichtId}:
     patch:
       summary: Nachricht öffnen und als gelesen markieren
-      description: "Öffnet die Nachricht der angemeldeten Kundin: setzt den Lesestatus auf gelesen und liefert die Nachricht mit ihrem Text. Der Aufruf braucht keinen Inhalt; bei einer schon gelesenen Nachricht ändert er nichts und antwortet ebenfalls mit 200. Eine unbekannte Nachrichten-Kennung oder eine Nachricht einer anderen Kundin beantwortet der Dienst mit 404, ohne gültige Sitzung mit 401."
+      description: "Öffnet die Nachricht der angemeldeten Kundin: setzt den Lesestatus auf gelesen und liefert die Nachricht mit ihrem Text. Der Aufruf braucht keinen Inhalt; bei einer schon gelesenen Nachricht ändert er nichts und antwortet ebenfalls mit 200. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401."
       operationId: nachrichtOeffnen
       tags:
         - Postfach
@@ -343,6 +343,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Nachricht'
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
         "401":
           description: Keine gültige Sitzung
           content:
@@ -360,7 +368,7 @@ paths:
       x-use-cases: [ UC-020 ]
     delete:
       summary: Nachricht löschen
-      description: Löscht die Nachricht der angemeldeten Kundin endgültig; sie erscheint nicht mehr in der Liste und zählt nicht mehr als ungelesen. Eine unbekannte Nachrichten-Kennung oder eine Nachricht einer anderen Kundin beantwortet der Dienst mit 404, ohne gültige Sitzung mit 401.
+      description: Löscht die Nachricht der angemeldeten Kundin endgültig; sie erscheint nicht mehr in der Liste und zählt nicht mehr als ungelesen. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401.
       operationId: nachrichtLoeschen
       tags:
         - Postfach
@@ -376,6 +384,14 @@ paths:
       responses:
         "204":
           description: Nachricht gelöscht
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
         "401":
           description: Keine gültige Sitzung
           content:
