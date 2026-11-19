@@ -140,3 +140,119 @@ Tags: UC-003, PK-47
 | 10.02.2026  | Energieversorgung Nord |
 | 01.02.2026  | Lindner Logistik GmbH  |
 | 28.01.2026  | Hausverwaltung Berger  |
+
+## Die CSV-Datei ist UTF-8 mit BOM, durch Semikolon getrennt und nach dem Konto benannt
+
+Tags: UC-003, PK-54
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin exportiert die Umsätze als CSV-Datei
+* Die CSV-Datei "umsaetze-DE02500105175407324931.csv" beginnt mit dem UTF-8-BOM und der Kopfzeile "Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach"
+
+## Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
+
+Tags: UC-003, PK-54, BR-0075
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "12,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+| Möbel    |              |              | Alle         |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
+* Die CSV-Datei enthält die Zeilen
+| Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
+|-----------------|------------------|--------|--------------|
+| Möbel Nord GmbH | Rechnung 4712    | -12,00 | 2083,30      |
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 | 2095,30      |
+
+## Die CSV-Datei schreibt den Buchungstag als TT.MM.JJJJ und Beträge mit Dezimalkomma
+
+Tags: UC-003, PK-54
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          | 2026-02-12   | 2026-02-12   | Alle         |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
+* Die CSV-Datei enthält die Zeilen
+| Buchungstag | Gegenpartei     | Betrag | Saldo danach |
+|-------------|-----------------|--------|--------------|
+| 12.02.2026  | Bäckerei Krause | -12,00 | 2145,30      |
+
+## Die CSV-Datei setzt einen Text mit Semikolon in Anführungszeichen, sodass die Spalten stimmen
+
+Tags: UC-003, PK-54
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Teil 1; Rest 2" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+| Teil 1   |              |              | Alle         |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
+* Die CSV-Datei enthält die Zeilen
+| Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
+|-----------------|------------------|--------|--------------|
+| Möbel Nord GmbH | Teil 1; Rest 2   | -50,00 | 2095,30      |
+
+## Der CSV-Export einer leeren Auswahl liefert keine Datei und zeigt die Meldung
+
+Tags: UC-003, PK-54, BR-0076
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+| Möbel    |              |              | Alle         |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "422"
+* Die Umsätze zeigen die Meldung "Für diese Auswahl gibt es keine Umsätze zum Export."
+
+## Der CSV-Export eines fremden Kontos zeigt, dass das Konto nicht gefunden wurde
+
+Tags: UC-003, PK-54, BR-0011
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos mit der IBAN "DE00 1234 5678 9012 3456 78"
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "404"
+* Die Umsätze zeigen die Meldung "Das Konto wurde nicht gefunden."
+
+## Der CSV-Export mit Von-Datum nach dem Bis-Datum zeigt die Meldung zum ungültigen Zeitraum
+
+Tags: UC-003, PK-54, BR-0010
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          | 2026-03-31   | 2026-03-01   | Alle         |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "400"
+* Die Umsätze zeigen die Meldung "Der Zeitraum ist ungültig: von liegt nach bis."
+
+## Ohne Anmeldung ist der CSV-Export nicht erreichbar
+
+Tags: UC-003, PK-54
+
+* Testdaten sind zurückgesetzt
+* Der CSV-Export antwortet ohne Anmeldung mit dem Status "401"
