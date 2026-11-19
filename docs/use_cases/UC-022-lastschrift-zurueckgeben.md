@@ -97,7 +97,7 @@ Eine SEPA-Lastschrift lässt sich nur zurückgeben, wenn seit ihrem Buchungstag 
 
 ### BR-0094: Nur SEPA-Lastschriften des Girokontos und nur einmal zurückgebbar
 
-Zurückgeben lässt sich nur ein Umsatz mit sepaLastschrift true; nur das Girokonto trägt SEPA-Lastschriften, jeder andere Umsatz, auch jeder Umsatz der Kreditkarte, ist keine. Sonst antwortet der Dienst mit 422 und dem Feld fehler „Dieser Umsatz ist keine SEPA-Lastschrift.“. Ist zurueckgegeben schon true, antwortet er mit 422 und „Die Lastschrift wurde bereits zurückgegeben.“; eine wiederholte Bestätigung bucht nicht erneut und erzeugt keinen weiteren Umsatz. Die Seite zeigt bei einer zurückgegebenen Lastschrift statt „Zurückgeben“ den Hinweis „Zurückgegeben“. Gehört zur umsatzId kein Umsatz des Kontos, antwortet der Dienst mit 404 und „Der Umsatz wurde nicht gefunden.“. Reihenfolge der Prüfungen: Konto (404, BR-0011), Umsatz (404), Lastschrift (422), schon zurückgegeben (422), Frist (422, BR-0093).
+Zurückgeben lässt sich nur ein Umsatz mit sepaLastschrift true; nur das Girokonto trägt SEPA-Lastschriften, jeder andere Umsatz, auch jeder Umsatz der Kreditkarte, ist keine. Sonst antwortet der Dienst mit 422 und dem Feld fehler „Dieser Umsatz ist keine SEPA-Lastschrift.“. Ist zurueckgegeben schon true, antwortet er mit 422 und „Die Lastschrift wurde bereits zurückgegeben.“; eine wiederholte Bestätigung bucht nicht erneut und erzeugt keinen weiteren Umsatz. Gehört zur umsatzId kein Umsatz des Kontos, antwortet der Dienst mit 404 und „Der Umsatz wurde nicht gefunden.“. Reihenfolge der Prüfungen: Konto (404, BR-0011), Umsatz (404), Lastschrift (422), schon zurückgegeben (422), Frist (422, BR-0093).
 
 ### BR-0095: Gutschrift und Umsatz einer Rückgabe
 

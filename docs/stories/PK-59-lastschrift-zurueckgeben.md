@@ -84,7 +84,10 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 
 - Welche SEPA-Lastschriften trägt das Girokonto im Ausgangsstand? Heute gibt es keine; alle Demo-Umsätze sind älter als 8 Wochen, und die Rückgabe lässt sich ohne Lastschrift in der Frist nicht prüfen.
   **Antwort:** Zwei neue Demo-Lastschriften auf dem Girokonto: eine mit Buchungstag relativ zum Reset-Tag (in der Frist), eine mit Buchungstag über 8 Wochen zurück; die bestehenden Szenarien mit fester Zeilenliste der Umsätze werden angepasst.
-  _→ eingearbeitet in UC-022, BR-0093, BR-0094, BR-0095, UC-003, Umsatz, GET /api/konten/{iban}/umsaetze, POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben, Schema Umsatz, Schema Rueckgabe, umsaetze, NFR-001, vision, architektur_
+  _→ eingearbeitet in UC-022, BR-0093, BR-0094, BR-0095, UC-003, Umsatz, GET /api/konten/{iban}/umsaetze, POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben, Schema Umsatz, Schema Rueckgabe, umsaetze, NFR-001, vision, architektur · d9654e1_
 - Gibt die Kundin die Lastschrift mit einem Klick zurück, oder muss sie die Rückgabe vorher bestätigen? Die Rückgabe lässt sich danach nicht rückgängig machen.
   **Antwort:** Rückfrage mit Betrag und Gegenpartei auf der Maske Umsätze, erst „Bestätigen“ bucht die Gutschrift; keine neue Maske.
-  _→ eingearbeitet in UC-022, BR-0093, BR-0094, BR-0095, UC-003, Umsatz, GET /api/konten/{iban}/umsaetze, POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben, Schema Umsatz, Schema Rueckgabe, umsaetze, NFR-001, vision, architektur_
+  _→ eingearbeitet in UC-022, BR-0093, BR-0094, BR-0095, UC-003, Umsatz, GET /api/konten/{iban}/umsaetze, POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben, Schema Umsatz, Schema Rueckgabe, umsaetze, NFR-001, vision, architektur · d9654e1_
+- Wie verhält sich die Umsatzseite nach einer abgelehnten oder wiederholten Bestätigung der Rückgabe?
+  **Antwort:** Die Rückfrage schließt, die Umsätze werden neu geladen, und die Meldung des Dienstes steht (404, 422); „Bestätigen“ ist während des Absendens gesperrt. Eine zweite Anfrage liefert 422 „Die Lastschrift wurde bereits zurückgegeben.“ und bucht nichts; die Zeile zeigt danach den aktuellen Stand.
+  _→ noch nicht in der Spezifikation_
