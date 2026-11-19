@@ -27,7 +27,7 @@
 
 ### A1: Feldregel verletzt
 
-**Auslöser:** Eine Eingabe verletzt eine Feldregel von Dauerauftrag im Datenmodell; ausgenommen IBAN und Betrag (A2, A3). (Schritt 4).  
+**Auslöser:** Eine Eingabe verletzt eine Feldregel von Dauerauftrag im Datenmodell; ausgenommen IBAN (A2) und ein Betrag, der fehlt, keine Zahl ist oder unter dem Mindestbetrag liegt (A3). Ein Betrag mit mehr als zwei Nachkommastellen gehört zu A1: der Dienst lehnt ihn mit 400 ab und rundet ihn nicht. (Schritt 4).  
 **Ablauf:**
 
 1. Das System speichert den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt „Die Angaben zum Dauerauftrag sind unvollständig oder ungültig.“; die bisherigen Eingaben bleiben stehen.
@@ -41,9 +41,9 @@
 1. Das System speichert den Dauerauftrag nicht und zeigt „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“.
 2. Die Kundin korrigiert die IBAN; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
-### A3: Betrag verletzt die Feldregel
+### A3: Betrag fehlt oder liegt unter dem Mindestbetrag
 
-**Auslöser:** Der Betrag (Feld Betrag in Euro oder Neuer Betrag in Euro) verletzt die Feldregel von Dauerauftrag.betrag im Datenmodell, auch wenn er fehlt oder keine Zahl ist. (Schritt 4).  
+**Auslöser:** Der Betrag (Feld Betrag in Euro oder Neuer Betrag in Euro) unterschreitet den Mindestbetrag von Dauerauftrag.betrag im Datenmodell, auch wenn er fehlt oder keine Zahl ist; mehr als zwei Nachkommastellen gehören zu A1. (Schritt 4).  
 **Ablauf:**
 
 1. Das System speichert den Dauerauftrag nicht und zeigt „Der Betrag muss mindestens 0,10 € betragen.“ im Formular; gegen den verfügbaren Betrag des Girokontos prüft es nicht.

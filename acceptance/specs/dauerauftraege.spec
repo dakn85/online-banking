@@ -200,3 +200,13 @@ Tags: UC-016, PK-52, BR-0077
 * Die Kundin öffnet die Daueraufträge
 * Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "in 5 Tagen" an
 * Die Daueraufträge zeigen die Meldung "Dauerauftrag gespeichert."
+
+## Ein Dauerauftrag mit mehr als zwei Nachkommastellen im Betrag wird abgelehnt
+
+Tags: UC-016, PK-52
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Daueraufträge
+* Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "10,555 €", Verwendungszweck "Rechnung 4711", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "" an
+* Die Daueraufträge zeigen die Meldung "Die Angaben zum Dauerauftrag sind unvollständig oder ungültig."

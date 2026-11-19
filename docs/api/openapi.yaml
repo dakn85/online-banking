@@ -328,7 +328,7 @@ paths:
         - UC-016
     post:
       summary: Dauerauftrag anlegen
-      description: "Legt einen Dauerauftrag der angemeldeten Kundin an; der Dienst setzt als Auftraggeberkonto das Girokonto der Kundin (BR-0007). Empfänger, IBAN (gültig und SEPA-Land, BR-0003), Betrag (mindestens 0,10), Verwendungszweck, Turnus und erster Ausführungstag sind Pflicht, das Enddatum ist optional. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Bei 400 und 422 steht im Feld fehler genau der Meldungstext aus UC-016 A1 bis A5, den die Oberfläche unverändert zeigt. Eine Prüfung gegen den verfügbaren Betrag gibt es nicht, der Dauerauftrag wird nicht ausgeführt. Ohne gültige Sitzung antwortet der Dienst mit 401."
+      description: "Legt einen Dauerauftrag der angemeldeten Kundin an; der Dienst setzt als Auftraggeberkonto das Girokonto der Kundin (BR-0007). Empfänger, IBAN (gültig und SEPA-Land, BR-0003), Betrag (mindestens 0,10, höchstens zwei Nachkommastellen), Verwendungszweck, Turnus und erster Ausführungstag sind Pflicht, das Enddatum ist optional. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Ein Betrag mit mehr als zwei Nachkommastellen wird mit 400 abgelehnt, nicht gerundet. Bei 400 und 422 steht im Feld fehler genau der Meldungstext aus UC-016 A1 bis A5, den die Oberfläche unverändert zeigt. Eine Prüfung gegen den verfügbaren Betrag gibt es nicht, der Dauerauftrag wird nicht ausgeführt. Ohne gültige Sitzung antwortet der Dienst mit 401."
       operationId: dauerauftragAnlegen
       tags:
         - Dauerauftrag
@@ -346,7 +346,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Dauerauftrag'
         "400":
-          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land; wird vor dem ersten Ausführungstag und dem Enddatum geprüft; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3
+          description: "Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10 oder mit mehr als zwei Nachkommastellen, IBAN ungültig oder gehört zu keinem SEPA-Land; wird vor dem ersten Ausführungstag und dem Enddatum geprüft; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3 (mehr als zwei Nachkommastellen: A1)"
           content:
             application/json:
               schema:
@@ -380,7 +380,7 @@ paths:
   /api/dauerauftraege/{dauerauftragId}:
     put:
       summary: Dauerauftrag ändern
-      description: "Ersetzt die Angaben eines Dauerauftrags der angemeldeten Kundin durch die Eingabe; das Auftraggeberkonto bleibt das Girokonto der Kundin. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Der erste Ausführungstag wird nur dann gegen heute geprüft, wenn er vom gespeicherten Wert abweicht; bleibt er unverändert, lässt sich der Dauerauftrag trotz vergangenem ersten Ausführungstag ändern. Das Enddatum wird immer gegen den geltenden ersten Ausführungstag geprüft. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401. Bei 400, 422 und 404 steht im Feld fehler genau der Meldungstext aus UC-016 (A1 bis A5, bei 404 A10), den die Oberfläche unverändert zeigt."
+      description: "Ersetzt die Angaben eines Dauerauftrags der angemeldeten Kundin durch die Eingabe; das Auftraggeberkonto bleibt das Girokonto der Kundin. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Ein Betrag mit mehr als zwei Nachkommastellen wird mit 400 abgelehnt, nicht gerundet. Der erste Ausführungstag wird nur dann gegen heute geprüft, wenn er vom gespeicherten Wert abweicht; bleibt er unverändert, lässt sich der Dauerauftrag trotz vergangenem ersten Ausführungstag ändern. Das Enddatum wird immer gegen den geltenden ersten Ausführungstag geprüft. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401. Bei 400, 422 und 404 steht im Feld fehler genau der Meldungstext aus UC-016 (A1 bis A5, bei 404 A10), den die Oberfläche unverändert zeigt."
       operationId: dauerauftragAendern
       tags:
         - Dauerauftrag
@@ -407,7 +407,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Dauerauftrag'
         "400":
-          description: Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10, IBAN ungültig oder gehört zu keinem SEPA-Land; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3
+          description: "Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10 oder mit mehr als zwei Nachkommastellen, IBAN ungültig oder gehört zu keinem SEPA-Land; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3 (mehr als zwei Nachkommastellen: A1)"
           content:
             application/json:
               schema:
@@ -848,6 +848,8 @@ components:
         betrag:
           type: number
           minimum: 0.1
+          multipleOf: 0.01
+          description: Höchstens zwei Nachkommastellen; mehr Nachkommastellen lehnt der Dienst mit 400 ab, er rundet nicht
         verwendungszweck:
           type: string
           minLength: 1

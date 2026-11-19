@@ -48,6 +48,7 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 - `acceptance/specs/dauerauftraege.spec`: Die Daueraufträge sind ohne Anmeldung nicht erreichbar
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit Betrag unter 0,10 € wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit IBAN außerhalb des SEPA-Raums wird abgelehnt
+- `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag mit mehr als zwei Nachkommastellen im Betrag wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag ohne Verwendungszweck wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird angelegt und in der Liste gezeigt
 - `acceptance/specs/dauerauftraege.spec`: Ein Dauerauftrag wird erst nach der Sicherheitsabfrage gelöscht
@@ -104,10 +105,13 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
   _→ eingearbeitet in vision, UC-016, BR-0077, BR-0078, Dauerauftrag, GET /api/dauerauftraege, POST /api/dauerauftraege, PUT /api/dauerauftraege/{dauerauftragId}, DELETE /api/dauerauftraege/{dauerauftragId}, Schema Dauerauftrag, Schema NeuerDauerauftrag, dauerauftraege, finanzstatus, NFR-001, architektur, ADR-002 · e5abd35_
 - ADR-002 und UC-016 nennen die Daueraufträge im Ausgangsstand von POST /api/test/reset (jonas.weber hat „Hausverwaltung Weber“, lena.hoffmann keinen). Die Beschreibung von POST /api/test/reset im Vertrag nennt sie nicht, und für den Lastbetrieb (POST /api/test/lasttest/reset) ist offen, ob die Lastkunden Daueraufträge anlegen dürfen und ob dieser Reset sie löscht. Was gilt? (Aussage „POST /api/test/reset setzt auch die Daueraufträge der Demo-Kundinnen zurück.“)
   **Antwort:** Der Vertrag von POST /api/test/reset nennt Daueraufträge und den Ausgangsstand von jonas.weber; POST /api/test/lasttest/reset löscht zusätzlich die Daueraufträge der Lastkunden, Ausgangsstand ohne Daueraufträge.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-016, BR-0078, dauerauftraege, POST /api/test/lasttest/reset, POST /api/dauerauftraege, PUT /api/dauerauftraege/{dauerauftragId}, DELETE /api/dauerauftraege/{dauerauftragId} · 14e1e5b_
 - Was sieht die Kundin, wenn ein Dauerauftrag beim Ändern oder Löschen nicht mehr existiert (404, zum Beispiel in einer zweiten Sitzung bereits gelöscht)?
   **Antwort:** Neue Meldung „Der Dauerauftrag existiert nicht mehr.“, die Liste wird neu geladen, die Eingaben der Änderung entfallen
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-016, BR-0078, dauerauftraege, POST /api/test/lasttest/reset, POST /api/dauerauftraege, PUT /api/dauerauftraege/{dauerauftragId}, DELETE /api/dauerauftraege/{dauerauftragId} · 14e1e5b_
 - Bei Dauerauftrag gibt es unter 400 drei verschiedene Meldungen (allgemein unvollständig oder ungültig, IBAN ungültig, Betrag unter 0,10 €) und unter 422 zwei (erster Ausführungstag, Enddatum). Die Zuordnung 400 gleich IBAN und 422 gleich Betrag aus ADR-004 passt dazu nicht. Woran erkennt die Oberfläche beim Antworten des Dienstes, welche Meldung sie zeigt? (Aussage „Die Oberfläche ordnet eine 400-Antwort dem IBAN-Feld und eine 422-Antwort dem Be“)
   **Antwort:** Der Dienst liefert im Feld fehler genau den Meldungstext aus UC-016 A1 bis A5, die Oberfläche zeigt ihn unverändert.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-016, BR-0078, dauerauftraege, POST /api/test/lasttest/reset, POST /api/dauerauftraege, PUT /api/dauerauftraege/{dauerauftragId}, DELETE /api/dauerauftraege/{dauerauftragId} · 14e1e5b_
+- Was geschieht bei einem Betrag mit mehr als zwei Nachkommastellen (z. B. 10,555 €): lehnt der Dienst ihn mit 400 ab, oder rundet er nach ADR-005 auf Cent? Wenn er ablehnt: welche Meldung sieht die Kundin?
+  **Antwort:** Ablehnen mit 400 und der Meldung „Die Angaben zum Dauerauftrag sind unvollständig oder ungültig.“
+  _→ eingearbeitet in UC-016, POST /api/dauerauftraege, PUT /api/dauerauftraege/{dauerauftragId}, Schema NeuerDauerauftrag_
