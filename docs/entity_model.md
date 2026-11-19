@@ -108,7 +108,7 @@ Eine wiederkehrende Zahlung vom Girokonto der Kundin an einen Empfänger mit Bet
 | auftraggeberIban | IBAN des Girokontos der angemeldeten Kundin, von dem der Dauerauftrag abgeht; setzt der Dienst, die Kundin gibt sie nicht ein | String | 15..34 | Pflicht; Länge 15..34 |
 | empfaenger | Name des Empfängers | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
 | empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE89 3704 0044 0532 0130 00 |
-| betrag | Betrag je Ausführung in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 50.00 |
+| betrag | Betrag je Ausführung in Euro, mindestens 0,10, höchstens zwei Nachkommastellen; Anzeige mit Komma und Euro-Zeichen, z. B. 50,00 € | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 50.00; höchstens zwei Nachkommastellen, Anzeige 50,00 € |
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | verwendungszweck | Verwendungszweck der Zahlung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
 | turnus | Wie oft der Dauerauftrag ausgeführt werden soll | String |  | Pflicht; Werte monatlich, vierteljährlich, jährlich; Beispiel monatlich |
