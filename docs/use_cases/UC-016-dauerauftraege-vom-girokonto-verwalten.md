@@ -20,14 +20,14 @@
 1. Die Kundin wählt im Finanzstatus „Daueraufträge“.
 2. Das System zeigt die Daueraufträge der Kundin vom Girokonto (BR-0078) mit Empfänger, IBAN, Betrag, Verwendungszweck, Turnus, erstem Ausführungstag und Enddatum, nach erstem Ausführungstag aufsteigend, bei gleichem Tag nach Empfänger aufsteigend.
 3. Die Kundin gibt Empfänger, IBAN des Empfängers, Betrag in Euro, Verwendungszweck, Turnus, ersten Ausführungstag und bei Bedarf ein Enddatum ein und wählt „Speichern“.
-4. Das System prüft in dieser Reihenfolge: zuerst Pflicht und Format der Felder nach dem Datenmodell von Dauerauftrag und die IBAN (BR-0003; 400), dann den ersten Ausführungstag und das Enddatum (BR-0077; 422); bei einer Abweichung speichert es den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt die Meldung im Formular. Die Oberfläche wählt die Meldung nach der Ursache der Abweichung (A1 bis A5), nicht allein nach dem Status: ein 400 zeigt je nach Ursache die Meldung aus A1, A2 oder A3, ein 422 die Meldung aus A4 oder A5; die Zuordnung nach ADR-004 (400 zur IBAN, 422 zum Betrag) gilt für Daueraufträge nicht.
+4. System prüft in dieser Reihenfolge: zuerst die Feldregeln nach dem Datenmodell von Dauerauftrag und die IBAN (BR-0003; 400), dann den ersten Ausführungstag und das Enddatum (BR-0077; 422); bei einer Abweichung speichert es den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt die Meldung im Formular. Die Oberfläche wählt die Meldung nach der Ursache der Abweichung (A1 bis A5), nicht allein nach dem Status: ein 400 zeigt je nach Ursache die Meldung aus A1, A2 oder A3, ein 422 die Meldung aus A4 oder A5; die Zuordnung nach ADR-004 (400 zur IBAN, 422 zum Betrag) gilt für Daueraufträge nicht.
 5. Das System speichert den Dauerauftrag mit dem Girokonto der Kundin als Auftraggeberkonto (BR-0007) und zeigt die Daueraufträge mit dem neuen Dauerauftrag und der Meldung „Dauerauftrag gespeichert.“.
 
 ## Alternativabläufe
 
-### A1: Pflicht oder Format verletzt
+### A1: Feldregel verletzt
 
-**Auslöser:** Eine Eingabe verletzt eine Feldregel von Dauerauftrag im Datenmodell: Name des Empfängers oder Neuer Empfängername (Pflicht, höchstens 70 Zeichen), Verwendungszweck oder Neuer Verwendungszweck (Pflicht, höchstens 140 Zeichen), Turnus oder Neuer Turnus (nicht monatlich, vierteljährlich oder jährlich), erster Ausführungstag oder Enddatum (fehlt beziehungsweise kein Datum); ausgenommen IBAN und Betrag (A2, A3). (Schritt 4).  
+**Auslöser:** Eine Eingabe verletzt eine Feldregel von Dauerauftrag im Datenmodell; ausgenommen IBAN und Betrag (A2, A3). (Schritt 4).  
 **Ablauf:**
 
 1. Das System speichert den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt „Die Angaben zum Dauerauftrag sind unvollständig oder ungültig.“; die bisherigen Eingaben bleiben stehen.
@@ -41,9 +41,9 @@
 1. Das System speichert den Dauerauftrag nicht und zeigt „Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.“.
 2. Die Kundin korrigiert die IBAN; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
-### A3: Betrag unter dem Mindestbetrag
+### A3: Betrag verletzt die Feldregel
 
-**Auslöser:** Der Betrag (Feld Betrag in Euro oder Neuer Betrag in Euro) verletzt die Feldregel von Dauerauftrag.betrag im Datenmodell (mindestens 0,10 €). (Schritt 4).  
+**Auslöser:** Der Betrag (Feld Betrag in Euro oder Neuer Betrag in Euro) verletzt die Feldregel von Dauerauftrag.betrag im Datenmodell, auch wenn er fehlt oder keine Zahl ist. (Schritt 4).  
 **Ablauf:**
 
 1. Das System speichert den Dauerauftrag nicht und zeigt „Der Betrag muss mindestens 0,10 € betragen.“ im Formular; gegen den verfügbaren Betrag des Girokontos prüft es nicht.
