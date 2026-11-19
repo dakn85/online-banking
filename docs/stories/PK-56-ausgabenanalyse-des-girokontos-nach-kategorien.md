@@ -36,6 +36,7 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 
 ## Akzeptanztests
 
+- `acceptance/specs/ausgabenanalyse.spec`: Die Ausgabenanalyse öffnet mit dem laufenden Monat
 - `acceptance/specs/ausgabenanalyse.spec`: Die Ausgabenanalyse zeigt die Ausgaben eines Monats je Kategorie mit Summe und Anteil
 - `acceptance/specs/ausgabenanalyse.spec`: Die Kreditkarte hat keine Ausgabenanalyse
 - `acceptance/specs/ausgabenanalyse.spec`: Ein anderer Monat zeigt dessen Ausgaben

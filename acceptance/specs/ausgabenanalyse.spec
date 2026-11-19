@@ -102,3 +102,12 @@ Tags: UC-019, PK-56, BR-0084
 * Die Ausgabenanalyse zeigt die Kategorien
 | Kategorie | Summe | Anteil |
 |-----------|-------|--------|
+
+## Die Ausgabenanalyse öffnet mit dem laufenden Monat
+
+Tags: UC-019, PK-56
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin wählt im Finanzstatus in der Zeile des Kontos "Girokonto" die Ausgabenanalyse
+* Das Feld Monat der Ausgabenanalyse enthält den laufenden Monat
