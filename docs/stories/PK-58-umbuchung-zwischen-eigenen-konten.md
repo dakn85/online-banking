@@ -95,10 +95,13 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 
 - Das Tagesgeldkonto gibt es im System noch nicht (Kontoart nur Girokonto und Kreditkarte). Wie ist es im Ausgangsstand der Testdaten vorhanden?
   **Antwort:** Neue Kontoart Tagesgeldkonto, bei beiden Demo-Kundinnen mit Saldo 0,00 €; das Gesamtvermögen im Ausgangsstand und die bestehenden Tests bleiben unverändert, Lastkunden bekommen keins.
-  _→ eingearbeitet in UC-021, BR-0088, BR-0089, BR-0090, BR-0091, BR-0092, UC-001, Konto, Umsatz, Umbuchung, POST /api/umbuchungen, Schema Konto, Schema Umbuchungsauftrag, Schema Umbuchung, umbuchung, finanzstatus, NFR-001, NFR-002, vision, architektur_
+  _→ eingearbeitet in UC-021, BR-0088, BR-0089, BR-0090, BR-0091, BR-0092, UC-001, Konto, Umsatz, Umbuchung, POST /api/umbuchungen, Schema Konto, Schema Umbuchungsauftrag, Schema Umbuchung, umbuchung, finanzstatus, NFR-001, NFR-002, vision, architektur · c664082_
 - Wie weit darf das Quellkonto bei einer Umbuchung belastet werden?
   **Antwort:** Girokonto bis zum verfügbaren Betrag (Saldo plus Dispositionsrahmen, wie bei der Überweisung), Tagesgeldkonto nur bis zum Saldo, da es keinen Dispositionsrahmen hat.
-  _→ eingearbeitet in UC-021, BR-0088, BR-0089, BR-0090, BR-0091, BR-0092, UC-001, Konto, Umsatz, Umbuchung, POST /api/umbuchungen, Schema Konto, Schema Umbuchungsauftrag, Schema Umbuchung, umbuchung, finanzstatus, NFR-001, NFR-002, vision, architektur_
+  _→ eingearbeitet in UC-021, BR-0088, BR-0089, BR-0090, BR-0091, BR-0092, UC-001, Konto, Umsatz, Umbuchung, POST /api/umbuchungen, Schema Konto, Schema Umbuchungsauftrag, Schema Umbuchung, umbuchung, finanzstatus, NFR-001, NFR-002, vision, architektur · c664082_
 - Gegenpartei und Verwendungszweck sind beim Umsatz Pflicht. Was steht bei den beiden Umsätzen einer Umbuchung dort?
   **Antwort:** Fester Text: Gegenpartei ist der Kontoname des anderen eigenen Kontos, Verwendungszweck ist „Umbuchung“; die Kundin gibt keinen Text ein.
-  _→ eingearbeitet in UC-021, BR-0088, BR-0089, BR-0090, BR-0091, BR-0092, UC-001, Konto, Umsatz, Umbuchung, POST /api/umbuchungen, Schema Konto, Schema Umbuchungsauftrag, Schema Umbuchung, umbuchung, finanzstatus, NFR-001, NFR-002, vision, architektur_
+  _→ eingearbeitet in UC-021, BR-0088, BR-0089, BR-0090, BR-0091, BR-0092, UC-001, Konto, Umsatz, Umbuchung, POST /api/umbuchungen, Schema Konto, Schema Umbuchungsauftrag, Schema Umbuchung, umbuchung, finanzstatus, NFR-001, NFR-002, vision, architektur · c664082_
+- In welcher Reihenfolge prüft der Dienst bei POST /api/umbuchungen, und welchen Text zeigt die Oberfläche bei 400 und 422? Das betrifft vor allem Anfragen, die mehrere Regeln verletzen (z. B. Betrag unter 0,10 € bei gleichem Konto, fremde IBAN mit zu hohem Betrag, Kreditkarte mit zu hohem Betrag).
+  **Antwort:** Reihenfolge: 401, 400 (Format inkl. Betrag unter 0,10 €), 403 (Konto nicht der Kundin), 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze). Der Dienst liefert im Feld fehler jeweils den Fachtext aus UC-021, die Oberfläche zeigt bei 400 und 422 diesen Text im Formular und ordnet nicht nach Status zu. 400 ohne Mindestbetrag-Ursache (Formatfehler von IBAN oder auftragsId) zeigt die allgemeine M
+  _→ noch nicht in der Spezifikation_
