@@ -141,3 +141,11 @@ Tags: UC-020, PK-57, BR-0085
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin ruft "DELETE /api/nachrichten/N-unbekannt" mit einer unbekannten Nachrichten-Kennung auf und erhält Status "404"
+
+## Ohne Anmeldung ist das Postfach nicht erreichbar
+
+Tags: UC-020, PK-57, NFR-001
+
+* Testdaten sind zurückgesetzt
+* Das Postfach ist ohne Anmeldung nicht erreichbar
+* Die Anmeldeseite ist zu sehen

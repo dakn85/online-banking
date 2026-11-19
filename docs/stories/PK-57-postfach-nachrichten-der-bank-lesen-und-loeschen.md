@@ -49,6 +49,7 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - `acceptance/specs/postfach.spec`: Eine Nachricht bleibt, wenn die Kundin die Sicherheitsabfrage verneint
 - `acceptance/specs/postfach.spec`: Eine ungelesene Nachricht gilt nach dem Öffnen als gelesen
 - `acceptance/specs/postfach.spec`: GET /api/nachrichten ohne Anmeldung antwortet mit 401
+- `acceptance/specs/postfach.spec`: Ohne Anmeldung ist das Postfach nicht erreichbar
 - `acceptance/specs/postfach.spec`: Ohne ungelesene Nachricht zeigt die Navigation keine Zahl
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} mit unbekannter Kennung antwortet mit 404
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} ohne Anmeldung antwortet mit 401
@@ -85,7 +86,13 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 
 - Wann gilt eine Nachricht als gelesen: sobald die Kundin sie öffnet, oder erst, wenn sie die Nachricht ausdrücklich als gelesen markiert?
   **Antwort:** Automatisch beim Öffnen: Die Kundin öffnet die Nachricht, der Dienst setzt den Lesestatus auf gelesen, eine eigene Aktion gibt es nicht.
-  _→ eingearbeitet in vision, Nachricht, UC-020, BR-0085, BR-0086, BR-0087, POST /api/test/reset, GET /api/nachrichten, PATCH /api/nachrichten/{nachrichtId}, DELETE /api/nachrichten/{nachrichtId}, Schema Nachricht, Schema Nachrichtenliste, postfach, finanzstatus, empfaengervorlagen, NFR-001, ADR-002, architektur_
+  _→ eingearbeitet in vision, Nachricht, UC-020, BR-0085, BR-0086, BR-0087, POST /api/test/reset, GET /api/nachrichten, PATCH /api/nachrichten/{nachrichtId}, DELETE /api/nachrichten/{nachrichtId}, Schema Nachricht, Schema Nachrichtenliste, postfach, finanzstatus, empfaengervorlagen, NFR-001, ADR-002, architektur · c456f2f_
 - Was zeigt die Navigation, wenn die Kundin keine ungelesene Nachricht hat?
   **Antwort:** Nur der Eintrag „Postfach“ ohne Zahl; die Zahl erscheint erst ab 1 ungelesenen Nachricht.
-  _→ eingearbeitet in vision, Nachricht, UC-020, BR-0085, BR-0086, BR-0087, POST /api/test/reset, GET /api/nachrichten, PATCH /api/nachrichten/{nachrichtId}, DELETE /api/nachrichten/{nachrichtId}, Schema Nachricht, Schema Nachrichtenliste, postfach, finanzstatus, empfaengervorlagen, NFR-001, ADR-002, architektur_
+  _→ eingearbeitet in vision, Nachricht, UC-020, BR-0085, BR-0086, BR-0087, POST /api/test/reset, GET /api/nachrichten, PATCH /api/nachrichten/{nachrichtId}, DELETE /api/nachrichten/{nachrichtId}, Schema Nachricht, Schema Nachrichtenliste, postfach, finanzstatus, empfaengervorlagen, NFR-001, ADR-002, architektur · c456f2f_
+- Der Use Case verlangt den Eintrag „Postfach“ mit der Zahl ungelesener Nachrichten in der Navigation „jeder angemeldeten Seite“. Die Skizzen zeigen ihn nur auf Finanzstatus, Empfängervorlagen und Postfach. Auf welchen Seiten erscheint der Eintrag mit der Zahl? (GET /api/nachrichten, anzahlUngelesen)
+  **Antwort:** Auf jeder angemeldeten Seite, auch Überweisung, Überweisung bestätigen, Umsätze und Tageslimit: Skizzen dieser Seiten ergänzen, UC-020 Schritt 1 bleibt.
+  _→ noch nicht in der Spezifikation_
+- Was zeigt das Postfach, wenn die Kundin keine Nachricht (mehr) hat, etwa nach dem Löschen der letzten, und wie verhalten sich dann „Öffnen“ und „Löschen“?
+  **Antwort:** Die Tabelle zeigt statt Zeilen den Hinweis „Keine Nachrichten.“, die Zahl ungelesener steht auf 0, die Auswahllisten sind leer und „Öffnen“ und „Löschen“ sind nicht auswählbar; ein vorher angezeigter Text wird geleert.
+  _→ noch nicht in der Spezifikation_
