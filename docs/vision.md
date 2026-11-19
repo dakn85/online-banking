@@ -2,7 +2,7 @@
 
 ## Zweck
 
-Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze und überweist von ihrem Girokonto.
+Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze, überweist von ihrem Girokonto und liest die Nachrichten der Bank in ihrem Postfach.
 
 ## Stakeholder
 
@@ -21,6 +21,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-5 | Überweisung vom Girokonto ausführen | Anteil der bestätigten Überweisungen, die genau einmal ausgeführt werden, im neuen Saldo des Finanzstatus und als neuester Umsatz des Girokontos sichtbar sind | 100 % |
 | Z-6 | Umsätze je Konto einsehen | Anteil der Umsätze eines Kontos, die die Umsatzliste mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigt, den neuesten zuerst | 100 % |
 | Z-7 | Empfänger aus Vorlage statt Neueingabe | Anteil der Überweisungen mit gewählter Empfängervorlage, bei denen das System Empfänger und IBAN des Empfängers unverändert aus der Vorlage übernimmt und den Verwendungszweck nur übernimmt, wenn die Vorlage einen hat | 100 % |
+| Z-8 | Nachrichten der Bank im Postfach lesen | Anteil der ungelesenen Nachrichten, bei denen nach dem Öffnen der Lesestatus gelesen ist und die Zahl ungelesener Nachrichten in der Navigation um eins sinkt | 100 % |
 
 ## Abgrenzung
 
@@ -30,6 +31,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 - Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später.
 - Empfängervorlagen: ein Empfänger je Vorlage mit genau einer IBAN, kein Adressbuch mit mehreren Konten je Empfänger, kein Teilen von Vorlagen zwischen Kundinnen, kein Import und Export und keine Vorlagen aus einer Kernbank.
 - Tageslimit: kein Anheben über das Standardlimit, keine Freigabe per TAN oder zweitem Faktor, keine Benachrichtigung und keine Historie der Änderungen, kein befristetes Limit, keine Verwaltung der Standardlimits durch die Bank und kein Limit je Konto oder Empfänger.
+- Postfach: nur Nachrichten der Bank an die Kundin, die sie liest und löscht; kein Erstellen oder Versenden durch die Bank, keine Antworten der Kundin, kein Zurücksetzen auf ungelesen, keine Benachrichtigung per E-Mail oder Push, keine Suche, kein Filter, kein Archiv, keine Anhänge und kein automatisches Löschen.
 
 ## Systemkontext
 
