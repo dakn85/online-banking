@@ -691,6 +691,7 @@ components:
         summe:
           type: number
           description: Summe der Ausgänge der Kategorie in Euro, positive Zahl
+          exclusiveMinimum: 0
         anteil:
           type: number
           description: Anteil an den Gesamtausgaben in Prozent, eine Nachkommastelle
