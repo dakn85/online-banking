@@ -97,3 +97,9 @@ Tags: UC-017, PK-53, BR-0080
 | feld       | wert        |
 |------------|-------------|
 | auftragsId | unbekannt-1 |
+
+## Ohne Anmeldung sind die vorgemerkten Überweisungen nicht erreichbar
+
+Tags: UC-017, PK-53
+
+* Die Seite der vorgemerkten Überweisungen ist ohne Anmeldung nicht erreichbar

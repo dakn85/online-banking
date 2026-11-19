@@ -56,6 +56,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ein vorgemerkter Auftrag wird erst nach der Sicherheitsabfrage gelöscht
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Eine unbekannte Auftrags-Kennung wird beim Löschen mit 404 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Eine vorgemerkte Überweisung steht mit Ausführungstag, Empfänger, Betrag und Verwendungszweck in der Liste
+- `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung sind die vorgemerkten Überweisungen nicht erreichbar
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung wird das Löschen eines vorgemerkten Auftrags mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung wird die Liste der vorgemerkten Aufträge mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne vorgemerkten Auftrag zeigt die Maske einen Hinweis statt der Liste
