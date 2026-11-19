@@ -62,6 +62,14 @@
 
 1. Das System zeigt die Meldung „Die Rückgabefrist von 8 Wochen ist abgelaufen.“ und bucht nichts.
 
+### A6: Nicht angemeldet
+
+**Auslöser:** Beim Bestätigen gibt es keine gültige Sitzung (NFR-001); der Dienst antwortet mit 401. (Schritt 4).  
+**Ablauf:**
+
+1. Das System bucht nichts und leitet auf die Anmeldeseite um.
+2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid
