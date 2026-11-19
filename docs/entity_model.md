@@ -106,7 +106,7 @@ Auswertung der Ausgaben eines Girokontos für einen Monat, gruppiert nach Katego
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
 | monat | Monat der Auswertung im Format JJJJ-MM, Monat 01 bis 12 | String | 7..7 | Pflicht; Länge 7..7; Muster ^[0-9]{4}-(0[1-9]\|1[0-2])$; Beispiel 2026-02 |
-| gesamtausgaben | Summe aller Ausgänge des Girokontos im Monat in Euro als positive Zahl, gleich der Summe der Kategoriesummen | Decimal |  | Pflicht; Beispiel 98.00; Anzeige 98,00 € |
+| gesamtausgaben | Summe aller Ausgänge des Girokontos im Monat in Euro, nicht negativ (0 bei einem Monat ohne Ausgänge), gleich der Summe der Kategoriesummen | Decimal |  | Pflicht; Wertebereich 0..; Beispiel 98.00; Anzeige 98,00 € |
 
 ### Kategorieausgabe
 

@@ -301,7 +301,7 @@ paths:
   /api/konten/{iban}/ausgabenanalyse:
     get:
       summary: Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil
-      description: Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Summen in Euro als positive Zahl, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); die IBAN einer Kreditkarte mit 422 (BR-0084). Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0.
+      description: Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Summen in Euro als positive Zahl, Gesamtausgaben nicht negativ, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); die IBAN einer Kreditkarte mit 422 (BR-0084). Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0.
       operationId: ausgabenanalyseLesen
       tags:
         - Finanzstatus
@@ -671,7 +671,8 @@ components:
           pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
         gesamtausgaben:
           type: number
-          description: Summe aller Ausgänge im Monat in Euro, positive Zahl
+          description: Summe aller Ausgänge im Monat in Euro, nicht negativ (0 ohne Ausgänge)
+          minimum: 0
         kategorien:
           type: array
           items:
