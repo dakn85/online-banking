@@ -16,7 +16,6 @@ Datumsformat in anderen Masken (z. B. Finanzstatus, Überweisung bestätigen): D
 |---|---|---|
 | Umsatz | Geändert | Attribut buchungstag neu |
 | Umsätze | Geändert | Skizze geändert |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Schritt 5 geändert |
 
 ## Akzeptanztests
 
@@ -26,6 +25,5 @@ Datumsformat in anderen Masken (z. B. Finanzstatus, Überweisung bestätigen): D
 
 - [ ] Umsatz: Attribut buchungstag neu
 - [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Schritt 5 geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-47 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-47 grün
