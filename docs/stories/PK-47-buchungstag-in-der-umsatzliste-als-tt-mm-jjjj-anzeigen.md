@@ -21,9 +21,21 @@ Datumsformat in anderen Masken (z. B. Finanzstatus, Überweisung bestätigen): D
 
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsatz: Attribut buchungstag neu
-- [ ] Umsätze: Skizze geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-47 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-47 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-19_
+
+## Bausteine
+- Oberfläche im Browser (`public/seiten/umsaetze.js`): keine Änderung nötig.
+- Online-Banking-Dienst (`src/`): keine Änderung; die API liefert `buchungstag` weiter als ISO-Datum (out of scope).
+
+## Befund
+Die Umsatzliste formatiert den Buchungstag schon seit PK-6 (Commit d3d8216) als TT.MM.JJJJ: `public/seiten/umsaetze.js:4` (`datum()` mit `toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'}, UTC)`), angewendet in Zeile 52. Die Story bringt die Spezifikation (Attribut Umsatz.buchungstag, Skizze in docs/ui/umsaetze.html) auf den Stand der Umsetzung.
+
+## Schritte
+1. UC-003 Schritt 5 / Umsatz.buchungstag: Anzeige TT.MM.JJJJ ist umgesetzt, Formatierung in UTC, damit sich der Tag nicht durch die Zeitzone des Browsers verschiebt. Filter (BR-0010), Sortierung und Saldo danach (BR-0008) bleiben unverändert.
+2. Akzeptanztest „Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ“: Der Step „Die Umsätze zeigen die Zeilen <tabelle>“ ist vorhanden und liest die Spalte „Buchungstag“ über die Kopfzeile.
+3. Weil die Story keinen Produktcode ändert, wird sie in der Stufe Entwicklung auf der Plattform geprüft (start_acceptance_tests).
+
+## Änderung am Rahmen
+Keine.
