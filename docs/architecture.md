@@ -55,8 +55,8 @@ C4Container
     title "Container des Online-Bankings"
     Person(kundin, "Privatkundin", "Browser")
     System_Boundary(banking, "Online-Banking") {
-        Container(oberflaeche, "Oberfläche im Browser", "HTML, CSS, JavaScript ohne Bibliothek", "Anmeldung, Finanzstatus, Überweisung, Prüfungen im Browser, Anzeige")
-        Container(dienst, "Online-Banking-Dienst", "Node 22, TypeScript, Express", "Anmeldung, Sitzung, Konten, Überweisung, Auslieferung der Seiten")
+        Container(oberflaeche, "Oberfläche im Browser", "HTML, CSS, JavaScript ohne Bibliothek", "Anmeldung, Finanzstatus, Überweisung, Umbuchung, Prüfungen im Browser, Anzeige")
+        Container(dienst, "Online-Banking-Dienst", "Node 22, TypeScript, Express", "Anmeldung, Sitzung, Konten, Überweisung, Umbuchung, Auslieferung der Seiten")
     }
     Rel(kundin, oberflaeche, "bedient", "Browser")
     Rel(kundin, dienst, "lädt Seiten", "HTTP")
@@ -65,14 +65,14 @@ C4Container
 
 | Baustein | Verantwortung | Schnittstellen | Ort |
 | --- | --- | --- | --- |
-| Online-Banking-Dienst | Führt Anmeldung, Sitzung, Konten und Überweisung und liefert die Oberfläche aus | REST laut OpenAPI als Server; HTTP für Seiten und Dateien | `src/` |
-| Oberfläche im Browser | Baut die Seiten für Anmeldung, Finanzstatus und Überweisung zusammen, prüft Eingaben vorab und zeigt Ergebnisse an | REST laut OpenAPI als Client | `public/` |
+| Online-Banking-Dienst | Führt Anmeldung, Sitzung, Konten, Überweisung und Umbuchung und liefert die Oberfläche aus | REST laut OpenAPI als Server; HTTP für Seiten und Dateien | `src/` |
+| Oberfläche im Browser | Baut die Seiten für Anmeldung, Finanzstatus, Überweisung und Umbuchung zusammen, prüft Eingaben vorab und zeigt Ergebnisse an | REST laut OpenAPI als Client | `public/` |
 
 Die Oberfläche kennt nur das JSON der API und keine Entität; der Dienst kennt kein Markup der Seiten; keine fachliche Component kennt HTTP.
 
 ### Online-Banking-Dienst
 
-Der Dienst besteht aus vier Components; die fachlichen Teile kennen kein HTTP, die Seitenauslieferung enthält keine Regel.
+Der Dienst besteht aus fünf Components; die fachlichen Teile kennen kein HTTP, die Seitenauslieferung enthält keine Regel.
 
 ```mermaid
 C4Component
@@ -81,24 +81,28 @@ C4Component
     Container_Boundary(dienst, "Online-Banking-Dienst") {
         Component(seiten, "Seitenauslieferung", "HTTP-Routing", "nimmt alle Anfragen an, prüft Pflichtfelder, liefert Seiten und Dateien")
         Component(sitzung, "Anmeldung und Sitzung", "Sitzungsverwaltung", "Anmeldung gegen Demo-Kunden, Sitzungscookie, Zugriffsschutz")
-        Component(konten, "Konten und Finanzstatus", "Kontenbestand im Speicher", "Salden, Gesamtvermögen, verfügbarer Betrag, Belastung")
+        Component(konten, "Konten und Finanzstatus", "Kontenbestand im Speicher", "Salden, Gesamtvermögen, verfügbarer Betrag, Belastung, Gutschrift")
         Component(auftrag, "Überweisungsauftrag", "Auftragsannahme", "IBAN, Betragsgrenze, Auftraggeberkonto, genau einmalige Ausführung")
+        Component(umbuchung, "Umbuchungsauftrag", "Auftragsannahme", "Quell- und Zielkonto, Betragsgrenze des Quellkontos, genau einmalige Ausführung")
     }
     Rel(oberflaeche, seiten, "ruft Seiten und API", "HTTP, REST laut OpenAPI")
     Rel(seiten, sitzung, "meldet an, prüft Sitzung", "intern")
     Rel(seiten, konten, "liest Finanzstatus", "intern")
     Rel(seiten, auftrag, "gibt Auftrag weiter", "intern")
+    Rel(seiten, umbuchung, "gibt Umbuchung weiter", "intern")
     Rel(auftrag, konten, "belastet Girokonto", "intern")
+    Rel(umbuchung, konten, "bucht zwischen Konten um", "intern")
 ```
 
 | Component | Verantwortung | Regeln |
 | --- | --- | --- |
 | Seitenauslieferung | Nimmt jede Anfrage von außen an, prüft die Pflichtfelder eines Auftrags und liefert Seiten und Dateien aus | keine |
 | Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
-| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
+| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen und Gutschriften; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006, BR-0091 |
 | Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007 |
+| Umbuchungsauftrag | Nimmt Umbuchungen an, prüft Quell- und Zielkonto und Betrag, führt sie genau einmal aus und legt den Umsatz auf beiden Konten an | BR-0088, BR-0089, BR-0090, BR-0092 |
 
-Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag kennt Konten und Finanzstatus, aber nicht umgekehrt.
+Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag und der Umbuchungsauftrag kennen Konten und Finanzstatus, aber nicht umgekehrt.
 
 ## 6. Laufzeitsicht
 
@@ -201,7 +205,7 @@ Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eige
 
 | Gruppe | Kennungen | Bestand | Zurückgesetzt von |
 | --- | --- | --- | --- |
-| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen | `POST /api/test/reset` |
+| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen sowie ein Tagesgeldkonto (0,00 Euro, ohne Umsätze); Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen | `POST /api/test/reset` |
 | Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `97531`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
 
 Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen und Tageslimit nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.

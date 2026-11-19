@@ -298,6 +298,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/umbuchungen:
+    post:
+      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Eine wiederholte Anfrage mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
+      operationId: umbuchungAusfuehren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Umbuchungsauftrag'
+      responses:
+        "200":
+          description: Umbuchung mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Umbuchung'
+        "201":
+          description: Umbuchung ausgeführt, Salden beider Konten verändert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Umbuchung'
+        "400":
+          description: Betrag kleiner als 0,10 Euro oder Feld verletzt die Feldregeln
+          x-rules:
+            - Umbuchung.betrag
+            - Umbuchung.quellIban
+            - Umbuchung.zielIban
+            - Umbuchung.auftragsId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "403":
+          description: Quell- oder Zielkonto gehört nicht zur angemeldeten Kundin
+          x-rules:
+            - BR-0088
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Quell- und Zielkonto sind nicht ein Girokonto und ein Tagesgeldkonto oder dasselbe Konto, oder der Betrag übersteigt den verfügbaren Betrag des Quellkontos
+          x-rules:
+            - BR-0088
+            - BR-0089
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+      summary: Umbuchung zwischen eigenen Konten ausführen
+      tags:
+        - Überweisung
+      x-use-cases:
+        - UC-021
 components:
   schemas:
     Anmeldedaten:
@@ -346,6 +408,7 @@ components:
           enum:
             - Girokonto
             - Kreditkarte
+            - Tagesgeldkonto
           type: string
         dispositionsrahmen:
           description: Dispositionsrahmen in Euro; nur beim Girokonto vorhanden
@@ -353,9 +416,13 @@ components:
         iban:
           description: IBAN des Kontos
           type: string
+          minLength: 22
+          maxLength: 22
         kontoname:
           description: Bezeichnung des Kontos
           type: string
+          minLength: 1
+          maxLength: 60
         saldo:
           description: Saldo in Euro; negativ bei einer Kreditkarte mit offenem Betrag
           type: number
@@ -593,3 +660,73 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Umbuchungsauftrag:
+      type: object
+      required:
+        - auftragsId
+        - quellIban
+        - zielIban
+        - betrag
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+          description: Kennung der Umbuchung, von der Seite je Umbuchung vergeben; wiederholte Anfrage mit derselben Kennung bucht nicht erneut
+        quellIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+          description: IBAN des Quellkontos, Girokonto oder Tagesgeldkonto der Kundin
+        zielIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+          description: IBAN des Zielkontos, Girokonto oder Tagesgeldkonto der Kundin
+        betrag:
+          type: number
+          minimum: 0.1
+          description: Betrag in Euro, mindestens 0,10; höchstens der verfügbare Betrag des Quellkontos
+        waehrung:
+          type: string
+          enum:
+            - EUR
+          default: EUR
+    Umbuchung:
+      type: object
+      x-entity: Umbuchung
+      required:
+        - auftragsId
+        - quellIban
+        - zielIban
+        - betrag
+        - waehrung
+        - status
+        - erfasstAm
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        quellIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+        zielIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+        betrag:
+          type: number
+          minimum: 0.1
+        waehrung:
+          type: string
+          enum:
+            - EUR
+        status:
+          type: string
+          enum:
+            - ausgefuehrt
+        erfasstAm:
+          type: string
+          format: date-time

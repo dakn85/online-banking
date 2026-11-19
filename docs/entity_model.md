@@ -8,6 +8,8 @@ erDiagram
     "Überweisung" }o--|| Konto : "geht ab von"
     Umsatz }o--|| Konto : "gehört zu"
     Empfaengervorlage }o--|| Kunde : "gehört zu"
+    Umbuchung }o--|| Konto : "bucht ab von"
+    Umbuchung }o--|| Konto : "bucht zu auf"
 ```
 
 ## Entitäten
@@ -32,17 +34,19 @@ Die angemeldete Privatkundin, deren Konten der Finanzstatus zeigt.
 
 **Bereich:** Finanzstatus  
 
-Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditkarte mit offenem Betrag führt einen negativen Saldo.
+Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditkarte mit offenem Betrag führt einen negativen Saldo. Das Tagesgeldkonto hat keinen Dispositionsrahmen; die Demo-Kundinnen haben im Ausgangsstand eines mit Saldo 0,00 Euro, die Lastkunden keines.
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
 | kontoname | Bezeichnung des Kontos in der Tabelle | String | 1..60 | Pflicht; Länge 1..60; Beispiel Girokonto |
 | iban | IBAN des Kontos | String | 22..22 | Pflicht; Eindeutig; Länge 22..22; Beispiel DE02 5001 0517 5407 3249 31 |
-| art | Art des Kontos | String |  | Pflicht; Werte Girokonto, Kreditkarte; Beispiel Girokonto |
+| art | Art des Kontos | String |  | Pflicht; Werte Girokonto, Kreditkarte, Tagesgeldkonto; Beispiel Girokonto |
 | saldo | Aktueller Saldo in Euro; bei einer Kreditkarte mit offenem Betrag negativ | Decimal |  | Pflicht; Beispiel 2145.30; negativ bei Kreditkarte mit offenem Betrag |
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
 | dispositionsrahmen | Eingeräumter Dispositionsrahmen in Euro; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 1000.00; nur bei Art Girokonto |
 | verfuegbarerBetrag | Verfügbarer Betrag in Euro: Saldo plus Dispositionsrahmen; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 3145.30; nur bei Art Girokonto |
+
+**Einschränkungen:** Ein Tagesgeldkonto trägt keinen Dispositionsrahmen und keinen verfügbaren Betrag; es wird nie unter 0 Euro geführt (BR-0089).
 
 ### Überweisung
 
@@ -65,7 +69,7 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 
 **Bereich:** Finanzstatus  
 
-Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist.
+Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); das Tagesgeldkonto hat im Ausgangsstand keine. Weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist, und aus einer ausgeführten Umbuchung (BR-0090), die auf beiden Konten je einen Umsatz mit der Gegenpartei Kontoname des anderen Kontos und dem Verwendungszweck Umbuchung erzeugt.
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
@@ -93,3 +97,21 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | verwendungszweck | Verwendungszweck der Vorlage; optional; leer oder nur Leerzeichen ergibt keinen Wert, dann fehlt das Feld | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711; leer oder nur Leerzeichen = kein Wert, das Feld fehlt in Antwort und Liste |
 
 **Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
+
+### Umbuchung
+
+**Bereich:** Überweisung  
+
+Eine sofortige Umbuchung zwischen dem Girokonto und dem Tagesgeldkonto der Kundin, wie sie die Umbuchung erfasst und genau einmal ausführt.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| auftragsId | Kennung der Umbuchung, von der Seite je Umbuchung vergeben; Träger der Einmalbuchung | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-2026-00007 |
+| quellIban | IBAN des Quellkontos, das belastet wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02500105175407324931 |
+| zielIban | IBAN des Zielkontos, dem der Betrag gutgeschrieben wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE97500105175407324947 |
+| betrag | Umbuchungsbetrag in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 500.00 |
+| waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
+| status | Stand der Umbuchung | String |  | Pflicht; Werte ausgefuehrt; Beispiel ausgefuehrt |
+| erfasstAm | Zeitpunkt der Ausführung | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+
+**Einschränkungen:** Quell- und Zielkonto gehören derselben Kundin und sind ein Girokonto und ein Tagesgeldkonto (BR-0088).
