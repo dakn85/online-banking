@@ -22,7 +22,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 | Architektur | Geändert | Bausteinsicht geändert, Laufzeitsicht geändert |
 | Überweisung | Geändert | Skizze geändert |
 | UC-002 Überweisung vom Girokonto | Geändert | Schritt 7 geändert, A9 neu: Tageslimit überschritten, Sequenzdiagramm neu |
-| UC-015 Tageslimit für Überweisungen festlegen | Geändert | BR-0070 geändert |
+| UC-015 Tageslimit für Überweisungen festlegen | Geändert | Notizen geändert, BR-0070 geändert |
 | BR-0070 Tageslimit der Kundin | Geändert | Text geändert |
 
 ## Akzeptanztests
@@ -44,6 +44,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] UC-002: Schritt 7 geändert
 - [ ] UC-002: A9 neu: Tageslimit überschritten
 - [ ] UC-002: Sequenzdiagramm neu
+- [ ] UC-015: Notizen geändert
 - [ ] UC-015: BR-0070 geändert
 - [ ] BR-0070: Text geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-60 implementieren
