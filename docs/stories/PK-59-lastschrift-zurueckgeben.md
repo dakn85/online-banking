@@ -27,7 +27,8 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 | Architektur | Geändert | Bausteinsicht geändert, Querschnittliche Konzepte geändert |
 | Zugriffsschutz des Finanzstatus | Geändert | Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Use Case UC-022 neu, Feld Rückgabe neu, Aktion Zurückgeben neu, und 3 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Notizen geändert, Schritt 5 geändert |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Notizen geändert, Schritt 5 geändert, BR-0011 geändert |
+| BR-0011 Umsätze und Rückgaben nur für Konten der Kundin | Geändert | Titel geändert, Text geändert |
 | UC-022 Lastschrift zurückgeben | Neu | Use Case neu |
 | BR-0093 Rückgabefrist von 8 Wochen | Neu | Neu in UC-022 |
 | BR-0094 Nur SEPA-Lastschriften des Girokontos und nur einmal zurückgebbar | Neu | Neu in UC-022 |
@@ -71,6 +72,9 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 - [ ] Umsätze: Skizze geändert
 - [ ] UC-003: Notizen geändert
 - [ ] UC-003: Schritt 5 geändert
+- [ ] UC-003: BR-0011 geändert
+- [ ] BR-0011: Titel geändert
+- [ ] BR-0011: Text geändert
 - [ ] UC-022: Use Case neu
 - [ ] BR-0093: Neu in UC-022
 - [ ] BR-0094: Neu in UC-022

@@ -101,9 +101,9 @@ Ein Eingang hat einen positiven Betrag, ein Ausgang einen negativen Betrag; der 
 
 Der Zeitraumfilter zeigt die Umsätze, deren Buchungstag zwischen dem gewählten Von- und Bis-Datum liegt, beide Grenzen eingeschlossen; fehlt eine Grenze, gilt sie als offen. Liegt das Von-Datum nach dem Bis-Datum, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keinen Hinweis nach A2. Die Textsuche zeigt die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung. Ohne Eingabe schränkt ein Filter nicht ein.
 
-### BR-0011: Umsätze nur für Konten der Kundin
+### BR-0011: Umsätze und Rückgaben nur für Konten der Kundin
 
-Umsätze liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“.
+Umsätze liefert der Dienst und eine Rückgabe (UC-022) bucht er nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“.
 
 ## Notizen
 
