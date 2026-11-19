@@ -31,6 +31,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - `acceptance/specs/ueberweisung.spec`: Ein Tageslimit von 0,00 € lehnt jede Überweisung ab
 - `acceptance/specs/ueberweisung.spec`: Eine abgelehnte Überweisung zählt nicht zu den Ausgängen des Tages
 - `acceptance/specs/ueberweisung.spec`: Eine Überweisung über dem Tageslimit wird abgelehnt und der Saldo bleibt unverändert
+- `acceptance/specs/ueberweisung.spec`: Eine wiederholte Bestätigung wird bei ausgeschöpftem Tageslimit nicht erneut geprüft
 - `acceptance/specs/ueberweisung.spec`: Heutige Ausgänge zählen zum Tageslimit
 
 ## Aufgaben für die Umsetzung
