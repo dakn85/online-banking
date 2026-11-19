@@ -107,7 +107,7 @@
 2. Bestätigt die Kundin, ruft die Oberfläche bei einem Ausführungstag POST /api/terminueberweisungen statt POST /api/ueberweisungen auf; der Dienst prüft dieselben Angaben und das Auftraggeberkonto (BR-0007) erneut und legt den Auftrag mit Status vorgemerkt und dem Ausführungstag an. Er bucht nichts: der Saldo des Girokontos bleibt unverändert und es entsteht kein Umsatz; BR-0006 und BR-0012 gelten erst bei der Ausführung.
 3. Das Tageslimit (BR-0070) prüft das System beim Vormerken nicht; es gilt erst bei der Ausführung.
 4. Bestätigt die Kundin denselben Auftrag mehrfach, legt das System ihn nur einmal an; weitere Bestätigungen mit derselben Auftrags-Kennung ändern nichts (BR-0005).
-5. Lehnt der Dienst das Auftraggeberkonto ab (403) oder antwortet mit einem anderen Fehler außerhalb von 400, 401 und 422, gilt A6 sinngemäß.
+5. Lehnt der Dienst das Auftraggeberkonto ab (403) oder antwortet mit einem anderen Fehler außerhalb von 400, 401 und 422, führt das System A6 aus, zeigt aber statt der dortigen Meldung „Die Terminüberweisung konnte nicht vorgemerkt werden.“; bei 401 gilt A6 unverändert.
 6. Das System zeigt den Finanzstatus mit unverändertem Saldo und der Meldung „Überweisung vorgemerkt.“; den Auftrag sieht die Kundin unter „Vorgemerkte Überweisungen“ (Use Case Vorgemerkte Überweisungen verwalten).
 
 ### A10: Ausführungstag nicht zulässig
