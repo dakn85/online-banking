@@ -168,3 +168,32 @@ Tags: UC-021, PK-58
 * Die Kundin wählt „Umbuchen“ "1" Mal
 * Die Umbuchung zeigt die Meldung "Die Umbuchung konnte nicht ausgeführt werden."
 * Der Knopf „Umbuchen“ ist freigegeben
+
+## Nach einer abgelehnten Umbuchung bucht die korrigierte Umbuchung genau einmal um
+
+Tags: UC-021, PK-58, BR-0092
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umbuchung
+* Die Kundin erfasst Quellkonto "Tagesgeldkonto", Zielkonto "Girokonto" und Betrag "10,00 €"
+* Die Kundin wählt „Umbuchen“ "1" Mal
+* Die Umbuchung zeigt die Meldung "Der Betrag übersteigt den verfügbaren Betrag des Quellkontos."
+* Die Kundin erfasst Quellkonto "Girokonto", Zielkonto "Tagesgeldkonto" und Betrag "500,00 €"
+* Die Kundin wählt „Umbuchen“ "1" Mal
+* Der Finanzstatus zeigt die Meldung "Umbuchung ausgeführt."
+* Die Zeile "Girokonto" zeigt "Saldo" "1.645,30 €"
+* Die Zeile "Tagesgeldkonto" zeigt "Saldo" "500,00 €"
+
+## Eine wiederholte Anfrage mit derselben Auftrags-Kennung ändert die Salden nicht erneut
+
+Tags: UC-021, PK-58, BR-0092, BR-0090
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Schnittstelle bucht von der IBAN "DE02500105175407324931" auf das Tagesgeldkonto über "500,00 €" mit derselben Auftrags-Kennung zweimal um und erhält die Status "201" und "200"
+* Die Kundin öffnet die Umsätze des Kontos "Tagesgeldkonto"
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Verwendungszweck | Betrag   | Saldo danach |
+|-------------|------------------|----------|--------------|
+| Girokonto   | Umbuchung        | 500,00 € | 500,00 €     |

@@ -52,6 +52,8 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 - `acceptance/specs/umbuchung.spec`: Eine Umbuchung erzeugt einen Umsatz auf beiden Konten
 - `acceptance/specs/umbuchung.spec`: Eine Umbuchung vom Girokonto aufs Tagesgeldkonto bucht sofort um
 - `acceptance/specs/umbuchung.spec`: Eine Umbuchung vom Tagesgeldkonto zurück aufs Girokonto bucht sofort um
+- `acceptance/specs/umbuchung.spec`: Eine wiederholte Anfrage mit derselben Auftrags-Kennung ändert die Salden nicht erneut
+- `acceptance/specs/umbuchung.spec`: Nach einer abgelehnten Umbuchung bucht die korrigierte Umbuchung genau einmal um
 - `acceptance/specs/umbuchung.spec`: Ohne Anmeldung ist die Umbuchung nicht erreichbar
 - `acceptance/specs/umbuchung.spec`: Umbuchen öffnet die Umbuchung aus dem Finanzstatus
 
