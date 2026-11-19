@@ -95,7 +95,7 @@ C4Component
 | --- | --- | --- |
 | Seitenauslieferung | Nimmt jede Anfrage von außen an, prüft die Pflichtfelder eines Auftrags und liefert Seiten und Dateien aus | keine |
 | Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
-| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen und Gutschriften, auch die Gutschrift einer zurückgegebenen SEPA-Lastschrift; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
+| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen und Gutschriften, auch die Gutschrift einer zurückgegebenen SEPA-Lastschrift; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006, BR-0093, BR-0094, BR-0095 |
 | Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007 |
 
 Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag kennt Konten und Finanzstatus, aber nicht umgekehrt.
