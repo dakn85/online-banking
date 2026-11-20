@@ -21,6 +21,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 |---|---|---|
 | Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert, Folgen geändert |
 | Genau einmalige Ausführung über die von der Oberfläche vergebene Auftrags-Kennung | Geändert | Entscheidung geändert |
+| Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
 | Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Vorgemerkte Aufträge der angemeldeten Kundin | Neu | Endpunkt neu |
@@ -78,6 +79,8 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Folgen geändert
 - [ ] Genau einmalige Ausführung über die von der Oberfläche vergebene Auftrags-Kennung: Entscheidung geändert
+- [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
+- [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Vorgemerkte Aufträge der angemeldeten Kundin: Endpunkt neu
