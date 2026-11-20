@@ -34,7 +34,8 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 | Finanzstatus | Geändert | Skizze geändert |
 | Überweisung bestätigen | Geändert | Feld Ausführungstag neu, Aktion Bestätigen neu, Skizze geändert |
 | Vorgemerkte Überweisungen | Neu | Maske neu |
-| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, A9 neu: Terminüberweisung vormerken, A10 neu: Ausführungstag nicht zulässig, und 2 weitere |
+| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, A9 neu: Terminüberweisung vormerken, A10 neu: Ausführungstag nicht zulässig, und 4 weitere |
+| BR-0005 Genau einmalige Ausführung | Geändert | Text geändert |
 | BR-0079 Ausführungstag der Terminüberweisung | Neu | Neu in UC-002 |
 | UC-017 Vorgemerkte Überweisungen verwalten | Neu | Use Case neu |
 | BR-0080 Vorgemerkte Aufträge der angemeldeten Kundin | Neu | Neu in UC-017 |
@@ -54,6 +55,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - `acceptance/specs/terminueberweisung.spec`: Ein fremdes Auftraggeberkonto wird beim Vormerken mit 403 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Ein Terminüberweisungsauftrag mit ungültiger IBAN wird mit 400 abgelehnt
 - `acceptance/specs/terminueberweisung.spec`: Ein ungültiges Datum als Ausführungstag wird beim Vormerken mit 400 abgelehnt
+- `acceptance/specs/terminueberweisung.spec`: Eine gelöschte Auftrags-Kennung kann beim Vormerken nicht erneut verwendet werden
 - `acceptance/specs/terminueberweisung.spec`: Eine Terminüberweisung wird vorgemerkt und nichts gebucht
 - `acceptance/specs/terminueberweisung.spec`: Eine wiederholte Auftrags-Kennung beim Vormerken legt keinen zweiten Auftrag an
 - `acceptance/specs/terminueberweisung.spec`: Nach dem Vormerken entsteht kein Umsatz
@@ -105,8 +107,11 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - [ ] UC-002: Notizen geändert
 - [ ] UC-002: A9 neu: Terminüberweisung vormerken
 - [ ] UC-002: A10 neu: Ausführungstag nicht zulässig
+- [ ] UC-002: A11 neu: Auftrags-Kennung bereits verwendet
 - [ ] UC-002: Erfolg 4 neu
+- [ ] UC-002: BR-0005 geändert
 - [ ] UC-002: BR-0079 neu: Ausführungstag der Terminüberweisung
+- [ ] BR-0005: Text geändert
 - [ ] BR-0079: Neu in UC-002
 - [ ] UC-017: Use Case neu
 - [ ] BR-0080: Neu in UC-017
@@ -114,6 +119,10 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - [ ] Vision: Abgrenzung geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-53 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-53 grün
+
+## Offene Fragen
+
+- [ ] Soll auch die Wiederholung der Kennung einer bereits ausgeführten sofortigen Überweisung über POST /api/ueberweisungen mit 422 statt wie bisher ohne erneute Buchung abgelehnt werden?
 
 ## Entscheidungen
 

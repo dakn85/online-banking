@@ -181,3 +181,26 @@ Tags: UC-002, PK-53
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“
+
+## Eine gelöschte Auftrags-Kennung kann beim Vormerken nicht erneut verwendet werden
+
+Tags: UC-002, PK-53, BR-0005
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "201"
+| feld            | wert         |
+|-----------------|--------------|
+| auftragsId      | verbraucht-1 |
+| ausfuehrungstag | in 5 Tagen   |
+* Die angemeldete Kundin ruft "DELETE /api/terminueberweisungen/{auftragsId}" mit den Angaben auf und erhält den Status "204"
+| feld       | wert         |
+|------------|--------------|
+| auftragsId | verbraucht-1 |
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "422"
+| feld            | wert         |
+|-----------------|--------------|
+| auftragsId      | verbraucht-1 |
+| ausfuehrungstag | in 5 Tagen   |
+* Die Kundin öffnet in der Überweisung die vorgemerkten Überweisungen
+* Die vorgemerkten Überweisungen zeigen "0" Aufträge
