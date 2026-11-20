@@ -14,6 +14,8 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
+| Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
+| Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
 | Persönliche Daten der angemeldeten Kundin | Neu | Endpunkt neu |
 | Persönliche Daten mit TAN ändern | Neu | Endpunkt neu |
 | Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb) | Neu | Endpunkt neu |
@@ -49,6 +51,10 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
+- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Intern neu
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Intern neu
 - [ ] Persönliche Daten der angemeldeten Kundin: Endpunkt neu
 - [ ] Persönliche Daten mit TAN ändern: Endpunkt neu
 - [ ] Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb): Endpunkt neu
