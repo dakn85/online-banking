@@ -1,30 +1,40 @@
-/* Aventa Bank – Online-Banking. Ein Erscheinungsbild für Anmeldung und Rahmen. */
+/* Aventa Bank – Online-Banking. Gestaltungsleitbild: .claude/skills/oberflaeche/SKILL.md
+   Aufbau: Grundlagen → Rahmen → Bausteine (Knopf, Feld, Liste, Blatt, Rückfrage, Meldung) → Seiten. */
 @font-face { font-family: Inter; font-weight: 400; font-display: swap; src: url(/assets/fonts/inter-latin-400-normal.woff2) format('woff2'); }
 @font-face { font-family: Inter; font-weight: 500; font-display: swap; src: url(/assets/fonts/inter-latin-500-normal.woff2) format('woff2'); }
 @font-face { font-family: Inter; font-weight: 600; font-display: swap; src: url(/assets/fonts/inter-latin-600-normal.woff2) format('woff2'); }
 
 :root {
-  --tanne: #0e3b36;
-  --tanne-hell: #17524b;
-  --tanne-tief: #0a2b27;
-  --messing: #c29a4b;
-  --messing-hell: #e6cf9d;
-  --grund: #eef2f1;
+  /* Marke: Tanne trägt, Messing setzt Akzente; alles andere ist ruhiges Grau-Grün. */
+  --tanne: #0f3d36;
+  --tanne-2: #1b5a50;
+  --tanne-tief: #0a2b26;
+  --tanne-hell: #e6f0ec;
+  --messing: #b8893a;
+  --messing-hell: #f4ead6;
+  --grund: #f3f5f4;
   --flaeche: #ffffff;
-  --tinte: #13201e;
-  --tinte-2: #44554f;
-  --linie: #dfe6e4;
-  --plus: #1c7a4c;
-  --minus: #b42318;
-  --fokus: 0 0 0 3px rgba(194, 154, 75, .55);
-  --rund-s: 8px;
-  --rund-m: 14px;
   --flaeche-2: #f7f9f8;
-  --leiste: 248px;
+  --tinte: #14211e;
+  --tinte-2: #4f5f5a;
+  --tinte-3: #7b8985;
+  --linie: #e3e9e6;
+  --linie-2: #cfd9d5;
+  --plus: #13784a;
+  --plus-hell: #e3f3ea;
+  --minus: #b3261e;
+  --minus-hell: #fcebea;
+  --fokus: 0 0 0 3px rgba(184, 137, 58, .45);
+  --r-l: 20px;
+  --r-m: 14px;
+  --r-s: 10px;
+  --leiste: 260px;
+  --tabhoehe: 64px;
+  --schatten-hoch: 0 24px 60px -20px rgba(10, 43, 38, .35), 0 2px 6px rgba(10, 43, 38, .08);
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; }
+html, body { margin: 0; min-height: 100%; }
 body {
   font: 400 15px/1.5 Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: var(--tinte);
@@ -32,347 +42,488 @@ body {
   font-feature-settings: 'tnum' 1, 'cv11' 1;
   -webkit-font-smoothing: antialiased;
 }
-h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.01em; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-weight: 600; letter-spacing: -.015em; }
 button, input, select, textarea { font: inherit; color: inherit; }
-a { color: var(--tanne); }
-:focus-visible { outline: none; box-shadow: var(--fokus); }
+a { color: var(--tanne); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: none; box-shadow: var(--fokus); border-radius: 6px; }
+.unsichtbar { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.iban { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.zahl { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.plus { color: var(--plus); }
+.minus { color: var(--minus); }
+.leise { color: var(--tinte-2); }
+svg.symbol { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 
-/* Knöpfe und Felder */
+/* ------------------------------------------------------------------ Knöpfe */
 .knopf {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 44px; padding: 0 20px; border-radius: var(--rund-s); border: 1px solid transparent;
-  font-weight: 600; cursor: pointer; text-decoration: none; transition: background .15s;
+  min-height: 44px; padding: 0 20px; border-radius: 999px;
+  border: 1px solid var(--linie-2); background: var(--flaeche); color: var(--tinte);
+  font-weight: 500; cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background-color .15s, border-color .15s;
 }
-.knopf--haupt { background: var(--tanne); color: #fff; }
-.knopf--haupt:hover { background: var(--tanne-hell); }
-.knopf--still { background: transparent; border-color: var(--linie); color: var(--tinte); }
-.knopf--still:hover { background: var(--grund); }
-.knopf[disabled] { opacity: .6; cursor: default; }
+.knopf:hover { background: var(--flaeche-2); border-color: var(--tinte-3); text-decoration: none; }
+.knopf--haupt { background: var(--tanne); border-color: var(--tanne); color: #fff; }
+.knopf--haupt:hover { background: var(--tanne-2); border-color: var(--tanne-2); }
+.knopf--gefahr { background: var(--minus); border-color: var(--minus); color: #fff; }
+.knopf--gefahr:hover { background: #95201a; border-color: #95201a; }
+.knopf--still { border-color: transparent; background: transparent; color: var(--tanne); }
+.knopf--still:hover { background: var(--tanne-hell); border-color: transparent; }
+.knopf--klein { min-height: 36px; padding: 0 14px; font-size: 14px; }
+.knopf:disabled { opacity: .45; cursor: not-allowed; }
+.knopf .symbol { width: 18px; height: 18px; }
+/* Symbolknopf an einer Listenzeile: Name per aria-label, Erklärung beim Überfahren per title. */
+.symbolknopf {
+  width: 38px; height: 38px; display: inline-grid; place-items: center; flex: none;
+  border: 0; border-radius: 999px; background: transparent; color: var(--tinte-2); cursor: pointer;
+}
+.symbolknopf:hover { background: var(--flaeche-2); color: var(--tinte); }
+.symbolknopf--gefahr:hover { background: var(--minus-hell); color: var(--minus); }
+.symbolknopf .symbol { width: 18px; height: 18px; }
 
+/* ------------------------------------------------------------------ Felder */
 .feld { display: grid; gap: 6px; align-content: start; min-width: 0; }
-.feld label { font-weight: 500; font-size: 14px; }
+.feld > label, .feld > span, .feld__kopf { font-size: 14px; font-weight: 500; color: var(--tinte); }
+.feld__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.feld__kopf a { font-weight: 500; font-size: 13px; }
 .feld input, .feld select, .feld textarea {
-  height: 46px; padding: 0 14px; border: 1px solid #b9c6c2; border-radius: var(--rund-s); background: #fff;
+  width: 100%; min-height: 48px; padding: 11px 14px;
+  border: 1px solid var(--linie-2); border-radius: var(--r-s); background: var(--flaeche);
+  transition: border-color .15s, box-shadow .15s;
 }
-.feld input, .feld select { width: 100%; min-width: 0; }
-.feld textarea { height: auto; min-height: 76px; padding: 10px 14px; resize: vertical; }
-.feld input:focus, .feld select:focus, .feld textarea:focus { outline: none; border-color: var(--messing); box-shadow: var(--fokus); }
-.feld .hinweis { margin: 0; font-size: 13px; color: var(--tinte-2); }
-.feld--fehler input { border-color: var(--minus); }
+.feld textarea { resize: vertical; min-height: 76px; }
+.feld select { appearance: none; padding-right: 40px; background: var(--flaeche) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234f5f5a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 16px center; }
+.feld input:hover, .feld select:hover, .feld textarea:hover { border-color: var(--tinte-3); }
+.feld input:focus, .feld select:focus, .feld textarea:focus { outline: none; border-color: var(--tanne); box-shadow: 0 0 0 3px var(--tanne-hell); }
+.feld input[readonly] { background: var(--flaeche-2); color: var(--tinte-2); }
+.feld input:disabled, .feld select:disabled { background: var(--flaeche-2); color: var(--tinte-3); }
+.feld--fehler input, .feld--fehler select, .feld input[aria-invalid="true"], .feld select[aria-invalid="true"] { border-color: var(--minus); box-shadow: 0 0 0 3px var(--minus-hell); }
+.hinweis { font-size: 13px; color: var(--tinte-3); }
+/* Betrag: große Ziffern mit Euro-Zeichen im Feld */
+.feld--betrag { position: relative; }
+.feld--betrag input { font-size: 22px; font-weight: 500; min-height: 60px; padding-right: 44px; letter-spacing: -.01em; }
+.feld--betrag::after { content: '€'; position: absolute; right: 16px; top: 39px; font-size: 20px; color: var(--tinte-3); pointer-events: none; }
+.raster-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+.raster-2 > .breit { grid-column: 1 / -1; }
 
-.meldung { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--rund-s); font-size: 14px; }
-.meldung--fehler { background: #fdecea; color: #7a1a12; }
-.meldung--erfolg { background: #e7f4ec; color: #14532f; }
+/* Segmentschalter (Radiogruppe): das Eingabefeld liegt unsichtbar über dem Segment. */
+.segmente { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--flaeche-2); border: 1px solid var(--linie); }
+.segmente label { position: relative; display: inline-flex; align-items: center; min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--tinte-2); cursor: pointer; }
+.segmente input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.segmente label:has(input:checked) { background: var(--flaeche); color: var(--tinte); box-shadow: 0 1px 3px rgba(10, 43, 38, .14); }
+.segmente label:has(input:focus-visible) { box-shadow: var(--fokus); }
+
+/* ------------------------------------------------------------------ Meldungen */
+.meldung {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 16px; border-radius: var(--r-m); font-size: 14px; line-height: 1.45;
+  background: var(--flaeche); border: 1px solid var(--linie); color: var(--tinte);
+}
 .meldung[hidden] { display: none; }
-
-/* ---------- Anmeldung ---------- */
-.anmeldung { display: grid; grid-template-columns: minmax(380px, 46%) 1fr; min-height: 100vh; }
-.anmeldung__marke {
-  position: relative; overflow: hidden; background: var(--tanne); color: #fff;
-  display: flex; flex-direction: column; justify-content: space-between; padding: 44px 56px;
+.meldung::before { content: ''; width: 18px; height: 18px; flex: none; margin-top: 1px; border-radius: 50%; background: var(--tinte-3) no-repeat center / 10px; }
+.meldung--erfolg { background: var(--plus-hell); border-color: #c4e5d2; color: #0d5534; }
+.meldung--erfolg::before { background-color: var(--plus); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.meldung--fehler, .meldung[role="alert"] { background: var(--minus-hell); border-color: #f2c9c6; color: #7f1d17; }
+.meldung--fehler::before, .meldung[role="alert"]::before { background-color: var(--minus); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 2.3v3.4M5 7.6v.1' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); }
+.leer {
+  display: grid; justify-items: center; gap: 6px; text-align: center;
+  padding: 40px 24px; color: var(--tinte-2); font-size: 15px;
 }
-.anmeldung__marke svg.guilloche { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.anmeldung__marke > * { position: relative; }
-.anmeldung__claim { max-width: 520px; }
-.anmeldung__claim h2 { font-size: 40px; line-height: 1.12; font-weight: 600; letter-spacing: -.02em; }
-.anmeldung__claim p { margin: 16px 0 0; color: #cfe0dc; font-size: 17px; max-width: 36ch; }
-.anmeldung__fuss { color: #a9c4be; font-size: 13px; }
+.leer .symbol { width: 28px; height: 28px; color: var(--tinte-3); margin-bottom: 4px; }
+.leer strong { color: var(--tinte); font-weight: 600; }
 
-.anmeldung__form { display: grid; place-items: center; padding: 40px 24px; background: var(--flaeche); }
-.anmeldung__karte { width: min(400px, 100%); display: grid; gap: 22px; }
-.anmeldung__karte h1 { font-size: 28px; }
-.anmeldung__karte .unterzeile { margin: 6px 0 0; color: var(--tinte-2); }
-.anmeldung__karte form { display: grid; gap: 18px; }
-.anmeldung__karte .knopf { width: 100%; height: 48px; }
-.demo-zugang { border: 1px dashed #c9d4d1; border-radius: var(--rund-s); padding: 12px 14px; font-size: 14px; color: var(--tinte-2); }
-.demo-zugang b { color: var(--tinte); font-weight: 600; }
-.sicherheit { font-size: 13px; color: var(--tinte-2); display: flex; gap: 8px; }
-.sicherheit svg { flex: none; margin-top: 2px; }
-
-/* ---------- Marke ---------- */
-.marke { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
-.marke__zeichen { width: 36px; height: 36px; flex: none; }
-.marke__name { font-weight: 600; font-size: 17px; letter-spacing: .01em; line-height: 1.1; }
-.marke__name small { display: block; font-weight: 400; font-size: 12px; color: #a9c4be; letter-spacing: 0; }
-
-/* ---------- Rahmen nach der Anmeldung ----------
-   Leiste links über die ganze Höhe, darin alle Funktionen in drei Gruppen. Auf dem Telefon eine Kopfzeile mit Menü. */
-.rahmen { min-height: 100vh; padding-left: var(--leiste); }
+/* ------------------------------------------------------------------ Rahmen */
+.rahmen { min-height: 100vh; display: grid; grid-template-columns: var(--leiste) minmax(0, 1fr); }
 .leiste {
-  position: fixed; inset: 0 auto 0 0; width: var(--leiste); z-index: 10;
-  background: var(--tanne); color: #e5efec; display: flex; flex-direction: column; padding: 24px 14px 18px;
+  position: sticky; top: 0; height: 100vh; z-index: 20;
+  display: flex; flex-direction: column; gap: 8px; padding: 22px 14px 18px;
+  background: var(--flaeche); border-right: 1px solid var(--linie);
 }
-.leiste__kopf { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 26px; }
-.leiste__menue { display: none; background: none; border: 0; color: #fff; padding: 8px; margin: -8px; border-radius: var(--rund-s); cursor: pointer; }
-.navigation { display: grid; gap: 18px; overflow-y: auto; }
+.leiste__kopf { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 14px; }
+.marke { display: inline-flex; align-items: center; gap: 12px; color: var(--tinte); text-decoration: none; }
+.marke:hover { text-decoration: none; }
+.marke__name { display: grid; font-weight: 600; font-size: 17px; letter-spacing: -.01em; line-height: 1.15; }
+.marke__name small { font-weight: 500; font-size: 12px; color: var(--tinte-3); letter-spacing: 0; }
+.leiste__menue { display: none; }
+.navigation { display: grid; gap: 18px; align-content: start; flex: 1; overflow-y: auto; }
 .navigation__gruppe { display: grid; gap: 2px; }
-.navigation__titel { margin: 0 0 4px; padding: 0 12px; font-size: 12px; font-weight: 500; color: #8fb1aa; }
+.navigation__titel { padding: 0 12px 6px; font-size: 12px; font-weight: 500; color: var(--tinte-3); }
 .navigation a {
-  display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: var(--rund-s);
-  color: #d6e5e1; text-decoration: none; font-weight: 500; position: relative;
+  display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 0 12px; border-radius: 12px;
+  color: var(--tinte-2); font-weight: 500; text-decoration: none;
 }
-.navigation a svg { width: 20px; height: 20px; flex: none; opacity: .8; }
-.navigation a:hover { background: var(--tanne-hell); color: #fff; }
-.navigation a[aria-current='page'] { background: rgba(255,255,255,.08); color: #fff; }
-.navigation a[aria-current='page'] svg { color: var(--messing); opacity: 1; }
-.navigation a[aria-current='page']::before {
-  content: ''; position: absolute; left: -14px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--messing);
+.navigation a svg { width: 20px; height: 20px; flex: none; }
+.navigation a:hover { background: var(--flaeche-2); color: var(--tinte); }
+.navigation a[aria-current="page"] { background: var(--tanne-hell); color: var(--tanne); }
+.navigation__zahl {
+  margin-left: auto; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px;
+  display: inline-grid; place-items: center; font-size: 12px; font-weight: 600;
+  background: var(--messing); color: #fff;
 }
-.navigation__zahl { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 11px; background: var(--messing); color: var(--tanne-tief); font-size: 12px; font-weight: 600; text-align: center; }
 .navigation__zahl[hidden] { display: none; }
 .leiste__kunde {
-  margin-top: auto; border-top: 1px solid rgba(255,255,255,.12); padding: 16px 8px 0;
-  display: grid; grid-template-columns: 38px 1fr; column-gap: 10px; row-gap: 12px; align-items: center;
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+  padding: 12px 8px 0; border-top: 1px solid var(--linie);
 }
-.leiste__kuerzel { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--messing-hell); color: var(--tanne-tief); font-weight: 600; font-size: 14px; }
-.leiste__person { display: grid; min-width: 0; }
-.leiste__person strong { color: #fff; font-weight: 600; font-size: 14px; }
-.leiste__person span { white-space: nowrap; font-size: 12px; color: #a9c4be; }
-.leiste__kunde button {
-  grid-column: 1 / -1; justify-self: start; display: inline-flex; gap: 8px; align-items: center;
-  background: none; border: 1px solid rgba(255,255,255,.22); color: #e5efec; border-radius: var(--rund-s);
-  padding: 6px 12px; cursor: pointer; font-size: 14px;
+.leiste__kuerzel {
+  width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--messing-hell); color: #6e4f17; font-weight: 600; font-size: 14px;
 }
-.leiste__kunde button:hover { background: var(--tanne-hell); }
+.leiste__person { display: grid; min-width: 0; line-height: 1.3; }
+.leiste__person strong { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leiste__person span { font-size: 12px; color: var(--tinte-3); white-space: nowrap; }
+#abmelden {
+  width: 38px; height: 38px; display: grid; place-items: center; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--tinte-2); cursor: pointer;
+}
+#abmelden:hover { background: var(--flaeche-2); color: var(--tinte); }
+#abmelden .text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-.inhalt { min-width: 0; padding: 36px 48px 72px; max-width: calc(1120px + 96px); }
-.inhalt__kopf { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 24px; }
-.inhalt__kopf h1 { font-size: 28px; letter-spacing: -.02em; }
-#begruessung { margin: 0 0 2px; color: var(--tinte-2); font-size: 15px; }
+.inhalt { padding: 36px 48px 72px; min-width: 0; }
+.inhalt > * { max-width: 1120px; margin-left: auto; margin-right: auto; }
+.inhalt__kopf { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 28px; }
+#begruessung { color: var(--tinte-2); font-size: 15px; margin-bottom: 2px; }
 #begruessung:empty { display: none; }
-#kopf-aktion:empty { display: none; }
-.inhalt__flaeche { min-width: 0; }
+#seitentitel { font-size: 30px; line-height: 1.15; letter-spacing: -.025em; }
+.inhalt__kopf #kopf-aktion:empty { display: none; }
+.zurueck { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; font-size: 14px; font-weight: 500; color: var(--tinte-2); }
+.zurueck:hover { color: var(--tanne); }
+.tableiste { display: none; }
 
-/* Leerer Bereich, solange eine Seite noch nicht gebaut ist */
-.vorbereitung {
-  background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m);
-  padding: 56px 48px; display: grid; grid-template-columns: 96px 1fr; gap: 32px; align-items: center;
+/* Fläche: Abschnitte einer Seite */
+.abschnitt { display: grid; gap: 14px; }
+.abschnitt + .abschnitt { margin-top: 36px; }
+.abschnitt__kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; min-height: 36px; }
+.abschnitt__kopf h2 { font-size: 18px; }
+.abschnitt__kopf .zusatz { font-size: 14px; color: var(--tinte-3); }
+.flaeche { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-l); }
+.seite { display: grid; gap: 20px; align-content: start; }
+.seite > .meldung { max-width: 760px; }
+
+/* ------------------------------------------------------------------ Liste */
+.liste { list-style: none; margin: 0; padding: 6px; display: grid; }
+.liste > li + li { border-top: 1px solid var(--linie); }
+.liste > li:hover + li, .liste > li:has(+ li:hover) { border-top-color: transparent; }
+.zeile {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 14px;
+  padding: 12px 12px; border-radius: 12px; position: relative;
 }
-.vorbereitung h2 { font-size: 20px; }
-.vorbereitung p { margin: 8px 0 0; color: var(--tinte-2); max-width: 58ch; }
-.vorbereitung .marke-klein { width: 96px; height: 96px; }
-.etikett { display: inline-block; font-size: 12px; font-weight: 600; color: #6b4e14; background: #f6ecd6; border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+.zeile:hover { background: var(--flaeche-2); }
+.liste > li:hover { border-top-color: transparent; }
+.zeile__symbol {
+  width: 42px; height: 42px; border-radius: 50%; flex: none; display: grid; place-items: center;
+  background: var(--flaeche-2); color: var(--tinte-2); font-size: 14px; font-weight: 600; letter-spacing: .01em;
+  border: 1px solid var(--linie);
+}
+.zeile__symbol--plus { background: var(--plus-hell); color: var(--plus); border-color: #cfe9da; }
+.zeile__symbol--tanne { background: var(--tanne-hell); color: var(--tanne); border-color: #d2e3dd; }
+.zeile__symbol--messing { background: var(--messing-hell); color: #6e4f17; border-color: #ead9b6; }
+.zeile__haupt { display: grid; gap: 2px; min-width: 0; }
+.zeile__titel { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zeile__unter { font-size: 14px; color: var(--tinte-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zeile__meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--tinte-3); }
+.zeile__meta > span { white-space: nowrap; }
+.zeile__wert { display: grid; justify-items: end; gap: 2px; text-align: right; }
+.zeile__betrag { font-weight: 600; font-size: 16px; white-space: nowrap; letter-spacing: -.01em; }
+.zeile__wert small { font-size: 13px; color: var(--tinte-3); white-space: nowrap; }
+.zeile__aktionen { display: flex; align-items: center; gap: 2px; }
+.zeile__aktionen:empty { display: none; }
+/* Ganze Zeile anklickbar: der Hauptknopf spannt sich über die Zeile, Aktionsknöpfe liegen darüber. */
+.zeile__oeffnen { all: unset; position: absolute; inset: 0; border-radius: 12px; cursor: pointer; }
+.zeile__oeffnen:focus-visible { box-shadow: var(--fokus); }
+.zeile__aktionen, .zeile__aktionen * { position: relative; z-index: 1; }
+.etikett {
+  display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 500; background: var(--flaeche-2); color: var(--tinte-2); border: 1px solid var(--linie); white-space: nowrap;
+}
+.etikett--messing { background: var(--messing-hell); color: #6e4f17; border-color: #ead9b6; }
+.etikett--tanne { background: var(--tanne-hell); color: var(--tanne); border-color: #d2e3dd; }
+.etikett--gefahr { background: var(--minus-hell); color: var(--minus); border-color: #f2c9c6; }
+/* Gruppen nach Tag (Umsätze) */
+.umsatzliste { overflow: hidden; }
+.tag__kopf { display: flex; justify-content: space-between; padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--tinte-2); background: var(--flaeche-2); border-bottom: 1px solid var(--linie); }
+.tag + .tag .tag__kopf { border-top: 1px solid var(--linie); }
+.tag .liste { padding: 4px 6px; }
 
-.unsichtbar { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.knopf--klein { height: 34px; padding: 0 14px; font-size: 14px; background: var(--flaeche); border-color: var(--linie); color: var(--tanne); }
-.knopf--klein:hover { background: #e9f1ef; border-color: #b9cbc6; }
-.knopf--klein.knopf--haupt { background: var(--tanne); border-color: var(--tanne); color: #fff; }
-.knopf--klein.knopf--haupt:hover { background: var(--tanne-hell); }
-.knopf--text { background: transparent; border-color: transparent; padding: 0 10px; }
-.knopf--text:hover { background: #e9f1ef; border-color: transparent; }
-.inhalt__flaeche > .meldung { margin-bottom: 20px; align-items: center; font-weight: 500; }
-.abschnitt { font-size: 17px; margin: 0 0 12px; }
-.aktionen { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 16px; }
+/* ------------------------------------------------------------------ Blatt (Anlegen, Ändern) und Rückfrage */
+dialog { padding: 0; border: 0; color: var(--tinte); background: var(--flaeche); }
+dialog::backdrop { background: rgba(10, 30, 26, .38); backdrop-filter: blur(2px); }
+.blatt {
+  position: fixed; inset: 0 0 0 auto; margin: 0; width: min(500px, 100vw); max-width: 100vw; height: 100dvh; max-height: 100dvh;
+  box-shadow: var(--schatten-hoch); display: flex; flex-direction: column;
+}
+.blatt:not([open]) { display: none; }
+.blatt[open] { animation: blatt-rein .22s cubic-bezier(.2, .8, .2, 1); }
+@keyframes blatt-rein { from { transform: translateX(40px); opacity: 0; } }
+.blatt form { display: flex; flex-direction: column; height: 100%; }
+.blatt__kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 24px 28px 8px; }
+.blatt__kopf h2 { font-size: 22px; }
+.blatt__kopf p { color: var(--tinte-2); font-size: 14px; margin-top: 4px; }
+.blatt__inhalt { flex: 1; overflow-y: auto; display: grid; gap: 18px; align-content: start; padding: 16px 28px 24px; }
+.blatt__fuss { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 28px; border-top: 1px solid var(--linie); background: var(--flaeche); }
+.rueckfrage {
+  width: min(420px, calc(100vw - 32px)); border-radius: var(--r-l); box-shadow: var(--schatten-hoch);
+  padding: 28px; display: grid; gap: 10px;
+}
+.rueckfrage:not([open]) { display: none; }
+.rueckfrage[open] { animation: rueckfrage-rein .18s ease-out; }
+@keyframes rueckfrage-rein { from { transform: scale(.97); opacity: 0; } }
+.rueckfrage h2 { font-size: 19px; }
+.rueckfrage p { color: var(--tinte-2); }
+.rueckfrage__aktionen { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
 
-/* Tabellen der übrigen Seiten: ruhig, ohne grauen Kopf */
-.kontentabelle, .umsatztabelle { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); overflow: hidden; }
-.kontentabelle th, .kontentabelle td, .umsatztabelle th, .umsatztabelle td { padding: 14px 14px; text-align: left; border-bottom: 1px solid var(--linie); }
-.kontentabelle td { white-space: nowrap; }
-.kontentabelle thead th, .umsatztabelle thead th { font-size: 13px; font-weight: 500; color: var(--tinte-2); padding-top: 12px; padding-bottom: 10px; white-space: normal; line-height: 1.3; }
-.kontentabelle tbody tr:last-child > *, .umsatztabelle tbody tr:last-child > * { border-bottom: 0; }
-.kontentabelle tbody tr:hover, .umsatztabelle tbody tr:hover { background: var(--flaeche-2); }
-.kontentabelle tbody th { font-weight: 600; }
-.kontentabelle .zahl, .umsatztabelle .zahl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.kontentabelle td.zahl { font-weight: 500; }
-.kontentabelle .minus, .umsatztabelle .minus { color: var(--minus); }
-.umsatztabelle .plus { color: var(--plus); }
-.kontentabelle .leise, .umsatztabelle .leise { color: var(--tinte-2); font-weight: 400; }
-.kontentabelle .aktion { text-align: right; width: 1%; }
-.kontentabelle .aktion .knopf + .knopf { margin-left: 4px; }
+/* ------------------------------------------------------------------ Anmeldung */
+.anmeldung { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(420px, 1fr); min-height: 100vh; }
+.anmeldung__marke {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
+  padding: 44px 56px; background: var(--tanne-tief); color: #fff;
+}
+.anmeldung__marke .guilloche { position: absolute; inset: 0; width: 100%; height: 100%; }
+.anmeldung__marke > * { position: relative; }
+.anmeldung__marke .marke { color: #fff; }
+.anmeldung__marke .marke__name small { color: rgba(255, 255, 255, .6); }
+.anmeldung__claim h2 { font-size: clamp(34px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -.035em; max-width: 12ch; }
+.anmeldung__claim p { margin-top: 18px; font-size: 17px; color: rgba(255, 255, 255, .72); max-width: 38ch; }
+.anmeldung__fuss { font-size: 13px; color: rgba(255, 255, 255, .55); }
+.anmeldung__form { display: grid; place-items: center; padding: 48px 32px; background: var(--flaeche); }
+.anmeldung__karte { width: min(380px, 100%); display: grid; gap: 28px; }
+.anmeldung__karte h1 { font-size: 30px; letter-spacing: -.025em; }
+.anmeldung__karte .unterzeile { margin-top: 6px; color: var(--tinte-2); }
+#anmeldeformular { display: grid; gap: 18px; }
+#anmeldeformular .knopf { width: 100%; min-height: 50px; margin-top: 4px; }
+.demo-zugang { padding: 12px 16px; border-radius: var(--r-m); background: var(--messing-hell); color: #5b4113; font-size: 14px; }
+.sicherheit { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--tinte-3); }
 
-/* ---------- Finanzstatus ----------
-   Oben das Gesamtvermögen mit dem Schnellzugriff, darunter je Konto eine Zeile: Name und IBAN links,
-   Beträge rechts, Aktionen darunter. Die Tabelle bleibt Tabelle (Vorleser, Tests), sieht aber nicht so aus. */
-.finanzstatus__meldung { margin: 0 0 18px; align-items: center; font-weight: 500; }
+/* ------------------------------------------------------------------ Finanzstatus */
 .vermoegen {
-  position: relative; overflow: hidden; background: var(--tanne); color: #fff; border-radius: var(--rund-m);
-  padding: 30px 32px; margin-bottom: 32px; display: grid; gap: 24px 32px;
-  grid-template-columns: minmax(0, 1fr) auto; align-items: end;
+  position: relative; overflow: hidden; border-radius: 26px; color: #fff;
+  background: radial-gradient(120% 140% at 85% 110%, #1d5f54 0%, var(--tanne) 45%, var(--tanne-tief) 100%);
+  padding: 30px 32px 26px; display: grid; gap: 26px;
 }
-.vermoegen__zahl, .vermoegen .schnell { position: relative; }
-.vermoegen__muster { position: absolute; right: -40px; top: -30px; width: 620px; height: 280px; opacity: .9; -webkit-mask-image: linear-gradient(to right, transparent, #000 45%); mask-image: linear-gradient(to right, transparent, #000 45%); }
-.vermoegen__titel { margin: 0; font-size: 14px; font-weight: 500; color: #b9d3cd; }
-.vermoegen__summe { margin: 2px 0 4px; font-size: 48px; font-weight: 600; letter-spacing: -.03em; line-height: 1.08; }
-.vermoegen__stand { margin: 0; font-size: 13px; color: #a9c4be; }
-.schnell { display: grid; grid-template-columns: repeat(5, minmax(0, 112px)); gap: 8px; }
+.vermoegen__muster { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+.vermoegen > *:not(.vermoegen__muster) { position: relative; }
+.vermoegen__titel { font-size: 15px; color: rgba(255, 255, 255, .72); }
+.vermoegen__summe { font-size: clamp(36px, 4.6vw, 54px); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; margin-top: 4px; }
+.vermoegen__stand { margin-top: 8px; font-size: 13px; color: rgba(255, 255, 255, .6); }
+.schnell { display: flex; flex-wrap: wrap; gap: 10px; }
 .schnell__eintrag {
-  display: grid; justify-items: center; gap: 8px; padding: 10px 4px; border-radius: var(--rund-s);
-  color: #e5efec; text-decoration: none; font-size: 13px; font-weight: 500; text-align: center; line-height: 1.25;
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 6px; border-radius: 999px;
+  background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .16); color: #fff; font-weight: 500; font-size: 14px;
+  backdrop-filter: blur(6px); transition: background-color .15s;
 }
-.schnell__symbol { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.08); border: 1px solid rgba(230,207,157,.45); color: var(--messing-hell); }
-.schnell__eintrag:hover { background: rgba(255,255,255,.06); color: #fff; }
-.schnell__eintrag:hover .schnell__symbol { background: var(--messing); color: var(--tanne-tief); border-color: var(--messing); }
+.schnell__eintrag:hover { background: rgba(255, 255, 255, .2); text-decoration: none; }
+.schnell__symbol { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .14); }
+.schnell__eintrag:first-child { background: #fff; color: var(--tanne); border-color: #fff; }
+.schnell__eintrag:first-child .schnell__symbol { background: var(--tanne-hell); }
+.schnell__eintrag:first-child:hover { background: var(--tanne-hell); }
 
-.konten__liste { width: 100%; display: block; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); }
-.konten__liste tbody { display: block; }
-.konten__liste tr {
-  display: grid; align-items: center; column-gap: 24px; row-gap: 6px; padding: 18px 22px;
-  grid-template-columns: max-content minmax(0, 1fr) repeat(3, minmax(120px, 150px));
-  grid-template-areas: "name name saldo dispo verf" "art iban akt akt akt";
-  border-bottom: 1px solid var(--linie);
+.kontenliste { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.konto--haupt { grid-column: span 2; }
+.konto {
+  display: grid; gap: 18px; align-content: space-between; padding: 22px 22px 18px;
+  background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-l);
+  transition: border-color .15s;
 }
-.konten__liste tr:last-child { border-bottom: 0; }
-.konten__liste th, .konten__liste td, .konten__liste tr:last-child > * { padding: 0; border: 0; text-align: left; white-space: nowrap; }
-.konten__liste .konten__name { grid-area: name; font-weight: 600; font-size: 16px; }
-.konten__liste tr > .konten__art { grid-area: art; margin-left: 46px; justify-self: start; font-size: 12px; font-weight: 500; color: var(--tinte-2); background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 999px; padding: 1px 9px; }
-.konten__liste .konten__iban { grid-area: iban; font-size: 13px; }
-.konten__liste .konten__saldo { grid-area: saldo; }
-.konten__liste .konten__dispo { grid-area: dispo; color: var(--tinte-2); }
-.konten__liste .konten__verfuegbar { grid-area: verf; }
-.konten__liste .konten__saldo, .konten__liste .konten__dispo, .konten__liste .konten__verfuegbar { display: grid; justify-items: end; font-weight: 500; font-variant-numeric: tabular-nums; }
-.konten__liste .konten__saldo { font-size: 17px; font-weight: 600; }
-.konten__liste td[data-titel]::before { content: attr(data-titel); font-size: 12px; font-weight: 400; color: var(--tinte-2); }
-.konten__liste td:empty { visibility: hidden; }
-.konten__liste .konten__aktion { grid-area: akt; width: auto; display: flex; justify-content: flex-end; gap: 4px; }
-.konten__liste .minus { color: var(--minus); }
+.konto:hover { border-color: var(--linie-2); }
+.konto__kopf { display: flex; gap: 12px; align-items: center; }
+.konto__symbol { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--tanne-hell); color: var(--tanne); flex: none; }
+.konto__symbol--tagesgeldkonto { background: var(--messing-hell); color: #6e4f17; }
+.konto__symbol--kreditkarte { background: #ece9f6; color: #4a3f86; }
+.konto__name { display: grid; line-height: 1.3; min-width: 0; }
+.konto__name strong { font-weight: 600; font-size: 16px; }
+.konto__name span { font-size: 13px; color: var(--tinte-3); }
+.konto__saldo { font-size: 30px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1; }
+.konto__saldo-titel { font-size: 13px; color: var(--tinte-3); margin-bottom: 4px; }
+.konto__werte { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13px; color: var(--tinte-3); }
+.konto__werte b { display: block; font-weight: 500; font-size: 14px; color: var(--tinte); }
+.konto__iban { font-size: 13px; color: var(--tinte-2); margin-top: -8px; white-space: nowrap; }
+.konto__aktionen { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 14px; border-top: 1px solid var(--linie); }
+.uebersicht { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+.uebersicht .flaeche { padding: 6px 0; }
+.uebersicht__kopf { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; }
+.uebersicht__kopf h2 { font-size: 17px; }
+.uebersicht__kopf a { font-size: 14px; font-weight: 500; }
+.verweise { list-style: none; margin: 0; padding: 4px 8px 8px; display: grid; }
+.verweise a { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; color: var(--tinte); font-weight: 500; }
+.verweise a:hover { background: var(--flaeche-2); text-decoration: none; }
+.verweise a small { display: block; font-weight: 400; font-size: 13px; color: var(--tinte-3); }
+.verweise .zeile__symbol { width: 38px; height: 38px; }
 
-.konto { display: inline-flex; align-items: center; gap: 12px; }
-.konto__symbol { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: #e6efed; color: var(--tanne); }
-.konto__symbol--kreditkarte { background: #f6ecd6; color: #7a5a1c; }
-.konto__symbol--tagesgeldkonto { background: #e2efe9; color: #14532f; }
-.iban { font-variant-numeric: tabular-nums; letter-spacing: .02em; color: var(--tinte-2); }
+/* ------------------------------------------------------------------ Kontokopf (Umsätze, Ausgabenanalyse) */
+.kontokopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; }
+.kontokopf__konto { display: flex; align-items: center; gap: 14px; }
+.kontokopf__konto strong { display: block; font-size: 17px; font-weight: 600; }
+.kontokopf__konto span { font-size: 14px; color: var(--tinte-2); }
+.kontokopf__aktionen { display: flex; flex-wrap: wrap; gap: 8px; }
+.filterleiste { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; padding: 14px; }
+.filterleiste .feld--suche { flex: 1 1 260px; }
+.filterleiste .feld--suche input { padding-left: 42px; background: var(--flaeche) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Ccircle cx='8' cy='8' r='5.5' fill='none' stroke='%237b8985' stroke-width='1.6'/%3E%3Cpath d='M12.2 12.2l3.3 3.3' stroke='%237b8985' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 14px center; }
+.filterleiste .feld--datum { flex: 0 1 170px; }
+.filterleiste .feld input, .filterleiste .feld select { min-height: 44px; }
+.filterleiste .feld > span { font-size: 13px; color: var(--tinte-2); }
+.umsaetze { display: grid; gap: 14px; }
 
-/* ---------- Überweisung (UC-002) ---------- */
-.schritte { list-style: none; display: flex; gap: 28px; margin: 0 0 20px; padding: 0; color: var(--tinte-2); font-weight: 500; font-size: 14px; }
-.schritte li { display: flex; align-items: center; gap: 10px; }
-.schritte span { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; border: 1.5px solid #b9c6c2; }
-.schritte li[aria-current] { color: var(--tinte); }
-.schritte li[aria-current] span { background: var(--tanne); border-color: var(--tanne); color: #fff; }
-.schritte li.erledigt span { background: #e6efed; border-color: #e6efed; color: var(--tanne); }
-.ueberweisung__raster { display: grid; grid-template-columns: minmax(0, 680px) 300px; gap: 24px; align-items: start; }
-.ueberweisung__form { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); padding: 28px; display: grid; gap: 18px; }
-.ueberweisung__form--raster { grid-template-columns: 1fr 1fr; column-gap: 16px; }
-.ueberweisung__form--raster > * { grid-column: 1 / -1; }
-.ueberweisung__form--raster > .feld--halb { grid-column: auto; }
-.ueberweisung__form h2 { font-size: 18px; }
-.ueberweisung__titel { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-.ueberweisung__links { margin: 2px 0 0; display: flex; gap: 16px; font-size: 14px; font-weight: 500; white-space: nowrap; }
-.ueberweisung__links a { text-decoration: none; }
-.ueberweisung__links a:hover { text-decoration: underline; }
-.ueberweisung__unter { margin: 4px 0 0; color: var(--tinte-2); font-size: 14px; }
-.ueberweisung__form input[readonly] { background: var(--flaeche-2); color: var(--tinte-2); }
-.ueberweisung__aktionen { display: flex; justify-content: flex-end; gap: 12px; padding-top: 6px; border-top: 1px solid var(--linie); margin-top: 4px; padding-top: 18px; }
-.ueberweisung__nebenaktion { margin-right: auto; }
-.ueberweisung__konto { position: sticky; top: 24px; background: var(--tanne); color: #fff; border-radius: var(--rund-m); padding: 22px; }
-.ueberweisung__klein { margin: 0; font-size: 13px; color: #b9d3cd; }
-.ueberweisung__kontoname { margin: 6px 0 2px; font-weight: 600; font-size: 17px; }
-.ueberweisung__konto .iban { margin: 0 0 16px; font-size: 14px; color: #cfe0dc; }
-.ueberweisung__konto dl { margin: 0; display: grid; gap: 8px; border-top: 1px solid rgba(255,255,255,.16); padding-top: 14px; }
-.ueberweisung__konto dl div, .zusammenfassung div { display: flex; justify-content: space-between; gap: 16px; }
-.ueberweisung__konto dt { color: #b9d3cd; }
-.ueberweisung__konto dd { margin: 0; font-weight: 600; }
-.ueberweisung__betrag { margin: 0; font-size: 36px; font-weight: 600; letter-spacing: -.02em; }
-.zusammenfassung { margin: 0; display: grid; gap: 12px; border-top: 1px solid var(--linie); padding-top: 18px; }
-.zusammenfassung dt { color: var(--tinte-2); }
-.zusammenfassung dd { margin: 0; font-weight: 500; text-align: right; }
 
-/* Empfängervorlagen (UC-004), Postfach */
-.vorlagen { display: grid; gap: 20px; max-width: 980px; }
-.vorlagen > .meldung { margin: 0; align-items: center; font-weight: 500; }
-.vorlagen__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-.vorlagen__kopf .abschnitt { margin: 0; }
-.vorlagen__zahl { margin: 0; color: var(--tinte-2); font-size: 14px; }
-.vorlagen__zahl strong { color: var(--tinte); font-weight: 600; }
-.vorlagen__leer { margin: 0; padding: 20px; background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); color: var(--tinte-2); }
-.vorlagen__tabelle td:last-child { white-space: normal; }
-.vorlagen__raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
-.vorlagen__spalte { display: grid; gap: 20px; }
-.vorlagen__abfrage { display: grid; gap: 8px; padding: 12px 14px; background: #fdf6e6; border-radius: var(--rund-s); }
-.vorlagen__abfrage p { margin: 0; font-weight: 600; }
-.ueberweisung__vorlage { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.ueberweisung__vorlage a { font-size: 14px; font-weight: 500; }
-.postfach__text { margin: 12px 0 0; }
-.postfach__text dt { color: var(--tinte-2); font-size: 13px; }
-.postfach__text dd { margin: 4px 0 0; }
+/* ------------------------------------------------------------------ Formularseiten (Überweisung, Umbuchung, Tageslimit, Daten) */
+.formseite { display: grid; grid-template-columns: minmax(0, 640px) minmax(260px, 340px); gap: 24px; align-items: start; justify-content: start; }
+.formseite--schmal { grid-template-columns: minmax(0, 640px); }
+.formkarte { display: grid; gap: 20px; padding: 28px; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-l); }
+.formkarte__kopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.formkarte__kopf h2 { font-size: 20px; }
+.formkarte__kopf p { margin-top: 4px; font-size: 14px; color: var(--tinte-2); }
+.formkarte__aktionen { display: flex; justify-content: flex-end; gap: 10px; padding-top: 8px; }
+.formkarte__abschnitt { display: grid; gap: 16px; padding-top: 20px; border-top: 1px solid var(--linie); }
+.formkarte__abschnitt h3 { font-size: 15px; }
+.formkarte .meldung { margin: 0; }
+.verweisleiste { display: flex; flex-wrap: wrap; gap: 6px; }
+.seitenkarte { display: grid; gap: 16px; padding: 22px; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-l); position: sticky; top: 24px; }
+.seitenkarte__titel { font-size: 13px; color: var(--tinte-3); }
+.seitenkarte__name { font-size: 17px; font-weight: 600; margin-top: 2px; }
+.werte { margin: 0; display: grid; gap: 12px; }
+.werte > div { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.werte dt { font-size: 14px; color: var(--tinte-2); }
+.werte dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.werte--gross dd { font-size: 20px; letter-spacing: -.02em; }
+.schritte { list-style: none; margin: 0 0 4px; padding: 0; display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--tinte-3); }
+.schritte li { display: inline-flex; align-items: center; gap: 8px; }
+.schritte li + li::before { content: ''; width: 28px; height: 1px; background: var(--linie-2); margin-right: 2px; }
+.schritte span { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 600; border: 1px solid var(--linie-2); }
+.schritte [aria-current="step"] { color: var(--tinte); font-weight: 500; }
+.schritte [aria-current="step"] span { background: var(--tanne); border-color: var(--tanne); color: #fff; }
+.schritte .erledigt span { background: var(--tanne-hell); border-color: var(--tanne-hell); color: var(--tanne); }
+.betrag-gross { font-size: 40px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
+.zusammenfassung { margin: 0; display: grid; border: 1px solid var(--linie); border-radius: var(--r-m); }
+.zusammenfassung > div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; padding: 13px 16px; }
+.zusammenfassung > div + div { border-top: 1px solid var(--linie); }
+.zusammenfassung dt { color: var(--tinte-2); font-size: 14px; }
+.zusammenfassung dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+/* Umbuchung: Von und Nach als Kacheln mit Tauschknopf dazwischen */
+.konto-paar { display: grid; gap: 8px; position: relative; }
+.konto-paar .feld select { min-height: 64px; font-weight: 500; }
+.tauschen {
+  justify-self: center; width: 40px; height: 40px; margin: -4px 0 -4px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid var(--linie-2); background: var(--flaeche); color: var(--tanne); cursor: pointer; position: relative; z-index: 1;
+}
+.tauschen:hover { background: var(--tanne-hell); }
+/* Tageslimit: Messbalken */
+.messung { display: grid; gap: 10px; }
+.messung__balken { height: 10px; border-radius: 999px; background: var(--flaeche-2); border: 1px solid var(--linie); overflow: hidden; }
+.messung__balken span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--tanne-2), var(--tanne)); }
+.messung__skala { display: flex; justify-content: space-between; font-size: 12px; color: var(--tinte-3); }
 
-/* Daueraufträge (UC-016), Debitkarte, Ausgabenanalyse: Abschnitte untereinander mit Luft */
-.dauerauftraege, .debitkarte { display: grid; gap: 20px; max-width: 1120px; }
-.dauerauftraege > *, .debitkarte > * { margin: 0; }
+/* ------------------------------------------------------------------ Postfach: Liste und Lesebereich */
+.postfach__raster { display: grid; grid-template-columns: minmax(320px, 2fr) minmax(0, 3fr); gap: 20px; align-items: start; }
+.postfach__liste .zeile__titel { white-space: normal; }
+.postfach__liste { padding: 6px 0; }
+.postfach__liste .liste { padding: 0 6px; }
+.zeile--ungelesen .zeile__titel { font-weight: 600; }
+.zeile--offen { background: var(--tanne-hell); }
+.zeile--offen:hover { background: var(--tanne-hell); }
+.punkt { width: 8px; height: 8px; border-radius: 50%; background: var(--messing); display: inline-block; flex: none; }
+.lesen { padding: 30px 34px; min-height: 360px; display: grid; gap: 18px; align-content: start; position: sticky; top: 24px; }
+.lesen__kopf { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding-bottom: 18px; border-bottom: 1px solid var(--linie); }
+.lesen__kopf h2 { font-size: 22px; line-height: 1.25; }
+.lesen__von { display: flex; gap: 12px; align-items: center; margin-top: 14px; font-size: 14px; color: var(--tinte-2); }
+.lesen__von strong { color: var(--tinte); font-weight: 500; }
+#nachrichtText { white-space: pre-line; line-height: 1.65; font-size: 15px; max-width: 68ch; }
+.lesen--leer { place-items: center; text-align: center; color: var(--tinte-3); }
 
-/* Tageslimit (UC-015), Persönliche Daten */
-.tageslimit { display: grid; gap: 20px; max-width: 948px; }
-.tageslimit > .meldung { margin: 0; align-items: center; font-weight: 500; }
-.persoenlich .ueberweisung__form { max-width: 560px; }
+/* ------------------------------------------------------------------ Ausgabenanalyse */
+.monatswahl { display: flex; align-items: center; gap: 6px; }
+.monatswahl .feld input { width: 130px; min-height: 44px; text-align: center; }
+.ausgaben__summe { padding: 24px 26px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.ausgaben__summe dt { font-size: 14px; color: var(--tinte-2); }
+.ausgaben__summe dd { margin: 4px 0 0; font-size: 36px; font-weight: 600; letter-spacing: -.035em; }
+.ausgaben__summe dl { margin: 0; }
+.verteilung { display: flex; height: 12px; border-radius: 999px; overflow: hidden; gap: 2px; min-width: 220px; flex: 1; max-width: 520px; }
+.verteilung span { display: block; height: 100%; }
+.kategorie__balken { height: 6px; border-radius: 999px; background: var(--flaeche-2); overflow: hidden; margin-top: 6px; }
+.kategorie__balken span { display: block; height: 100%; border-radius: inherit; }
+.farbe-0 { background: var(--tanne); } .farbe-1 { background: var(--messing); } .farbe-2 { background: #5f8f84; }
+.farbe-3 { background: #8a6bb8; } .farbe-4 { background: #c26a4a; } .farbe-5 { background: #4a7fb0; } .farbe-6 { background: #9aa6a2; }
 
-/* Vorgemerkte Überweisungen (UC-017) */
-.vorgemerkt { display: grid; gap: 20px; max-width: 980px; }
-.vorgemerkt > .meldung { margin: 0; align-items: center; font-weight: 500; }
-.vorgemerkt > .zurueck, .vorgemerkt__unter { margin: 0; }
-.vorgemerkt__unter { color: var(--tinte-2); }
-.vorgemerkt__tabelle td:last-child { white-space: normal; }
-.vorgemerkt__loeschen { max-width: 480px; }
+/* ------------------------------------------------------------------ Debitkarte */
+.karte {
+  position: relative; overflow: hidden; aspect-ratio: 1.586; width: 100%; max-width: 380px; border-radius: 20px; padding: 22px 24px;
+  color: #fff; background: radial-gradient(130% 120% at 0% 0%, #23685c 0%, var(--tanne) 45%, var(--tanne-tief) 100%);
+  display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 18px 40px -18px rgba(10, 43, 38, .55);
+}
+.karte .guilloche { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; }
+.karte > *:not(.guilloche) { position: relative; }
+.karte__kopf { display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+.karte__chip { width: 42px; height: 32px; border-radius: 7px; background: linear-gradient(135deg, #e9d29e, #b8893a); }
+.karte__nummer { font-size: 20px; letter-spacing: .12em; font-weight: 500; }
+.karte__fuss { display: flex; justify-content: space-between; align-items: end; font-size: 13px; color: rgba(255, 255, 255, .75); }
+.karte--gesperrt { filter: grayscale(.85) brightness(.9); }
+.karte__siegel { position: absolute; right: 18px; top: 50%; transform: translateY(-50%) rotate(-8deg); padding: 6px 12px; border: 2px solid #fff; border-radius: 8px; font-weight: 600; font-size: 13px; letter-spacing: .04em; }
+.debitkarte__raster { display: grid; grid-template-columns: minmax(280px, 400px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.debitkarte__links { display: grid; gap: 18px; }
+.gefahrzone { border-color: #f2c9c6; }
+.gefahrzone .formkarte__kopf h2 { color: var(--minus); }
 
-/* Umsätze (UC-003) */
-.zurueck { margin: 0 0 14px; font-size: 14px; }
-.zurueck a { color: var(--tanne); text-decoration: none; font-weight: 500; }
-.zurueck a:hover { text-decoration: underline; }
-.kontokopf { display: flex; gap: 32px; margin: 0 0 20px; padding: 16px 20px; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); }
-.kontokopf dt { font-size: 13px; color: var(--tinte-2); }
-.kontokopf dd { margin: 2px 0 0; font-weight: 600; }
-.filter { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin: 0 0 16px; }
-.filter .feld span { font-weight: 500; font-size: 14px; }
-.umsaetze .leer { padding: 24px; text-align: center; color: var(--tinte-2); background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); }
-.umsaetze .meldung { background: #fdecea; color: #7a1a12; }
-.rueckfrage:not([hidden]) { display: grid; gap: 10px; margin: 0 0 16px; padding: 16px 18px; background: #fdf6e6; border-radius: var(--rund-m); }
-
-/* ---------- Schmale Fenster ---------- */
+/* ------------------------------------------------------------------ Telefon und Tablet */
+@media (max-width: 1240px) { .konto--haupt { grid-column: 1 / -1; } }
 @media (max-width: 1100px) {
-  .konten__liste tr { grid-template-columns: max-content minmax(0, 1fr) repeat(3, minmax(104px, 1fr)); }
-  .vermoegen { grid-template-columns: 1fr; }
-  .schnell { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-}
-@media (max-width: 900px) {
-  .filter { grid-template-columns: 1fr 1fr; }
-  .umsaetze { overflow-x: auto; }
-  .ueberweisung__raster { grid-template-columns: 1fr; }
-  .ueberweisung__konto { order: -1; position: static; }
-  .vorlagen__raster { grid-template-columns: 1fr; }
+  .inhalt { padding: 28px 28px 64px; }
+  .uebersicht, .postfach__raster, .debitkarte__raster, .formseite { grid-template-columns: minmax(0, 1fr); }
+  .seitenkarte, .lesen { position: static; }
 }
 @media (max-width: 860px) {
-  .anmeldung { grid-template-columns: 1fr; }
-  .anmeldung__marke { padding: 28px 24px; min-height: 220px; }
-  .anmeldung__claim h2 { font-size: 28px; }
-
-  .rahmen { padding-left: 0; }
-  .leiste { position: sticky; top: 0; inset: auto; width: auto; padding: 12px 16px; }
-  .leiste__kopf { padding: 0; }
-  .leiste__menue { display: inline-flex; }
-  .navigation, .leiste__kunde { display: none; }
-  .rahmen--menue .leiste { max-height: 100vh; overflow-y: auto; }
-  .rahmen--menue .navigation { display: grid; padding: 16px 0 8px; }
-  .rahmen--menue .leiste__kunde { display: grid; margin-top: 8px; padding-bottom: 8px; }
-  .navigation a[aria-current='page']::before { left: -16px; }
-
-  .inhalt { padding: 20px 16px 48px; }
-  .inhalt__kopf { margin-bottom: 18px; }
-  .inhalt__kopf h1 { font-size: 24px; }
-  .vorbereitung { grid-template-columns: 1fr; padding: 32px 24px; }
-
-  .vermoegen { padding: 22px 18px 16px; gap: 20px; }
-  .vermoegen__summe { font-size: 36px; }
-  .schnell { display: flex; gap: 4px; overflow-x: auto; margin: 0 -18px; padding: 0 18px 4px; scrollbar-width: none; }
-  .schnell__eintrag { flex: 0 0 84px; padding: 6px 0; font-size: 12px; }
-  .schnell__symbol { width: 40px; height: 40px; }
-
-  .konten__liste tr {
-    padding: 16px; column-gap: 12px; row-gap: 8px;
-    grid-template-columns: max-content minmax(0, 1fr);
-    grid-template-areas: "name art" "iban iban" "saldo verf" "dispo dispo" "akt akt";
+  body { font-size: 15px; }
+  .rahmen { display: block; }
+  .leiste {
+    position: fixed; top: auto; height: auto;
+    inset: auto 0 calc(var(--tabhoehe) + env(safe-area-inset-bottom)) 0; width: auto; max-height: 80vh; padding: 18px 14px;
+    border-right: 0; border-top: 1px solid var(--linie); border-radius: 22px 22px 0 0; box-shadow: var(--schatten-hoch);
+    transform: translateY(110%); transition: transform .25s cubic-bezier(.2, .8, .2, 1); visibility: hidden;
   }
-  .konten__liste tr > .konten__art { margin-left: 0; justify-self: end; }
-  .konten__liste .konten__iban { padding-left: 46px; }
-  .konten__liste .konten__iban { white-space: normal; }
-  .konten__liste .konten__saldo, .konten__liste .konten__dispo, .konten__liste .konten__verfuegbar { justify-items: start; }
-  .konten__liste .konten__verfuegbar { justify-items: end; }
-  .konten__liste .konten__dispo { display: flex; gap: 6px; font-size: 13px; }
-  .konten__liste td:empty { display: none; }
-  .konten__liste .konten__aktion { justify-content: flex-start; flex-wrap: wrap; margin: 4px -10px 0; }
-  .konten__liste .konten__aktion .knopf--haupt { margin: 0 6px 0 10px; }
-
-  .kontentabelle:not(.konten__liste), .umsatztabelle { display: block; overflow-x: auto; }
-  .ueberweisung__form { padding: 20px; }
-  .ueberweisung__form--raster { grid-template-columns: 1fr; }
-  .ueberweisung__titel { flex-direction: column; gap: 8px; }
-  .kontokopf { flex-wrap: wrap; gap: 12px 24px; }
+  .rahmen--menue .leiste { transform: none; visibility: visible; }
+  .rahmen--menue::after { content: ''; position: fixed; inset: 0; background: rgba(10, 30, 26, .32); z-index: 19; }
+  .leiste__kopf { display: none; }
+  .inhalt { padding: 18px 16px calc(var(--tabhoehe) + 32px); }
+  .inhalt__kopf { margin-bottom: 18px; align-items: center; }
+  #seitentitel { font-size: 24px; }
+  .tableiste {
+    position: fixed; inset: auto 0 0 0; z-index: 30; display: grid; grid-template-columns: repeat(5, 1fr);
+    height: calc(var(--tabhoehe) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(255, 255, 255, .94); backdrop-filter: blur(12px); border-top: 1px solid var(--linie);
+  }
+  .tableiste a, .tableiste button {
+    all: unset; display: grid; justify-items: center; align-content: center; gap: 3px; font-size: 11px; font-weight: 500;
+    color: var(--tinte-3); cursor: pointer; position: relative;
+  }
+  .tableiste svg { width: 22px; height: 22px; }
+  .tableiste [aria-current="page"], .tableiste [aria-expanded="true"] { color: var(--tanne); }
+  .tableiste .navigation__zahl { position: absolute; top: 6px; left: calc(50% + 6px); margin: 0; min-width: 18px; height: 18px; font-size: 11px; padding: 0 5px; }
+  .vermoegen { padding: 24px 20px 20px; border-radius: 22px; }
+  .schnell { flex-wrap: nowrap; overflow-x: auto; margin: 0 -20px; padding: 0 20px 2px; scrollbar-width: none; }
+  .schnell::-webkit-scrollbar { display: none; }
+  .schnell__eintrag { flex: none; }
+  .kontenliste { grid-template-columns: minmax(0, 1fr); }
+  .konto--haupt { grid-column: auto; }
+  .raster-2 { grid-template-columns: minmax(0, 1fr); }
+  .formkarte { padding: 20px; }
+  .zusammenfassung > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .zeile { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; padding: 12px 10px; }
+  .zeile__aktionen { grid-column: 2 / -1; justify-content: flex-start; margin-left: -10px; }
+  .zeile__symbol { width: 38px; height: 38px; }
+  .filterleiste .feld--datum { flex: 1 1 120px; min-width: 0; }
+  .filterleiste .feld--datum input { min-width: 0; width: 100%; }
+  /* Hauptaktion der Seite schwebt über der Tab-Leiste */
+  #kopf-aktion .knopf--haupt { position: fixed; right: 16px; bottom: calc(var(--tabhoehe) + env(safe-area-inset-bottom) + 14px); z-index: 25; min-height: 52px; box-shadow: 0 10px 24px -8px rgba(10, 43, 38, .5); }
+  .formseite > .seitenkarte { order: -1; }
+  .blatt { inset: auto 0 0 0; width: 100vw; height: auto; max-height: 92dvh; border-radius: 22px 22px 0 0; }
+  .blatt[open] { animation-name: blatt-hoch; }
+  @keyframes blatt-hoch { from { transform: translateY(40px); opacity: 0; } }
+  .blatt__kopf, .blatt__inhalt, .blatt__fuss { padding-left: 20px; padding-right: 20px; }
+  .lesen { padding: 22px; min-height: 0; }
+  .lesen--leer { display: none; }
+  .anmeldung { grid-template-columns: minmax(0, 1fr); }
+  .anmeldung__marke { padding: 28px 24px 32px; min-height: 260px; }
+  .anmeldung__claim h2 { font-size: 32px; }
+  .anmeldung__fuss { display: none; }
+  .anmeldung__form { padding: 32px 20px; }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

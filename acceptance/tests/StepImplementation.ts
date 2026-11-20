@@ -30,6 +30,8 @@ export default class StepImplementation {
 
   @AfterScenario()
   public async cookiesLoeschen() {
+    // Erst die Seite verlassen: Abrufe, die sie noch nachlädt, laufen sonst ohne Sitzung in die Umleitung und stören das nächste Szenario.
+    await StepImplementation.page?.goto('about:blank').catch(() => {});
     await StepImplementation.page?.context().clearCookies();
     await StepImplementation.page?.unrouteAll({ behavior: 'ignoreErrors' });
     StepImplementation.export = undefined;
@@ -50,6 +52,35 @@ export default class StepImplementation {
     StepImplementation.browser ??= await chromium.launch();
     StepImplementation.page ??= await (await StepImplementation.browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'de-DE' })).newPage();
     return StepImplementation.page;
+  }
+
+  /** Die Zeilen einer Liste, je Zeile die Werte der Spalten des Szenarios (sichtbarer Text).
+      Die Liste nennt ihre Felder in data-felder wie einen Tabellenkopf; zeigt eine Zeile ein Feld nicht (kein Enddatum), ist der Wert leer.
+      Ein Feld der Gruppe außerhalb der Zeilen (der Buchungstag über den Umsätzen eines Tages) gilt für jede Zeile der Gruppe. */
+  private async listenzeilen(liste: Locator, spalten: string[], zeilen: Locator = liste.locator('[data-zeile]')): Promise<string[][]> {
+    if (!await liste.count()) return [];
+    const namen = ((await liste.getAttribute('data-felder')) ?? '').split('|');
+    for (const s of spalten) assert.ok(namen.includes(s), `Spalte „${s}“ fehlt, da sind: ${namen.join(', ')}`);
+    const werte = await zeilen.evaluateAll(zs => zs.map(z => {
+      const w: Record<string, string> = {};
+      z.closest('[data-gruppe]')?.querySelectorAll<HTMLElement>('[data-feld]').forEach(e => { if (!e.closest('[data-zeile]')) w[e.dataset.feld!] = e.innerText; });
+      z.querySelectorAll<HTMLElement>('[data-feld]').forEach(e => { if (e.closest('[data-zeile]') === z) w[e.dataset.feld!] = e.innerText; });
+      return w;
+    }));
+    return werte.map(w => spalten.map(s => sichtbar(w[s] ?? '')));
+  }
+
+  /** Die Zeile einer Liste, deren Feld genau diesen Text zeigt. */
+  private zeileMit(page: Page, liste: string, feld: string, wert: string): Locator {
+    const genau = new RegExp(`^\\s*${text(wert).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`);
+    return page.locator(`${liste} [data-zeile]`).filter({ has: page.locator(`[data-feld="${feld}"]`, { hasText: genau }) }).first();
+  }
+
+  /** Die Sicherheitsabfrage (Dialog) mit dieser Frage. */
+  private async sicherheitsabfrage(page: Page, frage: string): Promise<Locator> {
+    const abfrage = page.getByRole('dialog', { name: 'Sicherheitsabfrage' });
+    await abfrage.getByText(frage).waitFor();
+    return abfrage;
   }
 
   @Step('Testdaten sind zurückgesetzt')
@@ -109,24 +140,21 @@ export default class StepImplementation {
     await page.getByRole('heading', { name: 'Anmelden' }).waitFor();
   }
 
-  /** Die Kontentabelle des Finanzstatus; ruft ihn auf, wenn die Seite woanders steht. */
+  /** Die Kontenliste des Finanzstatus; ruft ihn auf, wenn die Seite woanders steht. */
   private async kontentabelle(): Promise<Page> {
     const page = await this.seite();
     if (!new URL(page.url()).pathname.startsWith('/finanzstatus')) await page.goto(`${basisUrl}/finanzstatus`, { waitUntil: 'domcontentloaded' });
-    await page.locator('.kontentabelle').waitFor();
+    await page.locator('.kontenliste').waitFor();
     return page;
   }
 
   @Step('Die Zeile <konto> zeigt <spalte> <wert>')
   public async zeileZeigt(konto: string, spalte: string, wert: string) {
     const page = await this.kontentabelle();
-    const kopf = (await page.locator('.kontentabelle thead th').allInnerTexts()).map(sichtbar);
-    const index = kopf.indexOf(text(spalte));
-    assert.ok(index >= 0, `Spalte „${spalte}“ fehlt, da sind: ${kopf.join(', ')}`);
-    const zeile = page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`);
+    const zeile = page.locator(`.kontenliste [data-zeile][data-konto="${text(konto)}"]`);
     await zeile.waitFor();
-    const zellen = (await zeile.locator('th, td').allInnerTexts()).map(sichtbar);
-    assert.strictEqual(zellen[index], sichtbar(text(wert)), `Zeile „${konto}“, Spalte „${spalte}“`);
+    const [[ist]] = await this.listenzeilen(page.locator('.kontenliste'), [text(spalte)], zeile);
+    assert.strictEqual(ist, sichtbar(text(wert)), `Zeile „${konto}“, Spalte „${spalte}“`);
   }
 
   @Step('Der Finanzstatus zeigt das Gesamtvermögen <betrag>')
@@ -148,9 +176,9 @@ export default class StepImplementation {
   @Step('Die Kundin öffnet die Überweisung vom Girokonto')
   public async ueberweisungOeffnen() {
     const page = await this.kontentabelle();
-    const zeile = page.locator('.kontentabelle tbody tr[data-konto="Girokonto"]');
+    const zeile = page.locator('.kontenliste [data-konto="Girokonto"]');
     // Das Girokonto der angemeldeten Kundin (Lena und Jonas haben eigene IBANs).
-    const iban = sichtbar(await zeile.locator('td.iban').textContent());
+    const iban = sichtbar(await zeile.locator('[data-feld="IBAN"]').textContent());
     await zeile.getByRole('link', { name: 'Überweisen' }).click();
     const konto = page.getByRole('form', { name: 'Überweisung' }).getByLabel('Auftraggeberkonto', { exact: true });
     await konto.waitFor();
@@ -200,7 +228,7 @@ export default class StepImplementation {
     const page = await this.seite();
     await page.getByRole('button', { name: 'Bestätigen' }).click({ clickCount: Number(anzahl) });
     await page.getByRole('status').filter({ hasText: text(meldung) }).waitFor();
-    await page.locator('.kontentabelle').waitFor();
+    await page.locator('.kontenliste').waitFor();
   }
 
   @Step('Die Kundin bestätigt die Überweisung')
@@ -213,7 +241,7 @@ export default class StepImplementation {
   public async ueberweisungAbbrechen() {
     const page = await this.seite();
     await page.getByRole('form', { name: 'Überweisung' }).getByRole('link', { name: 'Abbrechen' }).click();
-    await page.locator('.kontentabelle').waitFor();
+    await page.locator('.kontenliste').waitFor();
   }
 
   @Step('Die Kundin führt die Überweisung an <empfaenger> mit IBAN <iban> und Betrag <betrag> direkt beim Dienst aus und der Dienst antwortet mit dem Status <status> und der Meldung <meldung>')
@@ -257,11 +285,11 @@ export default class StepImplementation {
   @Step('Die Kundin öffnet die Umsätze des Kontos <konto>')
   public async umsaetzeOeffnen(konto: string) {
     const page = await this.kontentabelle();
-    await page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`).getByRole('link', { name: 'Umsätze' }).click();
+    await page.locator(`.kontenliste [data-konto="${text(konto)}"]`).getByRole('link', { name: 'Umsätze' }).click();
     await page.waitForURL(/\/umsaetze\?/);
     await this.umsaetzeGeladen();
     // Stand der Umsätze je Aufruf, für „gegenüber vorher unverändert“.
-    StepImplementation.umsatzstaende.push(await page.locator('#umsaetze-ergebnis tbody tr').allInnerTexts());
+    StepImplementation.umsatzstaende.push(await page.locator('#umsaetze-ergebnis [data-zeile]').allInnerTexts());
   }
 
   @Step('Die Kundin öffnet die Umsätze des Kontos mit der IBAN <iban>')
@@ -282,7 +310,7 @@ export default class StepImplementation {
     await form.getByLabel('Suche').fill(zelle('Suchtext'));
     await form.getByLabel('Zeitraum von').fill(zelle('Zeitraum von'));
     await form.getByLabel('Zeitraum bis').fill(zelle('Zeitraum bis'));
-    await form.getByLabel('Ein-/Ausgang').selectOption({ label: zelle('Ein-/Ausgang') || 'Alle' });
+    await form.getByRole('radiogroup', { name: 'Ein-/Ausgang' }).getByRole('radio', { name: zelle('Ein-/Ausgang') || 'Alle', exact: true }).check();
     // Dieselbe Abfrage, die die Seite baut: Reihenfolge suchtext, von, bis, richtung; Leeres fehlt.
     const q = new URLSearchParams();
     if (zelle('Suchtext')) q.set('suchtext', zelle('Suchtext'));
@@ -298,21 +326,7 @@ export default class StepImplementation {
     const page = await this.umsaetzeGeladen();
     const spalten = tabelle.getColumnNames();
     const erwartet = tabelle.getTableRows().map(z => spalten.map(s => sichtbar(text(z.getCell(s)))));
-    const tab = page.locator('#umsaetze-ergebnis table');
-    let ist: string[][] = [];
-    if (await tab.count()) {
-      const kopf = (await tab.locator('thead th').allInnerTexts()).map(sichtbar);
-      const index = spalten.map(s => {
-        const i = kopf.indexOf(s);
-        assert.ok(i >= 0, `Spalte „${s}“ fehlt, da sind: ${kopf.join(', ')}`);
-        return i;
-      });
-      const zeilen = tab.locator('tbody tr');
-      for (let n = 0; n < await zeilen.count(); n++) {
-        const zellen = (await zeilen.nth(n).locator('th, td').allInnerTexts()).map(sichtbar);
-        ist.push(index.map(i => zellen[i]));
-      }
-    }
+    const ist = await this.listenzeilen(page.locator('#umsaetze-ergebnis [data-felder]'), spalten);
     // Ohne Filter zählen die neuesten Zeilen: Das Girokonto trägt Demo-Umsätze (C-001), die ein Szenario zur Umbuchung nicht wiederholt.
     // Mit Filter und bei einer leeren Erwartung muss die Liste genau stimmen.
     const vergleich = StepImplementation.umsaetzeGefiltert || !erwartet.length ? ist : ist.slice(0, erwartet.length);
@@ -338,7 +352,7 @@ export default class StepImplementation {
   @Step('Die Kundin wählt bei der Lastschrift von <gegenpartei> die Rückgabe')
   public async rueckgabeWaehlen(gegenpartei: string) {
     const page = await this.umsaetzeGeladen();
-    const zeile = page.locator('#umsaetze-ergebnis tbody tr').filter({ hasText: text(gegenpartei) }).filter({ has: page.getByRole('button', { name: 'Zurückgeben' }) });
+    const zeile = page.locator('#umsaetze-ergebnis [data-zeile]').filter({ hasText: text(gegenpartei) }).filter({ has: page.getByRole('button', { name: 'Zurückgeben' }) });
     await zeile.getByRole('button', { name: 'Zurückgeben' }).click();
   }
 
@@ -544,6 +558,7 @@ export default class StepImplementation {
 
   private async vorlageAnlegen(name: string, iban: string, zweck: string) {
     const page = await this.vorlagenSeite();
+    await page.locator('#neue-vorlage').click();
     const form = page.getByRole('form', { name: 'Neue Vorlage' });
     await form.getByLabel('Name', { exact: true }).fill(text(name));
     await form.getByLabel('IBAN des Empfängers').fill(text(iban));
@@ -564,30 +579,27 @@ export default class StepImplementation {
   @Step('Die Empfängervorlagen zeigen die Meldung <meldung>')
   public async vorlagenMelden(meldung: string) {
     const page = await this.vorlagenSeite();
-    await page.locator('.vorlagen > [role="status"], .vorlagen > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.vorlagen [role="status"], .vorlagen [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
   }
 
   @Step('Die Kundin wählt die Vorlage <name> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
   public async vorlageLoeschen(name: string, antwort: string) {
     const page = await this.vorlagenSeite();
-    const form = page.getByRole('form', { name: 'Vorlage löschen' });
-    await form.getByLabel('Vorlage zum Löschen').selectOption({ label: text(name) });
-    await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
-    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
-    await abfrage.getByText('Vorlage löschen?').waitFor();
+    const zeile = this.zeileMit(page, '.vorlagen', 'Vorlage', name);
+    await this.nachNeuzeichnen(page, () => zeile.getByRole('button', { name: 'Löschen', exact: true }).click());
+    const abfrage = await this.sicherheitsabfrage(page, 'Vorlage löschen?');
     await this.nachNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
   }
 
   @Step('Die Kundin benennt die Vorlage <alt> in <neu> um und sieht IBAN <iban>, Verwendungszweck <zweck> und die Meldung <meldung>')
   public async vorlageUmbenennen(alt: string, neu: string, iban: string, zweck: string, meldung: string) {
     const page = await this.vorlagenSeite();
+    await this.nachNeuzeichnen(page, () => this.zeileMit(page, '.vorlagen', 'Vorlage', alt).getByRole('button', { name: 'Umbenennen', exact: true }).click());
     const form = page.getByRole('form', { name: 'Vorlage umbenennen' });
-    await form.getByLabel('Vorlage zum Umbenennen').selectOption({ label: text(alt) });
     await form.getByLabel('Neuer Name').fill(text(neu));
     await this.nachNeuzeichnen(page, () => form.getByRole('button', { name: 'Umbenennen' }).click());
     await this.vorlagenMelden(meldung);
-    const zeile = page.locator('.vorlagen__tabelle tbody tr').filter({ has: page.getByRole('rowheader', { name: text(neu), exact: true }) });
-    const zellen = (await zeile.locator('td').allInnerTexts()).map(sichtbar);
+    const [zellen] = await this.listenzeilen(page.locator('.vorlagen [data-felder]'), ['IBAN', 'Verwendungszweck der Vorlage'], this.zeileMit(page, '.vorlagen', 'Vorlage', neu));
     assert.deepStrictEqual(zellen, [text(iban), text(zweck)], `Vorlage „${neu}“`);
   }
 
@@ -630,7 +642,7 @@ export default class StepImplementation {
   @Step('Die Kundin öffnet das Tageslimit')
   public async tageslimitOeffnen() {
     const page = await this.kontentabelle();
-    await page.locator('#kopf-aktion').getByRole('link', { name: 'Tageslimit' }).click();
+    await page.getByRole('group', { name: 'Schnellzugriff' }).getByRole('link', { name: 'Tageslimit' }).click();
     await page.waitForURL(/\/tageslimit$/);
     await page.locator('.tageslimit').waitFor();
   }
@@ -649,7 +661,7 @@ export default class StepImplementation {
   @Step('Das Tageslimit zeigt die Meldung <meldung>')
   public async tageslimitMeldet(meldung: string) {
     const page = await this.tageslimitSeite();
-    await page.locator('.tageslimit > [role="status"], .tageslimit > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.tageslimit [role="status"], .tageslimit [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
   }
 
   @Step('Das Tageslimit zeigt das aktuelle Limit <aktuell> und das Standardlimit <standard>')
@@ -712,7 +724,7 @@ export default class StepImplementation {
   @Step('Die Kundin öffnet die Daueraufträge')
   public async dauerauftraegeOeffnen() {
     const page = await this.kontentabelle();
-    await page.locator('#kopf-aktion').getByRole('link', { name: 'Daueraufträge' }).click();
+    await page.getByRole('group', { name: 'Schnellzugriff' }).getByRole('link', { name: 'Daueraufträge' }).click();
     await page.waitForURL(/\/dauerauftraege$/);
     await page.locator('.dauerauftraege').waitFor();
   }
@@ -720,6 +732,7 @@ export default class StepImplementation {
   @Step('Die Kundin legt einen Dauerauftrag an Empfänger <empfaenger> mit IBAN <iban>, Betrag <betrag>, Verwendungszweck <zweck>, Turnus <turnus>, erstem Ausführungstag <tag> und Enddatum <ende> an')
   public async dauerauftragAnlegen(empfaenger: string, iban: string, betrag: string, zweck: string, turnus: string, tag: string, ende: string) {
     const page = await this.dauerauftraegeSeite();
+    await page.locator('#neuer-dauerauftrag').click();
     const form = page.getByRole('form', { name: 'Neuer Dauerauftrag' });
     await form.getByLabel('Name des Empfängers').fill(text(empfaenger));
     await form.getByLabel('IBAN des Empfängers').fill(text(iban));
@@ -734,7 +747,7 @@ export default class StepImplementation {
   @Step('Die Daueraufträge zeigen die Meldung <meldung>')
   public async dauerauftraegeMelden(meldung: string) {
     const page = await this.dauerauftraegeSeite();
-    await page.locator('.dauerauftraege > [role="status"], .dauerauftraege > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.dauerauftraege [role="status"], .dauerauftraege [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
   }
 
   @Step('Die Daueraufträge zeigen die Einträge <tabelle>')
@@ -744,36 +757,24 @@ export default class StepImplementation {
     const datumsspalten = ['Erster Ausführungstag', 'Enddatum'];
     const erwartet = tabelle.getTableRows().map(z => spalten.map(s =>
       datumsspalten.includes(s) ? this.anzeigeDatum(text(z.getCell(s))) : sichtbar(text(z.getCell(s)))));
-    const tab = page.locator('.dauerauftraege__tabelle');
-    await tab.waitFor();
-    const kopf = (await tab.locator('thead th').allInnerTexts()).map(sichtbar);
-    const index = spalten.map(s => {
-      const i = kopf.indexOf(s);
-      assert.ok(i >= 0, `Spalte „${s}“ fehlt, da sind: ${kopf.join(', ')}`);
-      return i;
-    });
-    const zeilen = tab.locator('tbody tr');
-    const ist: string[][] = [];
-    for (let n = 0; n < await zeilen.count(); n++) {
-      const zellen = (await zeilen.nth(n).locator('th, td').allInnerTexts()).map(sichtbar);
-      ist.push(index.map(i => zellen[i]));
-    }
+    const liste = page.locator('.dauerauftraege [data-felder]');
+    await liste.waitFor();
+    const ist = await this.listenzeilen(liste, spalten);
     assert.deepStrictEqual(ist, erwartet, 'Einträge der Daueraufträge');
   }
 
-  /** Wählt in der Auswahl den Dauerauftrag mit diesem Empfänger; die Optionen beginnen mit dem Empfänger. */
-  private async dauerauftragWaehlen(select: Locator, empfaenger: string) {
-    const wert = await select.locator('option').evaluateAll((os, name) =>
-      (os as HTMLOptionElement[]).find(o => o.text.startsWith(`${name},`))?.value, text(empfaenger));
-    assert.ok(wert, `Kein Dauerauftrag „${empfaenger}“ in der Auswahl`);
-    await select.selectOption(wert);
+  /** Wählt an der Zeile des Dauerauftrags mit diesem Empfänger die Aktion (Ändern, Löschen). */
+  private async dauerauftragWaehlen(page: Page, empfaenger: string, aktion: string) {
+    const zeile = this.zeileMit(page, '.dauerauftraege', 'Empfänger', empfaenger);
+    assert.ok(await zeile.count(), `Kein Dauerauftrag „${empfaenger}“ in der Liste`);
+    await this.dauerauftragNeuzeichnen(page, () => zeile.getByRole('button', { name: aktion, exact: true }).click());
   }
 
   @Step('Die Kundin ändert beim Dauerauftrag <empfaenger> das Feld <feld> auf <wert>')
   public async dauerauftragAendern(empfaenger: string, feld: string, wert: string) {
     const page = await this.dauerauftraegeSeite();
+    await this.dauerauftragWaehlen(page, empfaenger, 'Ändern');
     const form = page.getByRole('form', { name: 'Dauerauftrag ändern' });
-    await this.dauerauftragWaehlen(form.getByLabel('Dauerauftrag zum Ändern'), empfaenger);
     const felder: Record<string, string> = {
       'Empfänger': 'Neuer Empfängername', 'IBAN': 'Neue IBAN des Empfängers', 'Betrag': 'Neuer Betrag in Euro',
       'Verwendungszweck': 'Neuer Verwendungszweck', 'Turnus': 'Neuer Turnus',
@@ -792,11 +793,8 @@ export default class StepImplementation {
   @Step('Die Kundin wählt den Dauerauftrag <empfaenger> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
   public async dauerauftragLoeschen(empfaenger: string, antwort: string) {
     const page = await this.dauerauftraegeSeite();
-    const form = page.getByRole('form', { name: 'Dauerauftrag löschen' });
-    await this.dauerauftragWaehlen(form.getByLabel('Dauerauftrag zum Löschen'), empfaenger);
-    await this.dauerauftragNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
-    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
-    await abfrage.getByText('Dauerauftrag löschen?').waitFor();
+    await this.dauerauftragWaehlen(page, empfaenger, 'Löschen');
+    const abfrage = await this.sicherheitsabfrage(page, 'Dauerauftrag löschen?');
     await this.dauerauftragNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
   }
 
@@ -933,7 +931,7 @@ export default class StepImplementation {
   public async vorgemerktOeffnen() {
     const page = await this.seite();
     if (new URL(page.url()).pathname !== '/ueberweisung') await page.goto(`${basisUrl}/ueberweisung`, { waitUntil: 'domcontentloaded' });
-    await page.getByRole('form', { name: 'Überweisung' }).getByRole('link', { name: 'Vorgemerkte Überweisungen' }).click();
+    await page.getByRole('complementary', { name: 'Auftraggeberkonto' }).getByRole('link', { name: /^Vorgemerkte Überweisungen/ }).click();
     await page.waitForURL(/\/vorgemerkte-ueberweisungen$/);
     await this.vorgemerktSeite();
   }
@@ -941,7 +939,7 @@ export default class StepImplementation {
   @Step('Die vorgemerkten Überweisungen zeigen <anzahl> Aufträge')
   public async vorgemerktAnzahl(anzahl: string) {
     const page = await this.vorgemerktSeite();
-    assert.strictEqual(await page.locator('.vorgemerkt table tbody tr').count(), Number(anzahl), 'Zahl der vorgemerkten Aufträge');
+    assert.strictEqual(await page.locator('.vorgemerkt [data-zeile]').count(), Number(anzahl), 'Zahl der vorgemerkten Aufträge');
   }
 
   @Step('Die vorgemerkten Überweisungen zeigen die Aufträge <tabelle>')
@@ -950,21 +948,7 @@ export default class StepImplementation {
     const spalten = tabelle.getColumnNames();
     const erwartet = tabelle.getTableRows().map(z => spalten.map(s =>
       s === 'Ausführungstag' ? StepImplementation.anzeigetag(z.getCell(s)) : sichtbar(text(z.getCell(s)))));
-    const tab = page.locator('.vorgemerkt table');
-    const ist: string[][] = [];
-    if (await tab.count()) {
-      const kopf = (await tab.locator('thead th').allInnerTexts()).map(sichtbar);
-      const index = spalten.map(s => {
-        const i = kopf.indexOf(s);
-        assert.ok(i >= 0, `Spalte „${s}“ fehlt, da sind: ${kopf.join(', ')}`);
-        return i;
-      });
-      const zeilen = tab.locator('tbody tr');
-      for (let n = 0; n < await zeilen.count(); n++) {
-        const zellen = (await zeilen.nth(n).locator('th, td').allInnerTexts()).map(sichtbar);
-        ist.push(index.map(i => zellen[i]));
-      }
-    }
+    const ist = await this.listenzeilen(page.locator('.vorgemerkt [data-felder]'), spalten);
     assert.deepStrictEqual(ist, erwartet);
   }
 
@@ -984,14 +968,10 @@ export default class StepImplementation {
   @Step('Die Kundin wählt den vorgemerkten Auftrag an <empfaenger> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
   public async vorgemerktLoeschen(empfaenger: string, antwort: string) {
     const page = await this.vorgemerktSeite();
-    const form = page.getByRole('form', { name: 'Auftrag löschen' });
-    const auswahl = form.getByLabel('Auftrag zum Löschen');
-    const wert = await auswahl.locator('option').filter({ hasText: text(empfaenger) }).first().getAttribute('value');
-    assert.ok(wert, `Kein vorgemerkter Auftrag an „${empfaenger}“ zur Auswahl`);
-    await auswahl.selectOption(wert);
-    await this.vorgemerktNeu(page, () => form.getByRole('button', { name: 'Löschen' }).click());
-    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
-    await abfrage.getByText('Vorgemerkten Auftrag löschen?').waitFor();
+    const zeile = page.locator('.vorgemerkt [data-zeile]').filter({ hasText: text(empfaenger) }).first();
+    assert.ok(await zeile.count(), `Kein vorgemerkter Auftrag an „${empfaenger}“ in der Liste`);
+    await this.vorgemerktNeu(page, () => zeile.getByRole('button', { name: 'Löschen', exact: true }).click());
+    const abfrage = await this.sicherheitsabfrage(page, 'Vorgemerkten Auftrag löschen?');
     await this.vorgemerktNeu(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
   }
 
@@ -1026,7 +1006,7 @@ export default class StepImplementation {
   @Step('Die Kundin öffnet die Debitkarte des Girokontos')
   public async debitkarteOeffnen() {
     const page = await this.kontentabelle();
-    await page.locator('.kontentabelle tbody tr[data-konto="Girokonto"]').getByRole('link', { name: 'Debitkarte' }).click();
+    await page.locator('.kontenliste [data-konto="Girokonto"]').getByRole('link', { name: 'Debitkarte' }).click();
     await page.waitForURL(/\/debitkarte/);
     await page.locator('.debitkarte').waitFor();
   }
@@ -1049,15 +1029,14 @@ export default class StepImplementation {
     const form = page.getByRole('form', { name: 'Endgültig sperren' });
     await form.getByLabel('Grund der endgültigen Sperre').selectOption({ label: text(grund ?? '') });
     await this.debitkarteNeuzeichnen(page, () => form.getByRole('button', { name: 'Endgültig sperren' }).click());
-    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
-    await abfrage.getByText('Debitkarte endgültig sperren?').waitFor();
+    const abfrage = await this.sicherheitsabfrage(page, 'Debitkarte endgültig sperren?');
     await this.debitkarteNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
   }
 
   @Step('Die Debitkarte zeigt die Meldung <meldung>')
   public async debitkarteMeldet(meldung: string) {
     const page = await this.debitkarteSeite();
-    await page.locator('.debitkarte > [role="status"], .debitkarte > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.debitkarte [role="status"], .debitkarte [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
   }
 
   /** Die Werte der Karte als Beschriftung → Wert. */
@@ -1160,7 +1139,7 @@ export default class StepImplementation {
   @Step('Die Kundin wählt im Finanzstatus in der Zeile des Kontos <konto> die Ausgabenanalyse')
   public async ausgabenanalyseAusFinanzstatus(konto: string) {
     const page = await this.kontentabelle();
-    await page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`).getByRole('link', { name: 'Ausgabenanalyse' }).click();
+    await page.locator(`.kontenliste [data-konto="${text(konto)}"]`).getByRole('link', { name: 'Ausgabenanalyse' }).click();
     await page.waitForURL(/\/ausgabenanalyse\?/);
     await this.ausgabenSeite();
   }
@@ -1176,13 +1155,7 @@ export default class StepImplementation {
     const page = await this.ausgabenSeite();
     const spalten = tabelle.getColumnNames();
     const erwartet = tabelle.getTableRows().map(z => spalten.map(s => sichtbar(text(z.getCell(s)))));
-    const zeilen = page.locator('#ausgaben-ergebnis table tbody tr');
-    const ist: string[][] = [];
-    const kopf = (await page.locator('#ausgaben-ergebnis table thead th').allInnerTexts()).map(sichtbar);
-    for (let n = 0; n < await zeilen.count(); n++) {
-      const zellen = (await zeilen.nth(n).locator('td').allInnerTexts()).map(sichtbar);
-      ist.push(spalten.map(s => zellen[kopf.indexOf(s)]));
-    }
+    const ist = await this.listenzeilen(page.locator('#ausgaben-ergebnis [data-felder]'), spalten);
     assert.deepStrictEqual(ist, erwartet);
   }
 
@@ -1190,7 +1163,7 @@ export default class StepImplementation {
   @Step('Die Ausgabenanalyse zeigt die Kategorien')
   public async ausgabenanalyseOhneKategorien() {
     const page = await this.ausgabenSeite();
-    assert.strictEqual(await page.locator('#ausgaben-ergebnis table tbody tr').count(), 0, 'Die Ausgabenanalyse zeigt Kategorien');
+    assert.strictEqual(await page.locator('#ausgaben-ergebnis [data-zeile]').count(), 0, 'Die Ausgabenanalyse zeigt Kategorien');
   }
 
   @Step('Die Ausgabenanalyse zeigt <feld> mit dem Text <erwartet>')
@@ -1254,39 +1227,30 @@ export default class StepImplementation {
     const page = await this.postfachSeite();
     const spalten = tabelle.getColumnNames();
     const erwartet = tabelle.getTableRows().map(z => spalten.map(s => sichtbar(text(z.getCell(s)))));
-    const kopf = (await page.locator('.postfach__tabelle thead th').allInnerTexts()).map(sichtbar);
-    const zeilen = page.locator('.postfach__tabelle tbody tr');
-    const ist: string[][] = [];
-    for (let n = 0; n < await zeilen.count(); n++) {
-      const zellen = (await zeilen.nth(n).locator('td').allInnerTexts()).map(sichtbar);
-      ist.push(spalten.map(s => zellen[kopf.indexOf(s)]));
-    }
+    const ist = await this.listenzeilen(page.locator('.postfach [data-felder]'), spalten);
     assert.deepStrictEqual(ist, erwartet);
   }
 
   @Step('Das Postfach zeigt die Meldung <meldung>')
   public async postfachMeldet(meldung: string) {
     const page = await this.postfachSeite();
-    await page.locator('.postfach > [role="status"], .postfach > [role="alert"], .postfach > .vorlagen__leer').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.postfach [role="status"], .postfach [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
   }
 
   @Step('Die Kundin öffnet die Nachricht <betreff> und sieht den Text <erwartet>')
   public async nachrichtOeffnen(betreff: string, erwartet: string) {
     const page = await this.postfachSeite();
-    const form = page.getByRole('form', { name: 'Nachricht lesen' });
-    await form.getByLabel('Nachricht zum Öffnen').selectOption({ label: text(betreff) });
-    await this.postfachNeuzeichnen(page, () => form.getByRole('button', { name: 'Öffnen' }).click());
+    const zeile = this.zeileMit(page, '.postfach', 'Betreff', betreff);
+    await this.postfachNeuzeichnen(page, () => zeile.locator('[data-oeffnen]').click());
     assert.strictEqual(sichtbar(await page.locator('#nachrichtText').textContent()), sichtbar(text(erwartet)), `Text von „${betreff}“`);
   }
 
   @Step('Die Kundin löscht die Nachricht <betreff> und antwortet auf die Sicherheitsabfrage <antwort>')
   public async nachrichtLoeschen(betreff: string, antwort: string) {
     const page = await this.postfachSeite();
-    const form = page.getByRole('form', { name: 'Nachricht löschen' });
-    await form.getByLabel('Nachricht zum Löschen').selectOption({ label: text(betreff) });
-    await this.postfachNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
-    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
-    await abfrage.getByText('Nachricht löschen?').waitFor();
+    const zeile = this.zeileMit(page, '.postfach', 'Betreff', betreff);
+    await this.postfachNeuzeichnen(page, () => zeile.getByRole('button', { name: 'Löschen', exact: true }).click());
+    const abfrage = await this.sicherheitsabfrage(page, 'Nachricht löschen?');
     await this.postfachNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
   }
 
@@ -1394,7 +1358,7 @@ export default class StepImplementation {
   public async finanzstatusMeldet(meldung: string) {
     const page = await this.seite();
     await page.getByRole('status').filter({ hasText: text(meldung) }).waitFor();
-    await page.locator('.kontentabelle').waitFor();
+    await page.locator('.kontenliste').waitFor();
   }
 
   @Step('Die Umbuchung zeigt die Meldung <meldung>')
@@ -1651,7 +1615,7 @@ export default class StepImplementation {
       await page.goto(`${basisUrl}/finanzstatus`, { waitUntil: 'domcontentloaded' });
     }
     const kontentabelle = await this.kontentabelle();
-    await kontentabelle.locator('#kopf-aktion').getByRole('link', { name: 'Persönliche Daten' }).click();
+    await kontentabelle.getByRole('group', { name: 'Schnellzugriff' }).getByRole('link', { name: 'Persönliche Daten' }).click();
     await page.waitForURL(/\/persoenliche-daten$/);
     await page.locator('.persoenlich').waitFor();
   }

@@ -46,3 +46,4 @@ After the pull request, review, CI pipeline and merge happen in Git. After the m
 
 - Local Development stage: `scripts/akzeptanztests.sh [specs/<file>.spec]`. It prints only the summary and the failed steps; the full Gauge output is in `acceptance/reports/gauge.log`, read it only for a failure.
 - Unit tests: `npm test`; build: `npm run build`.
+- User interface (`public/`): read `.claude/skills/oberflaeche/SKILL.md` before changing a page; it fixes page patterns, building blocks and how the steps read lists. Check your result with `node scripts/fotos.cjs <url> <dir>` and look at the pictures.
