@@ -142,3 +142,27 @@ Tags: UC-024, PK-62, BR-0098
 | Buchungstag | Gegenpartei           |
 |-------------|-----------------------|
 | 28.01.2026  | Hausverwaltung Berger |
+
+## A5 Kontoauszug fehlgeschlagen: Die Maske zeigt die Fehlermeldung und liefert keine Datei
+
+Tags: UC-024, PK-62
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin öffnet den Kontoauszug
+* Der Kontoauszug-Dienst antwortet mit einem Fehler
+* Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
+* Der Kontoauszug wird mit dem Status "500" und der Meldung "Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut." abgelehnt
+
+## A1 Nicht angemeldet: Eine bis zum Herunterladen abgelaufene Sitzung führt zur Anmeldeseite
+
+Tags: UC-024, PK-62
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin öffnet den Kontoauszug
+* Die Sitzung der Kundin ist abgelaufen
+* Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
+* Die Anmeldeseite ist zu sehen

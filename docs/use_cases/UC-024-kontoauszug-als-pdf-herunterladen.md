@@ -57,10 +57,10 @@
 
 ### A5: Kontoauszug fehlgeschlagen
 
-**Auslöser:** Der Dienst antwortet mit einem anderen Fehler als in A1, A3 und A4, etwa weil das PDF nicht erzeugt werden kann, oder ist nicht erreichbar. (Schritt 5).  
+**Auslöser:** Der Dienst antwortet mit 500, etwa weil das PDF nicht erzeugt werden kann, oder mit einem anderen Fehler als in A1, A3 und A4, oder ist nicht erreichbar. (Schritt 5).  
 **Ablauf:**
 
-1. Das System liefert keine Datei und zeigt die Meldung „Der Kontoauszug ist fehlgeschlagen. Bitte versuchen Sie es später erneut.“.
+1. Das System liefert keine Datei und zeigt die Meldung „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“; bei 500 enthält die Antwort das Feld fehler, die Maske zeigt die Meldung unabhängig von dessen Text.
 
 ## Sequenzdiagramm
 
@@ -80,6 +80,8 @@ sequenceDiagram
         banking-->>kundin: „Das Konto wurde nicht gefunden.“
     else Monat ungültig
         banking-->>kundin: „Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.“
+    else Kontoauszug fehlgeschlagen
+        banking-->>kundin: „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“
     end
 ```
 
@@ -94,6 +96,7 @@ sequenceDiagram
 
 - Ohne gültige Sitzung wurde kein Auszug geliefert; die Anmeldeseite ist zu sehen.
 - Bei unbekanntem Konto oder ungültigem Monat wurde keine Datei geliefert.
+- Bei einem Fehler beim Erzeugen oder bei nicht erreichbarem Dienst wurde keine Datei geliefert; die Maske zeigt die Meldung aus A5.
 
 ## Geschäftsregeln
 

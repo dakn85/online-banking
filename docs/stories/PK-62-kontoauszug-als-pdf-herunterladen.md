@@ -34,7 +34,9 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 ## Akzeptanztests
 
 - `acceptance/specs/kontoauszug.spec`: A1 Nicht angemeldet: Der Abruf des Kontoauszugs ohne Sitzung wird mit Status 401 beantwortet
+- `acceptance/specs/kontoauszug.spec`: A1 Nicht angemeldet: Eine bis zum Herunterladen abgelaufene Sitzung führt zur Anmeldeseite
 - `acceptance/specs/kontoauszug.spec`: A4 Monat ungültig: Ein Monat nach dem laufenden Monat wird mit Status 400 abgelehnt
+- `acceptance/specs/kontoauszug.spec`: A5 Kontoauszug fehlgeschlagen: Die Maske zeigt die Fehlermeldung und liefert keine Datei
 - `acceptance/specs/kontoauszug.spec`: Der Kontoauszug wird als Datei mit festem Namen heruntergeladen
 - `acceptance/specs/kontoauszug.spec`: Der Kontoauszug zeigt Anfangssaldo, Endsaldo und alle Umsätze des Monats, neueste zuerst
 - `acceptance/specs/kontoauszug.spec`: Der laufende Monat zeigt den Zwischenstand bis heute
@@ -69,6 +71,10 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - [ ] Vision: Abgrenzung geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-62 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-62 grün
+
+## Offene Fragen
+
+- [ ] Soll die Meldung „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“ für alle unerwarteten Fehler und den nicht erreichbaren Dienst gelten?
 
 ## Entscheidungen
 
