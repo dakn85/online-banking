@@ -44,6 +44,8 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 - `acceptance/specs/umbuchung.spec`: Der Finanzstatus zeigt das Tagesgeldkonto mit Saldo 0,00 € und unverändertem Gesamtvermögen
 - `acceptance/specs/umbuchung.spec`: Die Schnittstelle lehnt dasselbe Konto als Quell- und Zielkonto mit 422 ab
 - `acceptance/specs/umbuchung.spec`: Die Schnittstelle lehnt einen Betrag unter 0,10 € mit 400 ab
+- `acceptance/specs/umbuchung.spec`: Die Schnittstelle prüft die Kontenpaarung vor der Betragsgrenze und nennt die Meldung zu BR-0088
+- `acceptance/specs/umbuchung.spec`: Die Schnittstelle prüft die Zugehörigkeit des Quellkontos vor der Betragsgrenze und lehnt mit 403 ab
 - `acceptance/specs/umbuchung.spec`: Ein Betrag über dem Saldo des Tagesgeldkontos wird abgelehnt
 - `acceptance/specs/umbuchung.spec`: Ein Betrag über dem verfügbaren Betrag des Girokontos wird abgelehnt
 - `acceptance/specs/umbuchung.spec`: Ein Betrag unter 0,10 € wird bei der Umbuchung abgelehnt

@@ -300,7 +300,7 @@ paths:
                 $ref: '#/components/schemas/Fehler'
   /api/umbuchungen:
     post:
-      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Eine wiederholte Anfrage mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
+      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Prüfreihenfolge: 401, 400 (Feldregeln inklusive Mindestbetrag), 403, 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze); die erste Verletzung lehnt ab. Im Feld fehler steht bei 400 wegen des Mindestbetrags und bei 422 der Fachtext aus UC-021. Eine wiederholte Anfrage mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
       operationId: umbuchungAusfuehren
       requestBody:
         required: true
@@ -322,7 +322,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Umbuchung'
         "400":
-          description: Betrag kleiner als 0,10 Euro oder Feld verletzt die Feldregeln
+          description: Betrag kleiner als 0,10 Euro oder Feld verletzt die Feldregeln; bei zu kleinem Betrag steht in fehler „Der Betrag muss mindestens 0,10 € betragen.“
           x-rules:
             - Umbuchung.betrag
             - Umbuchung.quellIban
@@ -339,7 +339,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "403":
-          description: Quell- oder Zielkonto gehört nicht zur angemeldeten Kundin
+          description: Quell- oder Zielkonto gehört nicht zur angemeldeten Kundin; wird vor 422 geprüft
           x-rules:
             - BR-0088
           content:
@@ -347,7 +347,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "422":
-          description: Quell- und Zielkonto sind nicht ein Girokonto und ein Tagesgeldkonto oder dasselbe Konto, oder der Betrag übersteigt den verfügbaren Betrag des Quellkontos
+          description: "Quell- und Zielkonto sind nicht ein Girokonto und ein Tagesgeldkonto oder dasselbe Konto (fehler: „Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich.“), oder der Betrag übersteigt den verfügbaren Betrag des Quellkontos (fehler: „Der Betrag übersteigt den verfügbaren Betrag des Quellkontos.“); die Kontenpaarung wird vor der Betragsgrenze geprüft"
           x-rules:
             - BR-0088
             - BR-0089

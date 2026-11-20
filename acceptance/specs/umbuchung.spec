@@ -208,3 +208,19 @@ Tags: UC-021, PK-58, BR-0088
 * Die Kundin erfasst Quellkonto "Girokonto", Zielkonto "Tagesgeldkonto" und Betrag "50,00 €"
 * Die Kundin wählt „Umbuchen“ "1" Mal
 * Die Umbuchung zeigt die Meldung "Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich."
+
+## Die Schnittstelle prüft die Zugehörigkeit des Quellkontos vor der Betragsgrenze und lehnt mit 403 ab
+
+Tags: UC-021, PK-58, BR-0088
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE89370400440532013000" auf die IBAN "<IBAN des Tagesgeldkontos von lena.hoffmann>" über "1.000.000,00 €" mit dem Status "403" ab
+
+## Die Schnittstelle prüft die Kontenpaarung vor der Betragsgrenze und nennt die Meldung zu BR-0088
+
+Tags: UC-021, PK-58, BR-0088, BR-0089
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324931" auf die IBAN "DE02500105175407324931" über "1.000.000,00 €" mit dem Status "422" und der Meldung "Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich." ab
