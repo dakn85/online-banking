@@ -171,3 +171,19 @@ Tags: UC-020, PK-57, BR-0086
 * Die Navigation zeigt am Eintrag Postfach "2"
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Navigation zeigt am Eintrag Postfach "2"
+
+## PATCH /api/nachrichten/{nachrichtId} mit ungültiger Kennung antwortet mit 400
+
+Tags: UC-020, PK-57
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin ruft "PATCH /api/nachrichten/N-01234567890123456789012345678901234" mit einer ungültigen Nachrichten-Kennung auf und erhält Status "400"
+
+## DELETE /api/nachrichten/{nachrichtId} mit ungültiger Kennung antwortet mit 400
+
+Tags: UC-020, PK-57
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin ruft "DELETE /api/nachrichten/N-01234567890123456789012345678901234" mit einer ungültigen Nachrichten-Kennung auf und erhält Status "400"

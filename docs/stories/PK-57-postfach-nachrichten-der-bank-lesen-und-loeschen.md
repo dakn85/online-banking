@@ -48,6 +48,7 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - `acceptance/specs/postfach.spec`: Das Postfach zeigt die Nachrichten der Kundin, neueste zuerst
 - `acceptance/specs/postfach.spec`: Das Postfach zeigt nur die Nachrichten der angemeldeten Kundin
 - `acceptance/specs/postfach.spec`: DELETE /api/nachrichten/{nachrichtId} mit unbekannter Kennung antwortet mit 404
+- `acceptance/specs/postfach.spec`: DELETE /api/nachrichten/{nachrichtId} mit ungültiger Kennung antwortet mit 400
 - `acceptance/specs/postfach.spec`: DELETE /api/nachrichten/{nachrichtId} ohne Anmeldung antwortet mit 401
 - `acceptance/specs/postfach.spec`: Die Navigation zeigt die Zahl ungelesener Nachrichten auch auf Überweisung und Umsätzen
 - `acceptance/specs/postfach.spec`: Die Zahl ungelesener Nachrichten in der Navigation sinkt beim Öffnen
@@ -59,6 +60,7 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - `acceptance/specs/postfach.spec`: Ohne Nachricht zeigt das Postfach einen Hinweis und die Navigation keine Zahl
 - `acceptance/specs/postfach.spec`: Ohne ungelesene Nachricht zeigt die Navigation keine Zahl
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} mit unbekannter Kennung antwortet mit 404
+- `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} mit ungültiger Kennung antwortet mit 400
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} ohne Anmeldung antwortet mit 401
 
 ## Aufgaben für die Umsetzung
