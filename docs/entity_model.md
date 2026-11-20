@@ -8,6 +8,9 @@ erDiagram
     "Überweisung" }o--|| Konto : "geht ab von"
     Umsatz }o--|| Konto : "gehört zu"
     Empfaengervorlage }o--|| Kunde : "gehört zu"
+    Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
+    Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
+    Debitkarte |o--|| Konto : "gehört zum Girokonto"
     Nachricht }o--|| Kunde : "gehört zu"
 ```
 
@@ -45,6 +48,8 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | dispositionsrahmen | Eingeräumter Dispositionsrahmen in Euro; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 1000.00; nur bei Art Girokonto |
 | verfuegbarerBetrag | Verfügbarer Betrag in Euro: Saldo plus Dispositionsrahmen; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 3145.30; nur bei Art Girokonto |
 
+**Einschränkungen:** Ein Konto der Art Girokonto kann eine Debitkarte haben (Entität Debitkarte); eine Kreditkarte hat keine.
+
 ### Überweisung
 
 **Bereich:** Überweisung  
@@ -77,6 +82,7 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30 |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+| kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Bu | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 
 **Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009).
 
@@ -111,3 +117,40 @@ Eine Nachricht der Bank an die Kundin im Postfach mit Absender, Betreff, Text, D
 | gelesen | Lesestatus: false, solange die Kundin die Nachricht nicht geöffnet hat, true ab dem Öffnen | Boolean |  | Pflicht; Standard false; Beispiel false |
 
 **Einschränkungen:** Eine Nachricht gehört genau einer Kundin und liegt nur im Speicher (ADR-002). Die Kundin setzt den Lesestatus nur durch Öffnen von false auf true und löscht Nachrichten endgültig; die Bank erzeugt die Nachrichten (hier als Demo-Daten, C-001).
+
+### Ausgabenanalyse
+
+**Bereich:** Finanzstatus  
+
+Auswertung der Ausgaben eines Girokontos für einen Monat, gruppiert nach Kategorien (UC-019). Sie wird bei jeder Abfrage aus den Umsätzen berechnet und nicht gespeichert.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| monat | Monat der Auswertung im Format JJJJ-MM, Monat 01 bis 12 | String | 7..7 | Pflicht; Länge 7..7; Muster ^[0-9]{4}-(0[1-9]\|1[0-2])$; Beispiel 2026-02 |
+| gesamtausgaben | Summe aller Ausgänge des Girokontos im Monat in Euro, nicht negativ (0 bei einem Monat ohne Ausgänge), gleich der Summe der Kategoriesummen | Decimal |  | Pflicht; Wertebereich 0..; Beispiel 98.00; Anzeige 98,00 € |
+
+### Kategorieausgabe
+
+**Bereich:** Finanzstatus  
+
+Eine Zeile der Ausgabenanalyse: eine Kategorie mit ihrer Summe und ihrem Anteil an den Gesamtausgaben des Monats. Nur Kategorien mit mindestens einem Ausgang erscheinen.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| kategorie | Kategorie aus der festen Liste | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
+| summe | Summe der Ausgänge dieser Kategorie im Monat in Euro als positive Zahl, auf Cent gerundet | Decimal |  | Pflicht; Beispiel 86.00; Anzeige 86,00 €; größer als 0 |
+| anteil | Anteil der Summe an den Gesamtausgaben in Prozent, kaufmännisch auf eine Nachkommastelle gerundet, ohne Ausgleich auf 100 % | Decimal |  | Pflicht; Wertebereich 0..100; Beispiel 87.8; Anzeige als Prozent mit einer Nachkommastelle, Beispiel 87,8 % |
+
+### Debitkarte
+
+**Bereich:** Debitkarte  
+
+Die Debitkarte zum Girokonto der Kundin mit ihrem Sperrstatus. Die Kundin erkennt sie an der maskierten Kartennummer.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| kartennummerMaskiert | Maskierte Kartennummer, vier Sterne und die letzten vier Stellen; daran erkennt die Kundin ihre Karte | String | 9..9 | Pflicht; Länge 9..9; Muster ^\*\*\*\* [0-9]{4}$; Beispiel **** 4821 |
+| status | Sperrstatus der Karte; endgültig gesperrt bleibt gesperrt | String |  | Pflicht; Werte aktiv, vorübergehend gesperrt, endgültig gesperrt; Standard aktiv; Beispiel aktiv |
+| sperrgrund | Grund der endgültigen Sperre, von der Kundin beim endgültigen Sperren gewählt; nur belegt, wenn der Status endgültig gesperrt ist | String |  | Werte Verlust, Diebstahl; Beispiel Verlust; Pflicht beim endgültigen Sperren, sonst nicht belegt; ein bei anderem Zielstatus mitgeschickter Sperrgrund wird ignoriert und nicht gespeichert |
+
+**Einschränkungen:** Zu einem Girokonto gibt es höchstens eine Debitkarte, zu einer Kreditkarte keine. Die Debitkarte liegt nur im Speicher (ADR-002); im Ausgangsstand haben die Demo-Kundinnen je eine Debitkarte mit Status aktiv.

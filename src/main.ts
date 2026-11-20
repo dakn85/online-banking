@@ -1,11 +1,12 @@
 import express from 'express';
 import { join } from 'node:path';
-import { Datenfehler, finanzstatus } from './konten';
+import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren } from './ueberweisung';
-import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
+import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
 import * as tageslimit from './tageslimit';
+import * as debitkarte from './debitkarte';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -81,6 +82,21 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   res.json({ umsaetze: liste });
 });
 
+// UC-019: Ausgabenanalyse des Girokontos; Prüfreihenfolge Monat 400, Konto 404, Kreditkarte 422 (BR-0083, BR-0084)
+app.get('/api/konten/:iban/ausgabenanalyse', nurAngemeldet('api'), (req, res) => {
+  let monat;
+  try {
+    monat = monatPruefen(req.query.monat);
+  } catch (fehler) {
+    if (!(fehler instanceof Abfragefehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  const konto = kontoMitIban(res.locals.kunde.kennung, req.params.iban);
+  if (!konto) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  if (konto.art !== 'Girokonto') return res.status(422).json({ fehler: 'Die Ausgabenanalyse gibt es nur für das Girokonto.' });
+  res.json(ausgabenanalyse(konto.iban, monat));
+});
+
 // UC-003, BR-0075, BR-0076: Export der Umsätze als CSV; Prüfreihenfolge 404, 400, 422
 app.get('/api/konten/:iban/umsaetze/export', nurAngemeldet('api'), (req, res) => {
   const kennung = res.locals.kunde.kennung;
@@ -130,6 +146,20 @@ app.put('/api/tageslimit', nurAngemeldet('api'), (req, res) => {
   }
 });
 
+// UC-018: Debitkarte zum Girokonto der Kundin lesen und den Status setzen (BR-0081, BR-0082)
+const kartenfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof debitkarte.Kartenfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
+  try { res.json(debitkarte.lesen(res.locals.kunde.kennung, req.params.iban)); } catch (fehler) { kartenfehler(res, fehler); }
+});
+app.put('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(debitkarte.setzen(res.locals.kunde.kennung, req.params.iban, req.body?.status, req.body?.sperrgrund));
+  } catch (fehler) { kartenfehler(res, fehler); }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
@@ -147,7 +177,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/debitkarte', '/ausgabenanalyse']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
