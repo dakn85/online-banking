@@ -1346,7 +1346,14 @@ export default class StepImplementation {
   @Step('Die Kundin wählt „Umbuchen“ <anzahl> Mal')
   public async umbuchenWaehlen(anzahl: string) {
     const page = await this.seite();
-    await page.getByRole('form', { name: 'Umbuchung' }).getByRole('button', { name: 'Umbuchen' }).click({ clickCount: Number(anzahl) });
+    const maske = page.getByRole('form', { name: 'Umbuchung' });
+    await maske.getByRole('button', { name: 'Umbuchen' }).click({ clickCount: Number(anzahl) });
+    // Ergebnis abwarten: Die App wechselt selbst auf /finanzstatus oder meldet in der Maske.
+    // Sonst sieht der nächste Step noch /umbuchung und startet parallel eine eigene Navigation.
+    await Promise.race([
+      page.waitForURL(url => url.pathname.startsWith('/finanzstatus'), { waitUntil: 'domcontentloaded' }),
+      maske.getByRole('alert').waitFor(),
+    ]).catch(() => { /* kein Ergebnis: die folgenden Steps prüfen und melden es */ });
   }
 
   @Step('Der Finanzstatus zeigt die Meldung <meldung>')
