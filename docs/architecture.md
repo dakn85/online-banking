@@ -100,8 +100,8 @@ C4Component
 | --- | --- | --- |
 | Seitenauslieferung | Nimmt jede Anfrage von außen an, prüft die Pflichtfelder eines Auftrags und liefert Seiten und Dateien aus | keine |
 | Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
-| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen und Gutschriften; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006, BR-0091 |
-| Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag, Tageslimit und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007, BR-0070 |
+| Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen und Gutschriften, auch die Gutschrift einer zurückgegebenen SEPA-Lastschrift; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006, BR-0091, BR-0093, BR-0094, BR-0095 |
+| Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag, Tageslimit und Auftraggeberkonto und führt sie genau einmal aus; merkt Aufträge für einen späteren Ausführungstag vor, liefert und löscht sie | BR-0003, BR-0004, BR-0005, BR-0007, BR-0070, BR-0079, BR-0080 |
 | Umbuchungsauftrag | Nimmt Umbuchungen an, prüft Quell- und Zielkonto und Betrag, führt sie genau einmal aus und legt den Umsatz auf beiden Konten an | BR-0088, BR-0089, BR-0090, BR-0092 |
 | Persönliche Daten | Führt Anschrift, E-Mail-Adresse und Telefonnummer je Kundin, prüft die TAN (Mock) einer Änderung und legt die Bestätigungsnachricht im Postfach an | TAN-Bestätigung, Bestätigungsnachricht |
 
@@ -209,7 +209,7 @@ Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eige
 | Gruppe | Kennungen | Bestand | Zurückgesetzt von |
 | --- | --- | --- | --- |
 | Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) mit einer Debitkarte (Status aktiv) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen sowie ein Tagesgeldkonto (0,00 Euro, ohne Umsätze); Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen und einen Dauerauftrag mit vergangenem ersten Ausführungstag; Nachrichten gehören nicht zur Kopie: Lena hat drei Nachrichten, davon zwei ungelesen, Jonas hat eine andere, gelesene Nachricht | `POST /api/test/reset` |
-| Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `••••`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze und ohne Nachrichten; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
+| Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `97531`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze und ohne Nachrichten; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
 
 Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen, Daueraufträge, vorgemerkte Aufträge, Nachrichten, Tageslimit, Debitkarte und persönliche Daten nur dieser Gruppe zurück; die andere bleibt, wie sie ist. Eine bestätigte Änderung der persönlichen Daten legt eine Bestätigungsnachricht im Postfach an, der Reset entfernt sie wieder (bei den Lastkunden ist das Postfach danach leer). So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.
 

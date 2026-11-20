@@ -58,7 +58,7 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -1470,7 +1470,19 @@ components:
           description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
           format: date-time
           type: string
+        umsatzId:
+          type: string
+          description: Kennung des Umsatzes, vom Dienst vergeben
+          minLength: 1
+          maxLength: 36
+        sepaLastschrift:
+          type: boolean
+          description: Der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche
+        zurueckgegeben:
+          type: boolean
+          description: Die SEPA-Lastschrift wurde zurückgegeben (BR-0094)
         kategorie:
+          description: Kategorie des Umsatzes aus der festen Liste
           enum:
             - Wohnen
             - Lebensmittel
@@ -1480,17 +1492,18 @@ components:
             - Gesundheit
             - Sonstiges
           type: string
-        umsatzId:
-          description: Kennung des Umsatzes, vom Dienst vergeben
-          type: string
-          minLength: 1
-          maxLength: 36
-        sepaLastschrift:
-          description: Der Umsatz ist eine SEPA-Lastschrift
-          type: boolean
-        zurueckgegeben:
-          description: Rückgabestatus der SEPA-Lastschrift (BR-0094)
-          type: boolean
+      required:
+        - umsatzId
+        - buchungstag
+        - gebuchtAm
+        - gegenpartei
+        - verwendungszweck
+        - betrag
+        - waehrung
+        - saldoDanach
+        - sepaLastschrift
+        - zurueckgegeben
+        - kategorie
       type: object
       x-entity: Umsatz
     Empfaengervorlage:
