@@ -1,11 +1,14 @@
 import express from 'express';
 import { join } from 'node:path';
-import { Datenfehler, finanzstatus } from './konten';
+import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
-import { Ablehnung, ausfuehren } from './ueberweisung';
-import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
+import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
+import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
+import * as dauerauftraege from './dauerauftraege';
 import * as tageslimit from './tageslimit';
+import * as debitkarte from './debitkarte';
+import * as nachrichten from './nachrichten';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -67,6 +70,53 @@ app.post('/api/ueberweisungen', nurAngemeldet('api'), (req, res) => {
   }
 });
 
+// UC-002 A9: Terminüberweisung vormerken, genau einmal je Auftrags-Kennung (BR-0005, BR-0079); bucht nichts.
+app.post('/api/terminueberweisungen', nurAngemeldet('api'), (req, res) => {
+  const b = req.body ?? {};
+  if (PFLICHT.some(feld => typeof b[feld] !== 'string' || !b[feld].trim()) || typeof b.betrag !== 'number' || typeof b.ausfuehrungstag !== 'string') {
+    return res.status(400).json({ fehler: 'Der Auftrag ist unvollständig.' });
+  }
+  try {
+    const { neu, terminueberweisung } = vormerken(res.locals.kunde, {
+      auftragsId: b.auftragsId, auftraggeberIban: b.auftraggeberIban, empfaenger: b.empfaenger.trim(),
+      empfaengerIban: b.empfaengerIban, betrag: b.betrag, verwendungszweck: b.verwendungszweck.trim(), ausfuehrungstag: b.ausfuehrungstag,
+    });
+    res.status(neu ? 201 : 200).json(terminueberweisung);
+  } catch (fehler) {
+    if (!(fehler instanceof Ablehnung)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
+});
+
+// UC-017: vorgemerkte Aufträge der angemeldeten Kundin liefern und löschen (BR-0080)
+app.get('/api/terminueberweisungen', nurAngemeldet('api'), (_req, res) => {
+  res.json(vorgemerkteAuftraege(res.locals.kunde.kennung));
+});
+app.delete('/api/terminueberweisungen/:auftragsId', nurAngemeldet('api'), (req, res) => {
+  if (!vorgemerktenLoeschen(res.locals.kunde.kennung, req.params.auftragsId)) {
+    return res.status(404).json({ fehler: 'Der vorgemerkte Auftrag wurde nicht gefunden.' });
+  }
+  res.status(204).end();
+});
+
+// UC-016: Daueraufträge der angemeldeten Kundin (BR-0077, BR-0078)
+const dauerauftragsfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof dauerauftraege.Dauerauftragsfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/dauerauftraege', nurAngemeldet('api'), (_req, res) => {
+  res.json(dauerauftraege.liste(res.locals.kunde.kennung));
+});
+app.post('/api/dauerauftraege', nurAngemeldet('api'), (req, res) => {
+  try { res.status(201).json(dauerauftraege.anlegen(res.locals.kunde.kennung, req.body ?? {})); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+app.put('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, res) => {
+  try { res.json(dauerauftraege.aendern(res.locals.kunde.kennung, req.params.dauerauftragId, req.body ?? {})); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+app.delete('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, res) => {
+  try { dauerauftraege.loeschen(res.locals.kunde.kennung, req.params.dauerauftragId); res.status(204).end(); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+
 // UC-003: Umsätze eines Kontos der Kundin (BR-0008 bis BR-0011)
 app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   let filter;
@@ -79,6 +129,21 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   const liste = umsaetzeVon(res.locals.kunde.kennung, req.params.iban, filter);
   if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
   res.json({ umsaetze: liste });
+});
+
+// UC-019: Ausgabenanalyse des Girokontos; Prüfreihenfolge Monat 400, Konto 404, Kreditkarte 422 (BR-0083, BR-0084)
+app.get('/api/konten/:iban/ausgabenanalyse', nurAngemeldet('api'), (req, res) => {
+  let monat;
+  try {
+    monat = monatPruefen(req.query.monat);
+  } catch (fehler) {
+    if (!(fehler instanceof Abfragefehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  const konto = kontoMitIban(res.locals.kunde.kennung, req.params.iban);
+  if (!konto) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  if (konto.art !== 'Girokonto') return res.status(422).json({ fehler: 'Die Ausgabenanalyse gibt es nur für das Girokonto.' });
+  res.json(ausgabenanalyse(konto.iban, monat));
 });
 
 // UC-003, BR-0075, BR-0076: Export der Umsätze als CSV; Prüfreihenfolge 404, 400, 422
@@ -130,12 +195,41 @@ app.put('/api/tageslimit', nurAngemeldet('api'), (req, res) => {
   }
 });
 
+// UC-018: Debitkarte zum Girokonto der Kundin lesen und den Status setzen (BR-0081, BR-0082)
+const kartenfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof debitkarte.Kartenfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
+  try { res.json(debitkarte.lesen(res.locals.kunde.kennung, req.params.iban)); } catch (fehler) { kartenfehler(res, fehler); }
+});
+app.put('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(debitkarte.setzen(res.locals.kunde.kennung, req.params.iban, req.body?.status, req.body?.sperrgrund));
+  } catch (fehler) { kartenfehler(res, fehler); }
+});
+
+// UC-020: Postfach der angemeldeten Kundin (BR-0085 bis BR-0087); eine Kundenkennung im Aufruf gibt es nicht.
+const nachrichtenfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof nachrichten.Nachrichtenfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/nachrichten', nurAngemeldet('api'), (_req, res) => {
+  res.json(nachrichten.liste(res.locals.kunde.kennung));
+});
+app.patch('/api/nachrichten/:nachrichtId', nurAngemeldet('api'), (req, res) => {
+  try { res.json(nachrichten.oeffnen(res.locals.kunde.kennung, req.params.nachrichtId)); } catch (fehler) { nachrichtenfehler(res, fehler); }
+});
+app.delete('/api/nachrichten/:nachrichtId', nurAngemeldet('api'), (req, res) => {
+  try { nachrichten.loeschen(res.locals.kunde.kennung, req.params.nachrichtId); res.status(204).end(); } catch (fehler) { nachrichtenfehler(res, fehler); }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
   // Lastkunden lasttest-001 bis lasttest-300, alle mit der PIN aus LASTTEST_PIN (öffentliche Testdaten, Vorgabe in testdaten.ts).
   lastkundenAnlegen(process.env.LASTTEST_PIN || undefined);
-  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
+  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine ausgeführten oder vorgemerkten Aufträge. Lastkunden bleiben.
   app.post('/api/test/reset', (_req, res) => { demoZuruecksetzen(); res.status(204).end(); });
   // Lastdaten zurücksetzen: dasselbe nur für die Lastkunden. Demo-Kundinnen bleiben.
   app.post('/api/test/lasttest/reset', (_req, res) => { lastdatenZuruecksetzen(); res.status(204).end(); });
@@ -147,7 +241,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
