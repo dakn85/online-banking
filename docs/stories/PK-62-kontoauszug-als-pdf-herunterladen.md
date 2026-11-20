@@ -20,6 +20,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 |---|---|---|
 | Kontoauszug wird beim Abruf im Dienst als PDF erzeugt | Neu | Entscheidung neu |
 | Kontoauszug eines Kontos für einen Monat als PDF | Neu | Endpunkt neu |
+| Umsatz | Geändert | Attribut buchungstag geändert, Attribut betrag geändert, Attribut saldoDanach neu |
 | Kontoauszug | Neu | Entität neu, Maske neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Use Case UC-024 neu, Aktion Kontoauszug neu, Skizze geändert |
@@ -43,6 +44,9 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 
 - [ ] Kontoauszug wird beim Abruf im Dienst als PDF erzeugt: Entscheidung neu
 - [ ] Kontoauszug eines Kontos für einen Monat als PDF: Endpunkt neu
+- [ ] Umsatz: Attribut buchungstag geändert
+- [ ] Umsatz: Attribut betrag geändert
+- [ ] Umsatz: Attribut saldoDanach neu
 - [ ] Kontoauszug: Entität neu
 - [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
 - [ ] Zugriffsschutz des Finanzstatus: Maß geändert
@@ -62,10 +66,10 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 
 - Welchen Saldo zeigt der leere Auszug eines Monats vor dem ersten Umsatz des Kontos, etwa Januar 2026 bei der Kreditkarte? Der Demo-Bestand beginnt am 28.01.2026.
   **Antwort:** Der Saldo vor dem ersten Umsatz (Saldo danach minus Betrag) gilt als Anfangs- und Endsaldo aller früheren Monate; der Auszug ist leer.
-  _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008_
+  _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008 · 3ae9325_
 - Welche Monate darf die Kundin wählen: den laufenden Monat und Monate in der Zukunft?
   **Antwort:** Vergangene Monate und der laufende Monat (Zwischenstand bis heute); zukünftige Monate lehnt der Dienst mit 400 und einer Meldung ab.
-  _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008_
+  _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008 · 3ae9325_
 - In welcher Reihenfolge stehen die Umsätze im Kontoauszug?
   **Antwort:** Neueste zuerst wie in den Umsätzen (BR-0008); der Endsaldo steht oben bei der ersten Zeile.
-  _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008_
+  _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008 · 3ae9325_
