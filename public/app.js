@@ -7,6 +7,13 @@
   window.Aventa = {
     seite(pfad, definition) { seiten[pfad] = definition; },
     euro: betrag => euro.format(betrag),
+    /** BR-0086: Zahl ungelesener Nachrichten am Navigationseintrag; ab 1 sichtbar, sonst ohne Zahl. */
+    postfachZahl(anzahl) {
+      const zahl = document.getElementById('postfach-zahl');
+      zahl.textContent = anzahl > 0 ? String(anzahl) : '';
+      zahl.hidden = !(anzahl > 0);
+      zahl.dataset.geladen = '1';
+    },
     async api(pfad, optionen = {}) {
       const antwort = await fetch(pfad, { headers: { 'Content-Type': 'application/json' }, ...optionen });
       if (antwort.status === 401) { location.href = '/anmelden'; throw new Error('abgemeldet'); }
@@ -50,6 +57,8 @@
     const seite = seiten[pfad] || seiten['/finanzstatus'];
     document.getElementById('seitentitel').textContent = seite.titel;
     document.title = `${seite.titel} · Aventa Bank`;
+    // Die Zahl steht auf jeder Seite; eine Antwort, die ausbleibt, hält die Seite nicht auf.
+    Aventa.api('/api/nachrichten').then(l => Aventa.postfachZahl(l.anzahlUngelesen), () => {});
     await seite.zeigen(document.getElementById('seite'), kunde, new URLSearchParams(location.search));
   }
   // Seitenskripte stehen in app.html hinter diesem und melden sich vorher an.

@@ -32,7 +32,7 @@ test('Jede Kundin sieht nur ihre Konten: Jonas hat eine eigene Kopie des Demo-Be
   demoZuruecksetzen();
   const lena = finanzstatus(LENA.kennung);
   const jonas = finanzstatus(JONAS.kennung);
-  assert.deepEqual(lena.konten.map(k => k.iban), [LENA_GIRO, 'DE44500105175407324955'], 'Lena behält ihre Konten');
+  assert.deepEqual(lena.konten.map(k => k.iban), [LENA_GIRO, 'DE44500105175407324955', 'DE97500105175407324947'], 'Lena behält ihre Konten');
   assert.equal(lena.gesamtvermoegen, 1757.85);
   assert.equal(jonas.gesamtvermoegen, 1757.85);
   assert.deepEqual(jonas.konten.map(k => [k.kontoname, k.saldo]), lena.konten.map(k => [k.kontoname, k.saldo]));

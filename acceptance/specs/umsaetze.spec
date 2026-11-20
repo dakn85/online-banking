@@ -128,11 +128,15 @@ Tags: UC-003, PK-6
 
 ## Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
-Tags: UC-003, PK-47
+Tags: UC-003, PK-59
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          |              | 2026-02-12   | Alle         |
 * Die Umsätze zeigen die Zeilen
 | Buchungstag | Gegenpartei            |
 |-------------|------------------------|
@@ -177,7 +181,7 @@ Tags: UC-003, PK-54, BR-0075
 
 ## Die CSV-Datei schreibt den Buchungstag als TT.MM.JJJJ und Beträge mit Dezimalkomma
 
-Tags: UC-003, PK-54
+Tags: UC-003, PK-59, BR-0008
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -190,7 +194,7 @@ Tags: UC-003, PK-54
 * Die CSV-Datei enthält die Zeilen
 | Buchungstag | Gegenpartei     | Betrag | Saldo danach |
 |-------------|-----------------|--------|--------------|
-| 12.02.2026  | Bäckerei Krause | -12,00 | 2145,30      |
+| 12.02.2026  | Bäckerei Krause | -12,00 | 2190,10      |
 
 ## Die CSV-Datei setzt einen Text mit Semikolon in Anführungszeichen, sodass die Spalten stimmen
 

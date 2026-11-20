@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Überweisung",
-  "useCases": ["UC-002","UC-015"],
+  "useCases": ["UC-002","UC-015","UC-017"],
   "fields": [
     {"name":"auftraggeberkonto","label":"Auftraggeberkonto","kind":"anzeige","attribute":"Konto.iban"},
     {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"},
@@ -8,12 +8,14 @@
     {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Überweisung.empfaenger","rules":{"required":true,"maxLength":70}},
     {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Überweisung.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
     {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Überweisung.betrag","rules":{"required":true,"min":"0.10","max":"Konto.verfuegbarerBetrag"}},
-    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Überweisung.verwendungszweck","rules":{"required":true,"maxLength":140}}
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Überweisung.verwendungszweck","rules":{"required":true,"maxLength":140}},
+    {"name":"ausfuehrungstag","label":"Ausführungstag","kind":"datum","attribute":"Überweisung.ausfuehrungstag"}
   ],
   "actions": [
     {"label":"Weiter","screen":"ueberweisung-bestaetigen"},
     {"label":"Abbrechen","screen":"finanzstatus"},
     {"label":"Vorlagen verwalten","screen":"empfaengervorlagen"},
+    {"label":"Vorgemerkte Überweisungen","useCase":"UC-017#1","screen":"vorgemerkte-ueberweisungen"},
     {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"}
   ]
 } -->
@@ -24,10 +26,13 @@
 <nav data-wf="navigation">
   <a href="#">Finanzstatus</a>
   <a href="#" aria-current="page">Überweisung</a>
+  <a href="#">Postfach (2)</a>
 </nav>
 <p data-wf="meldung" role="alert">Der Betrag übersteigt den verfügbaren Betrag des Girokontos.</p>
 <p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
 <p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
+<p data-wf="meldung" role="alert">Mit dieser Überweisung würde Ihr Tageslimit überschritten.</p>
+<p data-wf="meldung" role="alert">Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.</p>
 <form data-wf="formular">
   <h2>Empfänger und Betrag</h2>
   <label data-wf="feld"><span>Auftraggeberkonto</span><input name="auftraggeberkonto" placeholder="Girokonto · DE02 5001 0517 5407 3249 31"></label>
@@ -37,10 +42,12 @@
   <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE02 5001 0517 5407 3249 31" required></label>
   <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="50,00" required></label>
   <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Rechnung 4711" required></textarea></label>
+  <label data-wf="feld"><span>Ausführungstag</span><input type="date" name="ausfuehrungstag"></label>
   <div data-wf="aktionen">
     <button data-wf="primaer">Weiter</button>
     <button>Abbrechen</button>
     <button>Vorlagen verwalten</button>
+    <button>Vorgemerkte Überweisungen</button>
     <button>Tageslimit</button>
   </div>
 </form>

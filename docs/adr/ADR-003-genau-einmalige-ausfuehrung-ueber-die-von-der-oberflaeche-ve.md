@@ -9,7 +9,7 @@ BR-0005 verlangt genau eine Buchung je Auftrag, auch bei doppeltem Klick auf Bes
 
 ## Entscheidung
 
-Die Oberfläche schickt die Auftrags-Kennung als auftragsId mit. Der Dienst merkt jede ausgeführte Überweisung unter dieser Kennung in der Map ausgefuehrt und antwortet auf eine Wiederholung mit 200 und dem zuerst gespeicherten Ergebnis, auf einen neuen Auftrag mit 201.
+Die Oberfläche schickt die Auftrags-Kennung als auftragsId mit. Der Dienst merkt jede ausgeführte Überweisung unter dieser Kennung in der Map ausgefuehrt und antwortet auf eine Wiederholung mit 200 und dem zuerst gespeicherten Ergebnis, auf einen neuen Auftrag mit 201. Dasselbe gilt für POST /api/terminueberweisungen: Der Dienst merkt jeden vorgemerkten Auftrag unter seiner Kennung in einer eigenen Ablage und antwortet auf die Wiederholung des noch vorgemerkten Auftrags mit 200 und dem gespeicherten Auftrag, auf einen neuen Auftrag mit 201. Die Wiederholung wird nur im eigenen Endpunkt als solche erkannt; die auftragsId ist je Kundin und je Endpunkt eindeutig. Je Kundin bleibt eine Kennung für beide Überweisungsarten dauerhaft verbraucht: Wird sie am anderen Endpunkt oder nach dem Löschen des vorgemerkten Auftrags erneut gesendet, lehnt der Dienst mit 422 ab und legt keinen Auftrag an (BR-0005).
 
 ## Folgen
 

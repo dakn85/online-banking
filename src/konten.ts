@@ -1,7 +1,7 @@
 /* Konten je Kundin (C-001: noch kein Kernbanksystem). Jedes Konto gehört genau einer Kennung; jede Abfrage nennt die Kennung der Sitzung. */
 import { Auswahl, istDemokunde } from './kunden';
 
-export type Kontoart = 'Girokonto' | 'Kreditkarte';
+export type Kontoart = 'Girokonto' | 'Kreditkarte' | 'Tagesgeldkonto';
 
 export interface Konto {
   kontoname: string;
@@ -13,15 +13,17 @@ export interface Konto {
   dispositionsrahmen?: number;
 }
 
-/** Demo-Bestand je Kennung, Girokonto zuerst, dann Kreditkarte. Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs. */
+/** Demo-Bestand je Kennung, Girokonto zuerst, dann Kreditkarte und Tagesgeldkonto (0,00 Euro, ohne Umsätze). Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs. */
 const DEMO: Record<string, Konto[]> = {
   'lena.hoffmann': [
     { kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE02500105175407324931', saldo: 2145.30, waehrung: 'EUR', dispositionsrahmen: 1000 },
     { kontoname: 'Kreditkarte', art: 'Kreditkarte', iban: 'DE44500105175407324955', saldo: -387.45, waehrung: 'EUR' },
+    { kontoname: 'Tagesgeldkonto', art: 'Tagesgeldkonto', iban: 'DE97500105175407324947', saldo: 0, waehrung: 'EUR' },
   ],
   'jonas.weber': [
     { kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE61500105175407325013', saldo: 2145.30, waehrung: 'EUR', dispositionsrahmen: 1000 },
     { kontoname: 'Kreditkarte', art: 'Kreditkarte', iban: 'DE39500105175407325021', saldo: -387.45, waehrung: 'EUR' },
+    { kontoname: 'Tagesgeldkonto', art: 'Tagesgeldkonto', iban: 'DE38500105175407325039', saldo: 0, waehrung: 'EUR' },
   ],
 };
 
@@ -90,7 +92,25 @@ export function belasten(kennung: string, iban: string, betrag: number): void {
   konto.saldo = runden(konto.saldo - betrag);
 }
 
+/** BR-0095: den Saldo eines Kontos der Kundin um den Betrag erhöhen; gibt den neuen Saldo zurück. */
+export function gutschreiben(kennung: string, iban: string, betrag: number): number {
+  const konto = eigene(kennung).find(k => k.iban === iban);
+  if (!konto) throw new Error('Gutschrift: Konto gehört nicht zur Kundin');
+  konto.saldo = runden(konto.saldo + betrag);
+  return konto.saldo;
+}
+
 /** Nur für Tests: Konten einer Kennung setzen, ohne den Ausgangsstand zu ändern. */
 export function kontenSetzen(kennung: string, neu: Konto[]): void {
   konten.set(kennung, neu.map(k => ({ ...k })));
+}
+
+/** BR-0091: Saldo des Quellkontos mindern und Saldo des Zielkontos erhöhen, beides zusammen. Beide Konten gehören der Kundin (BR-0088). */
+export function umbuchen(kennung: string, quellIban: string, zielIban: string, betrag: number): { quellSaldo: number; zielSaldo: number } {
+  const quelle = eigene(kennung).find(k => k.iban === quellIban);
+  const ziel = eigene(kennung).find(k => k.iban === zielIban);
+  if (!quelle || !ziel || quelle === ziel) throw new Error('Umbuchung: Konten gehören nicht zur Kundin');
+  quelle.saldo = runden(quelle.saldo - betrag);
+  ziel.saldo = runden(ziel.saldo + betrag);
+  return { quellSaldo: quelle.saldo, zielSaldo: ziel.saldo };
 }
