@@ -19,6 +19,7 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
+| Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
 | Umbuchung zwischen eigenen Konten ausführen | Neu | Endpunkt neu |
 | Konto | Geändert | Eigenschaft art geändert, Beschreibung geändert, Attribut art geändert, Einschränkungen neu |
 | Umbuchungsauftrag | Neu | Schema neu |
@@ -60,6 +61,9 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Kontext geändert
+- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
+- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
 - [ ] Umbuchung zwischen eigenen Konten ausführen: Endpunkt neu
 - [ ] Konto: Eigenschaft art geändert
 - [ ] Umbuchungsauftrag: Schema neu
