@@ -35,6 +35,11 @@
   seiten['/finanzstatus'] = platzhalter('Finanzstatus', 'Hier sehen Sie bald alle Ihre Konten mit dem aktuellen Saldo auf einen Blick.');
   seiten['/ueberweisung'] = platzhalter('Überweisung', 'Hier überweisen Sie bald Geld von einem Ihrer Konten, im Inland und in den SEPA-Raum.');
 
+  const BEREICH = {
+    '/umsaetze': '/finanzstatus', '/ausgabenanalyse': '/finanzstatus', '/debitkarte': '/finanzstatus', '/kontoauszug': '/finanzstatus',
+    '/vorgemerkte-ueberweisungen': '/ueberweisung',
+  };
+
   function tageszeit() {
     const h = new Date().getHours();
     return h < 11 ? 'Guten Morgen' : h < 18 ? 'Guten Tag' : 'Guten Abend';
@@ -45,15 +50,25 @@
     const kunde = await Aventa.api('/api/sitzung');
     document.getElementById('kunde-name').textContent = `${kunde.vorname} ${kunde.nachname}`;
     document.getElementById('kunde-nummer').textContent = `Kundennummer ${kunde.kundennummer}`;
-    document.getElementById('begruessung').textContent = `${tageszeit()}, ${kunde.vorname} ${kunde.nachname}`;
+    document.getElementById('kunde-kuerzel').textContent = `${kunde.vorname[0] || ''}${kunde.nachname[0] || ''}`;
+    const menue = document.getElementById('menue');
+    menue.addEventListener('click', () => {
+      const offen = menue.getAttribute('aria-expanded') !== 'true';
+      menue.setAttribute('aria-expanded', String(offen));
+      document.querySelector('.rahmen').classList.toggle('rahmen--menue', offen);
+    });
     document.getElementById('abmelden').addEventListener('click', async () => {
       await fetch('/api/abmeldung', { method: 'POST' });
       location.href = '/anmelden';
     });
     const pfad = location.pathname;
+    // Seiten eines Kontos gehören zum Finanzstatus, vorgemerkte Aufträge zur Überweisung: Die Navigation zeigt, wo man ist.
+    const bereich = BEREICH[pfad] || pfad;
     document.querySelectorAll('.navigation a').forEach(a => {
-      if (a.dataset.seite === pfad) a.setAttribute('aria-current', 'page');
+      if (a.dataset.seite === bereich) a.setAttribute('aria-current', 'page');
     });
+    // Die Begrüßung steht auf der Startseite, nicht über jeder Seite.
+    if (pfad === '/finanzstatus' || !seiten[pfad]) document.getElementById('begruessung').textContent = `${tageszeit()}, ${kunde.vorname}`;
     const seite = seiten[pfad] || seiten['/finanzstatus'];
     document.getElementById('seitentitel').textContent = seite.titel;
     document.title = `${seite.titel} · Aventa Bank`;

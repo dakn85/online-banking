@@ -31,6 +31,7 @@ After the pull request, review, CI pipeline and merge happen in Git. After the m
 ## Rules
 
 - `docs/` is authoritative. Change nothing there: no use cases, rules, entities, no OpenAPI, no screens, no story file under `docs/stories/`, also not `docs/architecture.md`, `docs/adr/` and `docs/leitplanken.md`. If you must make a technical decision that `docs/architecture.md` and `docs/adr/` do not answer (new library, new pattern, different format), make it and report it with `give_feedback` (kind technik); the technical role records it as a decision. If the specification does not fit and you cannot continue without a decision, ask a clarifying question with `ask_question`. If you have already solved it sensibly in the code (wrong value, missing case, neighboring system behaves differently), give feedback with `give_feedback` and keep working: it blocks nothing while you build, and the business side decides it at the latest at acceptance.
+- Screens under `docs/ui` are wireframes: they fix content and names (labels, buttons, columns), not layout or look. Build one coherent application that works on a phone, every function in the navigation; keep the names exactly.
 - Write everything people read in KnippQAi (questions, options, feedback, draft) in German.
 - Do not change the scenarios under `acceptance/specs/`. Only implement missing steps.
 - KnippQAi assigns IDs (UC-…, BR-…, NFR-…). Reference them in code and unit tests, e.g. with `@UseCase("UC-003")`, when a criterion is checked as a unit or load test.

@@ -54,15 +54,16 @@
         </aside>`;
 
       function auftrag(meldung = '', fehlerfeld = '') {
-        const feld = (name, label, attr, hinweis = '') => `
-          <div class="feld${fehlerfeld === name ? ' feld--fehler' : ''}">
+        const feld = (name, label, attr, hinweis = '', halb = false) => `
+          <div class="feld${halb ? ' feld--halb' : ''}${fehlerfeld === name ? ' feld--fehler' : ''}">
             <label for="${name}">${label}</label>
             <input id="${name}" name="${name}" ${attr} value="${html(eingabe[name])}"${fehlerfeld === name ? ' aria-invalid="true"' : ''}>
             ${hinweis ? `<p class="hinweis">${hinweis}</p>` : ''}
           </div>`;
         flaeche.innerHTML = `<div class="ueberweisung">${schritte(0)}<div class="ueberweisung__raster">
-          <form class="ueberweisung__form" novalidate aria-label="Überweisung">
-            <div><h2>Empfänger und Betrag</h2><p class="ueberweisung__unter">Einmalige Überweisung von Ihrem Girokonto.</p></div>
+          <form class="ueberweisung__form ueberweisung__form--raster" novalidate aria-label="Überweisung">
+            <div class="ueberweisung__titel"><div><h2>Empfänger und Betrag</h2><p class="ueberweisung__unter">Einmalige Überweisung von Ihrem Girokonto.</p></div>
+              <p class="ueberweisung__links"><a href="/vorgemerkte-ueberweisungen">Vorgemerkte Überweisungen</a><a href="/tageslimit">Tageslimit</a></p></div>
             <p class="meldung meldung--fehler" role="alert"${meldung ? '' : ' hidden'}>${html(meldung)}</p>
             <div class="feld"><label for="auftraggeberkonto">Auftraggeberkonto</label>
               <input id="auftraggeberkonto" name="auftraggeberkonto" value="${html(giro.kontoname)} · ${gruppiert(giro.iban)}" readonly></div>
@@ -71,11 +72,11 @@
                 `<option value="${html(v.vorlagenId)}"${v.vorlagenId === eingabe.vorlage ? ' selected' : ''}>${html(v.name)}</option>`).join('')}</select></div>
             ${feld('empfaenger', 'Empfänger', 'autocomplete="off" maxlength="70"')}
             ${feld('empfaengerIban', 'IBAN des Empfängers', 'autocomplete="off" spellcheck="false" maxlength="42"', 'Inland und SEPA-Raum')}
-            ${feld('betrag', 'Betrag in Euro', 'inputmode="decimal" autocomplete="off" placeholder="0,00"', `Höchstens ${Aventa.euro(giro.verfuegbarerBetrag)}`)}
+            ${feld('betrag', 'Betrag in Euro', 'inputmode="decimal" autocomplete="off" placeholder="0,00"', `Höchstens ${Aventa.euro(giro.verfuegbarerBetrag)}`, true)}
+            ${feld('ausfuehrungstag', 'Ausführungstag', `type="date" min="${plusTage(heute(), 1)}" max="${plusTage(heute(), 365)}"`, 'Optional: leer lassen, um sofort zu überweisen. Mit Ausführungstag wird der Auftrag nur vorgemerkt.', true)}
             <div class="feld"><label for="verwendungszweck">Verwendungszweck</label>
               <textarea id="verwendungszweck" name="verwendungszweck" maxlength="140" rows="2">${html(eingabe.verwendungszweck)}</textarea></div>
-            ${feld('ausfuehrungstag', 'Ausführungstag', `type="date" min="${plusTage(heute(), 1)}" max="${plusTage(heute(), 365)}"`, 'Optional: leer lassen, um sofort zu überweisen. Mit Ausführungstag wird der Auftrag nur vorgemerkt.')}
-            <div class="ueberweisung__aktionen"><a class="knopf knopf--still ueberweisung__nebenaktion" href="/tageslimit">Tageslimit</a><a class="knopf knopf--still" href="/vorgemerkte-ueberweisungen">Vorgemerkte Überweisungen</a><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
+            <div class="ueberweisung__aktionen"><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
           </form>${kontoKarte}</div></div>`;
         const form = flaeche.querySelector('form');
         // BR-0017: Name, IBAN und, falls vorhanden, Verwendungszweck übernehmen; den Betrag nicht. Alles bleibt änderbar.
