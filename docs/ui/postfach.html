@@ -13,6 +13,7 @@
   ],
   "actions": [
     {"label":"Öffnen","useCase":"UC-020#3","operation":"PATCH /api/nachrichten/{nachrichtId}","screen":"postfach"},
+    {"label":"Löschen","useCase":"UC-020","screen":"postfach"},
     {"label":"Ja","useCase":"UC-020","operation":"DELETE /api/nachrichten/{nachrichtId}","screen":"postfach"},
     {"label":"Nein","useCase":"UC-020","screen":"postfach"}
   ]
@@ -57,9 +58,17 @@
 </section>
 <section data-wf="gruppe" data-merkmal="Nachricht löschen">
   <h2>Nachricht löschen</h2>
-  <p data-wf="meldung" role="status">Nachricht löschen?</p>
   <form data-wf="formular">
     <label data-wf="feld"><span>Nachricht zum Löschen</span><select name="nachrichtLoeschen"><option>Ihre Kreditkartenabrechnung liegt vor</option><option>Ihr Kontoauszug für Oktober</option></select></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Löschen</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Löschen bestätigen">
+  <h2>Löschen bestätigen</h2>
+  <p data-wf="meldung" role="status">Nachricht löschen?</p>
+  <form data-wf="formular">
     <div data-wf="aktionen">
       <button data-wf="primaer">Ja</button>
       <button>Nein</button>
