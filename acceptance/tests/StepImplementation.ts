@@ -722,6 +722,13 @@ export default class StepImplementation {
     assert.deepStrictEqual(ist, erwartet);
   }
 
+  /** Ohne Tabelle im Szenario: Es gibt keine Kategorie (Fehlermeldung statt Tabelle, Spec Zeilen 77 ff.). */
+  @Step('Die Ausgabenanalyse zeigt die Kategorien')
+  public async ausgabenanalyseOhneKategorien() {
+    const page = await this.ausgabenSeite();
+    assert.strictEqual(await page.locator('#ausgaben-ergebnis table tbody tr').count(), 0, 'Die Ausgabenanalyse zeigt Kategorien');
+  }
+
   @Step('Die Ausgabenanalyse zeigt <feld> mit dem Text <erwartet>')
   public async ausgabenanalyseFeld(feld: string, erwartet: string) {
     const page = await this.ausgabenSeite();
