@@ -21,7 +21,7 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 |---|---|---|
 | Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
 | Umbuchung zwischen eigenen Konten ausführen | Neu | Endpunkt neu |
-| Konto | Geändert | Eigenschaft art geändert, Beschreibung geändert, Attribut art geändert, Einschränkungen neu |
+| Konto | Geändert | Eigenschaft art geändert, Beschreibung geändert, Attribut art geändert, Einschränkungen geändert |
 | Umbuchungsauftrag | Neu | Schema neu |
 | Umbuchung | Neu | Schema neu, Entität neu, Maske neu |
 | Architektur | Geändert | Einführung und Ziele geändert, Kontextabgrenzung geändert, Bausteinsicht geändert, und 1 weitere |
@@ -61,47 +61,24 @@ Als Privatkundin möchte ich Geld zwischen meinem Girokonto und meinem Tagesgeld
 - `acceptance/specs/umbuchung.spec`: Ohne Anmeldung ist die Umbuchung nicht erreichbar
 - `acceptance/specs/umbuchung.spec`: Umbuchen öffnet die Umbuchung aus dem Finanzstatus
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Kontext geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
-- [ ] Umbuchung zwischen eigenen Konten ausführen: Endpunkt neu
-- [ ] Konto: Eigenschaft art geändert
-- [ ] Umbuchungsauftrag: Schema neu
-- [ ] Umbuchung: Schema neu
-- [ ] Architektur: Einführung und Ziele geändert
-- [ ] Architektur: Kontextabgrenzung geändert
-- [ ] Architektur: Bausteinsicht geändert
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Konto: Beschreibung geändert
-- [ ] Konto: Attribut art geändert
-- [ ] Konto: Einschränkungen neu
-- [ ] Umsatz: Beschreibung geändert
-- [ ] Umbuchung: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Genau einmalige Ausführung einer Überweisung oder Umbuchung: Titel geändert
-- [ ] Genau einmalige Ausführung einer Überweisung oder Umbuchung: Anforderung geändert
-- [ ] Genau einmalige Ausführung einer Überweisung oder Umbuchung: Maß geändert
-- [ ] Genau einmalige Ausführung einer Überweisung oder Umbuchung: Gilt für geändert
-- [ ] Finanzstatus: Use Case UC-021 neu
-- [ ] Finanzstatus: Aktion Umbuchen neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Umbuchung: Maske neu
-- [ ] UC-001: Schritt 10 neu
-- [ ] UC-021: Use Case neu
-- [ ] BR-0088: Neu in UC-021
-- [ ] BR-0089: Neu in UC-021
-- [ ] BR-0090: Neu in UC-021
-- [ ] BR-0091: Neu in UC-021
-- [ ] BR-0092: Neu in UC-021
-- [ ] Vision: Zweck geändert
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung neu
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-58 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-58 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine (docs/architecture.md)
+- **Konten und Finanzstatus** (`src/konten.ts`): neue Kontoart Tagesgeldkonto (Demo-Bestand 0,00 €, ohne Dispositionsrahmen), Funktion `umbuchen` mindert Quellsaldo und erhöht Zielsaldo gemeinsam (BR-0091). Gesamtvermögen bleibt Summe aller Salden (BR-0001).
+- **Umbuchungsauftrag** (neu `src/umbuchung.ts`, `POST /api/umbuchungen` in `src/main.ts`): Prüfreihenfolge 401, 400 (Format, Mindestbetrag 0,10 €), Wiederholung derselben auftragsId → 200 ohne Buchung (BR-0092), 403 Konto nicht der Kundin, 422 Kontenpaarung (BR-0088), 422 Betragsgrenze (BR-0089). Ablage der Auftrags-Kennungen je Kundin, getrennt von Überweisungen; Reset über `testdaten.ts`.
+- **Umsätze** (`src/umsaetze.ts`): je ein Umsatz auf Quell- und Zielkonto (BR-0090) über die vorhandene `buchen`-Funktion.
+- **Seitenauslieferung/Oberfläche**: neue Seite `/umbuchung` (`public/seiten/umbuchung.js`) mit Auswahl Quell-/Zielkonto und Betrag, Prüfung im Formular (ADR-004), Knopf während des Absendens gesperrt, neue Auftrags-Kennung nach jeder Ablehnung (BR-0092); Finanzstatus zeigt „Umbuchen“ im Kopf, das Tagesgeldkonto und die Meldung „Umbuchung ausgeführt.“ (UC-001, UC-021).
+
+## Schritte
+1. Konten: Tagesgeldkonto je Demo-Kundin, `umbuchen` (UC-001, BR-0091).
+2. `umbuchung.ts` und Endpunkt (UC-021, BR-0088, BR-0089, BR-0090, BR-0092, NFR-001, NFR-002).
+3. Oberfläche Umbuchung und Finanzstatus (UC-021 Schritte 1–8, A1–A6).
+4. Gauge-Schritte in `acceptance/tests/StepImplementation.ts`; Unit-Tests `test/umbuchung.test.ts` mit BR-IDs im Namen.
+
+## Rahmenänderung
+Keine neuen Bibliotheken oder Muster.
 
 ## Entscheidungen
 
