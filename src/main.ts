@@ -7,6 +7,7 @@ import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPr
 import * as vorlagen from './empfaengervorlagen';
 import * as tageslimit from './tageslimit';
 import * as debitkarte from './debitkarte';
+import * as nachrichten from './nachrichten';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -160,6 +161,21 @@ app.put('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
   } catch (fehler) { kartenfehler(res, fehler); }
 });
 
+// UC-020: Postfach der angemeldeten Kundin (BR-0085 bis BR-0087); eine Kundenkennung im Aufruf gibt es nicht.
+const nachrichtenfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof nachrichten.Nachrichtenfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/nachrichten', nurAngemeldet('api'), (_req, res) => {
+  res.json(nachrichten.liste(res.locals.kunde.kennung));
+});
+app.patch('/api/nachrichten/:nachrichtId', nurAngemeldet('api'), (req, res) => {
+  try { res.json(nachrichten.oeffnen(res.locals.kunde.kennung, req.params.nachrichtId)); } catch (fehler) { nachrichtenfehler(res, fehler); }
+});
+app.delete('/api/nachrichten/:nachrichtId', nurAngemeldet('api'), (req, res) => {
+  try { nachrichten.loeschen(res.locals.kunde.kennung, req.params.nachrichtId); res.status(204).end(); } catch (fehler) { nachrichtenfehler(res, fehler); }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
@@ -177,7 +193,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/debitkarte', '/ausgabenanalyse']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 

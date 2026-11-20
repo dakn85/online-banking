@@ -760,6 +760,124 @@ export default class StepImplementation {
     await page.waitForURL(/\/anmelden$/);
   }
 
+  /* ---------------------------------------------------------------- UC-020 Postfach */
+
+  /** Das geöffnete Postfach; ruft es über die Navigation auf, wenn die Seite woanders steht. */
+  private async postfachSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/postfach') {
+      await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: /^Postfach/ }).click();
+      await page.waitForURL(/\/postfach$/);
+    }
+    await page.locator('.postfach').waitFor();
+    return page;
+  }
+
+  /** Löst die Aktion aus und wartet, bis die Seite neu gezeichnet ist. */
+  private async postfachNeuzeichnen(page: Page, aktion: () => Promise<unknown>) {
+    await page.locator('.postfach').evaluate(e => e.setAttribute('data-alt', ''));
+    await aktion();
+    await page.locator('.postfach:not([data-alt])').waitFor();
+  }
+
+  @Step('Die Kundin öffnet das Postfach')
+  public async postfachOeffnen() {
+    await this.postfachSeite();
+  }
+
+  @Step('Das Postfach zeigt die Nachrichten <tabelle>')
+  public async postfachZeigtNachrichten(tabelle: Table) {
+    const page = await this.postfachSeite();
+    const spalten = tabelle.getColumnNames();
+    const erwartet = tabelle.getTableRows().map(z => spalten.map(s => sichtbar(text(z.getCell(s)))));
+    const kopf = (await page.locator('.postfach__tabelle thead th').allInnerTexts()).map(sichtbar);
+    const zeilen = page.locator('.postfach__tabelle tbody tr');
+    const ist: string[][] = [];
+    for (let n = 0; n < await zeilen.count(); n++) {
+      const zellen = (await zeilen.nth(n).locator('td').allInnerTexts()).map(sichtbar);
+      ist.push(spalten.map(s => zellen[kopf.indexOf(s)]));
+    }
+    assert.deepStrictEqual(ist, erwartet);
+  }
+
+  @Step('Das Postfach zeigt die Meldung <meldung>')
+  public async postfachMeldet(meldung: string) {
+    const page = await this.postfachSeite();
+    await page.locator('.postfach > [role="status"], .postfach > [role="alert"], .postfach > .vorlagen__leer').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Die Kundin öffnet die Nachricht <betreff> und sieht den Text <erwartet>')
+  public async nachrichtOeffnen(betreff: string, erwartet: string) {
+    const page = await this.postfachSeite();
+    const form = page.getByRole('form', { name: 'Nachricht lesen' });
+    await form.getByLabel('Nachricht zum Öffnen').selectOption({ label: text(betreff) });
+    await this.postfachNeuzeichnen(page, () => form.getByRole('button', { name: 'Öffnen' }).click());
+    assert.strictEqual(sichtbar(await page.locator('#nachrichtText').textContent()), sichtbar(text(erwartet)), `Text von „${betreff}“`);
+  }
+
+  @Step('Die Kundin löscht die Nachricht <betreff> und antwortet auf die Sicherheitsabfrage <antwort>')
+  public async nachrichtLoeschen(betreff: string, antwort: string) {
+    const page = await this.postfachSeite();
+    const form = page.getByRole('form', { name: 'Nachricht löschen' });
+    await form.getByLabel('Nachricht zum Löschen').selectOption({ label: text(betreff) });
+    await this.postfachNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
+    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
+    await abfrage.getByText('Nachricht löschen?').waitFor();
+    await this.postfachNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
+  }
+
+  /** „keine Zahl“ oder die Zahl; gewartet wird, bis die Navigation die Zahl vom Dienst bekommen hat. */
+  @Step('Die Navigation zeigt am Eintrag Postfach <zahl>')
+  public async navigationZeigtPostfachZahl(zahl: string) {
+    const page = await this.seite();
+    const eintrag = page.getByRole('navigation', { name: 'Hauptnavigation' }).locator('#postfach-zahl[data-geladen]');
+    await eintrag.waitFor({ state: 'attached' });
+    if (text(zahl) === 'keine Zahl') assert.strictEqual(await eintrag.isVisible(), false, 'Die Navigation zeigt eine Zahl am Postfach');
+    else assert.strictEqual(sichtbar(await eintrag.textContent()), text(zahl), 'Zahl am Eintrag Postfach');
+  }
+
+  /** „METHODE /pfad“ wie im Szenario. */
+  private aufruf(beschreibung: string): { method: string; url: string } {
+    const [method, pfad] = text(beschreibung).split(' ');
+    return { method, url: `${basisUrl}${pfad}` };
+  }
+
+  @Step('Ohne Anmeldung wird der Aufruf <aufruf> mit Status <status> abgelehnt')
+  public async ohneAnmeldungAbgelehnt(aufruf: string, status: string) {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const { method, url } = this.aufruf(aufruf);
+    const antwort = await fetch(url, { method });
+    assert.strictEqual(antwort.status, Number(status), text(aufruf));
+  }
+
+  private async aufrufAngemeldet(aufruf: string, status: string) {
+    const page = await this.seite();
+    const { method, url } = this.aufruf(aufruf);
+    const antwort = await page.context().request.fetch(url, { method });
+    assert.strictEqual(antwort.status(), Number(status), text(aufruf));
+  }
+
+  @Step('Die Kundin ruft <aufruf> mit einer unbekannten Nachrichten-Kennung auf und erhält Status <status>')
+  public async unbekannteNachricht(aufruf: string, status: string) {
+    await this.aufrufAngemeldet(aufruf, status);
+  }
+
+  @Step('Die Kundin ruft <aufruf> mit einer ungültigen Nachrichten-Kennung auf und erhält Status <status>')
+  public async ungueltigeNachricht(aufruf: string, status: string) {
+    await this.aufrufAngemeldet(aufruf, status);
+  }
+
+  @Step('Das Postfach ist ohne Anmeldung nicht erreichbar')
+  public async postfachOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const api = await fetch(`${basisUrl}/api/nachrichten`);
+    assert.strictEqual(api.status, 401, 'GET /api/nachrichten ohne Sitzung');
+    await page.goto(`${basisUrl}/postfach`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
   @Step('Die Kundin setzt die Debitkarte per Aufruf auf den Status <status> mit dem Sperrgrund <grund>')
   public async debitkarteSetzenAufruf(status: string, grund: string) {
     const page = await this.seite();

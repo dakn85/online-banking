@@ -8,6 +8,7 @@ import { zuruecksetzen as umsaetzeZuruecksetzen } from './umsaetze';
 import { zuruecksetzen as vorlagenZuruecksetzen } from './empfaengervorlagen';
 import { zuruecksetzen as tageslimitZuruecksetzen } from './tageslimit';
 import { zuruecksetzen as karteZuruecksetzen } from './debitkarte';
+import { zuruecksetzen as nachrichtenZuruecksetzen } from './nachrichten';
 
 export const LASTKUNDEN_ANZAHL = 300;
 /** Öffentliche Testdaten: die PIN aller Lastkunden, wenn LASTTEST_PIN nicht gesetzt ist. */
@@ -53,6 +54,7 @@ function zuruecksetzenFuer(auswahl: Auswahl): void {
   vorlagenZuruecksetzen(auswahl);
   tageslimitZuruecksetzen(auswahl);
   karteZuruecksetzen(auswahl);
+  nachrichtenZuruecksetzen(auswahl);
 }
 
 /** Legt im Testbetrieb die Lastkunden mit einem Girokonto ohne Umsätze an. */
