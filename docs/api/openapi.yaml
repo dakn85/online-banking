@@ -301,7 +301,7 @@ paths:
   /api/konten/{iban}/kontoauszug:
     get:
       summary: Kontoauszug eines Kontos für einen Monat als PDF
-      description: "Erzeugt den Kontoauszug des Kontos mit dieser IBAN für den Kalendermonat monat als PDF und liefert ihn als Download (Content-Disposition attachment, Dateiname Kontoauszug_<IBAN ohne Leerzeichen>_<monat>.pdf). Das PDF enthält Anfangssaldo, Endsaldo und alle Umsätze des Monats, neueste zuerst; ein Monat ohne Umsätze ergibt einen leeren Auszug mit Saldo (BR-0098, BR-0008). Der Dienst prüft in dieser Reihenfolge: ohne gültige Sitzung 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, 404 (BR-0011), ohne den Monat zu prüfen; ein Monat, der fehlt, nicht das Format JJJJ-MM hat oder nach dem laufenden Monat liegt, 400 mit dem Feld fehler „Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.“. Beträge in Euro, auf Cent gerundet (ADR-005)."
+      description: "Erzeugt den Kontoauszug des Kontos mit dieser IBAN für den Kalendermonat monat als PDF und liefert ihn als Download (Content-Disposition attachment, Dateiname Kontoauszug_<IBAN ohne Leerzeichen>_<monat>.pdf). Das PDF enthält Anfangssaldo, Endsaldo und alle Umsätze des Monats, neueste zuerst; ein Monat ohne Umsätze ergibt einen leeren Auszug mit Saldo (BR-0098, BR-0008). Der Dienst prüft in dieser Reihenfolge: ohne gültige Sitzung 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, 404 mit dem Feld fehler „Das Konto wurde nicht gefunden.“ (BR-0011 gilt auch für den Kontoauszug), ohne den Monat zu prüfen; ein Monat, der fehlt, nicht das Format JJJJ-MM hat oder nach dem laufenden Monat liegt, 400 mit dem Feld fehler „Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.“. Beträge in Euro, auf Cent gerundet (ADR-005)."
       operationId: kontoauszugErzeugen
       tags:
         - Finanzstatus
@@ -351,7 +351,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "404":
-          description: Die IBAN gehört zu keinem Konto der Kundin
+          description: Die IBAN gehört zu keinem Konto der Kundin; fehler lautet „Das Konto wurde nicht gefunden.“
           x-rules:
             - BR-0011
           content:
