@@ -20,7 +20,7 @@
         return;
       }
       // UC-015 Schritt 1: „Tageslimit“ im Kopf des Finanzstatus.
-      document.getElementById('kopf-aktion').innerHTML = '<a class="knopf knopf--still" href="/tageslimit">Tageslimit</a>';
+      document.getElementById('kopf-aktion').innerHTML = '<a class="knopf knopf--still" href="/tageslimit">Tageslimit</a> <a class="knopf knopf--still" href="/dauerauftraege">Daueraufträge</a>';
       // UC-002 Schritt 9: nach der Überweisung einmal die Meldung, die Adresse wird wieder schlicht.
       const ausgefuehrt = parameter && parameter.get('ausgefuehrt') === '1';
       if (ausgefuehrt) history.replaceState(null, '', '/finanzstatus');

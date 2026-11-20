@@ -1,6 +1,6 @@
 import { AfterScenario, AfterSuite, BeforeSuite, Step, Table } from 'gauge-ts';
 import assert = require('assert');
-import { Browser, chromium, Page } from 'playwright';
+import { Browser, chromium, Locator, Page } from 'playwright';
 
 const basisUrl = process.env.BANKING_URL || 'http://localhost:18300';
 
@@ -538,6 +538,148 @@ export default class StepImplementation {
     });
     assert.strictEqual(setzen.status, 401, 'PUT /api/tageslimit ohne Sitzung');
     await page.goto(`${basisUrl}/tageslimit`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
+  /* ---------------------------------------------------------------- UC-016 Daueraufträge */
+
+  /** „heute“, „gestern“, „in 5 Tagen“, „vor 30 Tagen“ als JJJJ-MM-TT in UTC (BR-0077); leer bleibt leer. */
+  private datum(angabe: string): string {
+    const a = text(angabe).trim();
+    if (!a) return '';
+    const m = /^(heute|gestern|in (\d+) Tagen|vor (\d+) Tagen)$/.exec(a);
+    assert.ok(m, `Unbekannte Datumsangabe „${a}“`);
+    const tage = a === 'heute' ? 0 : a === 'gestern' ? -1 : m[2] ? Number(m[2]) : -Number(m[3]);
+    const jetzt = new Date();
+    return new Date(Date.UTC(jetzt.getUTCFullYear(), jetzt.getUTCMonth(), jetzt.getUTCDate() + tage)).toISOString().slice(0, 10);
+  }
+
+  private anzeigeDatum(angabe: string): string {
+    return this.datum(angabe).split('-').reverse().join('.');
+  }
+
+  /** Die Seite Daueraufträge; ruft sie auf, wenn die Seite woanders steht. */
+  private async dauerauftraegeSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/dauerauftraege') await page.goto(`${basisUrl}/dauerauftraege`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.dauerauftraege').waitFor();
+    return page;
+  }
+
+  /** Die Seite zeichnet nach jeder Antwort des Dienstes neu; gewartet wird auf die neu gezeichnete Fläche. */
+  private async dauerauftragNeuzeichnen(page: Page, aktion: () => Promise<void>) {
+    await page.locator('.dauerauftraege').evaluate(e => e.setAttribute('data-alt', ''));
+    await aktion();
+    await page.locator('.dauerauftraege:not([data-alt])').waitFor();
+  }
+
+  /** UC-016 Schritt 1: „Daueraufträge“ im Finanzstatus. */
+  @Step('Die Kundin öffnet die Daueraufträge')
+  public async dauerauftraegeOeffnen() {
+    const page = await this.kontentabelle();
+    await page.locator('#kopf-aktion').getByRole('link', { name: 'Daueraufträge' }).click();
+    await page.waitForURL(/\/dauerauftraege$/);
+    await page.locator('.dauerauftraege').waitFor();
+  }
+
+  @Step('Die Kundin legt einen Dauerauftrag an Empfänger <empfaenger> mit IBAN <iban>, Betrag <betrag>, Verwendungszweck <zweck>, Turnus <turnus>, erstem Ausführungstag <tag> und Enddatum <ende> an')
+  public async dauerauftragAnlegen(empfaenger: string, iban: string, betrag: string, zweck: string, turnus: string, tag: string, ende: string) {
+    const page = await this.dauerauftraegeSeite();
+    const form = page.getByRole('form', { name: 'Neuer Dauerauftrag' });
+    await form.getByLabel('Name des Empfängers').fill(text(empfaenger));
+    await form.getByLabel('IBAN des Empfängers').fill(text(iban));
+    await form.getByLabel('Betrag in Euro').fill(text(betrag));
+    await form.getByLabel('Verwendungszweck').fill(text(zweck));
+    await form.getByLabel('Turnus des Dauerauftrags').selectOption({ label: text(turnus) });
+    await form.getByLabel('Erster Ausführungstag am').fill(this.datum(tag));
+    await form.getByLabel('Enddatum (optional)').fill(this.datum(ende));
+    await this.dauerauftragNeuzeichnen(page, () => form.getByRole('button', { name: 'Speichern' }).click());
+  }
+
+  @Step('Die Daueraufträge zeigen die Meldung <meldung>')
+  public async dauerauftraegeMelden(meldung: string) {
+    const page = await this.dauerauftraegeSeite();
+    await page.locator('.dauerauftraege > [role="status"], .dauerauftraege > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Die Daueraufträge zeigen die Einträge <tabelle>')
+  public async dauerauftraegeZeigen(tabelle: Table) {
+    const page = await this.dauerauftraegeSeite();
+    const spalten = tabelle.getColumnNames();
+    const datumsspalten = ['Erster Ausführungstag', 'Enddatum'];
+    const erwartet = tabelle.getTableRows().map(z => spalten.map(s =>
+      datumsspalten.includes(s) ? this.anzeigeDatum(text(z.getCell(s))) : sichtbar(text(z.getCell(s)))));
+    const tab = page.locator('.dauerauftraege__tabelle');
+    await tab.waitFor();
+    const kopf = (await tab.locator('thead th').allInnerTexts()).map(sichtbar);
+    const index = spalten.map(s => {
+      const i = kopf.indexOf(s);
+      assert.ok(i >= 0, `Spalte „${s}“ fehlt, da sind: ${kopf.join(', ')}`);
+      return i;
+    });
+    const zeilen = tab.locator('tbody tr');
+    const ist: string[][] = [];
+    for (let n = 0; n < await zeilen.count(); n++) {
+      const zellen = (await zeilen.nth(n).locator('th, td').allInnerTexts()).map(sichtbar);
+      ist.push(index.map(i => zellen[i]));
+    }
+    assert.deepStrictEqual(ist, erwartet, 'Einträge der Daueraufträge');
+  }
+
+  /** Wählt in der Auswahl den Dauerauftrag mit diesem Empfänger; die Optionen beginnen mit dem Empfänger. */
+  private async dauerauftragWaehlen(select: Locator, empfaenger: string) {
+    const wert = await select.locator('option').evaluateAll((os, name) =>
+      (os as HTMLOptionElement[]).find(o => o.text.startsWith(`${name},`))?.value, text(empfaenger));
+    assert.ok(wert, `Kein Dauerauftrag „${empfaenger}“ in der Auswahl`);
+    await select.selectOption(wert);
+  }
+
+  @Step('Die Kundin ändert beim Dauerauftrag <empfaenger> das Feld <feld> auf <wert>')
+  public async dauerauftragAendern(empfaenger: string, feld: string, wert: string) {
+    const page = await this.dauerauftraegeSeite();
+    const form = page.getByRole('form', { name: 'Dauerauftrag ändern' });
+    await this.dauerauftragWaehlen(form.getByLabel('Dauerauftrag zum Ändern'), empfaenger);
+    const felder: Record<string, string> = {
+      'Empfänger': 'Neuer Empfängername', 'IBAN': 'Neue IBAN des Empfängers', 'Betrag': 'Neuer Betrag in Euro',
+      'Verwendungszweck': 'Neuer Verwendungszweck', 'Turnus': 'Neuer Turnus',
+      'Erster Ausführungstag': 'Neuer erster Ausführungstag', 'Enddatum': 'Neues Enddatum (optional)',
+    };
+    const name = text(feld);
+    const label = felder[name];
+    assert.ok(label, `Unbekanntes Feld „${feld}“`);
+    const eingabe = form.getByLabel(label);
+    if (name === 'Turnus') await eingabe.selectOption({ label: text(wert) });
+    else if (name === 'Erster Ausführungstag' || name === 'Enddatum') await eingabe.fill(this.datum(wert));
+    else await eingabe.fill(text(wert));
+    await this.dauerauftragNeuzeichnen(page, () => form.getByRole('button', { name: 'Änderung speichern' }).click());
+  }
+
+  @Step('Die Kundin wählt den Dauerauftrag <empfaenger> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
+  public async dauerauftragLoeschen(empfaenger: string, antwort: string) {
+    const page = await this.dauerauftraegeSeite();
+    const form = page.getByRole('form', { name: 'Dauerauftrag löschen' });
+    await this.dauerauftragWaehlen(form.getByLabel('Dauerauftrag zum Löschen'), empfaenger);
+    await this.dauerauftragNeuzeichnen(page, () => form.getByRole('button', { name: 'Löschen' }).click());
+    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
+    await abfrage.getByText('Dauerauftrag löschen?').waitFor();
+    await this.dauerauftragNeuzeichnen(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
+  }
+
+  @Step('Die Daueraufträge sind ohne Anmeldung nicht erreichbar')
+  public async dauerauftraegeOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const aufrufe: [string, string, string | undefined][] = [
+      ['GET', '/api/dauerauftraege', undefined],
+      ['POST', '/api/dauerauftraege', '{}'],
+      ['PUT', '/api/dauerauftraege/x', '{}'],
+      ['DELETE', '/api/dauerauftraege/x', undefined],
+    ];
+    for (const [methode, pfad, body] of aufrufe) {
+      const antwort = await fetch(`${basisUrl}${pfad}`, { method: methode, headers: { 'Content-Type': 'application/json' }, body });
+      assert.strictEqual(antwort.status, 401, `${methode} ${pfad} ohne Sitzung`);
+    }
+    await page.goto(`${basisUrl}/dauerauftraege`, { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/anmelden$/);
   }
 }

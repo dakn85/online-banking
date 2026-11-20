@@ -5,6 +5,7 @@ import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
+import * as dauerauftraege from './dauerauftraege';
 import * as tageslimit from './tageslimit';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
@@ -130,6 +131,24 @@ app.put('/api/tageslimit', nurAngemeldet('api'), (req, res) => {
   }
 });
 
+// UC-016: Daueraufträge der angemeldeten Kundin (BR-0077, BR-0078)
+const dauerauftragsfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof dauerauftraege.Dauerauftragsfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/dauerauftraege', nurAngemeldet('api'), (_req, res) => {
+  res.json(dauerauftraege.liste(res.locals.kunde.kennung));
+});
+app.post('/api/dauerauftraege', nurAngemeldet('api'), (req, res) => {
+  try { res.status(201).json(dauerauftraege.anlegen(res.locals.kunde.kennung, req.body ?? {})); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+app.put('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, res) => {
+  try { res.json(dauerauftraege.aendern(res.locals.kunde.kennung, req.params.dauerauftragId, req.body ?? {})); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+app.delete('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, res) => {
+  try { dauerauftraege.loeschen(res.locals.kunde.kennung, req.params.dauerauftragId); res.status(204).end(); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
@@ -147,7 +166,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
