@@ -66,6 +66,12 @@ export default class StepImplementation {
       .or(page.getByRole('alert').filter({ hasText: /\S/ })).first().waitFor();
   }
 
+  @Step('<kennung> meldet sich mit der Vorgabe-PIN der Lastkunden an')
+  public async anmeldenMitVorgabePin(kennung: string) {
+    // Vorgabe wie LASTTEST_PIN_STANDARD im Dienst; LASTTEST_PIN überschreibt sie, falls gesetzt.
+    await this.anmelden(kennung, process.env.LASTTEST_PIN || '97531');
+  }
+
   @Step('Der Rahmen zeigt die Kundin <name>')
   public async rahmenZeigtKundin(name: string) {
     const page = await this.seite();
