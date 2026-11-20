@@ -340,7 +340,7 @@ paths:
                 $ref: '#/components/schemas/Fehler'
     put:
       summary: "Status der Debitkarte setzen: sperren, entsperren, endgültig sperren"
-      description: "Setzt den Status der Debitkarte des Girokontos auf den Zielstatus im Auftrag: vorübergehend gesperrt sperrt, aktiv entsperrt, endgültig gesperrt sperrt endgültig und verlangt den Sperrgrund Verlust oder Diebstahl. Ein Sperrgrund bei Zielstatus aktiv oder vorübergehend gesperrt wird ignoriert und nicht gespeichert; die Antwort ist 200 oder bei unzulässigem Wechsel 409, die Debitkarte hat keinen Sperrgrund. Zulässig sind nur die Wechsel nach BR-0081; jede andere Aktion, auch mit schon erreichtem Zielstatus, beantwortet der Dienst mit 409 und der Meldung zum Status, der Status bleibt unverändert. Ohne gültige Sitzung 401; eine IBAN, die nicht zu einem Girokonto der Kundin mit Debitkarte gehört, 404."
+      description: "Setzt den Status der Debitkarte des Girokontos auf den Zielstatus im Auftrag: vorübergehend gesperrt sperrt, aktiv entsperrt, endgültig gesperrt sperrt endgültig und verlangt den Sperrgrund Verlust oder Diebstahl. Ein Sperrgrund bei Zielstatus aktiv oder vorübergehend gesperrt wird ignoriert und nicht gespeichert, auch mit einem anderen Wert; die Antwort ist 200 oder bei unzulässigem Wechsel 409, die Debitkarte hat keinen Sperrgrund. Zulässig sind nur die Wechsel nach BR-0081; jede andere Aktion, auch mit schon erreichtem Zielstatus, beantwortet der Dienst mit 409 und der Meldung zum Status, der Status bleibt unverändert. Ohne gültige Sitzung 401; eine IBAN, die nicht zu einem Girokonto der Kundin mit Debitkarte gehört, 404."
       operationId: debitkarteStatusSetzen
       tags:
         - Debitkarte
@@ -367,7 +367,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Debitkarte'
         "400":
-          description: Zielstatus fehlt oder ist unbekannt, oder beim endgültigen Sperren fehlt der Sperrgrund oder ist weder Verlust noch Diebstahl
+          description: "Zielstatus fehlt oder ist unbekannt, oder nur beim Zielstatus endgültig gesperrt: der Sperrgrund fehlt oder ist weder Verlust noch Diebstahl"
           x-rules:
             - Debitkarte.status
             - Debitkarte.sperrgrund
@@ -725,7 +725,7 @@ components:
           enum: [ aktiv, vorübergehend gesperrt, endgültig gesperrt ]
         sperrgrund:
           type: string
-          description: Grund der endgültigen Sperre, Verlust oder Diebstahl; Pflicht beim Zielstatus endgültig gesperrt, bei anderem Zielstatus wird er ignoriert und nicht gespeichert
+          description: Grund der endgültigen Sperre. Nur beim Zielstatus endgültig gesperrt Pflicht und auf Verlust oder Diebstahl geprüft (sonst 400); bei anderem Zielstatus wird jeder Wert ignoriert, nicht geprüft und nicht gespeichert
           enum: [ Verlust, Diebstahl ]
       required:
         - status
