@@ -26,7 +26,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Use Case UC-024 neu, Aktion Kontoauszug neu, Skizze geändert |
 | UC-003 Umsätze eines Kontos anzeigen | Geändert | Schritt 11 neu, BR-0011 geändert |
-| BR-0011 Umsätze nur für Konten der Kundin | Geändert | Text geändert |
+| BR-0011 Umsätze und Rückgaben nur für Konten der Kundin | Geändert | Text geändert |
 | UC-024 Kontoauszug als PDF herunterladen | Neu | Use Case neu |
 | BR-0098 Inhalt und Salden des Kontoauszugs | Neu | Neu in UC-024 |
 | Vision | Geändert | Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
@@ -47,30 +47,25 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - `acceptance/specs/kontoauszug.spec`: Ein Monat vor dem ersten Umsatz zeigt den Saldo vor dem ersten Umsatz
 - `acceptance/specs/kontoauszug.spec`: Ohne Anmeldung ist die Kontoauszugsseite nicht erreichbar
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Kontoauszug wird beim Abruf im Dienst als PDF erzeugt: Entscheidung neu
-- [ ] Kontoauszug eines Kontos für einen Monat als PDF: Endpunkt neu
-- [ ] Umsatz: Attribut buchungstag geändert
-- [ ] Umsatz: Attribut betrag neu
-- [ ] Umsatz: Attribut saldoDanach neu
-- [ ] Kontoauszug: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Kontoauszug: Maske neu
-- [ ] Umsätze: Use Case UC-024 neu
-- [ ] Umsätze: Aktion Kontoauszug neu
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Schritt 11 neu
-- [ ] UC-003: BR-0011 geändert
-- [ ] BR-0011: Text geändert
-- [ ] UC-024: Use Case neu
-- [ ] BR-0098: Neu in UC-024
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-62 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-62 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine
+- **Online-Banking-Dienst** (`src/`): neues Modul `kontoauszug.ts` (Monatsprüfung, Salden nach BR-0098, PDF-Erzeugung); neue Route `GET /api/konten/:iban/kontoauszug` in `main.ts`; neue Seite `/kontoauszug` in der Seitenliste.
+- **Oberfläche** (`public/`): neue Seite `public/seiten/kontoauszug.js` (Maske Kontoauszug), Schaltfläche „Kontoauszug“ auf den Umsätzen (UC-003 Schritt 11).
+- **Akzeptanztests**: fehlende Steps in `acceptance/tests/StepImplementation.ts`, PDF-Text wird mit pdfjs-dist gelesen.
+
+## Schritte
+1. UC-024 Schritt 4 / BR-0011: Prüfreihenfolge 401, Konto 404 (ohne Monatsprüfung), Monat 400 (Muster JJJJ-MM, höchstens laufender Monat), sonst PDF.
+2. BR-0098 / BR-0008: Umsätze mit Buchungstag im Monat, neueste zuerst; Endsaldo = Saldo danach des neuesten Monatsumsatzes, sonst Saldo am Monatsende nach derselben Ableitung; Anfangssaldo = Saldo danach des neuesten Umsatzes vor dem Monatsersten, sonst Saldo vor dem ersten Umsatz, sonst Kontosaldo. Laufender Monat: Endsaldo = aktueller Saldo. Cent-Rundung (ADR-005).
+3. UC-024 Schritt 5 / ADR-008: PDF beim Abruf aus den Umsätzen im Speicher, nicht gespeichert; Content-Disposition `attachment; filename="Kontoauszug_<IBAN ohne Leerzeichen>_<monat>.pdf"`; Beträge als Euro mit Tausenderpunkt und Komma.
+4. UC-024 A5: Fehler beim Erzeugen ergibt 500 mit `fehler`; die Maske zeigt unabhängig davon die feste Meldung, auch bei nicht erreichbarem Dienst.
+5. UC-024 A1/A3/A4: Maske zeigt die Meldungen aus der Spezifikation; 401 leitet auf die Anmeldeseite um.
+6. Unit-Tests für BR-0098 und BR-0011 mit ID im Testnamen.
+
+## Rahmenänderung
+- Neue Bibliothek `pdfkit` (reines JavaScript, keine native Abhängigkeit) im Dienst, gemäß ADR-008; `pdfjs-dist` nur in den Akzeptanztests zum Lesen des PDF-Texts.
 
 ## Offene Fragen
 
