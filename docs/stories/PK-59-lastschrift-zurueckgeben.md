@@ -95,4 +95,4 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
   _→ eingearbeitet in UC-022, BR-0093, BR-0094, BR-0095, UC-003, Umsatz, GET /api/konten/{iban}/umsaetze, POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben, Schema Umsatz, Schema Rueckgabe, umsaetze, NFR-001, vision, architektur · d9654e1_
 - Wie verhält sich die Umsatzseite nach einer abgelehnten oder wiederholten Bestätigung der Rückgabe?
   **Antwort:** Die Rückfrage schließt, die Umsätze werden neu geladen, und die Meldung des Dienstes steht (404, 422); „Bestätigen“ ist während des Absendens gesperrt. Eine zweite Anfrage liefert 422 „Die Lastschrift wurde bereits zurückgegeben.“ und bucht nichts; die Zeile zeigt danach den aktuellen Stand.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-022_

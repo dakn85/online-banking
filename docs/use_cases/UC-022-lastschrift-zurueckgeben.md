@@ -20,7 +20,7 @@
 1. Die Kundin wählt in der Zeile einer SEPA-Lastschrift der Umsätze „Zurückgeben“; die Aktion führt die umsatzId der Zeile mit.
 2. Das System zeigt die Rückfrage „Lastschrift über {Betrag in Euro ohne Vorzeichen, z. B. 29,90 €} von {Gegenpartei} zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.“ mit „Bestätigen“ und „Abbrechen“.
 3. Die Kundin wählt „Bestätigen“.
-4. Das System ruft POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben mit der IBAN des Kontos und der umsatzId der gewählten Zeile auf.
+4. Das System sperrt „Bestätigen“, bis der Dienst antwortet, und ruft POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben mit der IBAN des Kontos und der umsatzId der gewählten Zeile auf.
 5. Das System prüft, dass der Umsatz zu einem Konto der Kundin gehört (BR-0011), eine SEPA-Lastschrift ist, noch nicht zurückgegeben wurde (BR-0094) und die Rückgabefrist von 8 Wochen nicht abgelaufen ist (BR-0093).
 6. Das System schreibt den Betrag dem Girokonto gut, legt den Umsatz der Gutschrift an und kennzeichnet die Lastschrift als zurückgegeben (BR-0095).
 7. Das System lädt die Umsätze neu, zeigt die Gutschrift als neuesten Umsatz und die Meldung „Lastschrift zurückgegeben: {Betrag} gutgeschrieben, neuer Saldo {Saldo}.“, beide in Euro.
@@ -39,28 +39,28 @@
 **Auslöser:** Die IBAN gehört zu keinem Konto der Kundin (BR-0011) oder das Konto hat keinen Umsatz mit dieser umsatzId (BR-0094); der Dienst antwortet mit 404. (Schritt 5).  
 **Ablauf:**
 
-1. Das System zeigt bei fremder IBAN die Meldung „Das Konto wurde nicht gefunden.“, sonst „Der Umsatz wurde nicht gefunden.“, und bucht nichts.
+1. Das System schließt die Rückfrage, lädt die Umsätze neu und zeigt bei fremder IBAN die Meldung „Das Konto wurde nicht gefunden.“, sonst „Der Umsatz wurde nicht gefunden.“; es bucht nichts.
 
 ### A3: Keine SEPA-Lastschrift
 
 **Auslöser:** Der Umsatz ist keine SEPA-Lastschrift (BR-0094); der Dienst antwortet mit 422. (Schritt 5).  
 **Ablauf:**
 
-1. Das System zeigt die Meldung „Dieser Umsatz ist keine SEPA-Lastschrift.“ und bucht nichts.
+1. Das System schließt die Rückfrage, lädt die Umsätze neu und zeigt die Meldung „Dieser Umsatz ist keine SEPA-Lastschrift.“; es bucht nichts.
 
 ### A4: Schon zurückgegeben
 
-**Auslöser:** Die Lastschrift ist bereits zurückgegeben (BR-0094); der Dienst antwortet mit 422. (Schritt 5).  
+**Auslöser:** Die Lastschrift ist bereits zurückgegeben (BR-0094), etwa weil die Kundin die Rückgabe ein zweites Mal bestätigt; der Dienst antwortet mit 422. (Schritt 5).  
 **Ablauf:**
 
-1. Das System zeigt die Meldung „Die Lastschrift wurde bereits zurückgegeben.“ und bucht nichts.
+1. Das System schließt die Rückfrage, lädt die Umsätze neu und zeigt die Meldung „Die Lastschrift wurde bereits zurückgegeben.“; es bucht nichts, und die Zeile der Lastschrift zeigt „Zurückgegeben“.
 
 ### A5: Rückgabefrist abgelaufen
 
 **Auslöser:** Der Buchungstag der Lastschrift liegt mehr als 56 Tage zurück (BR-0093); der Dienst antwortet mit 422. (Schritt 5).  
 **Ablauf:**
 
-1. Das System zeigt die Meldung „Die Rückgabefrist von 8 Wochen ist abgelaufen.“ und bucht nichts.
+1. Das System schließt die Rückfrage, lädt die Umsätze neu und zeigt die Meldung „Die Rückgabefrist von 8 Wochen ist abgelaufen.“; es bucht nichts, und die Zeile der Lastschrift zeigt weiter „Zurückgeben“.
 
 ### A6: Nicht angemeldet
 
