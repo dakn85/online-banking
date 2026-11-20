@@ -52,7 +52,7 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
 | kontoname | Bezeichnung des Kontos in der Tabelle | String | 1..60 | Pflicht; Länge 1..60; Beispiel Girokonto |
-| iban | IBAN des Kontos | String | 22..22 | Pflicht; Eindeutig; Länge 22..22; Beispiel DE02 5001 0517 5407 3249 31 |
+| iban | IBAN des Kontos | String | 22..22 | Pflicht; Eindeutig; Länge 22..22; Beispiel DE02 5001 0517 5407 3249 11 |
 | art | Art des Kontos | String |  | Pflicht; Werte Girokonto, Kreditkarte, Tagesgeldkonto; Beispiel Girokonto |
 | saldo | Aktueller Saldo in Euro; bei einer Kreditkarte mit offenem Betrag negativ | Decimal |  | Pflicht; Beispiel 2145.30; negativ bei Kreditkarte mit offenem Betrag |
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
@@ -72,7 +72,7 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 |---|---|---|---|---|
 | auftragsId | Kennung des Auftrags, von der Seite je Überweisung vergeben; Träger der Einmalbuchung | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel A-2026-00007 |
 | empfaenger | Name des Empfängers | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
-| empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE02 5001 0517 5407 3249 31 |
+| empfaengerIban | IBAN des Empfängers im SEPA-Raum | String | 15..34 | Pflicht; Länge 15..34; Beispiel DE02 5001 0517 5407 3249 11 |
 | betrag | Überweisungsbetrag in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 50.00 |
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | verwendungszweck | Verwendungszweck der Überweisung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
@@ -126,7 +126,7 @@ Eine sofortige Umbuchung zwischen dem Girokonto und dem Tagesgeldkonto der Kundi
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
 | auftragsId | Kennung der Umbuchung, von der Seite je Umbuchung vergeben; Träger der Einmalbuchung; eindeutig je Kundin, getrennt von der Kennung der Überweisung geführt | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-2026-00007 |
-| quellIban | IBAN des Quellkontos, das belastet wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02500105175407324931 |
+| quellIban | IBAN des Quellkontos, das belastet wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE02500105175407324911 |
 | zielIban | IBAN des Zielkontos, dem der Betrag gutgeschrieben wird | String | 22..22 | Pflicht; Länge 22..22; Beispiel DE97500105175407324947 |
 | betrag | Umbuchungsbetrag in Euro, mindestens 0,10 | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 500.00 |
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |

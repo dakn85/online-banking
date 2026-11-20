@@ -9,7 +9,7 @@ import { umsaetzeVon } from '../src/umsaetze';
 
 const LENA = { kennung: 'lena.hoffmann' };
 const JONAS = { kennung: 'jonas.weber' };
-const GIRO = 'DE02500105175407324931';
+const GIRO = 'DE02500105175407324911';
 /** 20.11.2026, 23:30 Uhr in Berlin (22:30 UTC): in UTC ist es noch derselbe Tag, in Berlin auch. */
 const JETZT = new Date('2026-11-20T22:30:00Z');
 const auftrag = (mehr = {}) => ({

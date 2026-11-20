@@ -3,7 +3,7 @@ import test from 'node:test';
 import { zuruecksetzen as kontenZuruecksetzen } from '../src/konten';
 import { Abfragefehler, MONAT_FEHLER, ausgabenanalyse, buchen, zuruecksetzen } from '../src/umsaetze';
 
-const GIRO = 'DE02500105175407324931';
+const GIRO = 'DE02500105175407324911';
 
 function ausgangsstand() {
   kontenZuruecksetzen();

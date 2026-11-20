@@ -5,8 +5,8 @@ import { GRENZE_FEHLER, MINDESTBETRAG_FEHLER, PAARUNG_FEHLER, Umbuchungsfehler, 
 import { umsaetzeVon, zuruecksetzen as umsaetzeZuruecksetzen } from '../src/umsaetze';
 
 const LENA = { kennung: 'lena.hoffmann' };
-const GIRO = 'DE02500105175407324931';
-const KARTE = 'DE44500105175407324955';
+const GIRO = 'DE02500105175407324911';
+const KARTE = 'DE44500105175407325028';
 const TAGESGELD = 'DE97500105175407324947';
 const FREMD = 'DE89370400440532013000';
 const auftrag = (mehr = {}) => ({ auftragsId: 'u-1', quellIban: GIRO, zielIban: TAGESGELD, betrag: 500, ...mehr });
