@@ -27,7 +27,7 @@
 
 ### A1: Feldregel verletzt
 
-**Auslöser:** Eine Eingabe verletzt eine Feldregel von Dauerauftrag im Datenmodell; ausgenommen IBAN (A2) und ein Betrag, der fehlt, keine Zahl ist oder unter dem Mindestbetrag liegt (A3). Ein Betrag mit mehr als zwei Nachkommastellen gehört zu A1: der Dienst lehnt ihn mit 400 ab und rundet ihn nicht. (Schritt 4).  
+**Auslöser:** Eine Eingabe verletzt eine Feldregel von Dauerauftrag im Datenmodell, zum Beispiel ein Empfängername (Feld Name des Empfängers oder Neuer Empfängername) oder ein Verwendungszweck (Feld Verwendungszweck oder Neuer Verwendungszweck), der fehlt oder die Länge nach dem Datenmodell überschreitet; der Dienst antwortet dann mit 400; ausgenommen IBAN (A2) und ein Betrag, der fehlt, keine Zahl ist oder unter dem Mindestbetrag liegt (A3). Ein Betrag mit mehr als zwei Nachkommastellen gehört zu A1: der Dienst lehnt ihn mit 400 ab und rundet ihn nicht. (Schritt 4).  
 **Ablauf:**
 
 1. Das System speichert den Dauerauftrag nicht, lässt die bestehenden unverändert und zeigt „Die Angaben zum Dauerauftrag sind unvollständig oder ungültig.“; die bisherigen Eingaben bleiben stehen.

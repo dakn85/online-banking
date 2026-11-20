@@ -22,38 +22,15 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert |
-| Online-Banking | Geändert | Titel entfällt, Version entfällt |
-| Konten der angemeldeten Kundin mit Salden und Gesamtvermögen | Entfällt | Endpunkt entfällt |
-| Überweisung vom Girokonto ausführen | Entfällt | Endpunkt entfällt |
-| Umsätze eines Kontos mit Saldo danach, neueste zuerst | Entfällt | Endpunkt entfällt |
-| Empfängervorlagen der angemeldeten Kundin | Entfällt | Endpunkt entfällt |
-| Empfängervorlage anlegen | Entfällt | Endpunkt entfällt |
-| Empfängervorlage umbenennen | Entfällt | Endpunkt entfällt |
-| Empfängervorlage löschen | Entfällt | Endpunkt entfällt |
-| Anmelden mit Kennung und PIN | Entfällt | Endpunkt entfällt |
-| Abmelden | Entfällt | Endpunkt entfällt |
-| Angemeldete Kundin | Entfällt | Endpunkt entfällt |
-| Demo-Testdaten zurücksetzen (nur Testbetrieb) | Entfällt | Endpunkt entfällt |
-| Lastdaten zurücksetzen (nur Testbetrieb) | Entfällt | Endpunkt entfällt |
-| Tageslimit der angemeldeten Kundin | Entfällt | Endpunkt entfällt |
-| Tageslimit der angemeldeten Kundin setzen | Entfällt | Endpunkt entfällt |
-| Anmeldedaten | Entfällt | Schema entfällt |
-| Angemeldet | Entfällt | Schema entfällt |
-| Sitzung | Entfällt | Schema entfällt |
-| Fehler | Entfällt | Schema entfällt |
-| Konto | Entfällt | Schema entfällt |
-| Kontenuebersicht | Entfällt | Schema entfällt |
-| Ueberweisung | Entfällt | Schema entfällt |
-| Ueberweisungsauftrag | Entfällt | Schema entfällt |
-| Umsaetze | Entfällt | Schema entfällt |
-| Umsatz | Entfällt | Schema entfällt |
-| Empfaengervorlage | Entfällt | Schema entfällt |
-| NeueEmpfaengervorlage | Entfällt | Schema entfällt |
-| EmpfaengervorlageName | Entfällt | Schema entfällt |
-| Tageslimit | Entfällt | Schema entfällt |
-| Tageslimitauftrag | Entfällt | Schema entfällt |
+| Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
+| Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Intern neu |
+| Daueraufträge der angemeldeten Kundin | Neu | Endpunkt neu |
+| Dauerauftrag anlegen | Neu | Endpunkt neu |
+| Dauerauftrag ändern | Neu | Endpunkt neu |
+| Dauerauftrag löschen | Neu | Endpunkt neu |
+| Dauerauftrag | Neu | Schema neu, Entität neu |
+| NeuerDauerauftrag | Neu | Schema neu |
 | Architektur | Geändert | Laufzeitsicht geändert, Querschnittliche Konzepte geändert |
-| Dauerauftrag | Neu | Entität neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Daueraufträge | Neu | Maske neu |
 | Finanzstatus | Geändert | Use Case UC-016 neu, Aktion Daueraufträge neu, Skizze geändert |
@@ -86,37 +63,16 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 ## Aufgaben für die Umsetzung
 
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
-- [ ] Online-Banking: Titel entfällt
-- [ ] Online-Banking: Version entfällt
-- [ ] Konten der angemeldeten Kundin mit Salden und Gesamtvermögen: Endpunkt entfällt
-- [ ] Überweisung vom Girokonto ausführen: Endpunkt entfällt
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Endpunkt entfällt
-- [ ] Empfängervorlagen der angemeldeten Kundin: Endpunkt entfällt
-- [ ] Empfängervorlage anlegen: Endpunkt entfällt
-- [ ] Empfängervorlage umbenennen: Endpunkt entfällt
-- [ ] Empfängervorlage löschen: Endpunkt entfällt
-- [ ] Anmelden mit Kennung und PIN: Endpunkt entfällt
-- [ ] Abmelden: Endpunkt entfällt
-- [ ] Angemeldete Kundin: Endpunkt entfällt
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Endpunkt entfällt
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Endpunkt entfällt
-- [ ] Tageslimit der angemeldeten Kundin: Endpunkt entfällt
-- [ ] Tageslimit der angemeldeten Kundin setzen: Endpunkt entfällt
-- [ ] Anmeldedaten: Schema entfällt
-- [ ] Angemeldet: Schema entfällt
-- [ ] Sitzung: Schema entfällt
-- [ ] Fehler: Schema entfällt
-- [ ] Konto: Schema entfällt
-- [ ] Kontenuebersicht: Schema entfällt
-- [ ] Ueberweisung: Schema entfällt
-- [ ] Ueberweisungsauftrag: Schema entfällt
-- [ ] Umsaetze: Schema entfällt
-- [ ] Umsatz: Schema entfällt
-- [ ] Empfaengervorlage: Schema entfällt
-- [ ] NeueEmpfaengervorlage: Schema entfällt
-- [ ] EmpfaengervorlageName: Schema entfällt
-- [ ] Tageslimit: Schema entfällt
-- [ ] Tageslimitauftrag: Schema entfällt
+- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
+- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Intern neu
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
+- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Intern neu
+- [ ] Daueraufträge der angemeldeten Kundin: Endpunkt neu
+- [ ] Dauerauftrag anlegen: Endpunkt neu
+- [ ] Dauerauftrag ändern: Endpunkt neu
+- [ ] Dauerauftrag löschen: Endpunkt neu
+- [ ] Dauerauftrag: Schema neu
+- [ ] NeuerDauerauftrag: Schema neu
 - [ ] Architektur: Laufzeitsicht geändert
 - [ ] Architektur: Querschnittliche Konzepte geändert
 - [ ] Dauerauftrag: Entität neu
