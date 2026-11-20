@@ -28,6 +28,8 @@ export default class StepImplementation {
   @AfterScenario()
   public async cookiesLoeschen() {
     await StepImplementation.page?.context().clearCookies();
+    await StepImplementation.page?.unrouteAll({ behavior: 'ignoreErrors' });
+    StepImplementation.export = undefined;
   }
 
   @AfterSuite()
@@ -287,6 +289,107 @@ export default class StepImplementation {
     await page.waitForURL(/\/anmelden$/);
   }
 
+  /* ---------------------------------------------------------------- UC-003 CSV-Export */
+
+  /** Die letzte Export-Antwort: Status, Kopfzeilen und Rohbytes der Datei. */
+  private static export?: { status: number; headers: Record<string, string>; body: Buffer };
+
+  /** Wählt „Als CSV exportieren“ und hält die Antwort des Dienstes fest. */
+  private async exportieren(): Promise<number> {
+    const page = await this.umsaetzeGeladen();
+    const antwort = page.waitForResponse(r => /\/umsaetze\/export(\?|$)/.test(r.url()));
+    await page.getByRole('button', { name: 'Als CSV exportieren' }).click();
+    const r = await antwort;
+    // Den Rumpf liest die Seite selbst als Blob; die Prüfung holt dieselbe Abfrage mit der Sitzung der Seite noch einmal.
+    const rumpf = r.ok() ? await page.request.get(r.url()) : r;
+    StepImplementation.export = { status: r.status(), headers: rumpf.headers(), body: await rumpf.body().catch(() => Buffer.alloc(0)) };
+    return r.status();
+  }
+
+  private csvZeilen(): string[][] {
+    const datei = StepImplementation.export;
+    assert.ok(datei && datei.status === 200, 'Es gibt keine exportierte Datei');
+    const inhalt = datei.body.toString('utf8').replace(/^﻿/, '');
+    const zeilen: string[][] = [];
+    let zeile: string[] = [];
+    let zelle = '';
+    let gequotet = false;
+    for (let i = 0; i < inhalt.length; i++) {
+      const z = inhalt[i];
+      if (gequotet) {
+        if (z === '"' && inhalt[i + 1] === '"') { zelle += '"'; i++; }
+        else if (z === '"') gequotet = false;
+        else zelle += z;
+      } else if (z === '"') gequotet = true;
+      else if (z === ';') { zeile.push(zelle); zelle = ''; }
+      else if (z === '\r' && inhalt[i + 1] === '\n') { zeile.push(zelle); zeilen.push(zeile); zeile = []; zelle = ''; i++; }
+      else zelle += z;
+    }
+    if (zelle || zeile.length) { zeile.push(zelle); zeilen.push(zeile); }
+    return zeilen;
+  }
+
+  @Step('Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status <status>')
+  public async umsaetzeExportierenMitStatus(status: string) {
+    assert.strictEqual(await this.exportieren(), Number(status), 'Status der Export-Antwort');
+  }
+
+  @Step('Die Kundin exportiert die Umsätze als CSV-Datei')
+  public async umsaetzeExportieren() {
+    await this.exportieren();
+  }
+
+  @Step('Die CSV-Datei <name> beginnt mit dem UTF-8-BOM und der Kopfzeile <kopfzeile>')
+  public async csvBeginn(name: string, kopfzeile: string) {
+    const datei = StepImplementation.export;
+    assert.ok(datei && datei.status === 200, 'Es gibt keine exportierte Datei');
+    assert.ok(datei.headers['content-disposition']?.includes(`filename="${text(name)}"`), `Dateiname ${text(name)}, Kopf: ${datei.headers['content-disposition']}`);
+    assert.deepStrictEqual([...datei.body.subarray(0, 3)], [0xef, 0xbb, 0xbf], 'UTF-8-BOM fehlt');
+    assert.strictEqual(this.csvZeilen()[0].join(';'), text(kopfzeile));
+  }
+
+  @Step('Die CSV-Datei enthält die Zeilen <tabelle>')
+  public async csvZeilenPruefen(tabelle: Table) {
+    const [kopf, ...daten] = this.csvZeilen();
+    const erwartet = tabelle.getTableRows();
+    assert.strictEqual(daten.length, erwartet.length, `Zeilen in der Datei: ${daten.length}, erwartet ${erwartet.length}`);
+    const spalten = tabelle.getColumnNames();
+    erwartet.forEach((zeile, i) => {
+      for (const spalte of spalten) {
+        const nr = kopf.indexOf(spalte);
+        assert.ok(nr >= 0, `Spalte ${spalte} fehlt in der Kopfzeile`);
+        assert.strictEqual(daten[i][nr], text(zeile.getCell(spalte) ?? ''), `Zeile ${i + 1}, Spalte ${spalte}`);
+      }
+    });
+  }
+
+  @Step('Die CSV-Datei hat den Content-Type <typ> und das Zeilenende <ende>')
+  public async csvFormat(typ: string, ende: string) {
+    const datei = StepImplementation.export;
+    assert.ok(datei && datei.status === 200, 'Es gibt keine exportierte Datei');
+    assert.ok(datei.headers['content-type']?.startsWith(text(typ)), `Content-Type: ${datei.headers['content-type']}`);
+    const inhalt = datei.body.toString('utf8');
+    const crlf = (inhalt.match(/\r\n/g) ?? []).length;
+    const lf = (inhalt.match(/\n/g) ?? []).length;
+    if (text(ende) === 'CRLF') assert.ok(crlf > 0 && crlf === lf, 'Zeilenende ist nicht durchgehend CRLF');
+    else assert.fail(`Unbekanntes Zeilenende ${text(ende)}`);
+  }
+
+  @Step('Der CSV-Export antwortet ohne Anmeldung mit dem Status <status>')
+  public async csvOhneAnmeldung(status: string) {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const antwort = await fetch(`${basisUrl}/api/konten/DE02500105175407324931/umsaetze/export`);
+    assert.strictEqual(antwort.status, Number(status), 'GET /api/konten/{iban}/umsaetze/export ohne Sitzung');
+  }
+
+  /** Der Dienst antwortet auf den Export mit 500; die Umleitung gilt bis zum Ende des Szenarios. */
+  @Step('Der Export-Dienst antwortet mit einem Fehler')
+  public async exportFehler() {
+    const page = await this.seite();
+    await page.route(/\/umsaetze\/export(\?|$)/, route => route.fulfill({ status: 500, contentType: 'application/json', body: '{"fehler":"Interner Fehler"}' }));
+  }
+
   /* ---------------------------------------------------------------- UC-004 Empfängervorlagen */
 
   /** Die Seite Empfängervorlagen; ruft sie auf, wenn die Seite woanders steht. */
@@ -376,5 +479,65 @@ export default class StepImplementation {
   public async vorlageWaehlenOhneZweck(name: string, empfaenger: string, iban: string) {
     const felder = await this.vorlageInUeberweisung(name);
     assert.deepStrictEqual(felder, { empfaenger: text(empfaenger), iban: text(iban), zweck: '' });
+  }
+
+  /* ---------------------------------------------------------------- UC-015 Tageslimit */
+
+  /** Die Seite Tageslimit; ruft sie auf, wenn die Seite woanders steht. */
+  private async tageslimitSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/tageslimit') await page.goto(`${basisUrl}/tageslimit`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.tageslimit').waitFor();
+    return page;
+  }
+
+  /** UC-015 Schritt 1: „Tageslimit“ im Finanzstatus. */
+  @Step('Die Kundin öffnet das Tageslimit')
+  public async tageslimitOeffnen() {
+    const page = await this.kontentabelle();
+    await page.locator('#kopf-aktion').getByRole('link', { name: 'Tageslimit' }).click();
+    await page.waitForURL(/\/tageslimit$/);
+    await page.locator('.tageslimit').waitFor();
+  }
+
+  /** Gibt den Betrag so ein, wie er im Szenario steht, und wählt „Speichern“; wartet auf die neu gezeichnete Seite. */
+  @Step('Die Kundin setzt das Tageslimit auf <betrag>')
+  public async tageslimitSetzen(betrag: string) {
+    const page = await this.tageslimitSeite();
+    const form = page.getByRole('form', { name: 'Tageslimit ändern' });
+    await form.getByLabel('Neues Tageslimit in Euro').fill(text(betrag));
+    await page.locator('.tageslimit').evaluate(e => e.setAttribute('data-alt', ''));
+    await form.getByRole('button', { name: 'Speichern' }).click();
+    await page.locator('.tageslimit:not([data-alt])').waitFor();
+  }
+
+  @Step('Das Tageslimit zeigt die Meldung <meldung>')
+  public async tageslimitMeldet(meldung: string) {
+    const page = await this.tageslimitSeite();
+    await page.locator('.tageslimit > [role="status"], .tageslimit > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Das Tageslimit zeigt das aktuelle Limit <aktuell> und das Standardlimit <standard>')
+  public async tageslimitZeigt(aktuell: string, standard: string) {
+    const page = await this.tageslimitSeite();
+    const werte = Object.fromEntries(await page.locator('.tageslimit dl > div').evaluateAll(zeilen =>
+      zeilen.map(z => [z.querySelector('dt')!.textContent!.trim(), z.querySelector('dd')!.textContent!])));
+    assert.deepStrictEqual(
+      { aktuell: sichtbar(werte['Aktuelles Tageslimit']), standard: sichtbar(werte['Standardlimit']) },
+      { aktuell: sichtbar(text(aktuell)), standard: sichtbar(text(standard)) });
+  }
+
+  @Step('Das Tageslimit ist ohne Anmeldung nicht erreichbar')
+  public async tageslimitOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const lesen = await fetch(`${basisUrl}/api/tageslimit`);
+    assert.strictEqual(lesen.status, 401, 'GET /api/tageslimit ohne Sitzung');
+    const setzen = await fetch(`${basisUrl}/api/tageslimit`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tageslimit: 1000 }),
+    });
+    assert.strictEqual(setzen.status, 401, 'PUT /api/tageslimit ohne Sitzung');
+    await page.goto(`${basisUrl}/tageslimit`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
   }
 }

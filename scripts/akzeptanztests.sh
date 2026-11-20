@@ -15,9 +15,13 @@ cd acceptance
 npx --no-install playwright install chromium >/dev/null
 rm -rf reports
 status=0
-BANKING_URL=http://localhost:${PORT:-18300} gauge run --env default "${@:-specs}" || status=$?
+log=$(mktemp)
+BANKING_URL=http://localhost:${PORT:-18300} gauge run --env default "${@:-specs}" > "$log" 2>&1 || status=$?
+mkdir -p reports && mv "$log" reports/gauge.log
+# Nur Zusammenfassung und Fehler ausgeben; die ganze Ausgabe steht in acceptance/reports/gauge.log.
+grep -E "Failed Step:|Specification: |Error Message:|^\s+Error:|Specifications:|Scenarios:|Total time" reports/gauge.log | head -80
 
 echo
 echo "Stand: $(git rev-parse HEAD)$(git diff --quiet HEAD || echo ' (mit ungespeicherten Änderungen: nicht melden)')"
-echo "Ergebnis: acceptance/$(find reports -name '*.xml' -path '*xml-report*' | head -1)"
+echo "Ergebnis: acceptance/$(find reports -name '*.xml' -path '*xml-report*' | head -1), Protokoll: acceptance/reports/gauge.log"
 exit $status
