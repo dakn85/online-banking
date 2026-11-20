@@ -43,7 +43,7 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Ein unbekannter Umsatz wird mit Umsatz nicht gefunden abgewiesen
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine fremde IBAN wird bei der Rückgabe mit Konto nicht gefunden abgewiesen
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine Lastschrift nach Ablauf der Frist von 8 Wochen wird abgelehnt
-- `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine zu lange umsatzId wird bei der Rückgabe mit 400 abgewiesen
+- `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine umsatzId, die die Feldbedingung verletzt, wird bei der Rückgabe mit 400 abgewiesen
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine zurückgegebene Lastschrift lässt sich nicht erneut zurückgeben
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Ohne gültige Sitzung weist der Dienst die Rückgabe mit 401 ab
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Umsätze der Kreditkarte bieten keine Rückgabe an
