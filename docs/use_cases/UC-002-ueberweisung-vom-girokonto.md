@@ -187,6 +187,9 @@ Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vo
 ## Weitere Prüfungen
 
 - **WP-1** (Unit-Test): IBAN-Prüfziffer nach ISO 7064 MOD 97-10 und Zugehörigkeit des Länderkennzeichens zur SEPA-Länderliste.
+- **WP-2** (Unit-Test): Tageslimit (BR-0070): Überweisungen kurz vor und nach Mitternacht UTC (erfasstAm) zählen zu verschiedenen Kalendertagen; die Überweisung des Vortags zählt nicht zu den heutigen Ausgängen.
+- **WP-3** (Unit-Test): Tageslimit (BR-0070): Summen werden in Cent verglichen; 0,10 € und 0,20 € bei Limit 0,30 € sind zulässig, weitere 0,01 € werden abgelehnt; ein Limit von 0,00 € lehnt jede Überweisung ab.
+- **WP-4** (Unit-Test): Tageslimit (BR-0070): Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge zählen nicht zu den heutigen Ausgängen.
 
 ## Notizen
 

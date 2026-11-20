@@ -23,7 +23,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 | Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
 | Architektur | Geändert | Bausteinsicht geändert, Laufzeitsicht geändert |
 | Überweisung | Geändert | Skizze geändert |
-| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, Schritt 7 geändert, A9 neu: Tageslimit überschritten, und 1 weitere |
+| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, Schritt 7 geändert, A9 neu: Tageslimit überschritten, und 4 weitere |
 | UC-015 Tageslimit für Überweisungen festlegen | Geändert | Notizen geändert, BR-0070 geändert |
 | BR-0070 Tageslimit der Kundin | Geändert | Text geändert |
 
@@ -51,6 +51,9 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] UC-002: Schritt 7 geändert
 - [ ] UC-002: A9 neu: Tageslimit überschritten
 - [ ] UC-002: Sequenzdiagramm neu
+- [ ] UC-002: WP-2 neu
+- [ ] UC-002: WP-3 neu
+- [ ] UC-002: WP-4 neu
 - [ ] UC-015: Notizen geändert
 - [ ] UC-015: BR-0070 geändert
 - [ ] BR-0070: Text geändert
