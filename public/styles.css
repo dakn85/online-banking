@@ -258,3 +258,8 @@ a { color: var(--tanne); }
 .kontentabelle th, .kontentabelle td { padding-left: 10px; padding-right: 10px; }
 @media (max-width: 900px) { .filter { grid-template-columns: 1fr 1fr; } .umsaetze { overflow-x: auto; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.navigation__zahl { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 11px; background: var(--messing); color: var(--tanne-tief); font-size: 12px; font-weight: 600; text-align: center; }
+.navigation__zahl[hidden] { display: none; }
+.postfach__text { margin: 12px 0 0; }
+.postfach__text dt { color: var(--tinte-2); font-size: 13px; }
+.postfach__text dd { margin: 4px 0 0; }

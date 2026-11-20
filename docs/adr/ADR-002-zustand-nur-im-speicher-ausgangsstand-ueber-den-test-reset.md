@@ -9,7 +9,7 @@ C-001 sagt: Demo-Konten statt Kernbank. Die Akzeptanztests brauchen vor jedem Sz
 
 ## Entscheidung
 
-Konten, Sitzungen und ausgeführte Aufträge liegen ausschließlich im Speicher des Prozesses, geordnet nach der Kennung der Kundin; jede Kundin hat eigene Konten, auch die beiden Demo-Kundinnen. Im Testbetrieb (TEST_MODE=1) kommen die Lastkunden lasttest-001 bis lasttest-300 dazu, und es gibt zwei Resets: POST /api/test/reset beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Aufträge, Empfängervorlagen und Daueraufträge auf den Ausgangsstand zurück; POST /api/test/lasttest/reset tut dasselbe nur für die Lastkunden. Keiner berührt die Daten des anderen. Beide Routen werden nur bei TEST_MODE=1 registriert.
+Konten, Sitzungen und ausgeführte Aufträge liegen ausschließlich im Speicher des Prozesses, geordnet nach der Kennung der Kundin; jede Kundin hat eigene Konten, auch die beiden Demo-Kundinnen. Im Testbetrieb (TEST_MODE=1) kommen die Lastkunden lasttest-001 bis lasttest-300 dazu, und es gibt zwei Resets: POST /api/test/reset beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Aufträge, Empfängervorlagen, Daueraufträge und Nachrichten mit ihrem Lesestatus auf den Ausgangsstand zurück; POST /api/test/lasttest/reset tut dasselbe nur für die Lastkunden. Keiner berührt die Daten des anderen. Beide Routen werden nur bei TEST_MODE=1 registriert.
 
 ## Folgen
 

@@ -10,7 +10,10 @@ erDiagram
     Empfaengervorlage }o--|| Kunde : "gehört zu"
     Dauerauftrag }o--|| Konto : "geht ab von"
     Dauerauftrag }o--|| Kunde : "gehört zu"
+    Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
+    Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
+    Nachricht }o--|| Kunde : "gehört zu"
 ```
 
 ## Entitäten
@@ -81,6 +84,7 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30 |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+| kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 
 **Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009).
 
@@ -119,6 +123,46 @@ Eine wiederkehrende Zahlung vom Girokonto der Kundin an einen Empfänger mit Bet
 | enddatum | Letzter Tag, bis zu dem der Dauerauftrag laufen soll; optional, ohne Enddatum läuft er unbefristet; die Oberfläche zeigt es als TT.MM.JJJJ | Date |  | Beispiel 2027-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
 
 **Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht.
+
+### Nachricht
+
+**Bereich:** Postfach  
+
+Eine Nachricht der Bank an die Kundin im Postfach mit Absender, Betreff, Text, Datum und Lesestatus. Die Kundin liest sie und löscht sie; sie ändert Absender, Betreff und Text nicht.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| nachrichtId | Kennung der Nachricht | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel N-2026-00001 |
+| absender | Absender der Nachricht | String | 1..60 | Pflicht; Länge 1..60; Beispiel Aventa Bank |
+| betreff | Betreff der Nachricht | String | 1..100 | Pflicht; Länge 1..100; Beispiel Ihr Kontoauszug für Oktober |
+| text | Text der Nachricht | String | 1..2000 | Pflicht; Länge 1..2000; Beispiel Ihr Kontoauszug für Oktober liegt zum Abruf bereit. |
+| versendetAm | Datum, an dem die Bank die Nachricht versendet hat; angezeigt als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-11-17 |
+| gelesen | Lesestatus: false, solange die Kundin die Nachricht nicht geöffnet hat, true ab dem Öffnen | Boolean |  | Pflicht; Standard false; Beispiel false |
+
+**Einschränkungen:** Eine Nachricht gehört genau einer Kundin und liegt nur im Speicher (ADR-002). Die Kundin setzt den Lesestatus nur durch Öffnen von false auf true und löscht Nachrichten endgültig; die Bank erzeugt die Nachrichten (hier als Demo-Daten, C-001).
+
+### Ausgabenanalyse
+
+**Bereich:** Finanzstatus  
+
+Auswertung der Ausgaben eines Girokontos für einen Monat, gruppiert nach Kategorien (UC-019). Sie wird bei jeder Abfrage aus den Umsätzen berechnet und nicht gespeichert.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| monat | Monat der Auswertung im Format JJJJ-MM, Monat 01 bis 12 | String | 7..7 | Pflicht; Länge 7..7; Muster ^[0-9]{4}-(0[1-9]\|1[0-2])$; Beispiel 2026-02 |
+| gesamtausgaben | Summe aller Ausgänge des Girokontos im Monat in Euro, nicht negativ (0 bei einem Monat ohne Ausgänge), gleich der Summe der Kategoriesummen | Decimal |  | Pflicht; Wertebereich 0..; Beispiel 98.00; Anzeige 98,00 € |
+
+### Kategorieausgabe
+
+**Bereich:** Finanzstatus  
+
+Eine Zeile der Ausgabenanalyse: eine Kategorie mit ihrer Summe und ihrem Anteil an den Gesamtausgaben des Monats. Nur Kategorien mit mindestens einem Ausgang erscheinen.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| kategorie | Kategorie aus der festen Liste | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
+| summe | Summe der Ausgänge dieser Kategorie im Monat in Euro als positive Zahl, auf Cent gerundet | Decimal |  | Pflicht; Beispiel 86.00; Anzeige 86,00 €; größer als 0 |
+| anteil | Anteil der Summe an den Gesamtausgaben in Prozent, kaufmännisch auf eine Nachkommastelle gerundet, ohne Ausgleich auf 100 % | Decimal |  | Pflicht; Wertebereich 0..100; Beispiel 87.8; Anzeige als Prozent mit einer Nachkommastelle, Beispiel 87,8 % |
 
 ### Debitkarte
 

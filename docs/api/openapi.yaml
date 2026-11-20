@@ -51,7 +51,7 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -86,12 +86,16 @@ paths:
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: "Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)"
+          x-rules:
+            - Umsatz.buchungstag
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
         "404":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Die IBAN gehört zu keinem Konto der Kundin
+          x-rules:
+            - BR-0011
       summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst"
       tags: [ Finanzstatus ]
       x-use-cases: [ UC-003 ]
@@ -230,17 +234,18 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Nachrichten mit ihrem Lesestatus, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Demo-Testdaten zurückgesetzt } }
       x-use-cases:
         - UC-018
+        - UC-020
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset ändert daran nichts. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -672,6 +677,179 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Fehler"
+  /api/konten/{iban}/ausgabenanalyse:
+    get:
+      summary: Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil
+      description: "Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Der Dienst rechnet aus allen Umsätzen des Kontos; die Grenze von 200 Umsätzen je Konto im Testbetrieb gilt nur für die Umsatzliste und den Export, nicht für die Ausgabenanalyse (BR-0083). Summen in Euro als positive Zahl, Gesamtausgaben nicht negativ, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401. Danach prüft er in dieser Reihenfolge: zuerst den Monat (400, auch bei fehlendem Monat, mit der Meldung „Der Monat ist ungültig: erwartet JJJJ-MM.“), dann das Konto (404 für eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, BR-0011, BR-0084), zuletzt die Kreditkarte (422 für die IBAN einer Kreditkarte, BR-0084). Treffen mehrere Fälle zu, gilt der erste. Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0."
+      operationId: ausgabenanalyseLesen
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-019
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+        - name: monat
+          in: query
+          required: true
+          description: Monat der Auswertung im Format JJJJ-MM, Monat 01 bis 12
+          schema:
+            type: string
+            minLength: 7
+            maxLength: 7
+            pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+      responses:
+        "200":
+          description: Kategorien des Monats, größte Summe zuerst
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ausgabenanalyse"
+        "400":
+          description: Monat fehlt oder ist ungültig, etwa nicht im Format JJJJ-MM oder Monat außerhalb 01 bis 12; wird vor Konto und Kreditkarte geprüft
+          x-rules:
+            - Ausgabenanalyse.monat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin; wird nach dem Monat und vor der Kreditkarte geprüft
+          x-rules:
+            - BR-0084
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: Die IBAN gehört zu einer Kreditkarte; die Ausgabenanalyse gibt es nur für das Girokonto; wird zuletzt geprüft
+          x-rules:
+            - BR-0084
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+  /api/nachrichten:
+    get:
+      summary: Nachrichten der angemeldeten Kundin mit Zahl ungelesener
+      description: Liefert die Nachrichten der angemeldeten Kundin, nach Datum absteigend (neueste zuerst), und die Zahl der ungelesenen Nachrichten. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um.
+      operationId: nachrichtenAuflisten
+      tags:
+        - Postfach
+      responses:
+        "200":
+          description: Nachrichten der Kundin, neueste zuerst, und Zahl ungelesener
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nachrichtenliste"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+  /api/nachrichten/{nachrichtId}:
+    patch:
+      summary: Nachricht öffnen und als gelesen markieren
+      description: "Öffnet die Nachricht der angemeldeten Kundin: setzt den Lesestatus auf gelesen und liefert die Nachricht mit ihrem Text. Der Aufruf braucht keinen Inhalt; bei einer schon gelesenen Nachricht ändert er nichts und antwortet ebenfalls mit 200. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401."
+      operationId: nachrichtOeffnen
+      tags:
+        - Postfach
+      parameters:
+        - name: nachrichtId
+          in: path
+          required: true
+          description: Kennung der Nachricht
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "200":
+          description: Nachricht mit Lesestatus gelesen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nachricht"
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Keine Nachricht der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0085
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+    delete:
+      summary: Nachricht löschen
+      description: Löscht die Nachricht der angemeldeten Kundin endgültig; sie erscheint nicht mehr in der Liste und zählt nicht mehr als ungelesen. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401.
+      operationId: nachrichtLoeschen
+      tags:
+        - Postfach
+      parameters:
+        - name: nachrichtId
+          in: path
+          required: true
+          description: Kennung der Nachricht
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Nachricht gelöscht
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Keine Nachricht der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0085
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
 components:
   schemas:
     Anmeldedaten:
@@ -857,12 +1035,16 @@ components:
         gegenpartei:
           description: Name der Gegenpartei
           type: string
+          minLength: 1
+          maxLength: 70
         saldoDanach:
           description: Saldo des Kontos nach dieser Buchung in Euro
           type: number
         verwendungszweck:
           description: Verwendungszweck der Buchung
           type: string
+          minLength: 1
+          maxLength: 140
         waehrung:
           enum:
             - EUR
@@ -870,6 +1052,17 @@ components:
         gebuchtAm:
           description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
           format: date-time
+          type: string
+        kategorie:
+          description: Kategorie des Umsatzes aus der festen Liste
+          enum:
+            - Wohnen
+            - Lebensmittel
+            - Mobilität
+            - Freizeit
+            - Versicherungen
+            - Gesundheit
+            - Sonstiges
           type: string
       required:
         - buchungstag
@@ -879,6 +1072,7 @@ components:
         - betrag
         - waehrung
         - saldoDanach
+        - kategorie
       type: object
       x-entity: Umsatz
     Empfaengervorlage:
@@ -1065,6 +1259,52 @@ components:
         - verwendungszweck
         - turnus
         - ersterAusfuehrungstag
+    Nachricht:
+      type: object
+      x-entity: Nachricht
+      properties:
+        nachrichtId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        absender:
+          type: string
+          minLength: 1
+          maxLength: 60
+        betreff:
+          type: string
+          minLength: 1
+          maxLength: 100
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        versendetAm:
+          type: string
+          format: date
+        gelesen:
+          type: boolean
+      required:
+        - nachrichtId
+        - absender
+        - betreff
+        - text
+        - versendetAm
+        - gelesen
+    Nachrichtenliste:
+      type: object
+      properties:
+        nachrichten:
+          type: array
+          items:
+            $ref: "#/components/schemas/Nachricht"
+        anzahlUngelesen:
+          type: integer
+          minimum: 0
+          description: Zahl der Nachrichten mit gelesen gleich false (BR-0086)
+      required:
+        - nachrichten
+        - anzahlUngelesen
     Debitkarte:
       type: object
       x-entity: Debitkarte
@@ -1108,3 +1348,53 @@ components:
           enum: [ Verlust, Diebstahl ]
       required:
         - status
+    Ausgabenanalyse:
+      type: object
+      x-entity: Ausgabenanalyse
+      required:
+        - monat
+        - gesamtausgaben
+        - kategorien
+      properties:
+        monat:
+          type: string
+          description: Monat der Auswertung im Format JJJJ-MM
+          minLength: 7
+          maxLength: 7
+          pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+        gesamtausgaben:
+          type: number
+          description: Summe aller Ausgänge im Monat in Euro, nicht negativ (0 ohne Ausgänge)
+          minimum: 0
+        kategorien:
+          type: array
+          items:
+            $ref: "#/components/schemas/Kategorieausgabe"
+    Kategorieausgabe:
+      type: object
+      x-entity: Kategorieausgabe
+      required:
+        - kategorie
+        - summe
+        - anteil
+      properties:
+        kategorie:
+          type: string
+          description: Kategorie aus der festen Liste
+          enum:
+            - Wohnen
+            - Lebensmittel
+            - Mobilität
+            - Freizeit
+            - Versicherungen
+            - Gesundheit
+            - Sonstiges
+        summe:
+          type: number
+          description: Summe der Ausgänge der Kategorie in Euro, positive Zahl
+          exclusiveMinimum: 0
+        anteil:
+          type: number
+          description: Anteil an den Gesamtausgaben in Prozent, eine Nachkommastelle
+          minimum: 0
+          maximum: 100
