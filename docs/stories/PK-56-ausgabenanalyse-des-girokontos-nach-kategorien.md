@@ -86,6 +86,10 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-56 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-56 grün
 
+## Offene Fragen
+
+- [ ] Die Umsatzabfrage hält je Konto nur die jüngsten 200 Umsätze (Lastkunden im Testbetrieb). Die Ausgabenanalyse wird bei jeder Abfrage aus den Umsätzen berechnet. Welche Umsätze zählen, wenn ein Konto mehr als 200 hat und der gewählte Monat weiter zurückliegt?
+
 ## Entscheidungen
 
 - Woher bekommt ein Ausgang seine Kategorie, vor allem der Umsatz einer neu ausgeführten Überweisung (BR-0012)? Die Überweisung kennt bisher keine Kategorie.
