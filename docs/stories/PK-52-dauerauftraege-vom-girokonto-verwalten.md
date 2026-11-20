@@ -60,37 +60,28 @@ Höchstzahl von Daueraufträgen je Kundin: Begrenzung wird in der Idee nicht ver
 - `acceptance/specs/dauerauftraege.spec`: Ein erster Ausführungstag in der Vergangenheit wird abgelehnt
 - `acceptance/specs/dauerauftraege.spec`: Ein geänderter erster Ausführungstag in der Vergangenheit wird abgelehnt
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Intern neu
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Intern neu
-- [ ] Daueraufträge der angemeldeten Kundin: Endpunkt neu
-- [ ] Dauerauftrag anlegen: Endpunkt neu
-- [ ] Dauerauftrag ändern: Endpunkt neu
-- [ ] Dauerauftrag löschen: Endpunkt neu
-- [ ] Dauerauftrag: Schema neu
-- [ ] NeuerDauerauftrag: Schema neu
-- [ ] Architektur: Laufzeitsicht geändert
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Dauerauftrag: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Daueraufträge: Maske neu
-- [ ] Finanzstatus: Use Case UC-016 neu
-- [ ] Finanzstatus: Aktion Daueraufträge neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] UC-016: Use Case neu
-- [ ] BR-0077: Neu in UC-016
-- [ ] BR-0078: Neu in UC-016
-- [ ] Vision: Zweck geändert
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-52 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-52 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine (docs/architecture.md)
+- **Neue Component „Dauerauftrag“** (`src/dauerauftraege.ts`, ohne HTTP, wie `empfaengervorlagen.ts`): Bestand je Kennung im Speicher (ADR-002), Prüfungen, Liste, Anlegen, Ändern, Löschen.
+- **Seitenauslieferung** (`src/main.ts`): Routen GET/POST `/api/dauerauftraege`, PUT/DELETE `/api/dauerauftraege/{id}` hinter `nurAngemeldet('api')` (NFR-001, BR-0078); Seite `/dauerauftraege` hinter `nurAngemeldet('seite')`.
+- **Testbetrieb** (`src/testdaten.ts`): Daueraufträge gehören zum Demo- und Last-Reset; Ausgangsstand jonas.weber „Hausverwaltung Weber“ (650,00 €, Miete, monatlich, erster Ausführungstag 30 Tage vor dem Zurücksetzen, UTC), lena.hoffmann keiner.
+- **Oberfläche** (`public/seiten/dauerauftraege.js`, Navigation, Link „Daueraufträge“ im Kopf des Finanzstatus) nach `docs/ui/dauerauftraege.html`; zeigt die Meldung des Dienstes unverändert.
+- **Akzeptanztests**: fehlende Steps in `acceptance/tests/StepImplementation.ts` (Datumsangaben „in 5 Tagen“, „gestern“ usw. relativ zu heute in UTC).
+
+## Schritte
+1. Modell und Prüfung (UC-016 Schritt 4, A1–A5): zuerst Pflicht/Format inkl. Turnus, Länge, Betrag > 2 Nachkommastellen, Datumsformat (400, A1), dann IBAN (BR-0003, 400, A2), Betrag < 0,10 oder fehlend/keine Zahl (400, A3); danach BR-0077 (422): erster Ausführungstag nicht vor heute (UTC), Enddatum nicht vor erstem Ausführungstag. Auftraggeberkonto = Girokonto der Kundin (BR-0007).
+2. Ändern (A6): Tag nur bei Abweichung vom gespeicherten Wert gegen heute prüfen, Enddatum immer gegen den geltenden ersten Ausführungstag (BR-0077).
+3. BR-0078: fremde/unbekannte Kennung → 404 „Der Dauerauftrag existiert nicht mehr.“, ohne Sitzung 401.
+4. Liste sortiert nach erstem Ausführungstag, dann Empfänger.
+5. Unit-Tests: WP-1 (BR-0078) und WP-2 (BR-0077, Prüfreihenfolge) mit den IDs im Testnamen; `report_unit_tests`.
+6. Oberfläche mit Formularen „Neuer Dauerauftrag“, „Dauerauftrag ändern“ (Auswahl übernimmt gespeicherte Angaben), „Dauerauftrag löschen“ mit Sicherheitsabfrage „Dauerauftrag löschen?“ (Ja/Nein), Leerzustand A11, 404 lädt die Liste neu (A10).
+7. Steps implementieren, `scripts/akzeptanztests.sh`, Lauf melden.
+
+## Rahmenänderung
+Keine neue Bibliothek, kein neues Muster.
 
 ## Entscheidungen
 
