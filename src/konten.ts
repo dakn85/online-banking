@@ -16,8 +16,8 @@ export interface Konto {
 /** Demo-Bestand je Kennung, Girokonto zuerst, dann Kreditkarte und Tagesgeldkonto (0,00 Euro, ohne Umsätze). Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs. */
 const DEMO: Record<string, Konto[]> = {
   'lena.hoffmann': [
-    { kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE02500105175407324931', saldo: 2145.30, waehrung: 'EUR', dispositionsrahmen: 1000 },
-    { kontoname: 'Kreditkarte', art: 'Kreditkarte', iban: 'DE44500105175407324955', saldo: -387.45, waehrung: 'EUR' },
+    { kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE02500105175407324911', saldo: 2145.30, waehrung: 'EUR', dispositionsrahmen: 1000 },
+    { kontoname: 'Kreditkarte', art: 'Kreditkarte', iban: 'DE44500105175407325028', saldo: -387.45, waehrung: 'EUR' },
     { kontoname: 'Tagesgeldkonto', art: 'Tagesgeldkonto', iban: 'DE97500105175407324947', saldo: 0, waehrung: 'EUR' },
   ],
   'jonas.weber': [

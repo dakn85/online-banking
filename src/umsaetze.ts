@@ -67,8 +67,8 @@ const KARTE: Demo[] = [
 ];
 /** Lena und Jonas haben dieselben Demo-Umsätze auf ihren eigenen Konten; Lastkunden haben keine. */
 const DEMO: Record<string, { kennung: string; umsaetze: () => Demo[] }> = {
-  DE02500105175407324931: { kennung: 'lena.hoffmann', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
-  DE44500105175407324955: { kennung: 'lena.hoffmann', umsaetze: () => KARTE },
+  DE02500105175407324911: { kennung: 'lena.hoffmann', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
+  DE44500105175407325028: { kennung: 'lena.hoffmann', umsaetze: () => KARTE },
   DE61500105175407325013: { kennung: 'jonas.weber', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
   DE39500105175407325021: { kennung: 'jonas.weber', umsaetze: () => KARTE },
 };

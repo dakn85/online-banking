@@ -64,6 +64,6 @@ test('UC-016: mehr als zwei Nachkommastellen werden mit 400 abgelehnt; Liste nac
   anlegen(LENA, gut({ empfaenger: 'Möbel Nord GmbH' }));
   anlegen(LENA, gut({ empfaenger: 'Zuerst', ersterAusfuehrungstag: heute(1) }));
   assert.deepEqual(liste(LENA).map(d => d.empfaenger), ['Zuerst', 'Möbel Nord GmbH', 'Stadtwerke Nord']);
-  assert.equal(liste(LENA)[0].auftraggeberIban, 'DE02500105175407324931');
+  assert.equal(liste(LENA)[0].auftraggeberIban, 'DE02500105175407324911');
   assert.equal('enddatum' in liste(LENA)[0], false);
 });

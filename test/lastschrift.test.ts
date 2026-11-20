@@ -6,8 +6,8 @@ import { umsaetzeVon, zuruecksetzen as umsaetzeZuruecksetzen } from '../src/umsa
 
 const LENA = { kennung: 'lena.hoffmann' };
 const JONAS = { kennung: 'jonas.weber' };
-const GIRO = 'DE02500105175407324931';
-const KARTE = 'DE44500105175407324955';
+const GIRO = 'DE02500105175407324911';
+const KARTE = 'DE44500105175407325028';
 
 function ausgangsstand() {
   kontenZuruecksetzen();

@@ -5,8 +5,8 @@ import { ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from '../src/uebe
 import { Abfragefehler, ZEITRAUM_FEHLER, csvAus, filterAus, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
 
 const LENA = 'lena.hoffmann';
-const GIRO = 'DE02500105175407324931';
-const KARTE = 'DE44500105175407324955';
+const GIRO = 'DE02500105175407324911';
+const KARTE = 'DE44500105175407325028';
 
 function ausgangsstand() {
   kontenZuruecksetzen();
@@ -65,7 +65,7 @@ test('BR-0010: Von nach Bis ist 400 mit Meldung; Format und Richtung werden gepr
 test('BR-0011: fremde IBAN liefert nichts, Leerzeichen in der IBAN zählen nicht', () => {
   ausgangsstand();
   assert.equal(umsaetzeVon(LENA, 'DE00123456789012345678'), undefined);
-  assert.ok(umsaetzeVon(LENA, 'DE02 5001 0517 5407 3249 31')?.length);
+  assert.ok(umsaetzeVon(LENA, 'DE02 5001 0517 5407 3249 11')?.length);
 });
 
 test('UC-003/BR-0075: CSV mit BOM, Kopfzeile, CRLF, Datum TT.MM.JJJJ und Dezimalkomma, in der Reihenfolge der Liste', () => {

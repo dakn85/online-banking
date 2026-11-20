@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { Response } from 'express';
-import { finanzstatus, kontoMitIban } from '../src/konten';
+import { finanzstatus, ibansJeKennung, kontoMitIban } from '../src/konten';
 import { kundeMitKennung } from '../src/kunden';
 import { anlegen, anzahl } from '../src/sitzung';
 import { Ablehnung, ausfuehren, ibanGueltig } from '../src/ueberweisung';
@@ -13,7 +13,7 @@ import {
 
 const LENA = { kennung: 'lena.hoffmann' };
 const JONAS = { kennung: 'jonas.weber' };
-const LENA_GIRO = 'DE02500105175407324931';
+const LENA_GIRO = 'DE02500105175407324911';
 const JONAS_GIRO = 'DE61500105175407325013';
 const EMPFAENGER = 'DE89370400440532013000';
 const auftrag = (auftragsId: string, auftraggeberIban: string, betrag = 50) => ({
@@ -32,7 +32,7 @@ test('Jede Kundin sieht nur ihre Konten: Jonas hat eine eigene Kopie des Demo-Be
   demoZuruecksetzen();
   const lena = finanzstatus(LENA.kennung);
   const jonas = finanzstatus(JONAS.kennung);
-  assert.deepEqual(lena.konten.map(k => k.iban), [LENA_GIRO, 'DE44500105175407324955', 'DE97500105175407324947'], 'Lena behält ihre Konten');
+  assert.deepEqual(lena.konten.map(k => k.iban), [LENA_GIRO, 'DE44500105175407325028', 'DE97500105175407324947'], 'Lena behält ihre Konten');
   assert.equal(lena.gesamtvermoegen, 1757.85);
   assert.equal(jonas.gesamtvermoegen, 1757.85);
   assert.deepEqual(jonas.konten.map(k => [k.kontoname, k.saldo]), lena.konten.map(k => [k.kontoname, k.saldo]));
@@ -131,4 +131,11 @@ test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen steh
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2095.3, 'Demo-Konto unberührt');
   assert.equal(ausfuehren(LENA, auftrag('d-2', LENA_GIRO)).neu, false, 'Demo-Auftrag bleibt genau einmal');
   assert.equal(umsaetzeVon(LENA.kennung, LENA_GIRO, { suchtext: 'Möbel' })!.length, 1);
+});
+
+test('UC-002/PK-64: jede IBAN der Demo-Konten besteht die IBAN-Prüfung (Prüfziffer nach ISO 7064 MOD 97-10)', () => {
+  demoZuruecksetzen();
+  const ibans = ibansJeKennung().flatMap(([, liste]) => liste);
+  assert.ok(ibans.length >= 6);
+  for (const iban of ibans) assert.ok(ibanGueltig(iban), `${iban} hat keine gültige Prüfziffer`);
 });

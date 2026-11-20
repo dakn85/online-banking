@@ -18,7 +18,7 @@ test('BR-0002: verfügbarer Betrag nur beim Girokonto, Saldo plus Rahmen', () =>
 });
 
 test('Ein Girokonto ohne Dispositionsrahmen ist ein Datenfehler', () => {
-  kontenSetzen(LENA, [{ kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE02500105175407324931', saldo: 10, waehrung: 'EUR' }]);
+  kontenSetzen(LENA, [{ kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE02500105175407324911', saldo: 10, waehrung: 'EUR' }]);
   assert.throws(() => finanzstatus(LENA), Datenfehler);
   zuruecksetzen();
 });
