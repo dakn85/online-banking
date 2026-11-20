@@ -690,7 +690,7 @@ export default class StepImplementation {
   @Step('Die Kundin wählt in der Ausgabenanalyse den Monat <monat>')
   public async ausgabenanalyseMonat(monat: string) {
     const page = await this.ausgabenSeite();
-    await this.ausgabenAbfrage(page, text(monat), () => page.getByLabel('Monat').fill(text(monat)));
+    await this.ausgabenAbfrage(page, text(monat), () => page.getByLabel('Monat', { exact: true }).fill(text(monat)));
   }
 
   @Step('Die Kundin wählt im Finanzstatus in der Zeile des Kontos <konto> die Ausgabenanalyse')
@@ -704,7 +704,7 @@ export default class StepImplementation {
   @Step('Das Feld Monat der Ausgabenanalyse enthält den laufenden Monat')
   public async ausgabenanalyseLaufenderMonat() {
     const page = await this.ausgabenSeite();
-    assert.strictEqual(await page.getByLabel('Monat').inputValue(), StepImplementation.laufenderMonat());
+    assert.strictEqual(await page.getByLabel('Monat', { exact: true }).inputValue(), StepImplementation.laufenderMonat());
   }
 
   @Step('Die Ausgabenanalyse zeigt die Kategorien <tabelle>')
