@@ -7,7 +7,7 @@
 **Bereich:** Kundendaten  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin sieht ihre Anschrift, E-Mail-Adresse und Telefonnummer und ändert sie selbst, bestätigt jede Änderung mit einer TAN (Mock) und erhält eine Bestätigungsnachricht im Postfach, damit ihre Kontaktdaten bei der Bank aktuell sind.  
-**Ziele:** Z-8  
+**Ziele:** Z-15  
 **Anforderungen:** NFR-001
 
 ## Vorbedingungen
