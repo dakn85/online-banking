@@ -51,40 +51,24 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 - `acceptance/specs/ausgabenanalyse.spec`: Eingänge zählen in der Ausgabenanalyse nicht
 - `acceptance/specs/ausgabenanalyse.spec`: Ohne Anmeldung ist die Ausgabenanalyse nicht erreichbar
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Beschreibung geändert
-- [ ] Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil: Endpunkt neu
-- [ ] Umsatz: Eigenschaft kategorie neu
-- [ ] Ausgabenanalyse: Schema neu
-- [ ] Kategorieausgabe: Schema neu
-- [ ] Umsatz: Attribut kategorie neu
-- [ ] Ausgabenanalyse: Entität neu
-- [ ] Kategorieausgabe: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Ausgabenanalyse: Maske neu
-- [ ] Finanzstatus: Use Case UC-019 neu
-- [ ] Finanzstatus: Aktion Ausgabenanalyse neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Umsätze: Use Case UC-019 neu
-- [ ] Umsätze: Feld Kategorie neu
-- [ ] Umsätze: Aktion Ausgabenanalyse neu
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-002: BR-0012 geändert
-- [ ] BR-0012: Text geändert
-- [ ] UC-003: Ziel geändert
-- [ ] UC-003: Schritt 5 geändert
-- [ ] UC-003: Erfolg 1 geändert
-- [ ] UC-019: Use Case neu
-- [ ] BR-0083: Neu in UC-019
-- [ ] BR-0084: Neu in UC-019
-- [ ] Vision: Zweck geändert
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung neu
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-56 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-56 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine
+- **Konten und Finanzstatus / Umsätze** (`src/umsaetze.ts`): Umsatz erhält `kategorie` (Demo-Umsätze fest, Überweisung „Sonstiges“, BR-0012). Neue Funktion `ausgabenanalyse` rechnet aus einem ungekürzten Bestand je IBAN, damit die 200er-Grenze der Lastkunden nicht greift (BR-0083).
+- **Seitenauslieferung** (`src/main.ts`): `GET /api/konten/:iban/ausgabenanalyse`, Prüfreihenfolge 401, Monat 400, Konto 404, Kreditkarte 422 (BR-0084); Seite `/ausgabenanalyse` hinter Sitzung (NFR-001).
+- **Oberfläche** (`public/seiten/ausgabenanalyse.js`): Monatsfeld mit laufendem Monat, Tabelle, Hinweis und Meldungen (UC-019). Knopf „Ausgabenanalyse“ im Finanzstatus (Girokonto) und in den Umsätzen (nur Girokonto); Spalte Kategorie in der Umsatzliste (UC-003).
+- **Akzeptanztests**: fehlende Steps in `StepImplementation.ts`; Unit-Tests für BR-0083 und BR-0084.
+
+## Schritte
+1. Kategorie im Umsatz, Demo-Kategorien, Überweisung „Sonstiges“ (BR-0012).
+2. Berechnung: Ausgänge (BR-0009) im Monat inkl. Grenztage, Summe auf Cent (ADR-005), Anteil kaufmännisch auf 0,1, Sortierung Summe absteigend, dann alphabetisch (BR-0083).
+3. Endpunkt und Fehlerreihenfolge (BR-0084).
+4. Oberfläche und Steps.
+
+## Rahmenänderung
+Keine neue Bibliothek, kein neues Muster.
 
 ## Offene Fragen
 
