@@ -120,3 +120,11 @@ Tags: UC-023, PK-61
 Tags: UC-023, PK-61, NFR-001
 
 * Die persönlichen Daten sind ohne Anmeldung nicht erreichbar
+
+## Ungültiges Feld und falsche TAN werden mit 400 beantwortet, die TAN wird erst danach geprüft
+
+Tags: UC-023, PK-61, BR-0096
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Änderung der persönlichen Daten mit Postleitzahl "5066" und TAN "000000" antwortet mit dem Status "400"
