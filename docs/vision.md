@@ -29,7 +29,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 - Daueraufträge: nur Anlegen, Anzeigen, Ändern und Löschen mit den Turnus-Arten monatlich, vierteljährlich und jährlich; die automatische Ausführung zum Fälligkeitstermin mit Umsatzbuchung, die Prüfung von Deckung, Dispositionsrahmen und Tageslimit, Benachrichtigungen, Aussetzen, weitere Turnus-Arten, das Anlegen aus einer Empfängervorlage, die Anzeige ausgeführter Daueraufträge in den Umsätzen und eine Höchstzahl je Kundin folgen später.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
-- Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später.
+- Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download und Storno von Umsätzen folgen später; der Export der Umsätze eines Kontos als CSV-Datei mit den Filtern der Umsatzliste ist enthalten, weitere Exportformate folgen später.
 - Empfängervorlagen: ein Empfänger je Vorlage mit genau einer IBAN, kein Adressbuch mit mehreren Konten je Empfänger, kein Teilen von Vorlagen zwischen Kundinnen, kein Import und Export und keine Vorlagen aus einer Kernbank.
 - Tageslimit: kein Anheben über das Standardlimit, keine Freigabe per TAN oder zweitem Faktor, keine Benachrichtigung und keine Historie der Änderungen, kein befristetes Limit, keine Verwaltung der Standardlimits durch die Bank und kein Limit je Konto oder Empfänger.
 
