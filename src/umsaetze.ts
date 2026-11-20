@@ -46,11 +46,14 @@ type Demo = Omit<Umsatz, 'umsatzId' | 'waehrung' | 'saldoDanach' | 'sepaLastschr
  * Demo-Umsätze je IBAN, neueste zuerst (C-001). Gegenparteien und Verwendungszwecke kommen in keinem Szenario
  * als Suchtext vor. Der Saldo danach ergibt sich rückwärts aus dem Kontosaldo: Der jüngste trägt ihn (BR-0008).
  */
-const lastschriften = (): Demo[] => [
-  // UC-022: Buchungstag relativ zum Tag des Resets (UTC), eine Lastschrift in der Frist und eine darüber hinaus.
-  { buchungstag: vorTagen(14), gebuchtAm: `${vorTagen(14)}T08:00:00.000Z`, gegenpartei: 'Fitnessstudio Vital', verwendungszweck: 'Mitgliedsbeitrag', betrag: -29.9, kategorie: 'Freizeit', sepaLastschrift: true },
+const lastschriften = (): Demo[] => {
+  const vormonat = letzterTagVormonat();
+  return [
+  // UC-022: Buchungstag relativ zum Tag des Resets (UTC): Vital am letzten Tag des Vormonats (in der Frist, nie im Monat des Resets), Zeitungsverlag darüber hinaus.
+  { buchungstag: vormonat, gebuchtAm: `${vormonat}T08:00:00.000Z`, gegenpartei: 'Fitnessstudio Vital', verwendungszweck: 'Mitgliedsbeitrag', betrag: -29.9, kategorie: 'Freizeit', sepaLastschrift: true },
   { buchungstag: vorTagen(70), gebuchtAm: `${vorTagen(70)}T08:00:00.000Z`, gegenpartei: 'Zeitungsverlag Nord', verwendungszweck: 'Zeitungsabo', betrag: -14.9, kategorie: 'Freizeit', sepaLastschrift: true },
-];
+  ];
+};
 const GIRO_ALT: Demo[] = [
   { buchungstag: '2026-02-12', gebuchtAm: '2026-02-12T09:30:00.000Z', gegenpartei: 'Bäckerei Krause', verwendungszweck: 'Einkauf', betrag: -12, kategorie: 'Lebensmittel' },
   { buchungstag: '2026-02-10', gebuchtAm: '2026-02-10T07:15:00.000Z', gegenpartei: 'Energieversorgung Nord', verwendungszweck: 'Abschlag Februar', betrag: -86, kategorie: 'Wohnen' },
@@ -78,6 +81,13 @@ export const heuteUtc = () => new Date().toISOString().slice(0, 10);
 function vorTagen(n: number): string {
   const d = new Date(`${heuteUtc()}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() - n);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Der letzte Tag des Vormonats des Resettags (UTC), JJJJ-MM-TT. */
+function letzterTagVormonat(): string {
+  const d = new Date(`${heuteUtc().slice(0, 8)}01T00:00:00Z`);
+  d.setUTCDate(0);
   return d.toISOString().slice(0, 10);
 }
 
