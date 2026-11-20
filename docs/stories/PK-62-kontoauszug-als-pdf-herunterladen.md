@@ -13,6 +13,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - Auszug für frei wählbaren Zeitraum oder andere Formate (CSV): Gefordert ist nur ein Kalendermonat als PDF.
 - Archiv bereits erzeugter Auszüge: Keine Ablage oder Verwaltung gefordert.
 - Auszug für mehrere Konten in einem Dokument: Die Idee nennt genau ein Konto je Auszug.
+- CSV-Export der Umsätze (UC-003 Schritte 9 und 10, A5 bis A8, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export, „Als CSV exportieren“): gehört zu PK-54; PK-62 ergänzt auf den Umsätzen nur „Kontoauszug“ (UC-003 Schritt 11).
 
 ## Änderungen
 
@@ -20,11 +21,11 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 |---|---|---|
 | Kontoauszug wird beim Abruf im Dienst als PDF erzeugt | Neu | Entscheidung neu |
 | Kontoauszug eines Kontos für einen Monat als PDF | Neu | Endpunkt neu |
-| Umsatz | Geändert | Attribut buchungstag geändert, Attribut betrag geändert, Attribut saldoDanach neu |
+| Umsatz | Geändert | Attribut buchungstag geändert, Attribut betrag neu, Attribut saldoDanach neu |
 | Kontoauszug | Neu | Entität neu, Maske neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Use Case UC-024 neu, Aktion Kontoauszug neu, Skizze geändert |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Schritt 9 neu |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Schritt 11 neu |
 | UC-024 Kontoauszug als PDF herunterladen | Neu | Use Case neu |
 | BR-0098 Inhalt und Salden des Kontoauszugs | Neu | Neu in UC-024 |
 | Vision | Geändert | Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
@@ -48,7 +49,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - [ ] Kontoauszug wird beim Abruf im Dienst als PDF erzeugt: Entscheidung neu
 - [ ] Kontoauszug eines Kontos für einen Monat als PDF: Endpunkt neu
 - [ ] Umsatz: Attribut buchungstag geändert
-- [ ] Umsatz: Attribut betrag geändert
+- [ ] Umsatz: Attribut betrag neu
 - [ ] Umsatz: Attribut saldoDanach neu
 - [ ] Kontoauszug: Entität neu
 - [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
@@ -58,7 +59,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - [ ] Umsätze: Use Case UC-024 neu
 - [ ] Umsätze: Aktion Kontoauszug neu
 - [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Schritt 9 neu
+- [ ] UC-003: Schritt 11 neu
 - [ ] UC-024: Use Case neu
 - [ ] BR-0098: Neu in UC-024
 - [ ] Vision: Z-8 neu
@@ -77,3 +78,6 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - In welcher Reihenfolge stehen die Umsätze im Kontoauszug?
   **Antwort:** Neueste zuerst wie in den Umsätzen (BR-0008); der Endsaldo steht oben bei der ersten Zeile.
   _→ eingearbeitet in vision, Kontoauszug, UC-024, BR-0098, GET /api/konten/{iban}/kontoauszug, umsaetze, kontoauszug, NFR-001, ADR-008 · 3ae9325_
+- Gehört der CSV-Export der Umsätze (UC-003 Schritte 9 und 10, A5 bis A8, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export, Schaltfläche „Als CSV exportieren“, Erweiterung von NFR-001 um den Export) zu PK-62 oder nur der Kontoauszug als PDF?
+  **Antwort:** Nur der Kontoauszug: Der Export gehört zu PK-54 und wird aus dem Änderungsumfang von PK-62 genommen. Von UC-003 bleiben Schritt 11 (Kontoauszug öffnen) und die Schaltfläche „Kontoauszug“ auf den Umsätzen. Die Export-Operation wird mit „untouched“ gemeldet. Die Formatangaben zu Betrag und Saldo danach in der Entität Umsatz bleiben auf die Anzeige im Kontoauszug beschränkt, die CSV-Formate entfallen
+  _→ noch nicht in der Spezifikation_
