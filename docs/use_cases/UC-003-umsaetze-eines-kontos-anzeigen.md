@@ -25,6 +25,7 @@
 6. Die Kundin gibt einen Suchtext ein, wählt einen Zeitraum oder eine Richtung.
 7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt und deren Betrag zur gewählten Richtung passt (BR-0009, BR-0010).
 8. Die Kundin liest Betrag und Saldo danach der Umsätze ab.
+9. Die Kundin wählt „Kontoauszug“; das System öffnet die Maske Kontoauszug für das Konto mit der IBAN der angezeigten Umsätze, weiter mit UC-024.
 
 ## Alternativabläufe
 

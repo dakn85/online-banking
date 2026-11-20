@@ -24,6 +24,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 | Kontoauszug | Neu | Entität neu, Maske neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Umsätze | Geändert | Use Case UC-024 neu, Aktion Kontoauszug neu, Skizze geändert |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Schritt 9 neu |
 | UC-024 Kontoauszug als PDF herunterladen | Neu | Use Case neu |
 | BR-0098 Inhalt und Salden des Kontoauszugs | Neu | Neu in UC-024 |
 | Vision | Geändert | Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
@@ -57,6 +58,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - [ ] Umsätze: Use Case UC-024 neu
 - [ ] Umsätze: Aktion Kontoauszug neu
 - [ ] Umsätze: Skizze geändert
+- [ ] UC-003: Schritt 9 neu
 - [ ] UC-024: Use Case neu
 - [ ] BR-0098: Neu in UC-024
 - [ ] Vision: Z-8 neu
