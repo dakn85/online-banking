@@ -52,32 +52,26 @@ Als Privatkundin möchte ich die Debitkarte zu meinem Girokonto vorübergehend s
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 409: Eine endgültig gesperrte Debitkarte lässt sich nicht entsperren
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 409: Eine vorübergehend gesperrte Debitkarte lässt sich nicht noch einmal sperren
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Use Cases neu
-- [ ] Debitkarte des Girokontos der angemeldeten Kundin abrufen: Endpunkt neu
-- [ ] Status der Debitkarte setzen: sperren, entsperren, endgültig sperren: Endpunkt neu
-- [ ] Debitkarte: Schema neu
-- [ ] Debitkartenauftrag: Schema neu
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Konto: Einschränkungen neu
-- [ ] Debitkarte: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Debitkarte: Maske neu
-- [ ] Finanzstatus: Use Case UC-018 neu
-- [ ] Finanzstatus: Aktion Debitkarte neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] UC-018: Use Case neu
-- [ ] BR-0081: Neu in UC-018
-- [ ] BR-0082: Neu in UC-018
-- [ ] Vision: Zweck geändert
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung neu
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-55 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-55 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine (docs/architecture.md)
+- **Konten und Finanzstatus / neues Modul `src/debitkarte.ts`** (ohne HTTP): Debitkarte je Kennung im Speicher (ADR-002), Ausgangsstand lena `**** 4821`, jonas `**** 7305`, Status aktiv, ohne Sperrgrund; Reset für die Demo-Gruppe in `testdaten.ts`.
+- **Seitenauslieferung (`src/main.ts`)**: `GET` und `PUT /api/konten/{iban}/debitkarte` hinter `nurAngemeldet('api')`, Seite `/debitkarte`.
+- **Oberfläche (`public/`)**: neue Seite `seiten/debitkarte.js`, Knopf „Debitkarte“ beim Girokonto im Finanzstatus.
+- **Akzeptanztests**: die fehlenden Schritte in `StepImplementation.ts`.
+
+## Schritte
+1. Modul: Karte nur zu einem Girokonto der Kundin mit Karte (BR-0082, sonst 404). Prüfreihenfolge Sitzung 401, Konto 404, Format 400, Statuswechsel 409 (BR-0081, UC-018 A3/A4).
+2. Statuswechsel nach BR-0081 mit den Meldungen je Status; der Sperrgrund wird nur bei Zielstatus „endgültig gesperrt“ geprüft und gespeichert, sonst ignoriert; bei 409 bleibt alles unverändert.
+3. Endpunkte nach OpenAPI (Debitkarte, Debitkartenauftrag, Fehler als `{fehler}`).
+4. Seite: Karte mit Status und Sperrgrund, Aktionen „Vorübergehend sperren“, „Entsperren“, „Endgültig sperren“ mit Auswahl (leere Vorauswahl, keine Vorabprüfung) und Sicherheitsabfrage „Bestätigen“/„Abbrechen“; Meldungen aus der Antwort des Dienstes (UC-018 Standardablauf, A1 bis A5).
+5. Unit-Test WP-1 (BR-0081, BR-0082) in `test/debitkarte.test.ts`.
+6. Schritte der 15 Szenarien implementieren; Prüfung der Statusseiten im Browser, 400/401/404/409 per HTTP.
+
+## Rahmenänderung
+Keine neue Bibliothek, kein neues Muster.
 
 ## Entscheidungen
 
