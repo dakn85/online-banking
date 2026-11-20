@@ -7,7 +7,7 @@
 **Bereich:** Überweisung  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin sieht ihre vorgemerkten Terminüberweisungen mit Ausführungstag, Empfänger, Betrag und Verwendungszweck und löscht einen vorgemerkten Auftrag vor der Ausführung, damit er nicht ausgeführt wird.  
-**Ziele:** Z-8  
+**Ziele:** Z-11  
 **Anforderungen:** NFR-001
 
 ## Vorbedingungen
