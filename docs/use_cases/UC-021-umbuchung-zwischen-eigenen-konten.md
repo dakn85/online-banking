@@ -7,7 +7,7 @@
 **Bereich:** Überweisung  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin bucht einen Betrag zwischen ihrem Girokonto und ihrem Tagesgeldkonto in beide Richtungen sofort um, ohne IBAN-Eingabe und ohne TAN, und sieht danach die neuen Salden und die Meldung „Umbuchung ausgeführt.“.  
-**Ziele:** Z-8  
+**Ziele:** Z-13  
 **Anforderungen:** NFR-001, NFR-002, C-001
 
 ## Vorbedingungen
