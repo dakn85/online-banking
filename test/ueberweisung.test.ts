@@ -5,7 +5,7 @@ import { setzen, zuruecksetzen as limitZuruecksetzen } from '../src/tageslimit';
 import { Ablehnung, ausfuehren, ibanGueltig, zuruecksetzen } from '../src/ueberweisung';
 
 const LENA = { kennung: 'lena.hoffmann' };
-const GIRO = 'DE02500105175407324931';
+const GIRO = 'DE02500105175407324911';
 const auftrag = (mehr = {}) => ({ auftragsId: 'a-1', auftraggeberIban: GIRO, empfaenger: 'Möbel Nord GmbH', empfaengerIban: 'DE89 3704 0044 0532 0130 00', betrag: 50, verwendungszweck: 'Rechnung 4711', ...mehr });
 const frisch = () => { kontenZuruecksetzen(); zuruecksetzen(); limitZuruecksetzen(); };
 const status = (fn: () => unknown) => { try { fn(); } catch (e) { return (e as Ablehnung).status; } return 0; };
@@ -34,7 +34,7 @@ test('BR-0003, BR-0004, BR-0007: Ablehnungen buchen nichts', () => {
   frisch();
   assert.equal(status(() => ausfuehren(LENA, auftrag({ empfaengerIban: 'DE00123456789012345678' }))), 400);
   assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-2', betrag: 3145.31 }))), 422);
-  assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-4', auftraggeberIban: 'DE44500105175407324955' }))), 403);
+  assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-4', auftraggeberIban: 'DE44500105175407325028' }))), 403);
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.3);
   assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'a-5', betrag: 3145.3 }))), 0, 'genau der verfügbare Betrag geht');
 });

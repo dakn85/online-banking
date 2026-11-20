@@ -153,7 +153,7 @@ Tags: UC-003, PK-54
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin exportiert die Umsätze als CSV-Datei
-* Die CSV-Datei "umsaetze-DE02500105175407324931.csv" beginnt mit dem UTF-8-BOM und der Kopfzeile "Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach"
+* Die CSV-Datei "umsaetze-DE02500105175407324911.csv" beginnt mit dem UTF-8-BOM und der Kopfzeile "Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach"
 
 ## Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
 

@@ -90,7 +90,7 @@ Tags: UC-021, PK-58, BR-0088
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE89370400440532013000" auf die IBAN "DE02500105175407324931" über "10,00 €" mit dem Status "403" ab
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE89370400440532013000" auf die IBAN "DE02500105175407324911" über "10,00 €" mit dem Status "403" ab
 
 ## Eine Umbuchung erzeugt einen Umsatz auf beiden Konten
 
@@ -129,7 +129,7 @@ Tags: UC-021, PK-58
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324931" auf die IBAN "<IBAN des Tagesgeldkontos von lena.hoffmann>" über "0,09 €" mit dem Status "400" ab
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324911" auf die IBAN "<IBAN des Tagesgeldkontos von lena.hoffmann>" über "0,09 €" mit dem Status "400" ab
 
 ## Die Schnittstelle lehnt dasselbe Konto als Quell- und Zielkonto mit 422 ab
 
@@ -137,7 +137,7 @@ Tags: UC-021, PK-58, BR-0088
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324931" auf die IBAN "DE02500105175407324931" über "50,00 €" mit dem Status "422" ab
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324911" auf die IBAN "DE02500105175407324911" über "50,00 €" mit dem Status "422" ab
 
 ## Ohne Anmeldung ist die Umbuchung nicht erreichbar
 
@@ -191,7 +191,7 @@ Tags: UC-021, PK-58, BR-0092, BR-0090
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Schnittstelle bucht von der IBAN "DE02500105175407324931" auf das Tagesgeldkonto über "500,00 €" mit derselben Auftrags-Kennung zweimal um und erhält die Status "201" und "200"
+* Die Schnittstelle bucht von der IBAN "DE02500105175407324911" auf das Tagesgeldkonto über "500,00 €" mit derselben Auftrags-Kennung zweimal um und erhält die Status "201" und "200"
 * Die Kundin öffnet die Umsätze des Kontos "Tagesgeldkonto"
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei | Verwendungszweck | Betrag   | Saldo danach |
@@ -223,4 +223,4 @@ Tags: UC-021, PK-58, BR-0088, BR-0089
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324931" auf die IBAN "DE02500105175407324931" über "1.000.000,00 €" mit dem Status "422" und der Meldung "Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich." ab
+* Die Schnittstelle lehnt die Umbuchung von der IBAN "DE02500105175407324911" auf die IBAN "DE02500105175407324911" über "1.000.000,00 €" mit dem Status "422" und der Meldung "Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich." ab

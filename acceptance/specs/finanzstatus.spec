@@ -6,7 +6,7 @@ Tags: UC-001, PK-1
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Zeile "Girokonto" zeigt "IBAN" "DE02 5001 0517 5407 3249 31"
+* Die Zeile "Girokonto" zeigt "IBAN" "DE02 5001 0517 5407 3249 11"
 * Die Zeile "Girokonto" zeigt "Saldo" "2.145,30 €"
 * Die Zeile "Kreditkarte" zeigt "Saldo" "-387,45 €"
 

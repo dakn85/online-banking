@@ -4,8 +4,8 @@ import { Kartenfehler, KEINE_KARTE, lesen, setzen, SPERRGRUND_FEHLER } from '../
 import { demoZuruecksetzen, lastIban, lastKennung } from '../src/testdaten';
 
 const LENA = 'lena.hoffmann';
-const GIRO = 'DE02500105175407324931';
-const KREDIT = 'DE44500105175407324955';
+const GIRO = 'DE02500105175407324911';
+const KREDIT = 'DE44500105175407325028';
 const VORUEBERGEHEND = 'vorübergehend gesperrt';
 const ENDGUELTIG = 'endgültig gesperrt';
 const fehler = (status: number, meldung: string) => (e: unknown) => e instanceof Kartenfehler && e.status === status && e.message === meldung;
@@ -55,7 +55,7 @@ test('BR-0081: Sperrgrund nur bei endgültiger Sperre geprüft, sonst ignoriert;
 
 test('BR-0082: nur das Girokonto der Kundin mit Karte, sonst 404', () => {
   demoZuruecksetzen();
-  assert.deepEqual(lesen(LENA, 'DE02 5001 0517 5407 3249 31').status, 'aktiv');
+  assert.deepEqual(lesen(LENA, 'DE02 5001 0517 5407 3249 11').status, 'aktiv');
   for (const iban of [KREDIT, 'DE61500105175407325013', 'DE00000000000000000000', lastIban(1)]) {
     assert.throws(() => lesen(LENA, iban), fehler(404, KEINE_KARTE));
     assert.throws(() => setzen(LENA, iban, VORUEBERGEHEND), fehler(404, KEINE_KARTE));
