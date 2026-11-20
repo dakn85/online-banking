@@ -26,10 +26,10 @@
 
 ### A1: Eingabe ungültig
 
-**Auslöser:** Straße oder Ort sind leer, die Postleitzahl hat nicht genau 5 Ziffern, E-Mail-Adresse oder Telefonnummer verletzen ihre Feldregel, oder die TAN hat nicht genau 6 Ziffern (Kunde.strasse, Kunde.postleitzahl, Kunde.ort, Kunde.email, Kunde.telefonnummer, Kunde.tan). (Schritt 4).  
+**Auslöser:** Eine Angabe verletzt ihre Feldregel im Datenmodell: Straße oder Ort sind leer oder zu lang, die Postleitzahl hat nicht genau 5 Ziffern, E-Mail-Adresse oder Telefonnummer verletzen Muster oder Länge, oder die TAN hat nicht genau 6 Ziffern (Kunde.strasse, Kunde.postleitzahl, Kunde.ort, Kunde.email, Kunde.telefonnummer, Kunde.tan). (Schritt 4).  
 **Ablauf:**
 
-1. Der Dienst antwortet mit Status 400; das System speichert nichts, legt keine Nachricht an und zeigt die Meldung zum Feld im Formular: „Bitte geben Sie Straße und Hausnummer an.“, „Die Postleitzahl muss aus 5 Ziffern bestehen.“, „Bitte geben Sie den Ort an.“, „Die E-Mail-Adresse ist ungültig.“, „Die Telefonnummer ist ungültig.“ oder „Die TAN muss aus 6 Ziffern bestehen.“.
+1. Der Dienst antwortet mit Status 400; das System speichert nichts, legt keine Nachricht an und zeigt die Meldung zum Feld im Formular: „Bitte geben Sie Straße und Hausnummer an.“, „Die Straße darf höchstens 100 Zeichen lang sein.“, „Die Postleitzahl muss aus 5 Ziffern bestehen.“, „Bitte geben Sie den Ort an.“, „Der Ort darf höchstens 60 Zeichen lang sein.“, „Die E-Mail-Adresse ist ungültig.“, „Die Telefonnummer ist ungültig.“ oder „Die TAN muss aus 6 Ziffern bestehen.“.
 2. Die Kundin korrigiert die Eingabe; der Ablauf geht bei Schritt 3 weiter, oder sie wechselt zu einer anderen Seite.
 
 ### A2: TAN falsch
