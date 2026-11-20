@@ -18,7 +18,7 @@
 
 1. Die Kundin wählt auf den Umsätzen eines Kontos „Kontoauszug“ oder ruft die Maske Kontoauszug direkt mit der IBAN in der Adresse auf.
 2. Das System zeigt die Maske Kontoauszug mit den Konten der Kundin zur Auswahl (GET /api/konten) und wählt das Konto vor, dessen IBAN die Adresse nennt.
-3. Die Kundin wählt Konto und Monat im Format JJJJ-MM, höchstens den laufenden Monat, und wählt „Kontoauszug herunterladen“.
+3. Die Kundin wählt Konto und Monat und wählt „Kontoauszug herunterladen“.
 4. Das System prüft zuerst das Konto (BR-0011) und dann den Monat (Feldregeln von Kontoauszug.monat), liest die Umsätze des Kontos mit Buchungstag im Monat (Demo-Daten, C-001), ordnet sie mit dem neuesten zuerst (BR-0008) und ermittelt Anfangs- und Endsaldo (BR-0098).
 5. Das System erzeugt das PDF mit Kontoname, IBAN, Monat, Anfangssaldo, Endsaldo und allen Umsätzen des Monats mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach in Euro und liefert es zum Download (GET /api/konten/{iban}/kontoauszug).
 6. Die Kundin lädt die Datei herunter und liest Salden und Umsätze ab.
