@@ -54,58 +54,24 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 - `acceptance/specs/persoenliche-daten.spec`: Ungültiges Feld und falsche TAN werden mit 400 beantwortet, die TAN wird erst danach geprüft
 - `acceptance/specs/persoenliche-daten.spec`: Unveränderte Angaben legen keine Bestätigungsnachricht an
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Beschreibung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Use Cases geändert
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Persönliche Daten der angemeldeten Kundin: Endpunkt neu
-- [ ] Persönliche Daten mit TAN ändern: Endpunkt neu
-- [ ] Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb): Endpunkt neu
-- [ ] Rueckgabe: Beschreibung neu
-- [ ] Rueckgabe: Eigenschaft lastschriftUmsatzId geändert
-- [ ] Umsatz: Eigenschaft betrag geändert
-- [ ] Umsatz: Eigenschaft buchungstag geändert
-- [ ] Umsatz: Eigenschaft gegenpartei geändert
-- [ ] Umsatz: Eigenschaft saldoDanach geändert
-- [ ] Umsatz: Eigenschaft verwendungszweck geändert
-- [ ] Umsatz: Eigenschaft waehrung geändert
-- [ ] Umsatz: Eigenschaft gebuchtAm geändert
-- [ ] Umsatz: Eigenschaft umsatzId geändert
-- [ ] Umsatz: Eigenschaft sepaLastschrift geändert
-- [ ] Umsatz: Eigenschaft zurueckgegeben geändert
-- [ ] Umsatz: Eigenschaft kategorie geändert
-- [ ] Kundendaten: Schema neu
-- [ ] Kundendatenauftrag: Schema neu
-- [ ] Architektur: Einführung und Ziele geändert
-- [ ] Architektur: Bausteinsicht geändert
-- [ ] Architektur: Laufzeitsicht geändert
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Kunde: Attribut strasse neu
-- [ ] Kunde: Attribut postleitzahl neu
-- [ ] Kunde: Attribut ort neu
-- [ ] Kunde: Attribut email neu
-- [ ] Kunde: Attribut telefonnummer neu
-- [ ] Kunde: Attribut tan neu
-- [ ] Kunde: Einschränkungen geändert
-- [ ] Umsatz: Beschreibung geändert
-- [ ] Nachricht: Einschränkungen geändert
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Finanzstatus: Use Case UC-023 neu
-- [ ] Finanzstatus: Aktion Persönliche Daten neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Persönliche Daten: Maske neu
-- [ ] UC-023: Use Case neu
-- [ ] BR-0096: Neu in UC-023
-- [ ] BR-0097: Neu in UC-023
-- [ ] Vision: Zweck geändert
-- [ ] Vision: Z-14 geändert
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-61 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-61 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine
+- Dienst (`src/`): neues Modul `kundendaten.ts` (fachlich, ohne HTTP) mit Anschrift, E-Mail und Telefonnummer je Kundin im Speicher (ADR-002, Ausgangsstand für Lena, Jonas und die Lastkunden, Reset über `testdaten.ts`). `nachrichten.ts` erhält eine Funktion zum Anlegen einer Nachricht der Bank. `main.ts`: Routen und Seite `/persoenliche-daten`.
+- Oberfläche (`public/`): Seite `seiten/persoenliche-daten.js` nach Maske `docs/ui/persoenliche-daten.html`; Link „Persönliche Daten“ im Finanzstatus.
+- Akzeptanztests: fehlende Schritte in `StepImplementation.ts`.
+
+## Schritte
+1. UC-023 Schritt 4: Randleerzeichen von Straße, Ort, E-Mail und Telefonnummer entfernen, dann Feldregeln des Datenmodells prüfen (400 mit Feldmeldung); Reihenfolge der Felder wie in der Maske. TAN mit sechs Ziffern ist ebenfalls Feldregel.
+2. BR-0096: erst nach gültigen Feldern die feste TAN 123456 prüfen, sonst 422, nichts gespeichert, keine Nachricht.
+3. UC-023 Schritt 5, A4, BR-0097: Vergleich genau (auch Groß-/Kleinschreibung); bei mindestens einer Änderung genau eine Nachricht (Absender Aventa Bank, Betreff, ein Satz je geänderter Angabe in fester Reihenfolge, versendetAm = heute, ungelesen).
+4. GET/PUT `/api/kunde` und `GET /api/test/postfachnachrichten` (nur Testbetrieb) nur für die Kundin der Sitzung, ohne Sitzung 401 (NFR-001).
+5. Unit-Tests mit BR-0096/BR-0097 im Namen.
+
+## Rahmenänderung
+Keine neue Bibliothek, kein neues Muster. Die Bestätigungsnachricht nutzt das Postfach aus PK-57.
 
 ## Entscheidungen
 
