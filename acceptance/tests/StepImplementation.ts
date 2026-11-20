@@ -1631,6 +1631,7 @@ export default class StepImplementation {
   public async sitzungAbgelaufen() {
     const page = await this.seite();
     await page.context().clearCookies();
+  }
 
   /* ---------------------------------------------------------------- UC-023 Persönliche Daten */
 
