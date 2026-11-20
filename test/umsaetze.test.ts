@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { zuruecksetzen as kontenZuruecksetzen } from '../src/konten';
 import { ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from '../src/ueberweisung';
-import { Abfragefehler, ZEITRAUM_FEHLER, filterAus, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
+import { Abfragefehler, ZEITRAUM_FEHLER, csvAus, filterAus, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
 
 const LENA = 'lena.hoffmann';
 const GIRO = 'DE02500105175407324931';
@@ -66,4 +66,24 @@ test('BR-0011: fremde IBAN liefert nichts, Leerzeichen in der IBAN zählen nicht
   ausgangsstand();
   assert.equal(umsaetzeVon(LENA, 'DE00123456789012345678'), undefined);
   assert.ok(umsaetzeVon(LENA, 'DE02 5001 0517 5407 3249 31')?.length);
+});
+
+test('UC-003/BR-0075: CSV mit BOM, Kopfzeile, CRLF, Datum TT.MM.JJJJ und Dezimalkomma, in der Reihenfolge der Liste', () => {
+  ausgangsstand();
+  const csv = csvAus(umsaetzeVon(LENA, GIRO, { von: '2026-02-10', bis: '2026-02-12' })!);
+  assert.equal(csv, '﻿Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach\r\n'
+    + '12.02.2026;Bäckerei Krause;Einkauf;-12,00;2145,30\r\n'
+    + '10.02.2026;Energieversorgung Nord;Abschlag Februar;-86,00;2157,30\r\n');
+});
+
+test('UC-003/BR-0075: Texte mit Semikolon oder Anführungszeichen stehen in Anführungszeichen', () => {
+  const csv = csvAus([{ buchungstag: '2026-02-01', gebuchtAm: '2026-02-01T00:00:00.000Z', gegenpartei: 'A "B"', verwendungszweck: 'Teil 1; Rest 2', betrag: 1250, waehrung: 'EUR', saldoDanach: 3000.5 }]);
+  assert.ok(csv.endsWith('01.02.2026;"A ""B""";"Teil 1; Rest 2";1250,00;3000,50\r\n'));
+});
+
+test('BR-0075/BR-0076: eine leere Auswahl hat keine Umsätze, der Export hat sonst eine Zeile je Umsatz der Liste', () => {
+  ausgangsstand();
+  assert.deepEqual(umsaetzeVon(LENA, GIRO, { suchtext: 'Möbel', richtung: 'eingang' }), []);
+  const ausgang = umsaetzeVon(LENA, GIRO, { richtung: 'ausgang' })!;
+  assert.equal(csvAus(ausgang).split('\r\n').length - 2, ausgang.length);
 });
