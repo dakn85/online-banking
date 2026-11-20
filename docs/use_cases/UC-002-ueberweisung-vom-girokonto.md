@@ -46,6 +46,7 @@
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
 2. Lehnt der Dienst den Betrag beim Bestätigen ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
+2a. Übersteigt der Betrag zugleich das Tageslimit (BR-0070), gilt allein diese Ablehnung: Der Dienst antwortet mit 422 und der Meldung zu BR-0004, die Oberfläche zeigt sie am Betragsfeld, und die Tageslimit-Prüfung (A9) läuft erst, wenn der Betrag den verfügbaren Betrag nicht übersteigt.
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ### A3: Mehrfaches Bestätigen
@@ -100,7 +101,7 @@
 
 ### A9: Tageslimit überschritten
 
-**Auslöser:** Der Betrag zusammen mit den am laufenden Kalendertag ausgeführten Überweisungen der Kundin übersteigt ihr Tageslimit (BR-0070), auch bei einem Tageslimit von 0,00 EUR. (Schritt 7).  
+**Auslöser:** Der Betrag zusammen mit den am laufenden Kalendertag ausgeführten Überweisungen der Kundin übersteigt ihr Tageslimit (BR-0070), auch bei einem Tageslimit von 0,00 EUR, und der Betrag übersteigt den verfügbaren Betrag des Girokontos nicht (sonst gilt A2). (Schritt 7).  
 **Ablauf:**
 
 1. Der Dienst führt den Auftrag nicht aus, bucht keinen Umsatz, lässt den Saldo des Girokontos unverändert und antwortet mit Status 422 und der Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“.

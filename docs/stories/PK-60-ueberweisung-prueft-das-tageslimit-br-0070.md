@@ -37,6 +37,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - `acceptance/specs/ueberweisung.spec`: Eine Überweisung über dem Tageslimit wird abgelehnt und der Saldo bleibt unverändert
 - `acceptance/specs/ueberweisung.spec`: Eine wiederholte Bestätigung wird bei ausgeschöpftem Tageslimit nicht erneut geprüft
 - `acceptance/specs/ueberweisung.spec`: Heutige Ausgänge zählen zum Tageslimit
+- `acceptance/specs/ueberweisung.spec`: Übersteigt ein Betrag Tageslimit und verfügbaren Betrag, gilt die Meldung zum verfügbaren Betrag
 
 ## Aufgaben für die Umsetzung
 
@@ -64,11 +65,6 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-60 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-60 grün
 
-## Offene Fragen
-
-- [ ] Welche Ablehnung gilt, wenn ein Betrag zugleich den verfügbaren Betrag des Girokontos (BR-0004) und das Tageslimit (BR-0070) übersteigt?
-- [ ] Gilt das Tageslimit auch für die Lastkunden (lasttest-001 bis lasttest-300), und setzt POST /api/test/lasttest/reset deren Tageslimit und Tagesausgänge zurück?
-
 ## Entscheidungen
 
 - Soll die Maske Überweisung das Tageslimit schon bei „Weiter“ prüfen, oder prüft nur der Dienst beim Bestätigen?
@@ -77,3 +73,9 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - Zählen zu den „heutigen Ausgängen“ nur die am laufenden UTC-Tag ausgeführten Überweisungen vom Girokonto (UC-002), oder auch andere Ausgänge wie Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge?
   **Antwort:** Nur ausgeführte Überweisungen nach UC-002; andere Ausgänge zählen nicht und werden als „Nicht im Scope“ benannt.
   _→ eingearbeitet in UC-015, BR-0070, UC-002 · b1d1336_
+- Welche Ablehnung gilt, wenn ein Betrag zugleich den verfügbaren Betrag des Girokontos (BR-0004) und das Tageslimit (BR-0070) übersteigt?
+  **Antwort:** BR-0004 zuerst: 422 mit „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“; die Oberfläche zeigt die Meldung am Betragsfeld, die Tageslimit-Prüfung läuft nur bei ausreichendem verfügbaren Betrag
+  _→ noch nicht in der Spezifikation_
+- Gilt das Tageslimit auch für die Lastkunden (lasttest-001 bis lasttest-300), und setzt POST /api/test/lasttest/reset deren Tageslimit und Tagesausgänge zurück?
+  **Antwort:** Ja: Der Lasttest-Reset setzt Limit auf das Standardlimit und Tagesausgänge zurück; BR-0070 nennt beide Resets
+  _→ noch nicht in der Spezifikation_
