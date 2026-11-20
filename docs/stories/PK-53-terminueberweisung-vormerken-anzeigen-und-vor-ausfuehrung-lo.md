@@ -74,56 +74,25 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung wird die Liste der vorgemerkten Aufträge mit 401 abgelehnt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne vorgemerkten Auftrag zeigt die Maske einen Hinweis statt der Liste
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
-- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Folgen geändert
-- [ ] Genau einmalige Ausführung über die von der Oberfläche vergebene Auftrags-Kennung: Entscheidung geändert
-- [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
-- [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Vorgemerkte Aufträge der angemeldeten Kundin: Endpunkt neu
-- [ ] Terminüberweisung vormerken: Endpunkt neu
-- [ ] Vorgemerkten Auftrag löschen: Endpunkt neu
-- [ ] Terminueberweisungsauftrag: Schema neu
-- [ ] Terminueberweisung: Schema neu
-- [ ] Architektur: Bausteinsicht geändert
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Überweisung: Beschreibung geändert
-- [ ] Überweisung: Attribut status geändert
-- [ ] Überweisung: Attribut erfasstAm geändert
-- [ ] Überweisung: Attribut ausfuehrungstag neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Genau einmalige Ausführung einer Überweisung: Anforderung geändert
-- [ ] Genau einmalige Ausführung einer Überweisung: Maß geändert
-- [ ] Genau einmalige Ausführung einer Überweisung: Gilt für geändert
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Überweisung bestätigen: Feld Ausführungstag neu
-- [ ] Überweisung bestätigen: Aktion Bestätigen neu
-- [ ] Überweisung bestätigen: Skizze geändert
-- [ ] Überweisung: Use Case UC-017 neu
-- [ ] Überweisung: Feld Ausführungstag neu
-- [ ] Überweisung: Aktion Vorgemerkte Überweisungen neu
-- [ ] Überweisung: Skizze geändert
-- [ ] Vorgemerkte Überweisungen: Maske neu
-- [ ] UC-002: Notizen geändert
-- [ ] UC-002: A9 neu: Terminüberweisung vormerken
-- [ ] UC-002: A10 neu: Ausführungstag nicht zulässig
-- [ ] UC-002: A11 neu: Auftrags-Kennung bereits verwendet
-- [ ] UC-002: Erfolg 4 neu
-- [ ] UC-002: BR-0005 geändert
-- [ ] UC-002: BR-0079 neu: Ausführungstag der Terminüberweisung
-- [ ] BR-0005: Text geändert
-- [ ] BR-0079: Neu in UC-002
-- [ ] UC-017: Use Case neu
-- [ ] BR-0080: Neu in UC-017
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-53 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-53 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine
+- **Überweisungsauftrag** (`src/ueberweisung.ts`, neues Modul `src/terminueberweisung.ts`): Vormerken, Liste, Löschen; gemeinsame Prüfungen (BR-0003, BR-0004, BR-0007, Mindestbetrag) werden aus `ausfuehren` herausgelöst und von beiden Wegen genutzt.
+- **Seitenauslieferung** (`src/main.ts`): POST/GET `/api/terminueberweisungen`, DELETE `/api/terminueberweisungen/:auftragsId` hinter `nurAngemeldet('api')`; Seite `/vorgemerkte-ueberweisungen` hinter `nurAngemeldet('seite')` (NFR-001).
+- **Testbetrieb** (`src/testdaten.ts`): beide Resets vergessen auch die vorgemerkten Aufträge und verbrauchten Kennungen der jeweiligen Gruppe (ADR-002).
+- **Oberfläche** (`public/seiten/ueberweisung.js`, neu `public/seiten/vorgemerkte-ueberweisungen.js`, `finanzstatus.js`).
+
+## Schritte
+1. UC-002 A9/A10, BR-0079: Ausführungstag als `YYYY-MM-DD`; kein gültiges Kalenderdatum → 400; „heute“ ist der Kalendertag in Europe/Berlin (über `Intl` mit `timeZone`), zulässig morgen bis heute + 365 Tage, sonst 422 mit dem Text aus BR-0079.
+2. UC-002 A9, BR-0005/ADR-003: eigene Ablage `vorgemerkt` je Kundin (Kennung → Auftrag) und eine Menge `verbraucht` je Kundin (nie gekappt). Wiederholung eines noch vorgemerkten Auftrags → 200 mit dem gespeicherten Auftrag; Kennung einer sofortigen Überweisung oder eines gelöschten Auftrags → 422 „Diese Auftrags-Kennung wurde bereits verwendet.“. Umgekehrt lehnt `POST /api/ueberweisungen` eine für eine Terminüberweisung verbrauchte Kennung mit 422 ab. Kein Buchen, kein Umsatz, keine Tageslimit-Prüfung (BR-0070 gilt erst bei Ausführung).
+3. UC-017, BR-0080: Liste nach Ausführungstag, bei gleichem Tag nach Vormerkzeitpunkt (Einfügereihenfolge); Löschen nur eigener vorgemerkter Aufträge, sonst 404.
+4. Oberfläche: Feld „Ausführungstag“ (`input type=date`), Prüfung BR-0079 im Browser (ADR-004), Zeile „Ausführungstag“ in der Zusammenfassung (TT.MM.JJJJ) nur bei Terminüberweisung, Bestätigen ruft dann POST /api/terminueberweisungen, Fehlerbehandlung nach A9 Schritt 5, A10, A11; Finanzstatus zeigt „Überweisung vorgemerkt.“. Neue Seite „Vorgemerkte Überweisungen“ mit Tabelle, Leerhinweis, Auswahl „Auftrag zum Löschen“, Sicherheitsabfrage Ja/Nein und Meldung „Vorgemerkter Auftrag gelöscht.“.
+5. Unit-Tests (`test/terminueberweisung.test.ts`) für BR-0079, BR-0005 und BR-0080 (UC-017 WP-1); Gauge-Schritte für die neuen Szenarien.
+
+## Rahmen
+Keine neue Bibliothek, kein neues Muster.
 
 ## Entscheidungen
 
