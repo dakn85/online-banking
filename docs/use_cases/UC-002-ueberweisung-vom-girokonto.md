@@ -190,4 +190,4 @@ Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vo
 
 ## Notizen
 
-Einmalige Überweisung vom Girokonto; Termin- und Daueraufträge sind nicht Teil dieser Story. Die Konten und Salden sind Demo-Daten (C-001), der Dienst schreibt den Saldo selbst fort. Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt.
+Einmalige Überweisung vom Girokonto; Termin- und Daueraufträge sind nicht Teil dieser Story. Die Konten und Salden sind Demo-Daten (C-001), der Dienst schreibt den Saldo selbst fort. Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt. Gegen das Tageslimit zählen nur ausgeführte Überweisungen nach diesem Use Case; andere Ausgänge wie Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge zählen nicht (BR-0070).

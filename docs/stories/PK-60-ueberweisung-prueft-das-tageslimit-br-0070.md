@@ -13,6 +13,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - Benachrichtigung der Kundin oder Hinweis bei Annäherung ans Limit: Die Idee verlangt keine Benachrichtigungen.
 - Erhöhung des Limits direkt aus der Ablehnungsmeldung: Die Idee nennt keinen Sprung zur Maske tageslimit; im Zweifel nicht im Scope.
 - Bericht oder Verlauf der Limitablehnungen: Berichte werden nicht verlangt.
+- Andere Ausgänge als ausgeführte Überweisungen nach UC-002 (Umbuchungen, Lastschriften, Kartenzahlungen, Daueraufträge): Sie zählen nicht zu den heutigen Ausgängen des Tageslimits.
 
 ## Änderungen
 
@@ -22,7 +23,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 | Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
 | Architektur | Geändert | Bausteinsicht geändert, Laufzeitsicht geändert |
 | Überweisung | Geändert | Skizze geändert |
-| UC-002 Überweisung vom Girokonto | Geändert | Schritt 7 geändert, A9 neu: Tageslimit überschritten, Sequenzdiagramm neu |
+| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, Schritt 7 geändert, A9 neu: Tageslimit überschritten, und 1 weitere |
 | UC-015 Tageslimit für Überweisungen festlegen | Geändert | Notizen geändert, BR-0070 geändert |
 | BR-0070 Tageslimit der Kundin | Geändert | Text geändert |
 
@@ -45,6 +46,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] Architektur: Bausteinsicht geändert
 - [ ] Architektur: Laufzeitsicht geändert
 - [ ] Überweisung: Skizze geändert
+- [ ] UC-002: Notizen geändert
 - [ ] UC-002: Schritt 7 geändert
 - [ ] UC-002: A9 neu: Tageslimit überschritten
 - [ ] UC-002: Sequenzdiagramm neu
@@ -61,4 +63,4 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
   _→ eingearbeitet in UC-015, BR-0070, UC-002, POST /api/ueberweisungen, ueberweisung, architektur · 495ae6c_
 - Zählen zu den „heutigen Ausgängen“ nur die am laufenden UTC-Tag ausgeführten Überweisungen vom Girokonto (UC-002), oder auch andere Ausgänge wie Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge?
   **Antwort:** Nur ausgeführte Überweisungen nach UC-002; andere Ausgänge zählen nicht und werden als „Nicht im Scope“ benannt.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-015, BR-0070, UC-002_
