@@ -104,7 +104,7 @@ Tags: UC-002, PK-53, BR-0079
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "201"
 | feld            | wert   |
 |-----------------|--------|
 | ausfuehrungstag | morgen |
@@ -126,7 +126,7 @@ Tags: UC-002, PK-53, BR-0005
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "201"
 | feld            | wert         |
 |-----------------|--------------|
 | auftragsId      | wiederholt-1 |

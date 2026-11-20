@@ -117,3 +117,6 @@ Keine neue Bibliothek, kein neues Muster.
 - Soll die Idempotenz-Ablage je Endpunkt getrennt geführt werden, während die Kennung je Kundin für beide Endpunkte verbraucht gilt?
   **Antwort:** Ja, getrennte Ablagen je Endpunkt, Verbrauch je Kkundin über beide
   _→ eingearbeitet in ADR-003 · b7cab8b_
+- Zwei Szenarien erwarten für einen NEU vorgemerkten Auftrag den Status 200, die OpenAPI (docs/api/openapi.yaml, POST /api/terminueberweisungen) nennt dafür 201 und 200 nur für die Wiederholung eines schon vorgemerkten Auftrags: - acceptance/specs/terminueberweisung.spec „Ein Ausführungstag morgen wird beim Vormerken angenommen“: erster und einziger Aufruf erwartet "200". - acceptance/specs/terminueberweisung.spec „Eine wiederholte Auftrags-Kennung beim Vormerken legt keinen zweiten Auftrag an“: der ERSTE Aufruf mit auftragsId wiederholt-1 erwartet "200" (der zweite 200 ist richtig). Andere Szenarien (gelöschte Kennung, fremder Auftrag) erwarten für den ersten Aufruf korrekt "201". Ich implementiere den Dienst nach der OpenAPI (201/200); ohne Änderung bleiben die beiden Szenarien rot und der PR ist gesperrt.
+  **Antwort:** Die beiden Szenarien werden korrigiert: erster Aufruf erwartet "201", die Wiederholung "200" (OpenAPI bleibt).
+  _→ eingearbeitet_
