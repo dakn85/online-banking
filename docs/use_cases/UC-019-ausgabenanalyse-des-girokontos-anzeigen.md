@@ -7,7 +7,7 @@
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin sieht die Ausgaben ihres Girokontos in einem von ihr gewählten Monat nach Kategorien gruppiert, je Kategorie mit Summe und Anteil an den Gesamtausgaben.  
-**Ziele:** Z-8  
+**Ziele:** Z-9  
 **Anforderungen:** NFR-001, C-001
 
 ## Vorbedingungen
