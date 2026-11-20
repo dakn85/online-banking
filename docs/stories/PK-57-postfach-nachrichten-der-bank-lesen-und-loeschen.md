@@ -49,12 +49,14 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - `acceptance/specs/postfach.spec`: Das Postfach zeigt nur die Nachrichten der angemeldeten Kundin
 - `acceptance/specs/postfach.spec`: DELETE /api/nachrichten/{nachrichtId} mit unbekannter Kennung antwortet mit 404
 - `acceptance/specs/postfach.spec`: DELETE /api/nachrichten/{nachrichtId} ohne Anmeldung antwortet mit 401
+- `acceptance/specs/postfach.spec`: Die Navigation zeigt die Zahl ungelesener Nachrichten auch auf Überweisung und Umsätzen
 - `acceptance/specs/postfach.spec`: Die Zahl ungelesener Nachrichten in der Navigation sinkt beim Öffnen
 - `acceptance/specs/postfach.spec`: Eine gelöschte Nachricht erscheint nicht mehr und zählt nicht als ungelesen
 - `acceptance/specs/postfach.spec`: Eine Nachricht bleibt, wenn die Kundin die Sicherheitsabfrage verneint
 - `acceptance/specs/postfach.spec`: Eine ungelesene Nachricht gilt nach dem Öffnen als gelesen
 - `acceptance/specs/postfach.spec`: GET /api/nachrichten ohne Anmeldung antwortet mit 401
 - `acceptance/specs/postfach.spec`: Ohne Anmeldung ist das Postfach nicht erreichbar
+- `acceptance/specs/postfach.spec`: Ohne Nachricht zeigt das Postfach einen Hinweis und die Navigation keine Zahl
 - `acceptance/specs/postfach.spec`: Ohne ungelesene Nachricht zeigt die Navigation keine Zahl
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} mit unbekannter Kennung antwortet mit 404
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} ohne Anmeldung antwortet mit 401
@@ -103,7 +105,7 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
   _→ eingearbeitet in vision, Nachricht, UC-020, BR-0085, BR-0086, BR-0087, POST /api/test/reset, GET /api/nachrichten, PATCH /api/nachrichten/{nachrichtId}, DELETE /api/nachrichten/{nachrichtId}, Schema Nachricht, Schema Nachrichtenliste, postfach, finanzstatus, empfaengervorlagen, NFR-001, ADR-002, architektur · c456f2f_
 - Der Use Case verlangt den Eintrag „Postfach“ mit der Zahl ungelesener Nachrichten in der Navigation „jeder angemeldeten Seite“. Die Skizzen zeigen ihn nur auf Finanzstatus, Empfängervorlagen und Postfach. Auf welchen Seiten erscheint der Eintrag mit der Zahl? (GET /api/nachrichten, anzahlUngelesen)
   **Antwort:** Auf jeder angemeldeten Seite, auch Überweisung, Überweisung bestätigen, Umsätze und Tageslimit: Skizzen dieser Seiten ergänzen, UC-020 Schritt 1 bleibt.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-020, postfach, umsaetze, ueberweisung-bestaetigen_
 - Was zeigt das Postfach, wenn die Kundin keine Nachricht (mehr) hat, etwa nach dem Löschen der letzten, und wie verhalten sich dann „Öffnen“ und „Löschen“?
   **Antwort:** Die Tabelle zeigt statt Zeilen den Hinweis „Keine Nachrichten.“, die Zahl ungelesener steht auf 0, die Auswahllisten sind leer und „Öffnen“ und „Löschen“ sind nicht auswählbar; ein vorher angezeigter Text wird geleert.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-020, postfach, umsaetze, ueberweisung-bestaetigen_

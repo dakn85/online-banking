@@ -149,3 +149,25 @@ Tags: UC-020, PK-57, NFR-001
 * Testdaten sind zurückgesetzt
 * Das Postfach ist ohne Anmeldung nicht erreichbar
 * Die Anmeldeseite ist zu sehen
+
+## Ohne Nachricht zeigt das Postfach einen Hinweis und die Navigation keine Zahl
+
+Tags: UC-020, PK-57, BR-0086
+
+* Testdaten sind zurückgesetzt
+* "jonas.weber" meldet sich mit der PIN "13579" an
+* Die Kundin öffnet das Postfach
+* Die Kundin löscht die Nachricht "Willkommen im Postfach" und antwortet auf die Sicherheitsabfrage "Ja"
+* Das Postfach zeigt die Meldung "Keine Nachrichten."
+* Die Navigation zeigt am Eintrag Postfach "keine Zahl"
+
+## Die Navigation zeigt die Zahl ungelesener Nachrichten auch auf Überweisung und Umsätzen
+
+Tags: UC-020, PK-57, BR-0086
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Navigation zeigt am Eintrag Postfach "2"
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Navigation zeigt am Eintrag Postfach "2"

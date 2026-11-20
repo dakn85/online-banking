@@ -62,6 +62,14 @@
 1. Das System ändert nichts und zeigt das Postfach mit der aktuellen Liste und Zahl neu.
 2. Die Kundin wählt eine andere Nachricht; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
+### A6: Keine Nachrichten
+
+**Auslöser:** Die Kundin hat keine Nachricht (mehr), etwa nach dem Löschen der letzten. (Schritt 2).  
+**Ablauf:**
+
+1. Das System zeigt statt der Tabelle den Hinweis „Keine Nachrichten.“ und die Zahl ungelesener Nachrichten 0; die Navigation zeigt den Eintrag „Postfach“ ohne Zahl (BR-0086).
+2. Die Auswahllisten „Nachricht zum Öffnen“ und „Nachricht zum Löschen“ sind leer, „Öffnen“ und „Löschen“ sind nicht auswählbar, ein vorher angezeigter Text der Nachricht wird geleert; die Kundin verlässt das Postfach über die Navigation.
+
 ## Sequenzdiagramm
 
 ```mermaid
