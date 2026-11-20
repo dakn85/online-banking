@@ -35,7 +35,7 @@ Tags: UC-023, PK-61, BR-0096
 * Die persönlichen Daten zeigen die Meldung "Die TAN ist falsch. Die Änderung wurde nicht gespeichert."
 * Die Kundin öffnet die persönlichen Daten
 * Die persönlichen Daten zeigen bei "E-Mail-Adresse" den Wert "lena.hoffmann@example.org"
-* Das Postfach der Kundin enthält "0" Nachrichten
+* Das Postfach der Kundin enthält "3" Nachrichten
 
 ## Eine falsche TAN wird vom Dienst mit 422 beantwortet
 
@@ -64,7 +64,7 @@ Tags: UC-023, PK-61, BR-0097
 * Die Kundin öffnet die persönlichen Daten
 * Die Kundin ändert in den persönlichen Daten "Telefonnummer" auf "+49 221 1234567" und bestätigt mit der TAN "123456"
 * Die persönlichen Daten zeigen die Meldung "Persönliche Daten gespeichert."
-* Das Postfach der Kundin enthält "0" Nachrichten
+* Das Postfach der Kundin enthält "3" Nachrichten
 
 ## Eine Postleitzahl ohne 5 Ziffern wird abgelehnt
 
@@ -141,7 +141,7 @@ Tags: UC-023, PK-61, BR-0097
 |-----------------------|----------------|
 | Telefonnummer         | +49 30 7654321 |
 | Straße und Hausnummer | Rosenweg 3     |
-* Das Postfach der Kundin enthält "1" Nachrichten
+* Das Postfach der Kundin enthält "4" Nachrichten
 * Die neueste Nachricht im Postfach der Kundin ist ungelesen und hat den Betreff "Ihre persönlichen Daten wurden geändert"
 * Die neueste Nachricht im Postfach der Kundin hat den Text "Ihre Anschrift wurde geändert. Ihre Telefonnummer wurde geändert."
 
