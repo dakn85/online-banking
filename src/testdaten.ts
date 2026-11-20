@@ -4,6 +4,7 @@ import { ausgangsstandSetzen, zuruecksetzen as kontenZuruecksetzen } from './kon
 import { Auswahl, istDemokunde, istLastkunde, Kunde, kundenHinzufuegen, LAST_PRAEFIX } from './kunden';
 import { beendenFuer } from './sitzung';
 import { zuruecksetzen as auftraegeZuruecksetzen } from './ueberweisung';
+import { zuruecksetzen as umbuchungenZuruecksetzen } from './umbuchung';
 import { zuruecksetzen as umsaetzeZuruecksetzen } from './umsaetze';
 import { zuruecksetzen as vorlagenZuruecksetzen } from './empfaengervorlagen';
 import { zuruecksetzen as tageslimitZuruecksetzen } from './tageslimit';
@@ -51,6 +52,7 @@ function zuruecksetzenFuer(auswahl: Auswahl): void {
   beendenFuer(auswahl);
   kontenZuruecksetzen(auswahl);
   auftraegeZuruecksetzen(auswahl); // ausgeführte und vorgemerkte Aufträge samt verbrauchter Auftrags-Kennungen
+  umbuchungenZuruecksetzen(auswahl); // ausgeführte Umbuchungen samt Auftrags-Kennungen
   umsaetzeZuruecksetzen(auswahl); // nach den Konten: der Saldo danach ergibt sich aus dem Kontosaldo
   vorlagenZuruecksetzen(auswahl);
   tageslimitZuruecksetzen(auswahl);

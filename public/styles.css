@@ -167,6 +167,7 @@ a { color: var(--tanne); }
 .konto { display: inline-flex; align-items: center; gap: 12px; }
 .konto__symbol { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: #e6efed; color: var(--tanne); }
 .konto__symbol--kreditkarte { background: #f6ecd6; color: #7a5a1c; }
+.konto__symbol--tagesgeldkonto { background: #e2efe9; color: #14532f; }
 
 /* Überweisung (UC-002) */
 .finanzstatus__meldung { margin: 0 0 18px; align-items: center; font-weight: 500; }
