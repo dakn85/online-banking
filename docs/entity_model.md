@@ -10,6 +10,7 @@ erDiagram
     Empfaengervorlage }o--|| Kunde : "gehört zu"
     Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
+    Debitkarte |o--|| Konto : "gehört zum Girokonto"
 ```
 
 ## Entitäten
@@ -45,6 +46,8 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
 | dispositionsrahmen | Eingeräumter Dispositionsrahmen in Euro; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 1000.00; nur bei Art Girokonto |
 | verfuegbarerBetrag | Verfügbarer Betrag in Euro: Saldo plus Dispositionsrahmen; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 3145.30; nur bei Art Girokonto |
+
+**Einschränkungen:** Ein Konto der Art Girokonto kann eine Debitkarte haben (Entität Debitkarte); eine Kreditkarte hat keine.
 
 ### Überweisung
 
@@ -119,3 +122,17 @@ Eine Zeile der Ausgabenanalyse: eine Kategorie mit ihrer Summe und ihrem Anteil 
 | kategorie | Kategorie aus der festen Liste | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 | summe | Summe der Ausgänge dieser Kategorie im Monat in Euro als positive Zahl, auf Cent gerundet | Decimal |  | Pflicht; Beispiel 86.00; Anzeige 86,00 €; größer als 0 |
 | anteil | Anteil der Summe an den Gesamtausgaben in Prozent, kaufmännisch auf eine Nachkommastelle gerundet, ohne Ausgleich auf 100 % | Decimal |  | Pflicht; Wertebereich 0..100; Beispiel 87.8; Anzeige als Prozent mit einer Nachkommastelle, Beispiel 87,8 % |
+
+### Debitkarte
+
+**Bereich:** Debitkarte  
+
+Die Debitkarte zum Girokonto der Kundin mit ihrem Sperrstatus. Die Kundin erkennt sie an der maskierten Kartennummer.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| kartennummerMaskiert | Maskierte Kartennummer, vier Sterne und die letzten vier Stellen; daran erkennt die Kundin ihre Karte | String | 9..9 | Pflicht; Länge 9..9; Muster ^\*\*\*\* [0-9]{4}$; Beispiel **** 4821 |
+| status | Sperrstatus der Karte; endgültig gesperrt bleibt gesperrt | String |  | Pflicht; Werte aktiv, vorübergehend gesperrt, endgültig gesperrt; Standard aktiv; Beispiel aktiv |
+| sperrgrund | Grund der endgültigen Sperre, von der Kundin beim endgültigen Sperren gewählt; nur belegt, wenn der Status endgültig gesperrt ist | String |  | Werte Verlust, Diebstahl; Beispiel Verlust; Pflicht beim endgültigen Sperren, sonst nicht belegt; ein bei anderem Zielstatus mitgeschickter Sperrgrund wird ignoriert und nicht gespeichert |
+
+**Einschränkungen:** Zu einem Girokonto gibt es höchstens eine Debitkarte, zu einer Kreditkarte keine. Die Debitkarte liegt nur im Speicher (ADR-002); im Ausgangsstand haben die Demo-Kundinnen je eine Debitkarte mit Status aktiv.
