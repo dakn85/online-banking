@@ -2,7 +2,7 @@ import express from 'express';
 import { join } from 'node:path';
 import { Datenfehler, finanzstatus } from './konten';
 import { kundeMitKennung } from './kunden';
-import { Ablehnung, ausfuehren } from './ueberweisung';
+import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
 import * as tageslimit from './tageslimit';
@@ -65,6 +65,35 @@ app.post('/api/ueberweisungen', nurAngemeldet('api'), (req, res) => {
     if (!(fehler instanceof Ablehnung)) throw fehler;
     res.status(fehler.status).json({ fehler: fehler.message });
   }
+});
+
+// UC-002 A9: Terminüberweisung vormerken, genau einmal je Auftrags-Kennung (BR-0005, BR-0079); bucht nichts.
+app.post('/api/terminueberweisungen', nurAngemeldet('api'), (req, res) => {
+  const b = req.body ?? {};
+  if (PFLICHT.some(feld => typeof b[feld] !== 'string' || !b[feld].trim()) || typeof b.betrag !== 'number' || typeof b.ausfuehrungstag !== 'string') {
+    return res.status(400).json({ fehler: 'Der Auftrag ist unvollständig.' });
+  }
+  try {
+    const { neu, terminueberweisung } = vormerken(res.locals.kunde, {
+      auftragsId: b.auftragsId, auftraggeberIban: b.auftraggeberIban, empfaenger: b.empfaenger.trim(),
+      empfaengerIban: b.empfaengerIban, betrag: b.betrag, verwendungszweck: b.verwendungszweck.trim(), ausfuehrungstag: b.ausfuehrungstag,
+    });
+    res.status(neu ? 201 : 200).json(terminueberweisung);
+  } catch (fehler) {
+    if (!(fehler instanceof Ablehnung)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
+});
+
+// UC-017: vorgemerkte Aufträge der angemeldeten Kundin liefern und löschen (BR-0080)
+app.get('/api/terminueberweisungen', nurAngemeldet('api'), (_req, res) => {
+  res.json(vorgemerkteAuftraege(res.locals.kunde.kennung));
+});
+app.delete('/api/terminueberweisungen/:auftragsId', nurAngemeldet('api'), (req, res) => {
+  if (!vorgemerktenLoeschen(res.locals.kunde.kennung, req.params.auftragsId)) {
+    return res.status(404).json({ fehler: 'Der vorgemerkte Auftrag wurde nicht gefunden.' });
+  }
+  res.status(204).end();
 });
 
 // UC-003: Umsätze eines Kontos der Kundin (BR-0008 bis BR-0011)
@@ -135,7 +164,7 @@ app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?
 if (testbetrieb) {
   // Lastkunden lasttest-001 bis lasttest-300, alle mit der PIN aus LASTTEST_PIN (öffentliche Testdaten, Vorgabe in testdaten.ts).
   lastkundenAnlegen(process.env.LASTTEST_PIN || undefined);
-  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
+  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine ausgeführten oder vorgemerkten Aufträge. Lastkunden bleiben.
   app.post('/api/test/reset', (_req, res) => { demoZuruecksetzen(); res.status(204).end(); });
   // Lastdaten zurücksetzen: dasselbe nur für die Lastkunden. Demo-Kundinnen bleiben.
   app.post('/api/test/lasttest/reset', (_req, res) => { lastdatenZuruecksetzen(); res.status(204).end(); });
@@ -147,7 +176,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/vorgemerkte-ueberweisungen']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
