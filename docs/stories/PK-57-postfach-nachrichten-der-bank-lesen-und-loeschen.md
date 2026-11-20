@@ -63,39 +63,26 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} mit ungültiger Kennung antwortet mit 400
 - `acceptance/specs/postfach.spec`: PATCH /api/nachrichten/{nachrichtId} ohne Anmeldung antwortet mit 401
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Use Cases neu
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Lastdaten zurücksetzen (nur Testbetrieb): Intern neu
-- [ ] Nachrichten der angemeldeten Kundin mit Zahl ungelesener: Endpunkt neu
-- [ ] Nachricht öffnen und als gelesen markieren: Endpunkt neu
-- [ ] Nachricht löschen: Endpunkt neu
-- [ ] Nachricht: Schema neu
-- [ ] Nachrichtenliste: Schema neu
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Nachricht: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Empfängervorlagen: Skizze geändert
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Postfach: Maske neu
-- [ ] Tageslimit: Skizze geändert
-- [ ] Überweisung bestätigen: Skizze geändert
-- [ ] Überweisung: Skizze geändert
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-020: Use Case neu
-- [ ] BR-0085: Neu in UC-020
-- [ ] BR-0086: Neu in UC-020
-- [ ] BR-0087: Neu in UC-020
-- [ ] Vision: Zweck geändert
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung neu
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-57 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-57 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine (docs/architecture.md)
+- Dienst (`src/`): neues Modul `nachrichten.ts` mit Speicher je Kundin (ADR-002), Ausgangsstand und Reset; Routen in `src/main.ts`; Anbindung an `testdaten.ts` (Demo-Reset setzt Nachrichten zurück, Lastkunden haben keine).
+- Oberfläche (`public/`): neue Seite `seiten/postfach.js` (Maske postfach), Navigationseintrag „Postfach“ mit Zahl ungelesener Nachrichten in `app.html`/`app.js` für jede angemeldete Seite; Seitenroute `/postfach` mit Sitzungsschutz.
+- Akzeptanztests: fehlende Schritte in `acceptance/tests/StepImplementation.ts`; Szenarien unverändert.
+
+## Schritte
+1. GET /api/nachrichten: Nachrichten der Kundin, neueste zuerst, mit `anzahlUngelesen` (UC-020, BR-0085, BR-0086); ohne Sitzung 401 (NFR-001).
+2. PATCH /api/nachrichten/{id}: Öffnen setzt `gelesen` auf true, idempotent, 200 (BR-0087); Kennung nicht 1..36 Zeichen → 400, unbekannt oder fremd → 404 (BR-0085).
+3. DELETE /api/nachrichten/{id}: endgültig löschen, 204, gleiche Fehlerfälle (BR-0085, BR-0086).
+4. Ausgangsstand: Lena drei Nachrichten (zwei ungelesen), Jonas eine gelesene; Demo-Reset stellt sie wieder her (ADR-002, UC-020 Notizen).
+5. Seite Postfach mit Tabelle, Auswahl „Nachricht zum Öffnen“/„zum Löschen“, Text, Sicherheitsabfrage „Nachricht löschen?“, Meldungen „Nachricht gelöscht.“ und „Keine Nachrichten.“ (UC-020 A1, A2, A6).
+6. Navigation lädt die Zahl über GET /api/nachrichten und zeigt sie nur ab 1 (BR-0086).
+7. Unit-Tests für WP-1 (BR-0085) in `test/nachrichten.test.ts`.
+
+## Rahmenänderung
+Keine neuen Bibliotheken oder Muster.
 
 ## Entscheidungen
 
