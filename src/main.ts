@@ -6,6 +6,7 @@ import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoe
 import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
 import * as tageslimit from './tageslimit';
+import * as debitkarte from './debitkarte';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -159,6 +160,20 @@ app.put('/api/tageslimit', nurAngemeldet('api'), (req, res) => {
   }
 });
 
+// UC-018: Debitkarte zum Girokonto der Kundin lesen und den Status setzen (BR-0081, BR-0082)
+const kartenfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof debitkarte.Kartenfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
+  try { res.json(debitkarte.lesen(res.locals.kunde.kennung, req.params.iban)); } catch (fehler) { kartenfehler(res, fehler); }
+});
+app.put('/api/konten/:iban/debitkarte', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(debitkarte.setzen(res.locals.kunde.kennung, req.params.iban, req.body?.status, req.body?.sperrgrund));
+  } catch (fehler) { kartenfehler(res, fehler); }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
@@ -176,7 +191,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/vorgemerkte-ueberweisungen']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/vorgemerkte-ueberweisungen', '/debitkarte']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
