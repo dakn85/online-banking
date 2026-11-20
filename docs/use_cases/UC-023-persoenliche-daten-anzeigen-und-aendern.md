@@ -19,14 +19,14 @@
 1. Die Kundin wählt im Finanzstatus „Persönliche Daten“.
 2. Das System zeigt Straße und Hausnummer, Postleitzahl, Ort, E-Mail-Adresse und Telefonnummer der Kundin (Kunde).
 3. Die Kundin ändert eine oder mehrere Angaben, gibt im Feld „TAN“ die TAN ein und wählt „Speichern“.
-4. Das System prüft die Felder nach dem Datenmodell (Kunde.strasse, Kunde.postleitzahl, Kunde.ort, Kunde.email, Kunde.telefonnummer, Kunde.tan) und zeigt bei einer Abweichung die Meldung im Formular; danach prüft der Dienst die TAN (BR-0096).
+4. Das System entfernt führende und folgende Leerzeichen von Straße, Ort, E-Mail-Adresse und Telefonnummer und prüft die Felder dann nach dem Datenmodell (Kunde.strasse, Kunde.postleitzahl, Kunde.ort, Kunde.email, Kunde.telefonnummer, Kunde.tan) und zeigt bei einer Abweichung die Meldung im Formular; danach prüft der Dienst die TAN (BR-0096).
 5. Das System speichert die Angaben am Kunden, legt für die geänderten Angaben eine Bestätigungsnachricht im Postfach der Kundin an (BR-0097) und zeigt die gespeicherten Daten mit der Meldung „Persönliche Daten gespeichert.“.
 
 ## Alternativabläufe
 
 ### A1: Eingabe ungültig
 
-**Auslöser:** Eine Angabe verletzt ihre Feldregel im Datenmodell: Straße oder Ort sind leer oder zu lang, die Postleitzahl hat nicht genau 5 Ziffern, E-Mail-Adresse oder Telefonnummer verletzen Muster oder Länge, oder die TAN hat nicht genau 6 Ziffern (Kunde.strasse, Kunde.postleitzahl, Kunde.ort, Kunde.email, Kunde.telefonnummer, Kunde.tan). (Schritt 4).  
+**Auslöser:** Eine Angabe verletzt nach dem Entfernen der Randleerzeichen ihre Feldregel im Datenmodell: Straße oder Ort sind leer (auch nur Leerzeichen) oder zu lang, die Postleitzahl hat nicht genau 5 Ziffern, E-Mail-Adresse oder Telefonnummer verletzen Muster oder Länge, oder die TAN hat nicht genau 6 Ziffern (Kunde.strasse, Kunde.postleitzahl, Kunde.ort, Kunde.email, Kunde.telefonnummer, Kunde.tan). (Schritt 4).  
 **Ablauf:**
 
 1. Der Dienst antwortet mit Status 400; das System speichert nichts, legt keine Nachricht an und zeigt die Meldung zum Feld im Formular: „Bitte geben Sie Straße und Hausnummer an.“, „Die Straße darf höchstens 100 Zeichen lang sein.“, „Die Postleitzahl muss aus 5 Ziffern bestehen.“, „Bitte geben Sie den Ort an.“, „Der Ort darf höchstens 60 Zeichen lang sein.“, „Die E-Mail-Adresse ist ungültig.“, „Die Telefonnummer ist ungültig.“ oder „Die TAN muss aus 6 Ziffern bestehen.“.
@@ -50,7 +50,7 @@
 
 ### A4: Keine Angabe geändert
 
-**Auslöser:** Die Eingaben stimmen mit den gespeicherten Angaben überein und die TAN ist richtig. (Schritt 5).  
+**Auslöser:** Die Eingaben stimmen nach dem Entfernen der Randleerzeichen genau, auch in der Groß-/Kleinschreibung, mit den gespeicherten Angaben überein und die TAN ist richtig. (Schritt 5).  
 **Ablauf:**
 
 1. Das System ändert nichts, legt keine Nachricht im Postfach an (BR-0097) und zeigt die Daten mit der Meldung „Persönliche Daten gespeichert.“.
@@ -96,7 +96,7 @@ Jede Änderung der persönlichen Daten gilt nur mit der richtigen TAN. Als TAN (
 
 ### BR-0097: Bestätigungsnachricht im Postfach
 
-Nach jeder gespeicherten Änderung, die mindestens eine Angabe ändert, legt der Dienst genau eine Nachricht im Postfach der angemeldeten Kundin an: Betreff „Ihre persönlichen Daten wurden geändert“, ungelesen. Der Text nennt je geänderter Angabe einen Satz, in dieser Reihenfolge: „Ihre Anschrift wurde geändert.“, „Ihre E-Mail-Adresse wurde geändert.“, „Ihre Telefonnummer wurde geändert.“; Werte nennt er nicht. Die Anschrift gilt als geändert, wenn Straße, Postleitzahl oder Ort abweichen. Bei unveränderten Angaben oder abgewiesener Änderung entsteht keine Nachricht. Der Dienst liest und ändert nur die Daten der angemeldeten Kundin aus der Sitzung, eine Kennung im Aufruf gibt es nicht.
+Nach jeder gespeicherten Änderung, die mindestens eine Angabe ändert, legt der Dienst genau eine Nachricht im Postfach der angemeldeten Kundin an: Betreff „Ihre persönlichen Daten wurden geändert“, ungelesen. Der Text nennt je geänderter Angabe einen Satz, in dieser Reihenfolge: „Ihre Anschrift wurde geändert.“, „Ihre E-Mail-Adresse wurde geändert.“, „Ihre Telefonnummer wurde geändert.“; Werte nennt er nicht. Die Anschrift gilt als geändert, wenn Straße, Postleitzahl oder Ort abweichen. Verglichen wird mit den gespeicherten Angaben nach dem Entfernen der Randleerzeichen (Datenmodell Kunde) genau, auch in der Groß-/Kleinschreibung; eine reine Schreibweisenänderung der E-Mail-Adresse ist eine Änderung und löst die Nachricht aus. Bei unveränderten Angaben oder abgewiesener Änderung entsteht keine Nachricht. Der Dienst liest und ändert nur die Daten der angemeldeten Kundin aus der Sitzung, eine Kennung im Aufruf gibt es nicht.
 
 ## Notizen
 

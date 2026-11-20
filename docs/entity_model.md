@@ -26,14 +26,14 @@ Die angemeldete Privatkundin, deren Konten der Finanzstatus zeigt.
 | nachname | Nachname der Kundin | String | 1..60 | Pflicht; Länge 1..60 |
 | tageslimit | Tageslimit der Kundin für Überweisungen je Kalendertag in Euro; anfangs das Standardlimit, von der Kundin senk- und bis zum Standardlimit anhebbar | Decimal |  | Pflicht; Wertebereich 0..5000; Standard 5000.00; Beispiel 1000.00; höchstens zwei Nachkommastellen |
 | standardlimit | Standardlimit für das Tageslimit in Euro; für alle Kundinnen gleich, nicht änderbar | Decimal |  | Pflicht; Standard 5000.00; Beispiel 5000.00; für alle Kundinnen gleich |
-| strasse | Straße mit Hausnummer der Anschrift der Kundin | String | 1..100 | Pflicht; Länge 1..100; Beispiel Lindenallee 12 |
+| strasse | Straße mit Hausnummer der Anschrift der Kundin | String | 1..100 | Pflicht; Länge 1..100; Beispiel Lindenallee 12; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
 | postleitzahl | Postleitzahl der Anschrift, nur Deutschland | String | 5..5 | Pflicht; Länge 5..5; Muster ^[0-9]{5}$; Beispiel 50667 |
-| ort | Ort der Anschrift, nur Deutschland; ein Land wird nicht gespeichert | String | 1..60 | Pflicht; Länge 1..60; Beispiel Köln |
-| email | E-Mail-Adresse der Kundin | String | 3..254 | Pflicht; Länge 3..254; Muster ^[^@ ]+@[^@ ]+\.[^@ ]+$; Beispiel lena.hoffmann@example.org |
-| telefonnummer | Telefonnummer der Kundin | String | 6..20 | Pflicht; Länge 6..20; Muster ^\+?[0-9 /()-]+$; Beispiel +49 221 1234567 |
+| ort | Ort der Anschrift, nur Deutschland; ein Land wird nicht gespeichert | String | 1..60 | Pflicht; Länge 1..60; Beispiel Köln; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
+| email | E-Mail-Adresse der Kundin | String | 3..254 | Pflicht; Länge 3..254; Muster ^[^@ ]+@[^@ ]+\.[^@ ]+$; Beispiel lena.hoffmann@example.org; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
+| telefonnummer | Telefonnummer der Kundin | String | 6..20 | Pflicht; Länge 6..20; Muster ^\+?[0-9 /()-]+$; Beispiel +49 221 1234567; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
 | tan | TAN (Mock) zur Bestätigung einer Änderung der persönlichen Daten; nur Eingabe im Auftrag, wird nicht gespeichert | String | 6..6 | Pflicht; Länge 6..6; Muster ^[0-9]{6}$; Beispiel 123456 |
 
-**Einschränkungen:** Das Tageslimit gilt je Kundin, nicht je Konto, und liegt nur im Speicher (ADR-002). Anschrift, E-Mail-Adresse und Telefonnummer gelten je Kundin, liegen ebenfalls nur im Speicher (ADR-002) und gehören zum Ausgangsstand des Test-Resets; die Anschrift gilt nur für Deutschland. Die TAN ist keine gespeicherte Angabe der Kundin.
+**Einschränkungen:** Das Tageslimit gilt je Kundin, nicht je Konto, und liegt nur im Speicher (ADR-002). Anschrift, E-Mail-Adresse und Telefonnummer gelten je Kundin, liegen ebenfalls nur im Speicher (ADR-002) und gehören zum Ausgangsstand des Test-Resets; die Anschrift gilt nur für Deutschland. Bei Straße, Ort, E-Mail-Adresse und Telefonnummer entfernt der Dienst führende und folgende Leerzeichen vor Prüfung, Speicherung und Vergleich; verglichen wird danach genau, auch in der Groß-/Kleinschreibung. Die TAN ist keine gespeicherte Angabe der Kundin.
 
 ### Konto
 

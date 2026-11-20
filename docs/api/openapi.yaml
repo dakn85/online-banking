@@ -324,7 +324,7 @@ paths:
                 $ref: '#/components/schemas/Fehler'
     put:
       summary: Persönliche Daten mit TAN ändern
-      description: Speichert Anschrift, E-Mail-Adresse und Telefonnummer der angemeldeten Kundin, wenn die TAN (Mock) stimmt, und legt bei geänderten Angaben eine Bestätigungsnachricht im Postfach an. Alle Felder und die TAN sind Pflicht. Ohne gültige Sitzung 401.
+      description: Speichert Anschrift, E-Mail-Adresse und Telefonnummer der angemeldeten Kundin, wenn die TAN (Mock) stimmt, und legt bei geänderten Angaben eine Bestätigungsnachricht im Postfach an. Alle Felder und die TAN sind Pflicht. Der Dienst entfernt führende und folgende Leerzeichen von Straße, Ort, E-Mail-Adresse und Telefonnummer vor Prüfung, Speicherung und Vergleich. Ohne gültige Sitzung 401.
       operationId: kundeAendern
       tags:
         - Kundendaten
