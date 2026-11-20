@@ -44,6 +44,7 @@ Als Privatkundin möchte ich die Debitkarte zu meinem Girokonto vorübergehend s
 - `acceptance/specs/debitkarte.spec`: Eine vorübergehend gesperrte Debitkarte lässt sich direkt endgültig sperren
 - `acceptance/specs/debitkarte.spec`: GET Debitkarte 401: Der Abruf der Debitkarte ohne Anmeldung wird abgelehnt
 - `acceptance/specs/debitkarte.spec`: GET Debitkarte 404: Zu einer Kreditkarte gibt es keine Debitkarte
+- `acceptance/specs/debitkarte.spec`: PUT Debitkarte 200: Ein Sperrgrund beim vorübergehenden Sperren wird ignoriert
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 400: Die endgültige Sperre ohne Sperrgrund wird abgelehnt
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 401: Das Sperren der Debitkarte ohne Anmeldung wird abgelehnt
 - `acceptance/specs/debitkarte.spec`: PUT Debitkarte 404: Eine Kreditkarte lässt sich nicht sperren
@@ -88,4 +89,4 @@ Als Privatkundin möchte ich die Debitkarte zu meinem Girokonto vorübergehend s
   _→ eingearbeitet in vision, Konto, Debitkarte, UC-018, BR-0081, BR-0082, POST /api/test/reset, GET /api/konten/{iban}/debitkarte, PUT /api/konten/{iban}/debitkarte, Schema Debitkarte, Schema Debitkartenauftrag, debitkarte, finanzstatus, NFR-001, architektur · 72dd413_
 - Was geschieht bei PUT /api/konten/{iban}/debitkarte, wenn ein Sperrgrund mitgeschickt wird, der Zielstatus aber „aktiv“ oder „vorübergehend gesperrt“ ist?
   **Antwort:** Der Sperrgrund wird ignoriert und nicht gespeichert; die Antwort ist 200 oder bei unzulässigem Wechsel 409, die Debitkarte hat keinen Sperrgrund.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in Debitkarte, PUT /api/konten/{iban}/debitkarte, Schema Debitkartenauftrag, UC-018, BR-0081_

@@ -141,3 +141,14 @@ Tags: UC-018, PK-55, A5, 404, BR-0082
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Das Setzen der Debitkarte zur IBAN "DE44 5001 0517 5407 3249 55" auf den Zielstatus "vorübergehend gesperrt" mit dem Sperrgrund "" antwortet mit dem Status "404"
+
+## PUT Debitkarte 200: Ein Sperrgrund beim vorübergehenden Sperren wird ignoriert
+
+Tags: UC-018, PK-55, BR-0081
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin setzt die Debitkarte per Aufruf auf den Status "vorübergehend gesperrt" mit dem Sperrgrund "Verlust"
+* Die Kundin öffnet die Debitkarte des Girokontos
+* Die Debitkarte zeigt die Kartennummer "**** 4821" und den Status "vorübergehend gesperrt"
+* Die Debitkarte zeigt keinen Sperrgrund
