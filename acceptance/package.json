@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "gauge-ts": "0.3.0",
+    "pdfjs-dist": "^3.11.174",
     "playwright": "^1.62.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

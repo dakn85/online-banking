@@ -4,6 +4,7 @@ import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
+import { Monatsfehler, auszugAus, monatPruefen as auszugMonatPruefen, pdfAus } from './kontoauszug';
 import { Rueckgabefehler, zurueckgeben } from './lastschrift';
 import { Umbuchungsfehler, ausfuehren as umbuchen } from './umbuchung';
 import * as vorlagen from './empfaengervorlagen';
@@ -187,6 +188,28 @@ app.get('/api/konten/:iban/umsaetze/export', nurAngemeldet('api'), (req, res) =>
     .send(csvAus(liste));
 });
 
+// UC-024, BR-0098: Kontoauszug als PDF; Prüfreihenfolge 401, Konto 404, Monat 400, Erzeugen 500
+app.get('/api/konten/:iban/kontoauszug', nurAngemeldet('api'), async (req, res) => {
+  const kennung = res.locals.kunde.kennung;
+  const konto = kontoMitIban(kennung, req.params.iban);
+  const liste = konto && umsaetzeVon(kennung, konto.iban);
+  if (!konto || !liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  let monat;
+  try {
+    monat = auszugMonatPruefen(req.query.monat);
+  } catch (fehler) {
+    if (!(fehler instanceof Monatsfehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  try {
+    const pdf = await pdfAus(konto, auszugAus(konto, liste, monat));
+    res.type('application/pdf').set('Content-Disposition', `attachment; filename="Kontoauszug_${konto.iban}_${monat}.pdf"`).send(pdf);
+  } catch (fehler) {
+    console.error('Kontoauszug konnte nicht erzeugt werden', fehler instanceof Error ? fehler.name : 'Fehler');
+    res.status(500).json({ fehler: 'Der Kontoauszug konnte nicht erstellt werden.' });
+  }
+});
+
 // UC-004: Empfängervorlagen der angemeldeten Kundin (BR-0013 bis BR-0016, BR-0018)
 const vorlagenfehler = (res: express.Response, fehler: unknown) => {
   if (!(fehler instanceof vorlagen.Vorlagenfehler)) throw fehler;
@@ -264,7 +287,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/umbuchung', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/umbuchung', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach', '/kontoauszug']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
