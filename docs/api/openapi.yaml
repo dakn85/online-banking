@@ -22,7 +22,7 @@ paths:
       x-use-cases: [ UC-001 ]
   /api/ueberweisungen:
     post:
-      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
+      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId einer bereits ausgeführten sofortigen Überweisung bucht nicht erneut (200). Ist die auftragsId der Kundin schon für eine Terminüberweisung verwendet worden (vorgemerkt oder gelöscht), wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt und nichts gebucht. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
       operationId: ueberweisungAusfuehren
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }
@@ -45,7 +45,10 @@ paths:
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
         "422":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: Betrag übersteigt den verfügbaren Betrag des Girokontos
+          description: Betrag übersteigt den verfügbaren Betrag des Girokontos, oder die auftragsId wurde bereits für eine Terminüberweisung verwendet („Diese Auftrags-Kennung wurde bereits verwendet.“)
+          x-rules:
+            - BR-0004
+            - BR-0005
       summary: Überweisung vom Girokonto ausführen
       tags: [ Überweisung ]
       x-use-cases: [ UC-002 ]
@@ -234,7 +237,7 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Nachrichten mit ihrem Lesestatus, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Nachrichten mit ihrem Lesestatus, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte und vorgemerkte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -245,7 +248,7 @@ paths:
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset ändert daran nichts. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten und vorgemerkten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset ändert daran nichts. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -577,6 +580,126 @@ paths:
             - BR-0078
       x-use-cases:
         - UC-016
+  /api/terminueberweisungen:
+    post:
+      summary: Terminüberweisung vormerken
+      description: "Legt einen Überweisungsauftrag für einen späteren Ausführungstag mit Status vorgemerkt an. Es wird nichts gebucht, der Saldo bleibt unverändert und es entsteht kein Umsatz; das Tageslimit prüft der Dienst hier nicht. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören (BR-0003), der Betrag muss mindestens 0,10 Euro betragen und darf den aktuellen verfügbaren Betrag des Girokontos nicht übersteigen (BR-0004), der Ausführungstag liegt frühestens morgen und höchstens 365 Tage nach heute (BR-0079). Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin (BR-0007). Eine wiederholte Bestätigung mit derselben auftragsId legt keinen weiteren Auftrag an, solange der Auftrag vorgemerkt ist; die auftragsId gilt je Kundin für sofortige und Terminüberweisungen und bleibt dauerhaft verbraucht, auch nach dem Löschen (BR-0005). Beträge in Euro. Status 422 hat drei Gründe, die die Oberfläche am Feld „fehler“ unterscheidet: bei BR-0004 lautet der Text „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“, bei BR-0079 „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“, bei BR-0005 „Diese Auftrags-Kennung wurde bereits verwendet.“."
+      operationId: terminueberweisungVormerken
+      tags:
+        - Überweisung
+      x-use-cases:
+        - UC-002
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Terminueberweisungsauftrag"
+      responses:
+        "200":
+          description: Auftrag mit dieser auftragsId war bereits vorgemerkt; kein weiterer Auftrag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Terminueberweisung"
+        "201":
+          description: Auftrag vorgemerkt, nichts gebucht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Terminueberweisung"
+        "400":
+          description: IBAN ungültig oder gehört zu keinem SEPA-Land, Betrag kleiner als 0,10 Euro oder Ausführungstag kein gültiges Datum
+          x-rules:
+            - Überweisung.empfaengerIban
+            - Überweisung.betrag
+            - Überweisung.ausfuehrungstag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "403":
+          description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
+          x-rules:
+            - BR-0007
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: "fehler „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“ (BR-0004), fehler „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“ (BR-0079) oder fehler „Diese Auftrags-Kennung wurde bereits verwendet.“ (BR-0005: Kennung ist für eine andere Überweisung der Kundin verbraucht, auch für einen gelöschten Auftrag; es entsteht kein Auftrag)"
+          x-rules:
+            - BR-0004
+            - BR-0079
+            - BR-0005
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+    get:
+      summary: Vorgemerkte Aufträge der angemeldeten Kundin
+      description: Liefert die Aufträge mit Status vorgemerkt der angemeldeten Kundin (BR-0080), nach Ausführungstag aufsteigend, bei gleichem Tag der früher vorgemerkte zuerst. Ohne vorgemerkten Auftrag ist die Liste leer; ohne gültige Sitzung antwortet der Dienst mit 401.
+      operationId: terminueberweisungenAbrufen
+      tags:
+        - Überweisung
+      responses:
+        "200":
+          description: Vorgemerkte Aufträge der Kundin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Terminueberweisung"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-017
+  /api/terminueberweisungen/{auftragsId}:
+    delete:
+      summary: Vorgemerkten Auftrag löschen
+      description: Löscht den vorgemerkten Auftrag der angemeldeten Kundin endgültig; er wird nicht ausgeführt. Eine unbekannte Auftrags-Kennung, ein Auftrag einer anderen Kundin und ein bereits ausgeführter Auftrag beantwortet der Dienst mit 404, ohne gültige Sitzung mit 401 (BR-0080).
+      operationId: terminueberweisungLoeschen
+      tags:
+        - Überweisung
+      parameters:
+        - name: auftragsId
+          in: path
+          required: true
+          description: Kennung des vorgemerkten Auftrags
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Auftrag gelöscht
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Kein vorgemerkter Auftrag der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0080
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-017
   /api/konten/{iban}/debitkarte:
     get:
       summary: Debitkarte des Girokontos der angemeldeten Kundin abrufen
@@ -1259,6 +1382,104 @@ components:
         - verwendungszweck
         - turnus
         - ersterAusfuehrungstag
+    Terminueberweisungsauftrag:
+      type: object
+      x-entity: Überweisung
+      required:
+        - auftragsId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - verwendungszweck
+        - ausfuehrungstag
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+          description: Kennung des Auftrags, von der Seite je Überweisung vergeben; wiederholte Bestätigung mit derselben Kennung legt keinen weiteren Auftrag an
+        auftraggeberIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+          description: IBAN des Girokontos der Kundin
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Empfängers; Länderkennzeichen muss in der SEPA-Länderliste stehen
+        betrag:
+          type: number
+          minimum: 0.1
+          description: Betrag in Euro, mindestens 0,10; höchstens der aktuelle verfügbare Betrag des Girokontos
+        waehrung:
+          type: string
+          enum:
+            - EUR
+          default: EUR
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        ausfuehrungstag:
+          type: string
+          format: date
+          description: Ausführungstag, frühestens morgen und höchstens 365 Tage nach heute
+    Terminueberweisung:
+      type: object
+      x-entity: Überweisung
+      required:
+        - auftragsId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - waehrung
+        - verwendungszweck
+        - status
+        - erfasstAm
+        - ausfuehrungstag
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        auftraggeberIban:
+          type: string
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+        betrag:
+          type: number
+          minimum: 0.1
+        waehrung:
+          type: string
+          enum:
+            - EUR
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        ausfuehrungstag:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - vorgemerkt
+        erfasstAm:
+          type: string
+          format: date-time
     Nachricht:
       type: object
       x-entity: Nachricht
