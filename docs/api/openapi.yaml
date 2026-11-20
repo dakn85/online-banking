@@ -234,17 +234,18 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund); ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar.
+      description: Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Nachrichten mit ihrem Lesestatus, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund); ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar.
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Demo-Testdaten zurückgesetzt } }
       x-use-cases:
         - UC-018
+        - UC-020
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge und Empfängervorlagen sind vergessen. Lastkunden haben keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset ändert daran nichts. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -555,6 +556,117 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Fehler"
+  /api/nachrichten:
+    get:
+      summary: Nachrichten der angemeldeten Kundin mit Zahl ungelesener
+      description: Liefert die Nachrichten der angemeldeten Kundin, nach Datum absteigend (neueste zuerst), und die Zahl der ungelesenen Nachrichten. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um.
+      operationId: nachrichtenAuflisten
+      tags:
+        - Postfach
+      responses:
+        "200":
+          description: Nachrichten der Kundin, neueste zuerst, und Zahl ungelesener
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nachrichtenliste"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+  /api/nachrichten/{nachrichtId}:
+    patch:
+      summary: Nachricht öffnen und als gelesen markieren
+      description: "Öffnet die Nachricht der angemeldeten Kundin: setzt den Lesestatus auf gelesen und liefert die Nachricht mit ihrem Text. Der Aufruf braucht keinen Inhalt; bei einer schon gelesenen Nachricht ändert er nichts und antwortet ebenfalls mit 200. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401."
+      operationId: nachrichtOeffnen
+      tags:
+        - Postfach
+      parameters:
+        - name: nachrichtId
+          in: path
+          required: true
+          description: Kennung der Nachricht
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "200":
+          description: Nachricht mit Lesestatus gelesen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nachricht"
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Keine Nachricht der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0085
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+    delete:
+      summary: Nachricht löschen
+      description: Löscht die Nachricht der angemeldeten Kundin endgültig; sie erscheint nicht mehr in der Liste und zählt nicht mehr als ungelesen. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401.
+      operationId: nachrichtLoeschen
+      tags:
+        - Postfach
+      parameters:
+        - name: nachrichtId
+          in: path
+          required: true
+          description: Kennung der Nachricht
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Nachricht gelöscht
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Keine Nachricht der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0085
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
 components:
   schemas:
     Anmeldedaten:
@@ -866,6 +978,52 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Nachricht:
+      type: object
+      x-entity: Nachricht
+      properties:
+        nachrichtId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        absender:
+          type: string
+          minLength: 1
+          maxLength: 60
+        betreff:
+          type: string
+          minLength: 1
+          maxLength: 100
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        versendetAm:
+          type: string
+          format: date
+        gelesen:
+          type: boolean
+      required:
+        - nachrichtId
+        - absender
+        - betreff
+        - text
+        - versendetAm
+        - gelesen
+    Nachrichtenliste:
+      type: object
+      properties:
+        nachrichten:
+          type: array
+          items:
+            $ref: "#/components/schemas/Nachricht"
+        anzahlUngelesen:
+          type: integer
+          minimum: 0
+          description: Zahl der Nachrichten mit gelesen gleich false (BR-0086)
+      required:
+        - nachrichten
+        - anzahlUngelesen
     Debitkarte:
       type: object
       x-entity: Debitkarte

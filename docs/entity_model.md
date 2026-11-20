@@ -11,6 +11,7 @@ erDiagram
     Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
+    Nachricht }o--|| Kunde : "gehört zu"
 ```
 
 ## Entitäten
@@ -99,6 +100,23 @@ Ein gespeicherter Empfänger der Kundin mit Name, IBAN und optional Verwendungsz
 | verwendungszweck | Verwendungszweck der Vorlage; optional; leer oder nur Leerzeichen ergibt keinen Wert, dann fehlt das Feld | String | 0..140 | Länge 0..140; Beispiel Rechnung 4711; leer oder nur Leerzeichen = kein Wert, das Feld fehlt in Antwort und Liste |
 
 **Einschränkungen:** Der Name ist je Kunde eindeutig, verglichen ohne führende und folgende Leerzeichen und ohne Beachtung der Groß-/Kleinschreibung; gespeichert wird die Eingabe der Kundin; höchstens 50 Empfängervorlagen je Kunde.
+
+### Nachricht
+
+**Bereich:** Postfach  
+
+Eine Nachricht der Bank an die Kundin im Postfach mit Absender, Betreff, Text, Datum und Lesestatus. Die Kundin liest sie und löscht sie; sie ändert Absender, Betreff und Text nicht.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| nachrichtId | Kennung der Nachricht | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel N-2026-00001 |
+| absender | Absender der Nachricht | String | 1..60 | Pflicht; Länge 1..60; Beispiel Aventa Bank |
+| betreff | Betreff der Nachricht | String | 1..100 | Pflicht; Länge 1..100; Beispiel Ihr Kontoauszug für Oktober |
+| text | Text der Nachricht | String | 1..2000 | Pflicht; Länge 1..2000; Beispiel Ihr Kontoauszug für Oktober liegt zum Abruf bereit. |
+| versendetAm | Datum, an dem die Bank die Nachricht versendet hat; angezeigt als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-11-17 |
+| gelesen | Lesestatus: false, solange die Kundin die Nachricht nicht geöffnet hat, true ab dem Öffnen | Boolean |  | Pflicht; Standard false; Beispiel false |
+
+**Einschränkungen:** Eine Nachricht gehört genau einer Kundin und liegt nur im Speicher (ADR-002). Die Kundin setzt den Lesestatus nur durch Öffnen von false auf true und löscht Nachrichten endgültig; die Bank erzeugt die Nachrichten (hier als Demo-Daten, C-001).
 
 ### Ausgabenanalyse
 
