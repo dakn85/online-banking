@@ -89,4 +89,4 @@ Als Privatkundin möchte ich die Debitkarte zu meinem Girokonto vorübergehend s
   _→ eingearbeitet in vision, Konto, Debitkarte, UC-018, BR-0081, BR-0082, POST /api/test/reset, GET /api/konten/{iban}/debitkarte, PUT /api/konten/{iban}/debitkarte, Schema Debitkarte, Schema Debitkartenauftrag, debitkarte, finanzstatus, NFR-001, architektur · 72dd413_
 - Was geschieht bei PUT /api/konten/{iban}/debitkarte, wenn ein Sperrgrund mitgeschickt wird, der Zielstatus aber „aktiv“ oder „vorübergehend gesperrt“ ist?
   **Antwort:** Der Sperrgrund wird ignoriert und nicht gespeichert; die Antwort ist 200 oder bei unzulässigem Wechsel 409, die Debitkarte hat keinen Sperrgrund.
-  _→ eingearbeitet in Debitkarte, PUT /api/konten/{iban}/debitkarte, Schema Debitkartenauftrag, UC-018, BR-0081_
+  _→ eingearbeitet in Debitkarte, PUT /api/konten/{iban}/debitkarte, Schema Debitkartenauftrag, UC-018, BR-0081 · d263edd_
