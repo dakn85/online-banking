@@ -2,7 +2,7 @@
 
 ## Zweck
 
-Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze, analysiert die Ausgaben ihres Girokontos eines Monats nach Kategorien, überweist von ihrem Girokonto, sperrt ihre Debitkarte vorübergehend oder endgültig und liest die Nachrichten der Bank in ihrem Postfach.
+Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze, analysiert die Ausgaben ihres Girokontos eines Monats nach Kategorien, überweist von ihrem Girokonto, verwaltet Daueraufträge vom Girokonto, sperrt ihre Debitkarte vorübergehend oder endgültig und liest die Nachrichten der Bank in ihrem Postfach.
 
 ## Stakeholder
 
@@ -25,10 +25,12 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-8 | Debitkarte selbst sperren und entsperren | Anteil der Sperr-, Entsperr- und Endgültig-Sperren-Aktionen der Kundin am Girokonto, nach denen die Debitkarte-Maske den neuen Status zeigt | 100 % |
 | Z-11 | Vorgemerkte Überweisungen im Blick | Anteil der vorgemerkten Terminüberweisungen, die die Kundin mit Ausführungstag, Empfänger, Betrag und Verwendungszweck in der Liste sieht und vor der Ausführung löschen kann | 100 % |
 | Z-10 | Nachrichten der Bank im Postfach lesen | Anteil der ungelesenen Nachrichten, bei denen nach dem Öffnen der Lesestatus gelesen ist und die Zahl ungelesener Nachrichten in der Navigation um eins sinkt | 100 % |
+| Z-12 | Daueraufträge vom Girokonto verwalten | Anteil der angelegten Daueraufträge, die die Maske Daueraufträge mit Empfänger, IBAN, Betrag, Verwendungszweck, Turnus, erstem Ausführungstag und ggf. Enddatum zeigt und die die Kundin ändern und löschen kann | 100 % |
 
 ## Abgrenzung
 
-- Überweisung: einmalige Überweisung vom Girokonto, sofort oder als Terminüberweisung mit Ausführungstag ab morgen bis 365 Tage voraus; eine Terminüberweisung wird nur vorgemerkt, angezeigt und gelöscht, die Ausführung am Ausführungstag, das Ändern eines vorgemerkten Auftrags und Daueraufträge folgen später.
+- Überweisung: einmalige Überweisung vom Girokonto, sofort oder als Terminüberweisung mit Ausführungstag ab morgen bis 365 Tage voraus; eine Terminüberweisung wird nur vorgemerkt, angezeigt und gelöscht, die Ausführung am Ausführungstag, das Ändern eines vorgemerkten Auftrags folgen später.
+- Daueraufträge: nur Anlegen, Anzeigen, Ändern und Löschen mit den Turnus-Arten monatlich, vierteljährlich und jährlich; die automatische Ausführung zum Fälligkeitstermin mit Umsatzbuchung, die Prüfung von Deckung, Dispositionsrahmen und Tageslimit, Benachrichtigungen, Aussetzen, weitere Turnus-Arten, das Anlegen aus einer Empfängervorlage, die Anzeige ausgeführter Daueraufträge in den Umsätzen und eine Höchstzahl je Kundin folgen später.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
 - Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download und Storno von Umsätzen folgen später; der Export der Umsätze eines Kontos als CSV-Datei mit den Filtern der Umsatzliste ist enthalten, weitere Exportformate folgen später.

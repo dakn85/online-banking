@@ -129,7 +129,7 @@ sequenceDiagram
 
 Der Ablauf zeigt, dass die Sitzung im Dienst entsteht und jede angemeldete Seite sie erneut prüft; ohne gültige Sitzung sieht die Kundin nur die Anmeldung (NFR-001).
 
-Die Anmeldung ist `POST /api/anmeldung` mit JSON `{kennung, pin}`. Passt beides, antwortet der Dienst mit 200 und `{name}` und setzt das Cookie `aventa_sitzung`; sonst kommt 401 mit `{fehler: "Kennung oder PIN ist falsch."}`, gleich ob die Kennung unbekannt oder die PIN falsch ist. `GET /api/sitzung` nennt Name und Kundennummer für den Rahmen, `POST /api/abmeldung` beendet die Sitzung und antwortet immer mit 204. Jeder geschützte Endpunkt holt die Kundin aus der Sitzung; Konten, Umsätze, Überweisungen und Empfängervorlagen gehen nur über ihre Kennung, eine Kennung im Auftrag oder in der Adresse gibt es nicht.
+Die Anmeldung ist `POST /api/anmeldung` mit JSON `{kennung, pin}`. Passt beides, antwortet der Dienst mit 200 und `{name}` und setzt das Cookie `aventa_sitzung`; sonst kommt 401 mit `{fehler: "Kennung oder PIN ist falsch."}`, gleich ob die Kennung unbekannt oder die PIN falsch ist. `GET /api/sitzung` nennt Name und Kundennummer für den Rahmen, `POST /api/abmeldung` beendet die Sitzung und antwortet immer mit 204. Jeder geschützte Endpunkt holt die Kundin aus der Sitzung; Konten, Umsätze, Überweisungen, Empfängervorlagen und Daueraufträge gehen nur über ihre Kennung, eine Kennung im Auftrag oder in der Adresse gibt es nicht.
 
 ### Überweisung mit genau einmaliger Ausführung
 
@@ -197,14 +197,14 @@ Der Dienst hält keinen dauerhaften Zustand: Kontenbestand, Sitzungen und gebuch
 
 ### Testbetrieb und Daten je Kundin
 
-Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eigenen Konten), Idempotenz-Ablage, Empfängervorlagen, vorgemerkte Aufträge, Nachrichten des Postfachs und Sitzungen gehören je einer Kundin. Es gibt zwei Gruppen von Kundinnen:
+Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eigenen Konten), Idempotenz-Ablage, Empfängervorlagen, Daueraufträge, vorgemerkte Aufträge, Nachrichten des Postfachs und Sitzungen gehören je einer Kundin. Es gibt zwei Gruppen von Kundinnen:
 
 | Gruppe | Kennungen | Bestand | Zurückgesetzt von |
 | --- | --- | --- | --- |
-| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) mit einer Debitkarte (Status aktiv) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen; Nachrichten gehören nicht zur Kopie: Lena hat drei Nachrichten, davon zwei ungelesen, Jonas hat eine andere, gelesene Nachricht | `POST /api/test/reset` |
+| Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) mit einer Debitkarte (Status aktiv) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen und einen Dauerauftrag mit vergangenem ersten Ausführungstag; Nachrichten gehören nicht zur Kopie: Lena hat drei Nachrichten, davon zwei ungelesen, Jonas hat eine andere, gelesene Nachricht | `POST /api/test/reset` |
 | Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `97531`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze und ohne Nachrichten; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
 
-Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen, vorgemerkte Aufträge, Nachrichten, Tageslimit und Debitkarte nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.
+Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen, Daueraufträge, vorgemerkte Aufträge, Nachrichten, Tageslimit und Debitkarte nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.
 
 Speicher: Jede Überweisung legt einen Umsatz und einen Eintrag in der Idempotenz-Ablage an. Für Lastkunden hält der Dienst je Konto nur die jüngsten 200 Umsätze und je Kundin die jüngsten 200 Auftrags-Kennungen, ältere fallen weg; bei 300 Lastkunden bleibt der Bestand damit bei höchstens je 60.000 Umsätzen und Aufträgen. Eine Wiederholung derselben Auftrags-Kennung kommt im Lasttest sofort und liegt damit im Fenster. Vorgemerkte Aufträge liegen außerhalb dieser Grenzen: Sie werden nicht gekappt, ihre Kennung bleibt je Kundin dauerhaft verbraucht, auch nach dem Löschen (Wiederholung beim noch vorgemerkten Auftrag: 200, sonst 422), und ihr Bestand wächst unter Last bis zum Last-Reset. Die Demo-Kundinnen haben keine Grenze, ihr Bestand wächst nur in Akzeptanzläufen und wird je Szenario zurückgesetzt. Sitzungen laufen nicht ab: Ein Lastskript meldet sich je virtuellem Nutzer einmal an und nicht je Iteration, sonst wächst die Sitzungsablage bis zum nächsten Last-Reset.
 

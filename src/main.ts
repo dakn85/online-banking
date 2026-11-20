@@ -5,6 +5,7 @@ import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
+import * as dauerauftraege from './dauerauftraege';
 import * as tageslimit from './tageslimit';
 import * as debitkarte from './debitkarte';
 import * as nachrichten from './nachrichten';
@@ -96,6 +97,24 @@ app.delete('/api/terminueberweisungen/:auftragsId', nurAngemeldet('api'), (req, 
     return res.status(404).json({ fehler: 'Der vorgemerkte Auftrag wurde nicht gefunden.' });
   }
   res.status(204).end();
+});
+
+// UC-016: Daueraufträge der angemeldeten Kundin (BR-0077, BR-0078)
+const dauerauftragsfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof dauerauftraege.Dauerauftragsfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.get('/api/dauerauftraege', nurAngemeldet('api'), (_req, res) => {
+  res.json(dauerauftraege.liste(res.locals.kunde.kennung));
+});
+app.post('/api/dauerauftraege', nurAngemeldet('api'), (req, res) => {
+  try { res.status(201).json(dauerauftraege.anlegen(res.locals.kunde.kennung, req.body ?? {})); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+app.put('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, res) => {
+  try { res.json(dauerauftraege.aendern(res.locals.kunde.kennung, req.params.dauerauftragId, req.body ?? {})); } catch (fehler) { dauerauftragsfehler(res, fehler); }
+});
+app.delete('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, res) => {
+  try { dauerauftraege.loeschen(res.locals.kunde.kennung, req.params.dauerauftragId); res.status(204).end(); } catch (fehler) { dauerauftragsfehler(res, fehler); }
 });
 
 // UC-003: Umsätze eines Kontos der Kundin (BR-0008 bis BR-0011)
@@ -222,7 +241,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 

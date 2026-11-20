@@ -7,6 +7,7 @@ import { zuruecksetzen as auftraegeZuruecksetzen } from './ueberweisung';
 import { zuruecksetzen as umsaetzeZuruecksetzen } from './umsaetze';
 import { zuruecksetzen as vorlagenZuruecksetzen } from './empfaengervorlagen';
 import { zuruecksetzen as tageslimitZuruecksetzen } from './tageslimit';
+import { zuruecksetzen as dauerauftraegeZuruecksetzen } from './dauerauftraege';
 import { zuruecksetzen as karteZuruecksetzen } from './debitkarte';
 import { zuruecksetzen as nachrichtenZuruecksetzen } from './nachrichten';
 
@@ -53,6 +54,7 @@ function zuruecksetzenFuer(auswahl: Auswahl): void {
   umsaetzeZuruecksetzen(auswahl); // nach den Konten: der Saldo danach ergibt sich aus dem Kontosaldo
   vorlagenZuruecksetzen(auswahl);
   tageslimitZuruecksetzen(auswahl);
+  dauerauftraegeZuruecksetzen(auswahl); // nach den Konten: das Auftraggeberkonto ist das Girokonto
   karteZuruecksetzen(auswahl);
   nachrichtenZuruecksetzen(auswahl);
 }
