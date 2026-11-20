@@ -203,7 +203,7 @@ Tags: UC-021, PK-58, BR-0092, BR-0090
 Tags: UC-021, PK-58, BR-0088
 
 * Testdaten sind zurückgesetzt
-* "lasttest-001" meldet sich mit der PIN "24680" an
+* "lasttest-001" meldet sich mit der Vorgabe-PIN der Lastkunden an
 * Die Kundin öffnet die Umbuchung
 * Die Kundin erfasst Quellkonto "Girokonto", Zielkonto "Tagesgeldkonto" und Betrag "50,00 €"
 * Die Kundin wählt „Umbuchen“ "1" Mal
