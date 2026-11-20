@@ -15,28 +15,17 @@ Als Product Owner möchte ich, dass Datenmodell, API-Beschreibung und Architektu
 | Architektur | Geändert | Bausteinsicht geändert, Querschnittliche Konzepte geändert |
 | UC-004 Empfängervorlagen verwalten | Geändert | Ziele geändert |
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Beschreibung geändert
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Use Cases geändert
-- [ ] Umsatz: Eigenschaft betrag geändert
-- [ ] Umsatz: Eigenschaft buchungstag geändert
-- [ ] Umsatz: Eigenschaft gegenpartei geändert
-- [ ] Umsatz: Eigenschaft saldoDanach geändert
-- [ ] Umsatz: Eigenschaft verwendungszweck geändert
-- [ ] Umsatz: Eigenschaft waehrung geändert
-- [ ] Umsatz: Eigenschaft gebuchtAm geändert
-- [ ] Umsatz: Eigenschaft kategorie geändert
-- [ ] Umsatz: Eigenschaft umsatzId geändert
-- [ ] Umsatz: Eigenschaft sepaLastschrift geändert
-- [ ] Umsatz: Eigenschaft zurueckgegeben geändert
-- [ ] Architektur: Bausteinsicht geändert
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Umsatz: Beschreibung geändert
-- [ ] Umsatz: Attribut kategorie geändert
-- [ ] UC-004: Ziele geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-63 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-63 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+**Bausteine:** keine; der Code hat das Verhalten seit PK-59/PK-60 (src/umsaetze.ts, src/lastschrift.ts, src/ueberweisung.ts).
+
+**Schritte**
+1. Nur Dokumentation: Die Beschreibung stellt wieder her, was der Code schon tut (UC-022, BR-0093..BR-0095; UC-017, BR-0079/BR-0080). Kein Code, keine Steps.
+2. Beleg: die bestehenden Szenarien zu UC-003, UC-017 und UC-022 laufen unverändert grün.
+
+**Rahmen:** keine Änderung.
 
 ## Entscheidungen
 
