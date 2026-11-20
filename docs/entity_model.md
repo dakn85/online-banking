@@ -52,7 +52,7 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
 | kontoname | Bezeichnung des Kontos in der Tabelle | String | 1..60 | Pflicht; Länge 1..60; Beispiel Girokonto |
-| iban | IBAN des Kontos | String | 22..22 | Pflicht; Eindeutig; Länge 22..22; Beispiel DE02 5001 0517 5407 3249 11 |
+| iban | IBAN des Kontos | String | 22..22 | Pflicht; Eindeutig; Länge 22..22; Beispiel DE02500105175407324911 (angezeigt in Vierergruppen) |
 | art | Art des Kontos | String |  | Pflicht; Werte Girokonto, Kreditkarte, Tagesgeldkonto; Beispiel Girokonto |
 | saldo | Aktueller Saldo in Euro; bei einer Kreditkarte mit offenem Betrag negativ | Decimal |  | Pflicht; Beispiel 2145.30; negativ bei Kreditkarte mit offenem Betrag |
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
