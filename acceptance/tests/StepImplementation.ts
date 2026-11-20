@@ -31,6 +31,7 @@ export default class StepImplementation {
     await StepImplementation.page?.unrouteAll({ behavior: 'ignoreErrors' });
     StepImplementation.export = undefined;
     StepImplementation.umsatzstaende = [];
+    StepImplementation.umsaetzeGefiltert = false;
   }
 
   @AfterSuite()
@@ -233,6 +234,7 @@ export default class StepImplementation {
   /** Füllt Suche und Filter; leere Zellen leeren das Feld. Wartet auf die Umsätze genau dieser Abfrage. */
   @Step('Die Kundin filtert die Umsätze mit den Einträgen <tabelle>')
   public async umsaetzeFiltern(tabelle: Table) {
+    StepImplementation.umsaetzeGefiltert = true;
     const page = await this.umsaetzeGeladen();
     const [zeile] = tabelle.getTableRows();
     const zelle = (spalte: string) => text(zeile.getCell(spalte) ?? '').trim();
@@ -271,7 +273,10 @@ export default class StepImplementation {
         ist.push(index.map(i => zellen[i]));
       }
     }
-    assert.deepStrictEqual(ist, erwartet);
+    // Ohne Filter zählen die neuesten Zeilen: Das Girokonto trägt Demo-Umsätze (C-001), die ein Szenario zur Umbuchung nicht wiederholt.
+    // Mit Filter und bei einer leeren Erwartung muss die Liste genau stimmen.
+    const vergleich = StepImplementation.umsaetzeGefiltert || !erwartet.length ? ist : ist.slice(0, erwartet.length);
+    assert.deepStrictEqual(vergleich, erwartet);
   }
 
   @Step('Die Umsätze zeigen die Meldung <meldung>')
@@ -694,6 +699,8 @@ export default class StepImplementation {
 
   /** Stände der Umsatzliste je „Die Kundin öffnet die Umsätze des Kontos …“ im laufenden Szenario. */
   private static umsatzstaende: string[][] = [];
+  /** Hat das Szenario die Umsatzliste gefiltert? Dann prüft „Die Umsätze zeigen die Zeilen“ die ganze Liste. */
+  private static umsaetzeGefiltert = false;
 
   /** BR-0079: heute in Europe/Berlin plus n Tage, JJJJ-MM-TT. */
   private static inTagen(n: number): string {
