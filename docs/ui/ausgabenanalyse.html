@@ -1,0 +1,41 @@
+<!-- maske: {
+  "title": "Ausgabenanalyse",
+  "useCases": ["UC-019"],
+  "fields": [
+    {"name":"kontoname","label":"Konto","kind":"anzeige","attribute":"Konto.kontoname"},
+    {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"gesamtausgaben","label":"Gesamtausgaben","kind":"anzeige","attribute":"Ausgabenanalyse.gesamtausgaben"},
+    {"name":"monat","label":"Monat","kind":"text","attribute":"Ausgabenanalyse.monat","rules":{"required":true,"minLength":7,"maxLength":7,"pattern":"^[0-9]{4}-(0[1-9]|1[0-2])$"}},
+    {"name":"kategorie","label":"Kategorie","kind":"anzeige","attribute":"Kategorieausgabe.kategorie"},
+    {"name":"summe","label":"Summe","kind":"anzeige","attribute":"Kategorieausgabe.summe"},
+    {"name":"anteil","label":"Anteil","kind":"anzeige","attribute":"Kategorieausgabe.anteil"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Ausgabenanalyse</h1>
+  <p>Die Ausgaben Ihres Girokontos eines Monats nach Kategorien.</p>
+</header>
+<dl data-wf="kennzahl">
+  <div><dt>Konto</dt><dd>Girokonto</dd></div>
+  <div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 31</dd></div>
+  <div><dt>Gesamtausgaben</dt><dd>98,00 €</dd></div>
+</dl>
+<div data-wf="filter">
+  <label data-wf="feld"><span>Monat</span><input name="monat" placeholder="2026-02" required></label>
+</div>
+<p data-wf="meldung" role="alert">Der Monat ist ungültig: erwartet JJJJ-MM.</p>
+<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+<p data-wf="meldung" role="alert">Die Ausgabenanalyse gibt es nur für das Girokonto.</p>
+<table data-wf="tabelle">
+  <caption>Ausgaben Girokonto nach Kategorien</caption>
+  <thead>
+    <tr><th>Kategorie</th><th>Summe</th><th>Anteil</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Wohnen</td><td>86,00 €</td><td>87,8 %</td></tr>
+    <tr><td>Lebensmittel</td><td>12,00 €</td><td>12,2 %</td></tr>
+  </tbody>
+</table>
+<div data-wf="leer">
+  <p>Für diesen Monat gibt es keine Ausgaben.</p>
+</div>

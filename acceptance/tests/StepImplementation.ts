@@ -649,6 +649,117 @@ export default class StepImplementation {
     assert.strictEqual(antwort.status(), Number(code), 'PUT /api/konten/{iban}/debitkarte');
   }
 
+  /* ---------------------------------------------------------------- UC-019 Ausgabenanalyse */
+
+  /** Status der letzten Abfrage der Ausgabenanalyse. */
+  private static ausgabenStatus?: number;
+
+  private static laufenderMonat(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  /** Wartet auf die Antwort der Abfrage, die `aktion` auslöst, und die gezeichnete Seite dazu. */
+  private async ausgabenAbfrage(page: Page, monat: string, aktion: () => Promise<unknown>) {
+    const antwort = page.waitForResponse(r => /\/api\/konten\/[^/]+\/ausgabenanalyse\?/.test(r.url()) && new URL(r.url()).searchParams.get('monat') === monat);
+    await aktion();
+    StepImplementation.ausgabenStatus = (await antwort).status();
+    await page.locator(`#ausgaben-ergebnis[data-abfrage="${monat.replace(/"/g, '\\"')}"]`).waitFor();
+  }
+
+  private async ausgabenSeite(): Promise<Page> {
+    const page = await this.seite();
+    await page.locator('#ausgaben-ergebnis[data-abfrage]').waitFor();
+    return page;
+  }
+
+  @Step('Die Kundin öffnet die Ausgabenanalyse des Kontos <konto> für den Monat <monat>')
+  public async ausgabenanalyseOeffnen(konto: string, monat: string) {
+    const page = await this.seite();
+    let iban = text(konto).replace(/\s+/g, '');
+    if (!/^[A-Z]{2}\d/.test(iban)) {
+      const konten = await (await page.context().request.get(`${basisUrl}/api/konten`)).json() as { konten: { kontoname: string; iban: string }[] };
+      const gefunden = konten.konten.find(k => k.kontoname === text(konto));
+      assert.ok(gefunden, `Konto „${konto}“ nicht gefunden`);
+      iban = gefunden.iban;
+    }
+    const m = text(monat) === 'aktueller Monat' ? StepImplementation.laufenderMonat() : text(monat);
+    await this.ausgabenAbfrage(page, m, () => page.goto(`${basisUrl}/ausgabenanalyse?iban=${encodeURIComponent(iban)}&monat=${encodeURIComponent(m)}`, { waitUntil: 'domcontentloaded' }));
+  }
+
+  @Step('Die Kundin wählt in der Ausgabenanalyse den Monat <monat>')
+  public async ausgabenanalyseMonat(monat: string) {
+    const page = await this.ausgabenSeite();
+    await this.ausgabenAbfrage(page, text(monat), () => page.getByLabel('Monat', { exact: true }).fill(text(monat)));
+  }
+
+  @Step('Die Kundin wählt im Finanzstatus in der Zeile des Kontos <konto> die Ausgabenanalyse')
+  public async ausgabenanalyseAusFinanzstatus(konto: string) {
+    const page = await this.kontentabelle();
+    await page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`).getByRole('link', { name: 'Ausgabenanalyse' }).click();
+    await page.waitForURL(/\/ausgabenanalyse\?/);
+    await this.ausgabenSeite();
+  }
+
+  @Step('Das Feld Monat der Ausgabenanalyse enthält den laufenden Monat')
+  public async ausgabenanalyseLaufenderMonat() {
+    const page = await this.ausgabenSeite();
+    assert.strictEqual(await page.getByLabel('Monat', { exact: true }).inputValue(), StepImplementation.laufenderMonat());
+  }
+
+  @Step('Die Ausgabenanalyse zeigt die Kategorien <tabelle>')
+  public async ausgabenanalyseKategorien(tabelle: Table) {
+    const page = await this.ausgabenSeite();
+    const spalten = tabelle.getColumnNames();
+    const erwartet = tabelle.getTableRows().map(z => spalten.map(s => sichtbar(text(z.getCell(s)))));
+    const zeilen = page.locator('#ausgaben-ergebnis table tbody tr');
+    const ist: string[][] = [];
+    const kopf = (await page.locator('#ausgaben-ergebnis table thead th').allInnerTexts()).map(sichtbar);
+    for (let n = 0; n < await zeilen.count(); n++) {
+      const zellen = (await zeilen.nth(n).locator('td').allInnerTexts()).map(sichtbar);
+      ist.push(spalten.map(s => zellen[kopf.indexOf(s)]));
+    }
+    assert.deepStrictEqual(ist, erwartet);
+  }
+
+  /** Ohne Tabelle im Szenario: Es gibt keine Kategorie (Fehlermeldung statt Tabelle, Spec Zeilen 77 ff.). */
+  @Step('Die Ausgabenanalyse zeigt die Kategorien')
+  public async ausgabenanalyseOhneKategorien() {
+    const page = await this.ausgabenSeite();
+    assert.strictEqual(await page.locator('#ausgaben-ergebnis table tbody tr').count(), 0, 'Die Ausgabenanalyse zeigt Kategorien');
+  }
+
+  @Step('Die Ausgabenanalyse zeigt <feld> mit dem Text <erwartet>')
+  public async ausgabenanalyseFeld(feld: string, erwartet: string) {
+    const page = await this.ausgabenSeite();
+    const ort = text(feld) === 'Meldung' ? page.locator('#ausgaben-ergebnis [role="alert"]')
+      : text(feld) === 'Hinweis' ? page.locator('#ausgaben-ergebnis [data-feld="hinweis"]')
+      : page.locator('#ausgaben-ergebnis [data-feld="gesamtausgaben"]');
+    assert.strictEqual(sichtbar(await ort.first().textContent({ timeout: 5000 })), sichtbar(text(erwartet)), text(feld));
+  }
+
+  @Step('Die Ausgabenanalyse zeigt <feld> nicht')
+  public async ausgabenanalyseOhne(feld: string) {
+    const page = await this.ausgabenSeite();
+    assert.strictEqual(text(feld), 'Hinweis');
+    assert.strictEqual(await page.locator('#ausgaben-ergebnis [data-feld="hinweis"]').count(), 0, `Der ${feld} ist zu sehen`);
+  }
+
+  @Step('Die Abfrage der Ausgabenanalyse antwortet mit dem Status <status>')
+  public async ausgabenanalyseStatus(status: string) {
+    assert.strictEqual(StepImplementation.ausgabenStatus, Number(status), 'GET /api/konten/{iban}/ausgabenanalyse');
+  }
+
+  @Step('Die Ausgabenanalyse ist ohne Anmeldung nicht erreichbar')
+  public async ausgabenanalyseOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const api = await fetch(`${basisUrl}/api/konten/DE02500105175407324931/ausgabenanalyse?monat=2026-02`);
+    StepImplementation.ausgabenStatus = api.status;
+    await page.goto(`${basisUrl}/ausgabenanalyse?iban=DE02500105175407324931`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
   @Step('Die Kundin setzt die Debitkarte per Aufruf auf den Status <status> mit dem Sperrgrund <grund>')
   public async debitkarteSetzenAufruf(status: string, grund: string) {
     const page = await this.seite();

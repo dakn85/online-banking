@@ -1,9 +1,9 @@
 import express from 'express';
 import { join } from 'node:path';
-import { Datenfehler, finanzstatus } from './konten';
+import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren } from './ueberweisung';
-import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
+import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
 import * as tageslimit from './tageslimit';
 import * as debitkarte from './debitkarte';
@@ -80,6 +80,21 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   const liste = umsaetzeVon(res.locals.kunde.kennung, req.params.iban, filter);
   if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
   res.json({ umsaetze: liste });
+});
+
+// UC-019: Ausgabenanalyse des Girokontos; Prüfreihenfolge Monat 400, Konto 404, Kreditkarte 422 (BR-0083, BR-0084)
+app.get('/api/konten/:iban/ausgabenanalyse', nurAngemeldet('api'), (req, res) => {
+  let monat;
+  try {
+    monat = monatPruefen(req.query.monat);
+  } catch (fehler) {
+    if (!(fehler instanceof Abfragefehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  const konto = kontoMitIban(res.locals.kunde.kennung, req.params.iban);
+  if (!konto) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  if (konto.art !== 'Girokonto') return res.status(422).json({ fehler: 'Die Ausgabenanalyse gibt es nur für das Girokonto.' });
+  res.json(ausgabenanalyse(konto.iban, monat));
 });
 
 // UC-003, BR-0075, BR-0076: Export der Umsätze als CSV; Prüfreihenfolge 404, 400, 422
@@ -162,7 +177,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/debitkarte']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/debitkarte', '/ausgabenanalyse']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
