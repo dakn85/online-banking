@@ -23,13 +23,14 @@ Tags: UC-024, PK-62, BR-0098
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
+* Der Kontoauszug zeigt im Kopf Kontoname "Girokonto", IBAN "DE02 5001 0517 5407 3249 31" und Monat "2026-02"
 * Der Kontoauszug zeigt Anfangssaldo "-396,70 €" und Endsaldo "2.145,30 €"
 * Der Kontoauszug zeigt die Zeilen
-| Buchungstag | Gegenpartei            |
-|-------------|------------------------|
-| 12.02.2026  | Bäckerei Krause        |
-| 10.02.2026  | Energieversorgung Nord |
-| 01.02.2026  | Lindner Logistik GmbH  |
+| Buchungstag | Gegenpartei            | Verwendungszweck | Betrag     | Saldo danach |
+|-------------|------------------------|------------------|------------|--------------|
+| 12.02.2026  | Bäckerei Krause        | Einkauf          | -12,00 €   | 2.145,30 €   |
+| 10.02.2026  | Energieversorgung Nord | Abschlag Februar | -86,00 €   | 2.157,30 €   |
+| 01.02.2026  | Lindner Logistik GmbH  | Gehalt Januar    | 2.640,00 € | 2.243,30 €   |
 
 ## Ein Monat vor dem ersten Umsatz zeigt den Saldo vor dem ersten Umsatz
 
