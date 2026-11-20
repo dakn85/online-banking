@@ -22,7 +22,7 @@ paths:
       x-use-cases: [ UC-001 ]
   /api/ueberweisungen:
     post:
-      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden UTC-Tag des Ausführungszeitpunkts (erfasstAm) ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro; eine Summe genau in Höhe des Limits ist zulässig); sonst wird nichts gebucht. Prüfreihenfolge: IBAN, verfügbarer Betrag (BR-0004), Tageslimit; bei mehreren Verletzungen gilt die Meldung der zuerst verletzten. Übersteigt der Betrag zugleich den verfügbaren Betrag und das Tageslimit, antwortet der Dienst allein mit der Meldung zu BR-0004; die Tageslimit-Prüfung läuft erst danach. Eine wiederholte Bestätigung mit derselben auftragsId (200) bucht nicht erneut und wird nicht erneut gegen das Tageslimit geprüft. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Das Tageslimit gilt auch für die Lastkunden im Testbetrieb; ihre Ausgänge des Tages hängen nicht am Fenster der jüngsten 200 auftragsIds. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
+      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden UTC-Tag des Ausführungszeitpunkts (erfasstAm) ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro; eine Summe genau in Höhe des Limits ist zulässig); sonst wird nichts gebucht. Prüfreihenfolge: IBAN, verfügbarer Betrag (BR-0004), Tageslimit; bei mehreren Verletzungen gilt die Meldung der zuerst verletzten. Übersteigt der Betrag zugleich den verfügbaren Betrag und das Tageslimit, antwortet der Dienst allein mit der Meldung zu BR-0004. Das Tageslimit gilt auch für die Lastkunden im Testbetrieb; ihre Ausgänge des Tages hängen nicht am Fenster der jüngsten 200 auftragsIds. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId einer bereits ausgeführten sofortigen Überweisung bucht nicht erneut (200). Ist die auftragsId der Kundin schon für eine Terminüberweisung verwendet worden (vorgemerkt oder gelöscht), wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt und nichts gebucht. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
       operationId: ueberweisungAusfuehren
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }
@@ -48,16 +48,17 @@ paths:
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
         "422":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: "Zwei Ursachen, im Feld fehler unterscheidbar: „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“ (BR-0004) oder „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“ (BR-0070); übersteigt der Betrag beide Grenzen, kommt allein die Meldung zu BR-0004; nichts wird gebucht"
+          description: Betrag übersteigt den verfügbaren Betrag des Girokontos (BR-0004; übersteigt er zugleich das Tageslimit, kommt allein diese Meldung), die Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“ (BR-0070), oder die auftragsId wurde bereits für eine Terminüberweisung verwendet („Diese Auftrags-Kennung wurde bereits verwendet.“)
           x-rules:
             - BR-0004
+            - BR-0005
             - BR-0070
       summary: Überweisung vom Girokonto ausführen
       tags: [ Überweisung ]
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -92,12 +93,16 @@ paths:
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: "Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)"
+          x-rules:
+            - Umsatz.buchungstag
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
         "404":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Die IBAN gehört zu keinem Konto der Kundin
+          x-rules:
+            - BR-0011
       summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst"
       tags: [ Finanzstatus ]
       x-use-cases: [ UC-003 ]
@@ -236,19 +241,23 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen und Tageslimit auf den Ausgangsstand (Tageslimit gleich Standardlimit); ausgeführte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Nachrichten mit ihrem Lesestatus, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte und vorgemerkte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Demo-Testdaten zurückgesetzt } }
+      x-use-cases:
+        - UC-018
+        - UC-020
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten und vorgemerkten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset ändert daran nichts. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
       responses: { "204": { description: Lastdaten zurückgesetzt } }
+      x-intern: Testbetrieb
   /api/tageslimit:
     get:
       summary: Tageslimit der angemeldeten Kundin
@@ -393,6 +402,643 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/dauerauftraege:
+    get:
+      summary: Daueraufträge der angemeldeten Kundin
+      description: Liefert die Daueraufträge der angemeldeten Kundin vom Girokonto, nach erstem Ausführungstag aufsteigend, bei gleichem Tag nach Empfänger aufsteigend. Das Enddatum fehlt, wenn der Dauerauftrag keines hat. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um.
+      operationId: dauerauftraegeAuflisten
+      tags:
+        - Dauerauftrag
+      responses:
+        "200":
+          description: Daueraufträge der Kundin, nach erstem Ausführungstag aufsteigend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dauerauftrag'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+      x-use-cases:
+        - UC-016
+    post:
+      summary: Dauerauftrag anlegen
+      description: "Legt einen Dauerauftrag der angemeldeten Kundin an; der Dienst setzt als Auftraggeberkonto das Girokonto der Kundin (BR-0007). Empfänger, IBAN (gültig und SEPA-Land, BR-0003), Betrag (mindestens 0,10, höchstens zwei Nachkommastellen), Verwendungszweck, Turnus und erster Ausführungstag sind Pflicht, das Enddatum ist optional. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Ein Betrag mit mehr als zwei Nachkommastellen wird mit 400 abgelehnt, nicht gerundet. Bei 400 und 422 steht im Feld fehler genau der Meldungstext aus UC-016 A1 bis A5, den die Oberfläche unverändert zeigt. Eine Prüfung gegen den verfügbaren Betrag gibt es nicht, der Dauerauftrag wird nicht ausgeführt. Ohne gültige Sitzung antwortet der Dienst mit 401."
+      operationId: dauerauftragAnlegen
+      tags:
+        - Dauerauftrag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NeuerDauerauftrag'
+      responses:
+        "201":
+          description: Dauerauftrag angelegt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dauerauftrag'
+        "400":
+          description: "Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10 oder mit mehr als zwei Nachkommastellen, IBAN ungültig oder gehört zu keinem SEPA-Land; wird vor dem ersten Ausführungstag und dem Enddatum geprüft; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3 (mehr als zwei Nachkommastellen: A1)"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - Dauerauftrag.empfaenger
+            - Dauerauftrag.empfaengerIban
+            - Dauerauftrag.betrag
+            - Dauerauftrag.verwendungszweck
+            - Dauerauftrag.turnus
+            - Dauerauftrag.ersterAusfuehrungstag
+            - Dauerauftrag.enddatum
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "422":
+          description: Der erste Ausführungstag liegt vor heute oder das Enddatum liegt vor dem ersten Ausführungstag; es wird nichts gespeichert; das Feld fehler enthält den Text aus UC-016 A4 oder A5
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0077
+      x-use-cases:
+        - UC-016
+  /api/dauerauftraege/{dauerauftragId}:
+    put:
+      summary: Dauerauftrag ändern
+      description: "Ersetzt die Angaben eines Dauerauftrags der angemeldeten Kundin durch die Eingabe; das Auftraggeberkonto bleibt das Girokonto der Kundin. Der Dienst prüft in dieser Reihenfolge: Pflicht und Format (400), dann erster Ausführungstag und Enddatum (422, BR-0077). Ein Betrag mit mehr als zwei Nachkommastellen wird mit 400 abgelehnt, nicht gerundet. Der erste Ausführungstag wird nur dann gegen heute geprüft, wenn er vom gespeicherten Wert abweicht; bleibt er unverändert, lässt sich der Dauerauftrag trotz vergangenem ersten Ausführungstag ändern. Das Enddatum wird immer gegen den geltenden ersten Ausführungstag geprüft. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, ohne gültige Sitzung mit 401. Bei 400, 422 und 404 steht im Feld fehler genau der Meldungstext aus UC-016 (A1 bis A5, bei 404 A10), den die Oberfläche unverändert zeigt."
+      operationId: dauerauftragAendern
+      tags:
+        - Dauerauftrag
+      parameters:
+        - name: dauerauftragId
+          in: path
+          required: true
+          description: Kennung des Dauerauftrags
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NeuerDauerauftrag'
+      responses:
+        "200":
+          description: Dauerauftrag geändert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dauerauftrag'
+        "400":
+          description: "Pflichtfeld fehlt, Länge oder Datumsformat verletzt, Turnus nicht monatlich, vierteljährlich oder jährlich, Betrag unter 0,10 oder mit mehr als zwei Nachkommastellen, IBAN ungültig oder gehört zu keinem SEPA-Land; das Feld fehler enthält den Text aus UC-016 A1, A2 oder A3 (mehr als zwei Nachkommastellen: A1)"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - Dauerauftrag.empfaenger
+            - Dauerauftrag.empfaengerIban
+            - Dauerauftrag.betrag
+            - Dauerauftrag.verwendungszweck
+            - Dauerauftrag.turnus
+            - Dauerauftrag.ersterAusfuehrungstag
+            - Dauerauftrag.enddatum
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "404":
+          description: Kein Dauerauftrag der Kundin mit dieser Kennung; das Feld fehler enthält „Der Dauerauftrag existiert nicht mehr.“ (UC-016 A10)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "422":
+          description: Erster Ausführungstag liegt vor heute und weicht vom gespeicherten Wert ab, oder das Enddatum liegt vor dem geltenden ersten Ausführungstag (BR-0077); der Dauerauftrag bleibt unverändert; das Feld fehler enthält den Text aus UC-016 A4 oder A5
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0077
+      x-use-cases:
+        - UC-016
+    delete:
+      summary: Dauerauftrag löschen
+      description: Löscht den Dauerauftrag der angemeldeten Kundin endgültig. Eine unbekannte Kennung oder ein Dauerauftrag einer anderen Kundin wird mit 404 beantwortet, im Feld fehler steht dann „Der Dauerauftrag existiert nicht mehr.“ (UC-016 A10); ohne gültige Sitzung antwortet der Dienst mit 401.
+      operationId: dauerauftragLoeschen
+      tags:
+        - Dauerauftrag
+      parameters:
+        - name: dauerauftragId
+          in: path
+          required: true
+          description: Kennung des Dauerauftrags
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Dauerauftrag gelöscht
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+        "404":
+          description: Kein Dauerauftrag der Kundin mit dieser Kennung; das Feld fehler enthält „Der Dauerauftrag existiert nicht mehr.“ (UC-016 A10)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0078
+      x-use-cases:
+        - UC-016
+  /api/terminueberweisungen:
+    post:
+      summary: Terminüberweisung vormerken
+      description: "Legt einen Überweisungsauftrag für einen späteren Ausführungstag mit Status vorgemerkt an. Es wird nichts gebucht, der Saldo bleibt unverändert und es entsteht kein Umsatz; das Tageslimit prüft der Dienst hier nicht. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören (BR-0003), der Betrag muss mindestens 0,10 Euro betragen und darf den aktuellen verfügbaren Betrag des Girokontos nicht übersteigen (BR-0004), der Ausführungstag liegt frühestens morgen und höchstens 365 Tage nach heute (BR-0079). Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin (BR-0007). Eine wiederholte Bestätigung mit derselben auftragsId legt keinen weiteren Auftrag an, solange der Auftrag vorgemerkt ist; die auftragsId gilt je Kundin für sofortige und Terminüberweisungen und bleibt dauerhaft verbraucht, auch nach dem Löschen (BR-0005). Beträge in Euro. Status 422 hat drei Gründe, die die Oberfläche am Feld „fehler“ unterscheidet: bei BR-0004 lautet der Text „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“, bei BR-0079 „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“, bei BR-0005 „Diese Auftrags-Kennung wurde bereits verwendet.“."
+      operationId: terminueberweisungVormerken
+      tags:
+        - Überweisung
+      x-use-cases:
+        - UC-002
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Terminueberweisungsauftrag"
+      responses:
+        "200":
+          description: Auftrag mit dieser auftragsId war bereits vorgemerkt; kein weiterer Auftrag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Terminueberweisung"
+        "201":
+          description: Auftrag vorgemerkt, nichts gebucht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Terminueberweisung"
+        "400":
+          description: IBAN ungültig oder gehört zu keinem SEPA-Land, Betrag kleiner als 0,10 Euro oder Ausführungstag kein gültiges Datum
+          x-rules:
+            - Überweisung.empfaengerIban
+            - Überweisung.betrag
+            - Überweisung.ausfuehrungstag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "403":
+          description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
+          x-rules:
+            - BR-0007
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: "fehler „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“ (BR-0004), fehler „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“ (BR-0079) oder fehler „Diese Auftrags-Kennung wurde bereits verwendet.“ (BR-0005: Kennung ist für eine andere Überweisung der Kundin verbraucht, auch für einen gelöschten Auftrag; es entsteht kein Auftrag)"
+          x-rules:
+            - BR-0004
+            - BR-0079
+            - BR-0005
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+    get:
+      summary: Vorgemerkte Aufträge der angemeldeten Kundin
+      description: Liefert die Aufträge mit Status vorgemerkt der angemeldeten Kundin (BR-0080), nach Ausführungstag aufsteigend, bei gleichem Tag der früher vorgemerkte zuerst. Ohne vorgemerkten Auftrag ist die Liste leer; ohne gültige Sitzung antwortet der Dienst mit 401.
+      operationId: terminueberweisungenAbrufen
+      tags:
+        - Überweisung
+      responses:
+        "200":
+          description: Vorgemerkte Aufträge der Kundin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Terminueberweisung"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-017
+  /api/terminueberweisungen/{auftragsId}:
+    delete:
+      summary: Vorgemerkten Auftrag löschen
+      description: Löscht den vorgemerkten Auftrag der angemeldeten Kundin endgültig; er wird nicht ausgeführt. Eine unbekannte Auftrags-Kennung, ein Auftrag einer anderen Kundin und ein bereits ausgeführter Auftrag beantwortet der Dienst mit 404, ohne gültige Sitzung mit 401 (BR-0080).
+      operationId: terminueberweisungLoeschen
+      tags:
+        - Überweisung
+      parameters:
+        - name: auftragsId
+          in: path
+          required: true
+          description: Kennung des vorgemerkten Auftrags
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Auftrag gelöscht
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Kein vorgemerkter Auftrag der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0080
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-017
+  /api/konten/{iban}/debitkarte:
+    get:
+      summary: Debitkarte des Girokontos der angemeldeten Kundin abrufen
+      description: "Liefert die Debitkarte zum Girokonto mit dieser IBAN: maskierte Kartennummer, Status und bei endgültiger Sperre den Sperrgrund. Ohne gültige Sitzung 401; eine IBAN, die nicht zu einem Girokonto der angemeldeten Kundin mit Debitkarte gehört, 404."
+      operationId: debitkarteLesen
+      tags:
+        - Debitkarte
+      x-use-cases:
+        - UC-018
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Debitkarte mit Status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Debitkarte"
+        "401":
+          description: Keine gültige Sitzung
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Die IBAN gehört zu keinem Girokonto der Kundin mit Debitkarte
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+    put:
+      summary: "Status der Debitkarte setzen: sperren, entsperren, endgültig sperren"
+      description: "Setzt den Status der Debitkarte des Girokontos auf den Zielstatus im Auftrag: vorübergehend gesperrt sperrt, aktiv entsperrt, endgültig gesperrt sperrt endgültig und verlangt den Sperrgrund Verlust oder Diebstahl. Ein Sperrgrund bei Zielstatus aktiv oder vorübergehend gesperrt wird ignoriert und nicht gespeichert, auch mit einem anderen Wert; die Antwort ist 200 oder bei unzulässigem Wechsel 409, die Debitkarte hat keinen Sperrgrund. Zulässig sind nur die Wechsel nach BR-0081; jede andere Aktion, auch mit schon erreichtem Zielstatus, beantwortet der Dienst mit 409 und der Meldung zum Status, der Status bleibt unverändert. Ohne gültige Sitzung 401; eine IBAN, die nicht zu einem Girokonto der Kundin mit Debitkarte gehört, 404."
+      operationId: debitkarteStatusSetzen
+      tags:
+        - Debitkarte
+      x-use-cases:
+        - UC-018
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Debitkartenauftrag"
+      responses:
+        "200":
+          description: Status gesetzt, Debitkarte mit neuem Status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Debitkarte"
+        "400":
+          description: "Zielstatus fehlt oder ist unbekannt, oder nur beim Zielstatus endgültig gesperrt: der Sperrgrund fehlt oder ist weder Verlust noch Diebstahl"
+          x-rules:
+            - Debitkarte.status
+            - Debitkarte.sperrgrund
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Die IBAN gehört zu keinem Girokonto der Kundin mit Debitkarte
+          x-rules:
+            - BR-0082
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "409":
+          description: Aktion im aktuellen Status nicht möglich, Status unverändert
+          x-rules:
+            - BR-0081
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+  /api/konten/{iban}/ausgabenanalyse:
+    get:
+      summary: Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil
+      description: "Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Der Dienst rechnet aus allen Umsätzen des Kontos; die Grenze von 200 Umsätzen je Konto im Testbetrieb gilt nur für die Umsatzliste und den Export, nicht für die Ausgabenanalyse (BR-0083). Summen in Euro als positive Zahl, Gesamtausgaben nicht negativ, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401. Danach prüft er in dieser Reihenfolge: zuerst den Monat (400, auch bei fehlendem Monat, mit der Meldung „Der Monat ist ungültig: erwartet JJJJ-MM.“), dann das Konto (404 für eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, BR-0011, BR-0084), zuletzt die Kreditkarte (422 für die IBAN einer Kreditkarte, BR-0084). Treffen mehrere Fälle zu, gilt der erste. Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0."
+      operationId: ausgabenanalyseLesen
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-019
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+        - name: monat
+          in: query
+          required: true
+          description: Monat der Auswertung im Format JJJJ-MM, Monat 01 bis 12
+          schema:
+            type: string
+            minLength: 7
+            maxLength: 7
+            pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+      responses:
+        "200":
+          description: Kategorien des Monats, größte Summe zuerst
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ausgabenanalyse"
+        "400":
+          description: Monat fehlt oder ist ungültig, etwa nicht im Format JJJJ-MM oder Monat außerhalb 01 bis 12; wird vor Konto und Kreditkarte geprüft
+          x-rules:
+            - Ausgabenanalyse.monat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin; wird nach dem Monat und vor der Kreditkarte geprüft
+          x-rules:
+            - BR-0084
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: Die IBAN gehört zu einer Kreditkarte; die Ausgabenanalyse gibt es nur für das Girokonto; wird zuletzt geprüft
+          x-rules:
+            - BR-0084
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+  /api/nachrichten:
+    get:
+      summary: Nachrichten der angemeldeten Kundin mit Zahl ungelesener
+      description: Liefert die Nachrichten der angemeldeten Kundin, nach Datum absteigend (neueste zuerst), und die Zahl der ungelesenen Nachrichten. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um.
+      operationId: nachrichtenAuflisten
+      tags:
+        - Postfach
+      responses:
+        "200":
+          description: Nachrichten der Kundin, neueste zuerst, und Zahl ungelesener
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nachrichtenliste"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+  /api/nachrichten/{nachrichtId}:
+    patch:
+      summary: Nachricht öffnen und als gelesen markieren
+      description: "Öffnet die Nachricht der angemeldeten Kundin: setzt den Lesestatus auf gelesen und liefert die Nachricht mit ihrem Text. Der Aufruf braucht keinen Inhalt; bei einer schon gelesenen Nachricht ändert er nichts und antwortet ebenfalls mit 200. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401."
+      operationId: nachrichtOeffnen
+      tags:
+        - Postfach
+      parameters:
+        - name: nachrichtId
+          in: path
+          required: true
+          description: Kennung der Nachricht
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "200":
+          description: Nachricht mit Lesestatus gelesen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nachricht"
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Keine Nachricht der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0085
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+    delete:
+      summary: Nachricht löschen
+      description: Löscht die Nachricht der angemeldeten Kundin endgültig; sie erscheint nicht mehr in der Liste und zählt nicht mehr als ungelesen. Eine Kennung außerhalb der Länge 1 bis 36 beantwortet der Dienst mit 400, eine wohlgeformte unbekannte Kennung oder eine Nachricht einer anderen Kundin mit 404, ohne gültige Sitzung mit 401.
+      operationId: nachrichtLoeschen
+      tags:
+        - Postfach
+      parameters:
+        - name: nachrichtId
+          in: path
+          required: true
+          description: Kennung der Nachricht
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "204":
+          description: Nachricht gelöscht
+        "400":
+          description: Kennung verletzt die Feldregeln
+          x-rules:
+            - Nachricht.nachrichtId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Keine Nachricht der Kundin mit dieser Kennung
+          x-rules:
+            - BR-0085
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-020
+  /api/umbuchungen:
+    post:
+      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Prüfreihenfolge: 401, 400 (Feldregeln inklusive Mindestbetrag), Wiederholung derselben auftragsId der Kundin (200 mit der ursprünglichen Umbuchung, ohne weitere Prüfung und ohne Buchung), 403, 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze); die erste Verletzung lehnt ab. Im Feld fehler steht bei 400 wegen des Mindestbetrags und bei 422 der Fachtext aus UC-021. Die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
+      operationId: umbuchungAusfuehren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Umbuchungsauftrag"
+      responses:
+        "200":
+          description: Umbuchung mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung, auch wenn Konten oder Betrag jetzt nicht mehr zulässig wären
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Umbuchung"
+        "201":
+          description: Umbuchung ausgeführt, Salden beider Konten verändert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Umbuchung"
+        "400":
+          description: Betrag kleiner als 0,10 Euro oder Feld verletzt die Feldregeln; bei zu kleinem Betrag steht in fehler „Der Betrag muss mindestens 0,10 € betragen.“
+          x-rules:
+            - Umbuchung.betrag
+            - Umbuchung.quellIban
+            - Umbuchung.zielIban
+            - Umbuchung.auftragsId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "403":
+          description: Quell- oder Zielkonto gehört nicht zur angemeldeten Kundin; wird vor 422 geprüft
+          x-rules:
+            - BR-0088
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: "Quell- und Zielkonto sind nicht ein Girokonto und ein Tagesgeldkonto oder dasselbe Konto (fehler: „Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich.“), oder der Betrag übersteigt den verfügbaren Betrag des Quellkontos (fehler: „Der Betrag übersteigt den verfügbaren Betrag des Quellkontos.“); die Kontenpaarung wird vor der Betragsgrenze geprüft"
+          x-rules:
+            - BR-0088
+            - BR-0089
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+      summary: Umbuchung zwischen eigenen Konten ausführen
+      tags:
+        - Überweisung
+      x-use-cases:
+        - UC-021
 components:
   schemas:
     Anmeldedaten:
@@ -441,6 +1087,7 @@ components:
           enum:
             - Girokonto
             - Kreditkarte
+            - Tagesgeldkonto
           type: string
         dispositionsrahmen:
           description: Dispositionsrahmen in Euro; nur beim Girokonto vorhanden
@@ -448,9 +1095,13 @@ components:
         iban:
           description: IBAN des Kontos
           type: string
+          minLength: 22
+          maxLength: 22
         kontoname:
           description: Bezeichnung des Kontos
           type: string
+          minLength: 1
+          maxLength: 60
         saldo:
           description: Saldo in Euro; negativ bei einer Kreditkarte mit offenem Betrag
           type: number
@@ -578,12 +1229,16 @@ components:
         gegenpartei:
           description: Name der Gegenpartei
           type: string
+          minLength: 1
+          maxLength: 70
         saldoDanach:
           description: Saldo des Kontos nach dieser Buchung in Euro
           type: number
         verwendungszweck:
           description: Verwendungszweck der Buchung
           type: string
+          minLength: 1
+          maxLength: 140
         waehrung:
           enum:
             - EUR
@@ -591,6 +1246,17 @@ components:
         gebuchtAm:
           description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
           format: date-time
+          type: string
+        kategorie:
+          description: Kategorie des Umsatzes aus der festen Liste
+          enum:
+            - Wohnen
+            - Lebensmittel
+            - Mobilität
+            - Freizeit
+            - Versicherungen
+            - Gesundheit
+            - Sonstiges
           type: string
       required:
         - buchungstag
@@ -600,6 +1266,7 @@ components:
         - betrag
         - waehrung
         - saldoDanach
+        - kategorie
       type: object
       x-entity: Umsatz
     Empfaengervorlage:
@@ -688,3 +1355,408 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Dauerauftrag:
+      type: object
+      x-entity: Dauerauftrag
+      properties:
+        dauerauftragId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        auftraggeberIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Girokontos der angemeldeten Kundin (BR-0007); setzt der Dienst
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Empfängers; Länderkennzeichen muss in der SEPA-Länderliste stehen (BR-0003)
+        betrag:
+          type: number
+          minimum: 0.1
+          multipleOf: 0.01
+        waehrung:
+          type: string
+          enum:
+            - EUR
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        turnus:
+          type: string
+          enum:
+            - monatlich
+            - vierteljährlich
+            - jährlich
+        ersterAusfuehrungstag:
+          type: string
+          format: date
+        enddatum:
+          type: string
+          format: date
+          description: Fehlt, wenn der Dauerauftrag kein Enddatum hat
+      required:
+        - dauerauftragId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
+        - waehrung
+        - betrag
+        - verwendungszweck
+        - turnus
+        - ersterAusfuehrungstag
+    NeuerDauerauftrag:
+      type: object
+      properties:
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Empfängers; Länderkennzeichen muss in der SEPA-Länderliste stehen (BR-0003)
+        betrag:
+          type: number
+          minimum: 0.1
+          multipleOf: 0.01
+          description: Höchstens zwei Nachkommastellen; mehr Nachkommastellen lehnt der Dienst mit 400 ab, er rundet nicht
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        turnus:
+          type: string
+          enum:
+            - monatlich
+            - vierteljährlich
+            - jährlich
+        ersterAusfuehrungstag:
+          type: string
+          format: date
+        enddatum:
+          type: string
+          format: date
+          description: Optional; Prüfung gegen den ersten Ausführungstag nach BR-0077
+      required:
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - verwendungszweck
+        - turnus
+        - ersterAusfuehrungstag
+    Terminueberweisungsauftrag:
+      type: object
+      x-entity: Überweisung
+      required:
+        - auftragsId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - verwendungszweck
+        - ausfuehrungstag
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+          description: Kennung des Auftrags, von der Seite je Überweisung vergeben; wiederholte Bestätigung mit derselben Kennung legt keinen weiteren Auftrag an
+        auftraggeberIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+          description: IBAN des Girokontos der Kundin
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+          description: IBAN des Empfängers; Länderkennzeichen muss in der SEPA-Länderliste stehen
+        betrag:
+          type: number
+          minimum: 0.1
+          description: Betrag in Euro, mindestens 0,10; höchstens der aktuelle verfügbare Betrag des Girokontos
+        waehrung:
+          type: string
+          enum:
+            - EUR
+          default: EUR
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        ausfuehrungstag:
+          type: string
+          format: date
+          description: Ausführungstag, frühestens morgen und höchstens 365 Tage nach heute
+    Terminueberweisung:
+      type: object
+      x-entity: Überweisung
+      required:
+        - auftragsId
+        - auftraggeberIban
+        - empfaenger
+        - empfaengerIban
+        - betrag
+        - waehrung
+        - verwendungszweck
+        - status
+        - erfasstAm
+        - ausfuehrungstag
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        auftraggeberIban:
+          type: string
+        empfaenger:
+          type: string
+          minLength: 1
+          maxLength: 70
+        empfaengerIban:
+          type: string
+          minLength: 15
+          maxLength: 34
+        betrag:
+          type: number
+          minimum: 0.1
+        waehrung:
+          type: string
+          enum:
+            - EUR
+        verwendungszweck:
+          type: string
+          minLength: 1
+          maxLength: 140
+        ausfuehrungstag:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - vorgemerkt
+        erfasstAm:
+          type: string
+          format: date-time
+    Nachricht:
+      type: object
+      x-entity: Nachricht
+      properties:
+        nachrichtId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        absender:
+          type: string
+          minLength: 1
+          maxLength: 60
+        betreff:
+          type: string
+          minLength: 1
+          maxLength: 100
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        versendetAm:
+          type: string
+          format: date
+        gelesen:
+          type: boolean
+      required:
+        - nachrichtId
+        - absender
+        - betreff
+        - text
+        - versendetAm
+        - gelesen
+    Nachrichtenliste:
+      type: object
+      properties:
+        nachrichten:
+          type: array
+          items:
+            $ref: "#/components/schemas/Nachricht"
+        anzahlUngelesen:
+          type: integer
+          minimum: 0
+          description: Zahl der Nachrichten mit gelesen gleich false (BR-0086)
+      required:
+        - nachrichten
+        - anzahlUngelesen
+    Debitkarte:
+      type: object
+      x-entity: Debitkarte
+      properties:
+        kartennummerMaskiert:
+          type: string
+          description: Maskierte Kartennummer, vier Sterne und die letzten vier Stellen
+          minLength: 9
+          maxLength: 9
+          pattern: ^\*\*\*\* [0-9]{4}$
+        status:
+          type: string
+          description: Sperrstatus der Karte
+          enum:
+            - aktiv
+            - vorübergehend gesperrt
+            - endgültig gesperrt
+        sperrgrund:
+          type: string
+          description: Grund der endgültigen Sperre; nur bei Status endgültig gesperrt vorhanden
+          enum:
+            - Verlust
+            - Diebstahl
+      required:
+        - kartennummerMaskiert
+        - status
+    Debitkartenauftrag:
+      type: object
+      x-entity: Debitkarte
+      properties:
+        status:
+          type: string
+          description: "Zielstatus: vorübergehend gesperrt, aktiv oder endgültig gesperrt"
+          enum:
+            - aktiv
+            - vorübergehend gesperrt
+            - endgültig gesperrt
+        sperrgrund:
+          type: string
+          description: Grund der endgültigen Sperre, erlaubt sind Verlust und Diebstahl. Nur beim Zielstatus endgültig gesperrt Pflicht und darauf geprüft (sonst 400, vom Dienst geprüft, nicht per Enum am Feld); bei anderem Zielstatus wird jeder Wert ignoriert, nicht geprüft und nicht gespeichert
+          enum: [ Verlust, Diebstahl ]
+      required:
+        - status
+    Ausgabenanalyse:
+      type: object
+      x-entity: Ausgabenanalyse
+      required:
+        - monat
+        - gesamtausgaben
+        - kategorien
+      properties:
+        monat:
+          type: string
+          description: Monat der Auswertung im Format JJJJ-MM
+          minLength: 7
+          maxLength: 7
+          pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+        gesamtausgaben:
+          type: number
+          description: Summe aller Ausgänge im Monat in Euro, nicht negativ (0 ohne Ausgänge)
+          minimum: 0
+        kategorien:
+          type: array
+          items:
+            $ref: "#/components/schemas/Kategorieausgabe"
+    Kategorieausgabe:
+      type: object
+      x-entity: Kategorieausgabe
+      required:
+        - kategorie
+        - summe
+        - anteil
+      properties:
+        kategorie:
+          type: string
+          description: Kategorie aus der festen Liste
+          enum:
+            - Wohnen
+            - Lebensmittel
+            - Mobilität
+            - Freizeit
+            - Versicherungen
+            - Gesundheit
+            - Sonstiges
+        summe:
+          type: number
+          description: Summe der Ausgänge der Kategorie in Euro, positive Zahl
+          exclusiveMinimum: 0
+        anteil:
+          type: number
+          description: Anteil an den Gesamtausgaben in Prozent, eine Nachkommastelle
+          minimum: 0
+          maximum: 100
+    Umbuchungsauftrag:
+      type: object
+      required:
+        - auftragsId
+        - quellIban
+        - zielIban
+        - betrag
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+          description: Kennung der Umbuchung, von der Seite je Umbuchung vergeben; wiederholte Anfrage mit derselben Kennung bucht nicht erneut
+        quellIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+          description: IBAN des Quellkontos, Girokonto oder Tagesgeldkonto der Kundin
+        zielIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+          description: IBAN des Zielkontos, Girokonto oder Tagesgeldkonto der Kundin
+        betrag:
+          type: number
+          minimum: 0.1
+          description: Betrag in Euro, mindestens 0,10; höchstens der verfügbare Betrag des Quellkontos
+        waehrung:
+          type: string
+          enum:
+            - EUR
+          default: EUR
+    Umbuchung:
+      type: object
+      x-entity: Umbuchung
+      required:
+        - auftragsId
+        - quellIban
+        - zielIban
+        - betrag
+        - waehrung
+        - status
+        - erfasstAm
+      properties:
+        auftragsId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        quellIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+        zielIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+        betrag:
+          type: number
+          minimum: 0.1
+        waehrung:
+          type: string
+          enum:
+            - EUR
+        status:
+          type: string
+          enum:
+            - ausgefuehrt
+        erfasstAm:
+          type: string
+          format: date-time

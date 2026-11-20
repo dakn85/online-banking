@@ -34,7 +34,7 @@
           <label class="feld"><span>Zeitraum bis</span><input name="zeitraumBis" type="date"></label>
           <label class="feld"><span>Ein-/Ausgang</span><select name="richtung"><option value="alle">Alle</option><option value="eingang">Eingang</option><option value="ausgang">Ausgang</option></select></label>
         </form>` : ''}
-        <div class="aktionen"><button type="button" id="umsaetze-export">Als CSV exportieren</button></div>
+        <div class="aktionen"><button type="button" id="umsaetze-export">Als CSV exportieren</button>${konto && konto.art === 'Girokonto' ? ` <a class="knopf knopf--klein knopf--text" href="/ausgabenanalyse?iban=${encodeURIComponent(konto.iban)}">Ausgabenanalyse</a>` : ''}</div>
         <section id="umsaetze-ergebnis" class="umsaetze" aria-label="Umsätze" aria-live="polite"></section>`;
       const ergebnis = flaeche.querySelector('#umsaetze-ergebnis');
       const form = flaeche.querySelector('form.filter');
@@ -48,9 +48,9 @@
           const { umsaetze } = await Aventa.api(`/api/konten/${encodeURIComponent(gesucht || '-')}/umsaetze${q ? `?${q}` : ''}`);
           inhalt = umsaetze.length ? `<table class="umsatztabelle">
               <caption class="unsichtbar">Umsätze ${html(konto ? konto.kontoname : '')}</caption>
-              <thead><tr><th scope="col">Buchungstag</th><th scope="col">Gegenpartei</th><th scope="col">Verwendungszweck</th><th scope="col" class="zahl">Betrag</th><th scope="col" class="zahl">Saldo danach</th></tr></thead>
+              <thead><tr><th scope="col">Buchungstag</th><th scope="col">Gegenpartei</th><th scope="col">Verwendungszweck</th><th scope="col">Kategorie</th><th scope="col" class="zahl">Betrag</th><th scope="col" class="zahl">Saldo danach</th></tr></thead>
               <tbody>${umsaetze.map(u => `<tr>
-                <td>${datum(u.buchungstag)}</td><td>${html(u.gegenpartei)}</td><td class="leise">${html(u.verwendungszweck)}</td>
+                <td>${datum(u.buchungstag)}</td><td>${html(u.gegenpartei)}</td><td class="leise">${html(u.verwendungszweck)}</td><td>${html(u.kategorie)}</td>
                 <td class="zahl${u.betrag < 0 ? ' minus' : ' plus'}">${Aventa.euro(u.betrag)}</td><td class="zahl">${Aventa.euro(u.saldoDanach)}</td>
               </tr>`).join('')}</tbody>
             </table>`
