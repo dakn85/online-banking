@@ -18,7 +18,7 @@
 ## Standardablauf
 
 1. Die Kundin wählt im Finanzstatus in der Zeile des Girokontos oder in den Umsätzen „Ausgabenanalyse“.
-2. Das System liest das Konto der Kundin und seine Umsätze (Demo-Daten, C-001) und prüft, dass es das Girokonto der Kundin ist (BR-0011, BR-0084).
+2. Das System liest das Konto der Kundin und seine Umsätze (Demo-Daten, C-001) und prüft, dass es ein Konto der Kundin und das Girokonto ist (BR-0084).
 3. Das System zeigt Kontoname und IBAN des Kontos und das Feld Monat, vorbelegt mit dem laufenden Monat.
 4. Das System wählt die Ausgänge des Monats (BR-0009), gruppiert sie nach Kategorie und bildet je Kategorie Summe und Anteil sowie die Gesamtausgaben (BR-0083).
 5. Das System zeigt die Gesamtausgaben und die Kategorien in einer Tabelle mit Kategorie, Summe in Euro und Anteil in Prozent.
@@ -45,7 +45,7 @@
 
 ### A3: Konto nicht gefunden
 
-**Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin (BR-0011). (Schritt 2).  
+**Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin (BR-0084). (Schritt 2).  
 **Ablauf:**
 
 1. Das System zeigt die Meldung „Das Konto wurde nicht gefunden.“ und keine Kategorien.
@@ -100,9 +100,9 @@ sequenceDiagram
 
 Die Ausgabenanalyse eines Monats berücksichtigt die Ausgänge des Girokontos (BR-0009), deren Buchungstag im gewählten Monat liegt, erster und letzter Tag eingeschlossen; Eingänge zählen nicht. Sie gruppiert diese Ausgänge nach der Kategorie des Umsatzes, und nur Kategorien mit mindestens einem Ausgang erscheinen. Die Summe einer Kategorie ist die Summe der Beträge ihrer Ausgänge als positive Zahl in Euro, auf Cent gerundet (ADR-005); die Gesamtausgaben sind die Summe der Kategoriesummen. Der Anteil einer Kategorie ist ihre Summe geteilt durch die Gesamtausgaben mal 100, kaufmännisch auf eine Nachkommastelle gerundet, ohne Ausgleich auf 100 %. Die Kategorien stehen mit der größten Summe zuerst, bei gleicher Summe alphabetisch nach Kategorie. Hat der Monat keinen Ausgang, liefert der Dienst eine leere Kategorienliste mit den Gesamtausgaben 0 und die Seite zeigt den Hinweis nach A2.
 
-### BR-0084: Ausgabenanalyse nur für das Girokonto
+### BR-0084: Ausgabenanalyse nur für das Girokonto der Kundin
 
-Die Ausgabenanalyse gibt es nur zu einem Konto der Art Girokonto. Gehört die IBAN zu einer Kreditkarte der angemeldeten Kundin, antwortet der Dienst mit 422 und dem Feld fehler „Die Ausgabenanalyse gibt es nur für das Girokonto.“ und liefert keine Kategorien; die Seite zeigt diese Meldung.
+Die Ausgabenanalyse liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und dem Feld fehler „Das Konto wurde nicht gefunden.“ und liefert keine Kategorien; die Seite zeigt diese Meldung. Außerdem gibt es die Ausgabenanalyse nur zu einem Konto der Art Girokonto. Gehört die IBAN zu einer Kreditkarte der angemeldeten Kundin, antwortet der Dienst mit 422 und dem Feld fehler „Die Ausgabenanalyse gibt es nur für das Girokonto.“ und liefert keine Kategorien; die Seite zeigt diese Meldung. Bei mehreren zutreffenden Fällen gilt die Reihenfolge: zuerst der Monat (400), dann das Konto (404), dann die Kreditkarte (422).
 
 ## Notizen
 

@@ -78,7 +78,7 @@ Tags: UC-019, PK-56
 
 ## Ein Konto, das nicht zur Kundin gehört, zeigt keine Ausgabenanalyse
 
-Tags: UC-019, PK-56, BR-0011
+Tags: UC-019, PK-56, BR-0084
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an

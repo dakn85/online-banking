@@ -33,7 +33,7 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 | UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 5 geändert, Erfolg 1 geändert |
 | UC-019 Ausgabenanalyse des Girokontos anzeigen | Neu | Use Case neu |
 | BR-0083 Gruppierung, Summe und Anteil der Ausgaben je Kategorie | Neu | Neu in UC-019 |
-| BR-0084 Ausgabenanalyse nur für das Girokonto | Neu | Neu in UC-019 |
+| BR-0084 Ausgabenanalyse nur für das Girokonto der Kundin | Neu | Neu in UC-019 |
 | Vision | Geändert | Abschnitt „Zweck“ geändert, Abschnitt „Ziele“ geändert, Abschnitt „Abgrenzung“ geändert |
 
 ## Akzeptanztests
@@ -103,4 +103,4 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
   _→ noch nicht in der Spezifikation_
 - Soll die Kategorie in der Umsatzliste (API und Maske) erscheinen oder nur intern für die Ausgabenanalyse gelten?
   **Antwort:** Antwort und Spalte in der Umsatzliste
-  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, Schema Umsatz, UC-003, umsaetze_
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, Schema Umsatz, UC-003, umsaetze · e5a0dd3_
