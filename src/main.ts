@@ -4,6 +4,7 @@ import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
+import { Umbuchungsfehler, ausfuehren as umbuchen } from './umbuchung';
 import * as vorlagen from './empfaengervorlagen';
 import * as dauerauftraege from './dauerauftraege';
 import * as tageslimit from './tageslimit';
@@ -97,6 +98,17 @@ app.delete('/api/terminueberweisungen/:auftragsId', nurAngemeldet('api'), (req, 
     return res.status(404).json({ fehler: 'Der vorgemerkte Auftrag wurde nicht gefunden.' });
   }
   res.status(204).end();
+});
+
+// UC-021: Umbuchung zwischen Girokonto und Tagesgeldkonto, sofort und genau einmal je Auftrags-Kennung (BR-0088 bis BR-0092)
+app.post('/api/umbuchungen', nurAngemeldet('api'), (req, res) => {
+  try {
+    const { neu, umbuchung } = umbuchen(res.locals.kunde, req.body ?? {});
+    res.status(neu ? 201 : 200).json(umbuchung);
+  } catch (fehler) {
+    if (!(fehler instanceof Umbuchungsfehler)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
 });
 
 // UC-016: Daueraufträge der angemeldeten Kundin (BR-0077, BR-0078)
@@ -241,7 +253,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/umbuchung', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 

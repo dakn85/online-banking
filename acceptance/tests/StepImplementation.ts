@@ -1220,4 +1220,122 @@ export default class StepImplementation {
     const antwort = await this.debitkarteSetzenPerAufruf(iban, status, grund);
     assert.strictEqual(antwort.status(), 200, 'PUT /api/konten/{iban}/debitkarte');
   }
+
+  /* ---------------------------------------------------------------- UC-021 Umbuchung */
+
+  @Step('Die Kundin öffnet die Umbuchung')
+  public async umbuchungOeffnen() {
+    const page = await this.kontentabelle();
+    await page.getByRole('link', { name: 'Umbuchen' }).click();
+    await page.getByRole('form', { name: 'Umbuchung' }).waitFor();
+  }
+
+  /** Wählt in der Auswahl das Konto mit diesem Namen; gibt es keines (kein Tagesgeldkonto), bleibt die Vorbelegung stehen. */
+  private async kontoWaehlen(page: Page, feld: string, konto: string) {
+    const auswahl = page.getByRole('form', { name: 'Umbuchung' }).getByLabel(feld, { exact: true });
+    const optionen = (await auswahl.locator('option').allInnerTexts()).map(sichtbar);
+    const index = optionen.findIndex(o => o.startsWith(`${text(konto)} ·`));
+    if (index >= 0) await auswahl.selectOption({ index });
+  }
+
+  @Step('Die Kundin erfasst Quellkonto <quelle>, Zielkonto <ziel> und Betrag <betrag>')
+  public async umbuchungErfassen(quelle: string, ziel: string, betrag: string) {
+    const page = await this.seite();
+    await this.kontoWaehlen(page, 'Quellkonto', quelle);
+    await this.kontoWaehlen(page, 'Zielkonto', ziel);
+    await page.getByRole('form', { name: 'Umbuchung' }).getByLabel('Betrag in Euro').fill(text(betrag));
+  }
+
+  /** „2“ Mal: beide Klicks gehen an den Knopf, bevor die Seite wechselt (Doppelklick). */
+  @Step('Die Kundin wählt „Umbuchen“ <anzahl> Mal')
+  public async umbuchenWaehlen(anzahl: string) {
+    const page = await this.seite();
+    await page.getByRole('form', { name: 'Umbuchung' }).getByRole('button', { name: 'Umbuchen' }).click({ clickCount: Number(anzahl) });
+  }
+
+  @Step('Der Finanzstatus zeigt die Meldung <meldung>')
+  public async finanzstatusMeldet(meldung: string) {
+    const page = await this.seite();
+    await page.getByRole('status').filter({ hasText: text(meldung) }).waitFor();
+    await page.locator('.kontentabelle').waitFor();
+  }
+
+  @Step('Die Umbuchung zeigt die Meldung <meldung>')
+  public async umbuchungMeldet(meldung: string) {
+    const page = await this.seite();
+    await page.getByRole('form', { name: 'Umbuchung' }).getByRole('alert').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  @Step('Der Knopf „Umbuchen“ ist freigegeben')
+  public async umbuchenFreigegeben() {
+    const page = await this.seite();
+    const knopf = page.getByRole('form', { name: 'Umbuchung' }).getByRole('button', { name: 'Umbuchen' });
+    await knopf.waitFor();
+    assert.ok(await knopf.isEnabled(), 'Der Knopf „Umbuchen“ ist gesperrt');
+  }
+
+  @Step('Der Dienst antwortet auf die Umbuchung mit dem Status <status>')
+  public async dienstAntwortetAufUmbuchung(status: string) {
+    const page = await this.seite();
+    await page.route('**/api/umbuchungen', route => route.fulfill({
+      status: Number(status), contentType: 'application/json', body: JSON.stringify({ fehler: 'Interner Fehler.' }),
+    }));
+  }
+
+  /** „<IBAN des Tagesgeldkontos von lena.hoffmann>“ → die IBAN dieses Kontos der angemeldeten Kundin; sonst die IBAN wörtlich. */
+  private async umbuchungIban(wert: string): Promise<string> {
+    const platzhalter = /^<IBAN des (\w+) von [\w.]+>$/.exec(text(wert).trim());
+    if (!platzhalter) return text(wert).trim();
+    const page = await this.seite();
+    const { konten } = await (await page.context().request.get(`${basisUrl}/api/konten`)).json() as { konten: { kontoname: string; iban: string }[] };
+    const name = platzhalter[1].replace(/s$/, ''); // Genitiv: „des Tagesgeldkontos“
+    const konto = konten.find(k => k.kontoname === name);
+    assert.ok(konto, `Die Kundin hat kein Konto „${name}“`);
+    return konto.iban;
+  }
+
+  /** Ruft POST /api/umbuchungen mit der Sitzung der angemeldeten Kundin auf. */
+  private async umbuchungAufrufen(quelle: string, ziel: string, betrag: string, auftragsId = `test-${Date.now()}-${Math.random().toString(16).slice(2)}`) {
+    const page = await this.seite();
+    return page.context().request.post(`${basisUrl}/api/umbuchungen`, {
+      data: { auftragsId, quellIban: await this.umbuchungIban(quelle), zielIban: await this.umbuchungIban(ziel), betrag: StepImplementation.betrag(betrag), waehrung: 'EUR' },
+    });
+  }
+
+  @Step('Die Schnittstelle lehnt die Umbuchung von der IBAN <quelle> auf die IBAN <ziel> über <betrag> mit dem Status <status> ab')
+  public async umbuchungAbgelehnt(quelle: string, ziel: string, betrag: string, status: string) {
+    const antwort = await this.umbuchungAufrufen(quelle, ziel, betrag);
+    assert.strictEqual(antwort.status(), Number(status), `POST /api/umbuchungen: ${await antwort.text()}`);
+  }
+
+  @Step('Die Schnittstelle lehnt die Umbuchung von der IBAN <quelle> auf die IBAN <ziel> über <betrag> mit dem Status <status> und der Meldung <meldung> ab')
+  public async umbuchungAbgelehntMitMeldung(quelle: string, ziel: string, betrag: string, status: string, meldung: string) {
+    const antwort = await this.umbuchungAufrufen(quelle, ziel, betrag);
+    const koerper = await antwort.text();
+    assert.strictEqual(antwort.status(), Number(status), `POST /api/umbuchungen: ${koerper}`);
+    assert.strictEqual((JSON.parse(koerper) as { fehler: string }).fehler, text(meldung));
+  }
+
+  @Step('Die Schnittstelle bucht von der IBAN <quelle> auf das Tagesgeldkonto über <betrag> mit derselben Auftrags-Kennung zweimal um und erhält die Status <erster> und <zweiter>')
+  public async umbuchungZweimal(quelle: string, betrag: string, erster: string, zweiter: string) {
+    const ziel = '<IBAN des Tagesgeldkontos von lena.hoffmann>';
+    const kennung = `test-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const ersteAntwort = await this.umbuchungAufrufen(quelle, ziel, betrag, kennung);
+    assert.strictEqual(ersteAntwort.status(), Number(erster), `1. POST /api/umbuchungen: ${await ersteAntwort.text()}`);
+    const zweiteAntwort = await this.umbuchungAufrufen(quelle, ziel, betrag, kennung);
+    assert.strictEqual(zweiteAntwort.status(), Number(zweiter), `2. POST /api/umbuchungen: ${await zweiteAntwort.text()}`);
+  }
+
+  @Step('Die Umbuchung ist ohne Anmeldung nicht erreichbar, die Schnittstelle antwortet mit dem Status <status>')
+  public async umbuchungOhneAnmeldung(status: string) {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const api = await fetch(`${basisUrl}/api/umbuchungen`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ auftragsId: 'ohne-anmeldung', quellIban: 'DE02500105175407324931', zielIban: 'DE97500105175407324947', betrag: 10 }),
+    });
+    assert.strictEqual(api.status, Number(status), 'POST /api/umbuchungen ohne Sitzung');
+    await page.goto(`${basisUrl}/umbuchung`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
 }
