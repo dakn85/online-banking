@@ -35,6 +35,8 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - `acceptance/specs/kontoauszug.spec`: Der Kontoauszug wird als Datei mit festem Namen heruntergeladen
 - `acceptance/specs/kontoauszug.spec`: Der Kontoauszug zeigt Anfangssaldo, Endsaldo und alle Umsätze des Monats, neueste zuerst
 - `acceptance/specs/kontoauszug.spec`: Der laufende Monat zeigt den Zwischenstand bis heute
+- `acceptance/specs/kontoauszug.spec`: Der Monat des ersten Umsatzes zeigt den Saldo vor dem ersten Umsatz als Anfangssaldo
+- `acceptance/specs/kontoauszug.spec`: Die Kreditkarte zeigt einen negativen Anfangssaldo aus dem Saldo vor dem ersten Umsatz
 - `acceptance/specs/kontoauszug.spec`: Ein Konto, das nicht zur Kundin gehört, hat keinen Kontoauszug
 - `acceptance/specs/kontoauszug.spec`: Ein Monat ohne Umsätze ergibt einen leeren Auszug mit Saldo
 - `acceptance/specs/kontoauszug.spec`: Ein Monat vor dem ersten Umsatz zeigt den Saldo vor dem ersten Umsatz

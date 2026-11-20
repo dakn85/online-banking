@@ -109,3 +109,35 @@ Tags: UC-024, PK-62
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
 * Der Download hat den Dateinamen "Kontoauszug_<IBAN ohne Leerzeichen>_2026-02.pdf"
+
+## Die Kreditkarte zeigt einen negativen Anfangssaldo aus dem Saldo vor dem ersten Umsatz
+
+Tags: UC-024, PK-62, BR-0098
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Kreditkarte"
+* Die Kundin öffnet den Kontoauszug
+* Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
+* Der Kontoauszug zeigt Anfangssaldo "-715,00 €" und Endsaldo "-387,45 €"
+* Der Kontoauszug zeigt die Zeilen
+| Buchungstag | Gegenpartei              |
+|-------------|--------------------------|
+| 11.02.2026  | Buchhandlung Seitenweise |
+| 05.02.2026  | Reisebüro Fernweh        |
+| 02.02.2026  | Aventa Bank              |
+
+## Der Monat des ersten Umsatzes zeigt den Saldo vor dem ersten Umsatz als Anfangssaldo
+
+Tags: UC-024, PK-62, BR-0098
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin öffnet den Kontoauszug
+* Die Kundin lädt den Kontoauszug für den Monat "2026-01" herunter
+* Der Kontoauszug zeigt Anfangssaldo "553,30 €" und Endsaldo "-396,70 €"
+* Der Kontoauszug zeigt die Zeilen
+| Buchungstag | Gegenpartei           |
+|-------------|-----------------------|
+| 28.01.2026  | Hausverwaltung Berger |
