@@ -114,7 +114,7 @@ export function ausfuehren(kunde: Pick<Kunde, 'kennung' | 'speichergrenze'>, auf
   buchen(konto.iban, {
     buchungstag: ueberweisung.erfasstAm.slice(0, 10), gebuchtAm: ueberweisung.erfasstAm,
     gegenpartei: ueberweisung.empfaenger, verwendungszweck: ueberweisung.verwendungszweck,
-    betrag: -ueberweisung.betrag, saldoDanach: girokonto(kunde.kennung, konto.iban)!.saldo,
+    betrag: -ueberweisung.betrag, kategorie: 'Sonstiges', saldoDanach: girokonto(kunde.kennung, konto.iban)!.saldo,
   }, kunde.speichergrenze);
   if (!eigene) ausgefuehrt.set(kunde.kennung, eigene = new Map());
   eigene.set(auftrag.auftragsId, ueberweisung);

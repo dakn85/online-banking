@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Finanzstatus",
-  "useCases": ["UC-001","UC-003","UC-015","UC-018"],
+  "useCases": ["UC-001","UC-003","UC-015","UC-018","UC-019"],
   "fields": [
     {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
     {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
@@ -14,6 +14,7 @@
     {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"},
     {"label":"Umsätze","useCase":"UC-003#1","screen":"umsaetze"},
     {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"},
+    {"label":"Ausgabenanalyse","useCase":"UC-019#1","operation":"GET /api/konten/{iban}/ausgabenanalyse","screen":"ausgabenanalyse"},
     {"label":"Debitkarte","useCase":"UC-018#1","screen":"debitkarte"}
   ]
 } -->
@@ -23,6 +24,12 @@
   <div data-wf="aktionen"><button>Tageslimit</button></div>
 </header>
 <p data-wf="meldung" role="status">Überweisung vorgemerkt.</p>
+<nav data-wf="navigation">
+  <a href="#" aria-current="page">Finanzstatus</a>
+  <a href="#">Überweisung</a>
+  <a href="#">Empfängervorlagen</a>
+  <a href="#">Postfach (2)</a>
+</nav>
 <dl data-wf="kennzahl">
   <div><dt>Gesamtvermögen</dt><dd>1.757,85 €</dd></div>
 </dl>
@@ -32,7 +39,7 @@
     <tr><th>Kontoname</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
   </thead>
   <tbody>
-    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button>Umsätze</button> <button data-wf="primaer">Überweisen</button> <button>Debitkarte</button></td></tr>
+    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 31</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button>Umsätze</button> <button>Ausgabenanalyse</button> <button data-wf="primaer">Überweisen</button> <button>Debitkarte</button></td></tr>
     <tr><td>Kreditkarte</td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3249 55</td><td>-387,45 €</td><td></td><td></td><td><button>Umsätze</button></td></tr>
   </tbody>
 </table>
