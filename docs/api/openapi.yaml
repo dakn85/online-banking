@@ -298,36 +298,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
-  /api/umbuchungen:
-    post:
-      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Prüfreihenfolge: 401, 400 (Feldregeln inklusive Mindestbetrag), 403, 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze); die erste Verletzung lehnt ab. Im Feld fehler steht bei 400 wegen des Mindestbetrags und bei 422 der Fachtext aus UC-021. Eine wiederholte Anfrage mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
-      operationId: umbuchungAusfuehren
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Umbuchungsauftrag'
+  /api/konten/{iban}/umsaetze/export:
+    get:
+      summary: Umsätze eines Kontos als CSV-Datei exportieren
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Abfrageparametern, derselben Auswahl, Reihenfolge und demselben Saldo danach wie GET /api/konten/{iban}/umsaetze (BR-0075, BR-0008, BR-0009, BR-0010). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); passt kein Umsatz zur Auswahl, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
+      operationId: umsaetzeExportieren
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-003
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Kontos der Kundin
+          schema:
+            type: string
+        - name: suchtext
+          in: query
+          required: false
+          description: Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)
+          schema:
+            type: string
+        - name: von
+          in: query
+          required: false
+          description: Nur Umsätze mit Buchungstag ab diesem Tag, einschließlich (BR-0010); liegt dieser Tag nach dem Bis-Datum, antwortet der Dienst mit 400
+          schema:
+            type: string
+            format: date
+        - name: bis
+          in: query
+          required: false
+          description: Nur Umsätze mit Buchungstag bis zu diesem Tag, einschließlich (BR-0010)
+          schema:
+            type: string
+            format: date
+        - name: richtung
+          in: query
+          required: false
+          description: Nur Umsätze mit positivem (eingang) oder negativem (ausgang) Betrag; alle schränkt nicht ein (BR-0009)
+          schema:
+            type: string
+            default: alle
+            enum:
+              - alle
+              - eingang
+              - ausgang
       responses:
         "200":
-          description: Umbuchung mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung
-          content:
-            application/json:
+          description: CSV-Datei mit den Umsätzen des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert
+          headers:
+            Content-Disposition:
+              description: attachment mit dem Dateinamen umsaetze-<IBAN ohne Leerzeichen>.csv
               schema:
-                $ref: '#/components/schemas/Umbuchung'
-        "201":
-          description: Umbuchung ausgeführt, Salden beider Konten verändert
+                type: string
           content:
-            application/json:
+            text/csv:
               schema:
-                $ref: '#/components/schemas/Umbuchung'
+                type: string
         "400":
-          description: Betrag kleiner als 0,10 Euro oder Feld verletzt die Feldregeln; bei zu kleinem Betrag steht in fehler „Der Betrag muss mindestens 0,10 € betragen.“
+          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)
           x-rules:
-            - Umbuchung.betrag
-            - Umbuchung.quellIban
-            - Umbuchung.zielIban
-            - Umbuchung.auftragsId
+            - Umsatz.buchungstag
           content:
             application/json:
               schema:
@@ -338,6 +371,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin (BR-0011)
+          x-rules:
+            - BR-0011
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Zur Auswahl passt kein Umsatz (BR-0076)
+          x-rules:
+            - BR-0076
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+  /api/umbuchungen:
+    post:
+      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Prüfreihenfolge: 401, 400 (Feldregeln inklusive Mindestbetrag), 403, 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze); die erste Verletzung lehnt ab. Im Feld fehler steht bei 400 wegen des Mindestbetrags und bei 422 der Fachtext aus UC-021. Eine wiederholte Anfrage mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
+      operationId: umbuchungAusfuehren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Umbuchungsauftrag"
+      responses:
+        "200":
+          description: Umbuchung mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Umbuchung"
+        "201":
+          description: Umbuchung ausgeführt, Salden beider Konten verändert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Umbuchung"
+        "400":
+          description: Betrag kleiner als 0,10 Euro oder Feld verletzt die Feldregeln; bei zu kleinem Betrag steht in fehler „Der Betrag muss mindestens 0,10 € betragen.“
+          x-rules:
+            - Umbuchung.betrag
+            - Umbuchung.quellIban
+            - Umbuchung.zielIban
+            - Umbuchung.auftragsId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
         "403":
           description: Quell- oder Zielkonto gehört nicht zur angemeldeten Kundin; wird vor 422 geprüft
           x-rules:
@@ -345,7 +434,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
         "422":
           description: "Quell- und Zielkonto sind nicht ein Girokonto und ein Tagesgeldkonto oder dasselbe Konto (fehler: „Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich.“), oder der Betrag übersteigt den verfügbaren Betrag des Quellkontos (fehler: „Der Betrag übersteigt den verfügbaren Betrag des Quellkontos.“); die Kontenpaarung wird vor der Betragsgrenze geprüft"
           x-rules:
@@ -354,7 +443,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
       summary: Umbuchung zwischen eigenen Konten ausführen
       tags:
         - Überweisung
