@@ -30,6 +30,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 
 ## Akzeptanztests
 
+- `acceptance/specs/ueberweisung.spec`: Der Dienst lehnt bei Verletzung von verfügbarem Betrag und Tageslimit mit der Meldung zum verfügbaren Betrag ab
 - `acceptance/specs/ueberweisung.spec`: Ein Betrag genau in Höhe des Tageslimits wird ausgeführt
 - `acceptance/specs/ueberweisung.spec`: Ein gesenktes Tageslimit zählt frühere Ausgänge des Tages mit
 - `acceptance/specs/ueberweisung.spec`: Ein Tageslimit von 0,00 € lehnt jede Überweisung ab

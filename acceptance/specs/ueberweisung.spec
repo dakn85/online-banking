@@ -233,3 +233,13 @@ Tags: UC-002, PK-60, BR-0004, BR-0070
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "3.200,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Überweisung zeigt die Meldung "Der Betrag übersteigt den verfügbaren Betrag des Girokontos."
 * Die Überweisung zeigt keine Zusammenfassung
+
+## Der Dienst lehnt bei Verletzung von verfügbarem Betrag und Tageslimit mit der Meldung zum verfügbaren Betrag ab
+
+Tags: UC-002, PK-60, BR-0004, BR-0070
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Tageslimit
+* Die Kundin setzt das Tageslimit auf "100,00"
+* Die Kundin führt die Überweisung an "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00" und Betrag "3.200,00" direkt beim Dienst aus und der Dienst antwortet mit dem Status "422" und der Meldung "Der Betrag übersteigt den verfügbaren Betrag des Girokontos."
