@@ -304,7 +304,7 @@ paths:
   /api/terminueberweisungen:
     post:
       summary: Terminüberweisung vormerken
-      description: "Legt einen Überweisungsauftrag für einen späteren Ausführungstag mit Status vorgemerkt an. Es wird nichts gebucht, der Saldo bleibt unverändert und es entsteht kein Umsatz; das Tageslimit prüft der Dienst hier nicht. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören (BR-0003), der Betrag muss mindestens 0,10 Euro betragen und darf den aktuellen verfügbaren Betrag des Girokontos nicht übersteigen (BR-0004), der Ausführungstag liegt frühestens morgen und höchstens 365 Tage nach heute (BR-0079). Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin (BR-0007). Eine wiederholte Bestätigung mit derselben auftragsId legt keinen weiteren Auftrag an, solange der Auftrag vorgemerkt ist; die auftragsId gilt je Kundin für sofortige und Terminüberweisungen und bleibt dauerhaft verbraucht, auch nach dem Löschen (BR-0005). Beträge in Euro. Status 422 hat drei Gründe, die die Oberfläche am Feld „fehler“ unterscheidet: bei BR-0004 lautet der Text „Der Betrag übersteigt den verfügbaren Betrag.“, bei BR-0079 „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“, bei BR-0005 „Diese Auftrags-Kennung wurde bereits verwendet.“."
+      description: "Legt einen Überweisungsauftrag für einen späteren Ausführungstag mit Status vorgemerkt an. Es wird nichts gebucht, der Saldo bleibt unverändert und es entsteht kein Umsatz; das Tageslimit prüft der Dienst hier nicht. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören (BR-0003), der Betrag muss mindestens 0,10 Euro betragen und darf den aktuellen verfügbaren Betrag des Girokontos nicht übersteigen (BR-0004), der Ausführungstag liegt frühestens morgen und höchstens 365 Tage nach heute (BR-0079). Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin (BR-0007). Eine wiederholte Bestätigung mit derselben auftragsId legt keinen weiteren Auftrag an, solange der Auftrag vorgemerkt ist; die auftragsId gilt je Kundin für sofortige und Terminüberweisungen und bleibt dauerhaft verbraucht, auch nach dem Löschen (BR-0005). Beträge in Euro. Status 422 hat drei Gründe, die die Oberfläche am Feld „fehler“ unterscheidet: bei BR-0004 lautet der Text „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“, bei BR-0079 „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“, bei BR-0005 „Diese Auftrags-Kennung wurde bereits verwendet.“."
       operationId: terminueberweisungVormerken
       tags:
         - Überweisung
@@ -354,7 +354,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "422":
-          description: "fehler „Der Betrag übersteigt den verfügbaren Betrag.“ (BR-0004), fehler „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“ (BR-0079) oder fehler „Diese Auftrags-Kennung wurde bereits verwendet.“ (BR-0005: Kennung ist für eine andere Überweisung der Kundin verbraucht, auch für einen gelöschten Auftrag; es entsteht kein Auftrag)"
+          description: "fehler „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“ (BR-0004), fehler „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“ (BR-0079) oder fehler „Diese Auftrags-Kennung wurde bereits verwendet.“ (BR-0005: Kennung ist für eine andere Überweisung der Kundin verbraucht, auch für einen gelöschten Auftrag; es entsteht kein Auftrag)"
           x-rules:
             - BR-0004
             - BR-0079
