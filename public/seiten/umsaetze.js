@@ -41,7 +41,7 @@
           <label class="feld"><span>Zeitraum bis</span><input name="zeitraumBis" type="date"></label>
           <label class="feld"><span>Ein-/Ausgang</span><select name="richtung"><option value="alle">Alle</option><option value="eingang">Eingang</option><option value="ausgang">Ausgang</option></select></label>
         </form>` : ''}
-        <div class="aktionen"><button type="button" id="umsaetze-export">Als CSV exportieren</button>${konto ? ` <a class="knopf knopf--klein knopf--text" href="/kontoauszug?iban=${encodeURIComponent(konto.iban)}">Kontoauszug</a>` : ''}${konto && konto.art === 'Girokonto' ? ` <a class="knopf knopf--klein knopf--text" href="/ausgabenanalyse?iban=${encodeURIComponent(konto.iban)}">Ausgabenanalyse</a>` : ''}</div>
+        <div class="aktionen"><button type="button" class="knopf knopf--klein" id="umsaetze-export">Als CSV exportieren</button>${konto ? ` <a class="knopf knopf--klein knopf--text" href="/kontoauszug?iban=${encodeURIComponent(konto.iban)}">Kontoauszug</a>` : ''}${konto && konto.art === 'Girokonto' ? ` <a class="knopf knopf--klein knopf--text" href="/ausgabenanalyse?iban=${encodeURIComponent(konto.iban)}">Ausgabenanalyse</a>` : ''}</div>
         <section id="umsaetze-rueckfrage" class="rueckfrage" aria-label="Lastschrift zurückgeben" hidden></section>
         <section id="umsaetze-ergebnis" class="umsaetze" aria-label="Umsätze" aria-live="polite"></section>`;
       const ergebnis = flaeche.querySelector('#umsaetze-ergebnis');

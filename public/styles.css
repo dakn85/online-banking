@@ -9,16 +9,18 @@
   --tanne-tief: #0a2b27;
   --messing: #c29a4b;
   --messing-hell: #e6cf9d;
-  --grund: #f2f5f4;
+  --grund: #eef2f1;
   --flaeche: #ffffff;
   --tinte: #13201e;
   --tinte-2: #44554f;
-  --linie: #d9e1df;
+  --linie: #dfe6e4;
   --plus: #1c7a4c;
   --minus: #b42318;
   --fokus: 0 0 0 3px rgba(194, 154, 75, .55);
-  --rund-s: 6px;
-  --rund-m: 10px;
+  --rund-s: 8px;
+  --rund-m: 14px;
+  --flaeche-2: #f7f9f8;
+  --leiste: 248px;
 }
 
 * { box-sizing: border-box; }
@@ -47,14 +49,15 @@ a { color: var(--tanne); }
 .knopf--still:hover { background: var(--grund); }
 .knopf[disabled] { opacity: .6; cursor: default; }
 
-.feld { display: grid; gap: 6px; }
+.feld { display: grid; gap: 6px; align-content: start; min-width: 0; }
 .feld label { font-weight: 500; font-size: 14px; }
 .feld input, .feld select, .feld textarea {
   height: 46px; padding: 0 14px; border: 1px solid #b9c6c2; border-radius: var(--rund-s); background: #fff;
 }
+.feld input, .feld select { width: 100%; min-width: 0; }
 .feld textarea { height: auto; min-height: 76px; padding: 10px 14px; resize: vertical; }
 .feld input:focus, .feld select:focus, .feld textarea:focus { outline: none; border-color: var(--messing); box-shadow: var(--fokus); }
-.feld .hinweis { font-size: 13px; color: var(--tinte-2); }
+.feld .hinweis { margin: 0; font-size: 13px; color: var(--tinte-2); }
 .feld--fehler input { border-color: var(--minus); }
 
 .meldung { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--rund-s); font-size: 14px; }
@@ -89,42 +92,56 @@ a { color: var(--tanne); }
 /* ---------- Marke ---------- */
 .marke { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
 .marke__zeichen { width: 36px; height: 36px; flex: none; }
-.marke__name { font-weight: 600; font-size: 18px; letter-spacing: .01em; line-height: 1.1; }
+.marke__name { font-weight: 600; font-size: 17px; letter-spacing: .01em; line-height: 1.1; }
 .marke__name small { display: block; font-weight: 400; font-size: 12px; color: #a9c4be; letter-spacing: 0; }
 
-/* ---------- Rahmen nach der Anmeldung ---------- */
-.rahmen { display: grid; grid-template-columns: 264px 1fr; min-height: 100vh; }
+/* ---------- Rahmen nach der Anmeldung ----------
+   Leiste links über die ganze Höhe, darin alle Funktionen in drei Gruppen. Auf dem Telefon eine Kopfzeile mit Menü. */
+.rahmen { min-height: 100vh; padding-left: var(--leiste); }
 .leiste {
-  background: var(--tanne); color: #e5efec; display: flex; flex-direction: column;
-  padding: 28px 18px 22px; position: sticky; top: 0; height: 100vh;
+  position: fixed; inset: 0 auto 0 0; width: var(--leiste); z-index: 10;
+  background: var(--tanne); color: #e5efec; display: flex; flex-direction: column; padding: 24px 14px 18px;
 }
-.leiste .marke { padding: 0 10px 30px; }
-.navigation { display: grid; gap: 4px; }
+.leiste__kopf { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 26px; }
+.leiste__menue { display: none; background: none; border: 0; color: #fff; padding: 8px; margin: -8px; border-radius: var(--rund-s); cursor: pointer; }
+.navigation { display: grid; gap: 18px; overflow-y: auto; }
+.navigation__gruppe { display: grid; gap: 2px; }
+.navigation__titel { margin: 0 0 4px; padding: 0 12px; font-size: 12px; font-weight: 500; color: #8fb1aa; }
 .navigation a {
-  display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--rund-s);
+  display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: var(--rund-s);
   color: #d6e5e1; text-decoration: none; font-weight: 500; position: relative;
 }
-.navigation a svg { width: 20px; height: 20px; flex: none; opacity: .85; }
+.navigation a svg { width: 20px; height: 20px; flex: none; opacity: .8; }
 .navigation a:hover { background: var(--tanne-hell); color: #fff; }
-.navigation a[aria-current='page'] { background: var(--tanne-tief); color: #fff; }
+.navigation a[aria-current='page'] { background: rgba(255,255,255,.08); color: #fff; }
+.navigation a[aria-current='page'] svg { color: var(--messing); opacity: 1; }
 .navigation a[aria-current='page']::before {
-  content: ''; position: absolute; left: -18px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--messing);
+  content: ''; position: absolute; left: -14px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--messing);
 }
-.leiste__kunde { margin-top: auto; border-top: 1px solid rgba(255,255,255,.12); padding: 18px 10px 0; display: grid; gap: 4px; }
-.leiste__kunde strong { color: #fff; font-weight: 600; }
-.leiste__kunde span { font-size: 13px; color: #a9c4be; }
+.navigation__zahl { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 11px; background: var(--messing); color: var(--tanne-tief); font-size: 12px; font-weight: 600; text-align: center; }
+.navigation__zahl[hidden] { display: none; }
+.leiste__kunde {
+  margin-top: auto; border-top: 1px solid rgba(255,255,255,.12); padding: 16px 8px 0;
+  display: grid; grid-template-columns: 38px 1fr; column-gap: 10px; row-gap: 12px; align-items: center;
+}
+.leiste__kuerzel { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--messing-hell); color: var(--tanne-tief); font-weight: 600; font-size: 14px; }
+.leiste__person { display: grid; min-width: 0; }
+.leiste__person strong { color: #fff; font-weight: 600; font-size: 14px; }
+.leiste__person span { white-space: nowrap; font-size: 12px; color: #a9c4be; }
 .leiste__kunde button {
-  margin-top: 12px; justify-self: start; display: inline-flex; gap: 8px; align-items: center;
+  grid-column: 1 / -1; justify-self: start; display: inline-flex; gap: 8px; align-items: center;
   background: none; border: 1px solid rgba(255,255,255,.22); color: #e5efec; border-radius: var(--rund-s);
-  padding: 7px 12px; cursor: pointer; font-size: 14px;
+  padding: 6px 12px; cursor: pointer; font-size: 14px;
 }
 .leiste__kunde button:hover { background: var(--tanne-hell); }
 
-.inhalt { min-width: 0; padding: 40px 48px 64px; }
-.inhalt__kopf { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 28px; max-width: 1120px; }
-.inhalt__kopf h1 { font-size: 30px; }
-.inhalt__kopf p { margin: 4px 0 0; color: var(--tinte-2); }
-.inhalt__flaeche { max-width: 1120px; }
+.inhalt { min-width: 0; padding: 36px 48px 72px; max-width: calc(1120px + 96px); }
+.inhalt__kopf { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 24px; }
+.inhalt__kopf h1 { font-size: 28px; letter-spacing: -.02em; }
+#begruessung { margin: 0 0 2px; color: var(--tinte-2); font-size: 15px; }
+#begruessung:empty { display: none; }
+#kopf-aktion:empty { display: none; }
+.inhalt__flaeche { min-width: 0; }
 
 /* Leerer Bereich, solange eine Seite noch nicht gebaut ist */
 .vorbereitung {
@@ -136,54 +153,107 @@ a { color: var(--tanne); }
 .vorbereitung .marke-klein { width: 96px; height: 96px; }
 .etikett { display: inline-block; font-size: 12px; font-weight: 600; color: #6b4e14; background: #f6ecd6; border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
 
-
-/* ---------- Finanzstatus ---------- */
 .unsichtbar { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .knopf--klein { height: 34px; padding: 0 14px; font-size: 14px; background: var(--flaeche); border-color: var(--linie); color: var(--tanne); }
 .knopf--klein:hover { background: #e9f1ef; border-color: #b9cbc6; }
+.knopf--klein.knopf--haupt { background: var(--tanne); border-color: var(--tanne); color: #fff; }
+.knopf--klein.knopf--haupt:hover { background: var(--tanne-hell); }
+.knopf--text { background: transparent; border-color: transparent; padding: 0 10px; }
+.knopf--text:hover { background: #e9f1ef; border-color: transparent; }
 .inhalt__flaeche > .meldung { margin-bottom: 20px; align-items: center; font-weight: 500; }
+.abschnitt { font-size: 17px; margin: 0 0 12px; }
+.aktionen { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 16px; }
+
+/* Tabellen der übrigen Seiten: ruhig, ohne grauen Kopf */
+.kontentabelle, .umsatztabelle { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); overflow: hidden; }
+.kontentabelle th, .kontentabelle td, .umsatztabelle th, .umsatztabelle td { padding: 14px 14px; text-align: left; border-bottom: 1px solid var(--linie); }
+.kontentabelle td { white-space: nowrap; }
+.kontentabelle thead th, .umsatztabelle thead th { font-size: 13px; font-weight: 500; color: var(--tinte-2); padding-top: 12px; padding-bottom: 10px; white-space: normal; line-height: 1.3; }
+.kontentabelle tbody tr:last-child > *, .umsatztabelle tbody tr:last-child > * { border-bottom: 0; }
+.kontentabelle tbody tr:hover, .umsatztabelle tbody tr:hover { background: var(--flaeche-2); }
+.kontentabelle tbody th { font-weight: 600; }
+.kontentabelle .zahl, .umsatztabelle .zahl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.kontentabelle td.zahl { font-weight: 500; }
+.kontentabelle .minus, .umsatztabelle .minus { color: var(--minus); }
+.umsatztabelle .plus { color: var(--plus); }
+.kontentabelle .leise, .umsatztabelle .leise { color: var(--tinte-2); font-weight: 400; }
+.kontentabelle .aktion { text-align: right; width: 1%; }
+.kontentabelle .aktion .knopf + .knopf { margin-left: 4px; }
+
+/* ---------- Finanzstatus ----------
+   Oben das Gesamtvermögen mit dem Schnellzugriff, darunter je Konto eine Zeile: Name und IBAN links,
+   Beträge rechts, Aktionen darunter. Die Tabelle bleibt Tabelle (Vorleser, Tests), sieht aber nicht so aus. */
+.finanzstatus__meldung { margin: 0 0 18px; align-items: center; font-weight: 500; }
 .vermoegen {
   position: relative; overflow: hidden; background: var(--tanne); color: #fff; border-radius: var(--rund-m);
-  padding: 30px 36px; margin-bottom: 36px; min-height: 168px; display: flex; align-items: center;
+  padding: 30px 32px; margin-bottom: 32px; display: grid; gap: 24px 32px;
+  grid-template-columns: minmax(0, 1fr) auto; align-items: end;
 }
-.vermoegen > div { position: relative; }
+.vermoegen__zahl, .vermoegen .schnell { position: relative; }
 .vermoegen__muster { position: absolute; right: -40px; top: -30px; width: 620px; height: 280px; opacity: .9; -webkit-mask-image: linear-gradient(to right, transparent, #000 45%); mask-image: linear-gradient(to right, transparent, #000 45%); }
 .vermoegen__titel { margin: 0; font-size: 14px; font-weight: 500; color: #b9d3cd; }
-.vermoegen__summe { margin: 4px 0 6px; font-size: 44px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
+.vermoegen__summe { margin: 2px 0 4px; font-size: 48px; font-weight: 600; letter-spacing: -.03em; line-height: 1.08; }
 .vermoegen__stand { margin: 0; font-size: 13px; color: #a9c4be; }
-.abschnitt { font-size: 18px; margin: 0 0 14px; }
-.kontentabelle { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); overflow: hidden; }
-.kontentabelle th, .kontentabelle td { padding: 16px 14px; text-align: left; border-bottom: 1px solid var(--linie); white-space: nowrap; }
-.kontentabelle thead th { white-space: normal; line-height: 1.3; }
-.kontentabelle thead th { font-size: 13px; font-weight: 500; color: var(--tinte-2); background: #f7f9f8; padding-top: 12px; padding-bottom: 12px; }
-.kontentabelle tbody tr:last-child > * { border-bottom: 0; }
-.kontentabelle tbody th { font-weight: 600; }
-.kontentabelle .zahl { text-align: right; }
-.kontentabelle td.zahl { font-weight: 500; }
-.kontentabelle .minus { color: var(--minus); }
-.kontentabelle .leise { color: var(--tinte-2); font-weight: 400; }
-.kontentabelle .aktion { text-align: right; width: 1%; }
-.iban { font-variant-numeric: tabular-nums; letter-spacing: .02em; color: var(--tinte-2); }
+.schnell { display: grid; grid-template-columns: repeat(5, minmax(0, 112px)); gap: 8px; }
+.schnell__eintrag {
+  display: grid; justify-items: center; gap: 8px; padding: 10px 4px; border-radius: var(--rund-s);
+  color: #e5efec; text-decoration: none; font-size: 13px; font-weight: 500; text-align: center; line-height: 1.25;
+}
+.schnell__symbol { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.08); border: 1px solid rgba(230,207,157,.45); color: var(--messing-hell); }
+.schnell__eintrag:hover { background: rgba(255,255,255,.06); color: #fff; }
+.schnell__eintrag:hover .schnell__symbol { background: var(--messing); color: var(--tanne-tief); border-color: var(--messing); }
+
+.konten__liste { width: 100%; display: block; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); }
+.konten__liste tbody { display: block; }
+.konten__liste tr {
+  display: grid; align-items: center; column-gap: 24px; row-gap: 6px; padding: 18px 22px;
+  grid-template-columns: max-content minmax(0, 1fr) repeat(3, minmax(120px, 150px));
+  grid-template-areas: "name name saldo dispo verf" "art iban akt akt akt";
+  border-bottom: 1px solid var(--linie);
+}
+.konten__liste tr:last-child { border-bottom: 0; }
+.konten__liste th, .konten__liste td, .konten__liste tr:last-child > * { padding: 0; border: 0; text-align: left; white-space: nowrap; }
+.konten__liste .konten__name { grid-area: name; font-weight: 600; font-size: 16px; }
+.konten__liste tr > .konten__art { grid-area: art; margin-left: 46px; justify-self: start; font-size: 12px; font-weight: 500; color: var(--tinte-2); background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 999px; padding: 1px 9px; }
+.konten__liste .konten__iban { grid-area: iban; font-size: 13px; }
+.konten__liste .konten__saldo { grid-area: saldo; }
+.konten__liste .konten__dispo { grid-area: dispo; color: var(--tinte-2); }
+.konten__liste .konten__verfuegbar { grid-area: verf; }
+.konten__liste .konten__saldo, .konten__liste .konten__dispo, .konten__liste .konten__verfuegbar { display: grid; justify-items: end; font-weight: 500; font-variant-numeric: tabular-nums; }
+.konten__liste .konten__saldo { font-size: 17px; font-weight: 600; }
+.konten__liste td[data-titel]::before { content: attr(data-titel); font-size: 12px; font-weight: 400; color: var(--tinte-2); }
+.konten__liste td:empty { visibility: hidden; }
+.konten__liste .konten__aktion { grid-area: akt; width: auto; display: flex; justify-content: flex-end; gap: 4px; }
+.konten__liste .minus { color: var(--minus); }
+
 .konto { display: inline-flex; align-items: center; gap: 12px; }
-.konto__symbol { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: #e6efed; color: var(--tanne); }
+.konto__symbol { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: #e6efed; color: var(--tanne); }
 .konto__symbol--kreditkarte { background: #f6ecd6; color: #7a5a1c; }
 .konto__symbol--tagesgeldkonto { background: #e2efe9; color: #14532f; }
+.iban { font-variant-numeric: tabular-nums; letter-spacing: .02em; color: var(--tinte-2); }
 
-/* Überweisung (UC-002) */
-.finanzstatus__meldung { margin: 0 0 18px; align-items: center; font-weight: 500; }
-.schritte { list-style: none; display: flex; gap: 28px; margin: 0 0 22px; padding: 0; color: var(--tinte-2); font-weight: 500; font-size: 14px; }
+/* ---------- Überweisung (UC-002) ---------- */
+.schritte { list-style: none; display: flex; gap: 28px; margin: 0 0 20px; padding: 0; color: var(--tinte-2); font-weight: 500; font-size: 14px; }
 .schritte li { display: flex; align-items: center; gap: 10px; }
 .schritte span { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; border: 1.5px solid #b9c6c2; }
 .schritte li[aria-current] { color: var(--tinte); }
 .schritte li[aria-current] span { background: var(--tanne); border-color: var(--tanne); color: #fff; }
 .schritte li.erledigt span { background: #e6efed; border-color: #e6efed; color: var(--tanne); }
-.ueberweisung__raster { display: grid; grid-template-columns: minmax(0, 620px) 300px; gap: 28px; align-items: start; }
+.ueberweisung__raster { display: grid; grid-template-columns: minmax(0, 680px) 300px; gap: 24px; align-items: start; }
 .ueberweisung__form { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); padding: 28px; display: grid; gap: 18px; }
+.ueberweisung__form--raster { grid-template-columns: 1fr 1fr; column-gap: 16px; }
+.ueberweisung__form--raster > * { grid-column: 1 / -1; }
+.ueberweisung__form--raster > .feld--halb { grid-column: auto; }
 .ueberweisung__form h2 { font-size: 18px; }
+.ueberweisung__titel { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.ueberweisung__links { margin: 2px 0 0; display: flex; gap: 16px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.ueberweisung__links a { text-decoration: none; }
+.ueberweisung__links a:hover { text-decoration: underline; }
 .ueberweisung__unter { margin: 4px 0 0; color: var(--tinte-2); font-size: 14px; }
-.ueberweisung__form input[readonly] { background: #f7f9f8; color: var(--tinte-2); }
-.ueberweisung__aktionen { display: flex; justify-content: flex-end; gap: 12px; padding-top: 4px; }
-.ueberweisung__konto { background: var(--tanne); color: #fff; border-radius: var(--rund-m); padding: 22px; }
+.ueberweisung__form input[readonly] { background: var(--flaeche-2); color: var(--tinte-2); }
+.ueberweisung__aktionen { display: flex; justify-content: flex-end; gap: 12px; padding-top: 6px; border-top: 1px solid var(--linie); margin-top: 4px; padding-top: 18px; }
+.ueberweisung__nebenaktion { margin-right: auto; }
+.ueberweisung__konto { position: sticky; top: 24px; background: var(--tanne); color: #fff; border-radius: var(--rund-m); padding: 22px; }
 .ueberweisung__klein { margin: 0; font-size: 13px; color: #b9d3cd; }
 .ueberweisung__kontoname { margin: 6px 0 2px; font-weight: 600; font-size: 17px; }
 .ueberweisung__konto .iban { margin: 0 0 16px; font-size: 14px; color: #cfe0dc; }
@@ -196,7 +266,7 @@ a { color: var(--tanne); }
 .zusammenfassung dt { color: var(--tinte-2); }
 .zusammenfassung dd { margin: 0; font-weight: 500; text-align: right; }
 
-/* Empfängervorlagen (UC-004) */
+/* Empfängervorlagen (UC-004), Postfach */
 .vorlagen { display: grid; gap: 20px; max-width: 980px; }
 .vorlagen > .meldung { margin: 0; align-items: center; font-weight: 500; }
 .vorlagen__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
@@ -211,12 +281,18 @@ a { color: var(--tanne); }
 .vorlagen__abfrage p { margin: 0; font-weight: 600; }
 .ueberweisung__vorlage { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .ueberweisung__vorlage a { font-size: 14px; font-weight: 500; }
+.postfach__text { margin: 12px 0 0; }
+.postfach__text dt { color: var(--tinte-2); font-size: 13px; }
+.postfach__text dd { margin: 4px 0 0; }
 
-/* Tageslimit (UC-015): Kennzahlen als Karte wie das Auftraggeberkonto, daneben das Formular */
+/* Daueraufträge (UC-016), Debitkarte, Ausgabenanalyse: Abschnitte untereinander mit Luft */
+.dauerauftraege, .debitkarte { display: grid; gap: 20px; max-width: 1120px; }
+.dauerauftraege > *, .debitkarte > * { margin: 0; }
+
+/* Tageslimit (UC-015), Persönliche Daten */
 .tageslimit { display: grid; gap: 20px; max-width: 948px; }
 .tageslimit > .meldung { margin: 0; align-items: center; font-weight: 500; }
 .persoenlich .ueberweisung__form { max-width: 560px; }
-.ueberweisung__nebenaktion { margin-right: auto; }
 
 /* Vorgemerkte Überweisungen (UC-017) */
 .vorgemerkt { display: grid; gap: 20px; max-width: 980px; }
@@ -226,50 +302,77 @@ a { color: var(--tanne); }
 .vorgemerkt__tabelle td:last-child { white-space: normal; }
 .vorgemerkt__loeschen { max-width: 480px; }
 
+/* Umsätze (UC-003) */
+.zurueck { margin: 0 0 14px; font-size: 14px; }
+.zurueck a { color: var(--tanne); text-decoration: none; font-weight: 500; }
+.zurueck a:hover { text-decoration: underline; }
+.kontokopf { display: flex; gap: 32px; margin: 0 0 20px; padding: 16px 20px; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); }
+.kontokopf dt { font-size: 13px; color: var(--tinte-2); }
+.kontokopf dd { margin: 2px 0 0; font-weight: 600; }
+.filter { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin: 0 0 16px; }
+.filter .feld span { font-weight: 500; font-size: 14px; }
+.umsaetze .leer { padding: 24px; text-align: center; color: var(--tinte-2); background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); }
+.umsaetze .meldung { background: #fdecea; color: #7a1a12; }
+.rueckfrage:not([hidden]) { display: grid; gap: 10px; margin: 0 0 16px; padding: 16px 18px; background: #fdf6e6; border-radius: var(--rund-m); }
+
+/* ---------- Schmale Fenster ---------- */
+@media (max-width: 1100px) {
+  .konten__liste tr { grid-template-columns: max-content minmax(0, 1fr) repeat(3, minmax(104px, 1fr)); }
+  .vermoegen { grid-template-columns: 1fr; }
+  .schnell { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .filter { grid-template-columns: 1fr 1fr; }
+  .umsaetze { overflow-x: auto; }
+  .ueberweisung__raster { grid-template-columns: 1fr; }
+  .ueberweisung__konto { order: -1; position: static; }
+  .vorlagen__raster { grid-template-columns: 1fr; }
+}
 @media (max-width: 860px) {
-  .vermoegen { padding: 24px; }
-  .vermoegen__summe { font-size: 34px; }
-  .konten { overflow-x: auto; }
   .anmeldung { grid-template-columns: 1fr; }
   .anmeldung__marke { padding: 28px 24px; min-height: 220px; }
   .anmeldung__claim h2 { font-size: 28px; }
-  .rahmen { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  .leiste { position: static; height: auto; padding: 16px; }
-  .leiste .marke { padding: 0 0 12px; }
-  .navigation { grid-auto-flow: column; overflow-x: auto; }
-  .navigation a[aria-current='page']::before { display: none; }
-  .leiste__kunde { display: none; }
-  .inhalt { padding: 24px 16px 48px; }
+
+  .rahmen { padding-left: 0; }
+  .leiste { position: sticky; top: 0; inset: auto; width: auto; padding: 12px 16px; }
+  .leiste__kopf { padding: 0; }
+  .leiste__menue { display: inline-flex; }
+  .navigation, .leiste__kunde { display: none; }
+  .rahmen--menue .leiste { max-height: 100vh; overflow-y: auto; }
+  .rahmen--menue .navigation { display: grid; padding: 16px 0 8px; }
+  .rahmen--menue .leiste__kunde { display: grid; margin-top: 8px; padding-bottom: 8px; }
+  .navigation a[aria-current='page']::before { left: -16px; }
+
+  .inhalt { padding: 20px 16px 48px; }
+  .inhalt__kopf { margin-bottom: 18px; }
+  .inhalt__kopf h1 { font-size: 24px; }
   .vorbereitung { grid-template-columns: 1fr; padding: 32px 24px; }
-  .ueberweisung__raster { grid-template-columns: 1fr; }
-  .ueberweisung__konto { order: -1; }
-  .vorlagen__raster { grid-template-columns: 1fr; }
+
+  .vermoegen { padding: 22px 18px 16px; gap: 20px; }
+  .vermoegen__summe { font-size: 36px; }
+  .schnell { display: flex; gap: 4px; overflow-x: auto; margin: 0 -18px; padding: 0 18px 4px; scrollbar-width: none; }
+  .schnell__eintrag { flex: 0 0 84px; padding: 6px 0; font-size: 12px; }
+  .schnell__symbol { width: 40px; height: 40px; }
+
+  .konten__liste tr {
+    padding: 16px; column-gap: 12px; row-gap: 8px;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-areas: "name art" "iban iban" "saldo verf" "dispo dispo" "akt akt";
+  }
+  .konten__liste tr > .konten__art { margin-left: 0; justify-self: end; }
+  .konten__liste .konten__iban { padding-left: 46px; }
+  .konten__liste .konten__iban { white-space: normal; }
+  .konten__liste .konten__saldo, .konten__liste .konten__dispo, .konten__liste .konten__verfuegbar { justify-items: start; }
+  .konten__liste .konten__verfuegbar { justify-items: end; }
+  .konten__liste .konten__dispo { display: flex; gap: 6px; font-size: 13px; }
+  .konten__liste td:empty { display: none; }
+  .konten__liste .konten__aktion { justify-content: flex-start; flex-wrap: wrap; margin: 4px -10px 0; }
+  .konten__liste .konten__aktion .knopf--haupt { margin: 0 6px 0 10px; }
+
+  .kontentabelle:not(.konten__liste), .umsatztabelle { display: block; overflow-x: auto; }
+  .ueberweisung__form { padding: 20px; }
+  .ueberweisung__form--raster { grid-template-columns: 1fr; }
+  .ueberweisung__titel { flex-direction: column; gap: 8px; }
+  .kontokopf { flex-wrap: wrap; gap: 12px 24px; }
 }
-/* UC-003 Umsätze */
-.zurueck { margin: 0 0 16px; font-size: 14px; }
-.zurueck a { color: var(--tanne); text-decoration: none; }
-.kontokopf { display: flex; gap: 32px; margin: 0 0 20px; }
-.kontokopf dt { font-size: 13px; color: var(--tinte-2); }
-.kontokopf dd { margin: 2px 0 0; font-weight: 600; }
-.filter { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin: 0 0 20px; }
-.umsatztabelle { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--rund-m); overflow: hidden; }
-.umsatztabelle th, .umsatztabelle td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--linie); }
-.umsatztabelle thead th { font-size: 13px; font-weight: 500; color: var(--tinte-2); background: #f7f9f8; }
-.umsatztabelle tbody tr:last-child > * { border-bottom: 0; }
-.umsatztabelle .zahl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.umsatztabelle .minus { color: var(--minus); }
-.umsatztabelle .plus { color: var(--plus); }
-.umsatztabelle .leise { color: var(--tinte-2); }
-.umsaetze .leer { padding: 24px; text-align: center; color: var(--tinte-2); background: var(--flaeche); border: 1px dashed var(--linie); border-radius: var(--rund-m); }
-.umsaetze .meldung { background: #fdecea; color: #7a1a12; }
-.kontentabelle .aktion .knopf + .knopf { margin-left: 4px; }
-.knopf--text { background: transparent; border-color: transparent; padding: 0 10px; }
-.knopf--text:hover { background: #e9f1ef; border-color: transparent; }
-.kontentabelle th, .kontentabelle td { padding-left: 10px; padding-right: 10px; }
-@media (max-width: 900px) { .filter { grid-template-columns: 1fr 1fr; } .umsaetze { overflow-x: auto; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-.navigation__zahl { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 11px; background: var(--messing); color: var(--tanne-tief); font-size: 12px; font-weight: 600; text-align: center; }
-.navigation__zahl[hidden] { display: none; }
-.postfach__text { margin: 12px 0 0; }
-.postfach__text dt { color: var(--tinte-2); font-size: 13px; }
-.postfach__text dd { margin: 4px 0 0; }
