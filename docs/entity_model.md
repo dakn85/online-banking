@@ -10,6 +10,7 @@ erDiagram
     Empfaengervorlage }o--|| Kunde : "gehört zu"
     Dauerauftrag }o--|| Konto : "geht ab von"
     Dauerauftrag }o--|| Kunde : "gehört zu"
+    Debitkarte |o--|| Konto : "gehört zum Girokonto"
 ```
 
 ## Entitäten
@@ -45,6 +46,8 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
 | dispositionsrahmen | Eingeräumter Dispositionsrahmen in Euro; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 1000.00; nur bei Art Girokonto |
 | verfuegbarerBetrag | Verfügbarer Betrag in Euro: Saldo plus Dispositionsrahmen; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 3145.30; nur bei Art Girokonto |
+
+**Einschränkungen:** Ein Konto der Art Girokonto kann eine Debitkarte haben (Entität Debitkarte); eine Kreditkarte hat keine.
 
 ### Überweisung
 
@@ -116,3 +119,17 @@ Eine wiederkehrende Zahlung vom Girokonto der Kundin an einen Empfänger mit Bet
 | enddatum | Letzter Tag, bis zu dem der Dauerauftrag laufen soll; optional, ohne Enddatum läuft er unbefristet; die Oberfläche zeigt es als TT.MM.JJJJ | Date |  | Beispiel 2027-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
 
 **Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht.
+
+### Debitkarte
+
+**Bereich:** Debitkarte  
+
+Die Debitkarte zum Girokonto der Kundin mit ihrem Sperrstatus. Die Kundin erkennt sie an der maskierten Kartennummer.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| kartennummerMaskiert | Maskierte Kartennummer, vier Sterne und die letzten vier Stellen; daran erkennt die Kundin ihre Karte | String | 9..9 | Pflicht; Länge 9..9; Muster ^\*\*\*\* [0-9]{4}$; Beispiel **** 4821 |
+| status | Sperrstatus der Karte; endgültig gesperrt bleibt gesperrt | String |  | Pflicht; Werte aktiv, vorübergehend gesperrt, endgültig gesperrt; Standard aktiv; Beispiel aktiv |
+| sperrgrund | Grund der endgültigen Sperre, von der Kundin beim endgültigen Sperren gewählt; nur belegt, wenn der Status endgültig gesperrt ist | String |  | Werte Verlust, Diebstahl; Beispiel Verlust; Pflicht beim endgültigen Sperren, sonst nicht belegt; ein bei anderem Zielstatus mitgeschickter Sperrgrund wird ignoriert und nicht gespeichert |
+
+**Einschränkungen:** Zu einem Girokonto gibt es höchstens eine Debitkarte, zu einer Kreditkarte keine. Die Debitkarte liegt nur im Speicher (ADR-002); im Ausgangsstand haben die Demo-Kundinnen je eine Debitkarte mit Status aktiv.

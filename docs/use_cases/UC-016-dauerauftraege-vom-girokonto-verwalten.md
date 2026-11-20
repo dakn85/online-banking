@@ -7,7 +7,7 @@
 **Bereich:** Dauerauftrag  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin legt wiederkehrende Zahlungen von ihrem Girokonto als Dauerauftrag mit Empfänger, IBAN, Betrag, Verwendungszweck, Turnus (monatlich, vierteljährlich, jährlich), erstem Ausführungstag und optionalem Enddatum an, sieht sie in einer Liste, ändert und löscht sie, damit sie wiederkehrende Zahlungen einmal einrichtet und selbst pflegt.  
-**Ziele:** Z-8  
+**Ziele:** Z-9  
 **Anforderungen:** NFR-001
 
 ## Vorbedingungen
