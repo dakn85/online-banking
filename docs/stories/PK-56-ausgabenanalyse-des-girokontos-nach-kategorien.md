@@ -20,15 +20,17 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
+| Umsätze eines Kontos mit Saldo danach, neueste zuerst | Geändert | Beschreibung geändert |
 | Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil | Neu | Endpunkt neu |
+| Umsatz | Geändert | Eigenschaft kategorie neu, Attribut kategorie neu |
 | Ausgabenanalyse | Neu | Schema neu, Entität neu, Maske neu |
 | Kategorieausgabe | Neu | Schema neu, Entität neu |
-| Umsatz | Geändert | Attribut kategorie neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Anforderung geändert, Maß geändert, Gilt für geändert |
 | Finanzstatus | Geändert | Use Case UC-019 neu, Aktion Ausgabenanalyse neu, Skizze geändert |
-| Umsätze | Geändert | Use Case UC-019 neu, Aktion Ausgabenanalyse neu, Skizze geändert |
+| Umsätze | Geändert | Use Case UC-019 neu, Feld Kategorie neu, Aktion Ausgabenanalyse neu, und 1 weitere |
 | UC-002 Überweisung vom Girokonto | Geändert | BR-0012 geändert |
 | BR-0012 Umsatz einer ausgeführten Überweisung | Geändert | Text geändert |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 5 geändert, Erfolg 1 geändert |
 | UC-019 Ausgabenanalyse des Girokontos anzeigen | Neu | Use Case neu |
 | BR-0083 Gruppierung, Summe und Anteil der Ausgaben je Kategorie | Neu | Neu in UC-019 |
 | BR-0084 Ausgabenanalyse nur für das Girokonto | Neu | Neu in UC-019 |
@@ -49,7 +51,9 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Beschreibung geändert
 - [ ] Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil: Endpunkt neu
+- [ ] Umsatz: Eigenschaft kategorie neu
 - [ ] Ausgabenanalyse: Schema neu
 - [ ] Kategorieausgabe: Schema neu
 - [ ] Umsatz: Attribut kategorie neu
@@ -63,10 +67,14 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 - [ ] Finanzstatus: Aktion Ausgabenanalyse neu
 - [ ] Finanzstatus: Skizze geändert
 - [ ] Umsätze: Use Case UC-019 neu
+- [ ] Umsätze: Feld Kategorie neu
 - [ ] Umsätze: Aktion Ausgabenanalyse neu
 - [ ] Umsätze: Skizze geändert
 - [ ] UC-002: BR-0012 geändert
 - [ ] BR-0012: Text geändert
+- [ ] UC-003: Ziel geändert
+- [ ] UC-003: Schritt 5 geändert
+- [ ] UC-003: Erfolg 1 geändert
 - [ ] UC-019: Use Case neu
 - [ ] BR-0083: Neu in UC-019
 - [ ] BR-0084: Neu in UC-019
@@ -93,3 +101,6 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 - Welcher Fehler gilt, wenn bei der Abfrage der Ausgabenanalyse mehrere Fälle zugleich zutreffen, etwa ungültiger oder fehlender Monat zusammen mit einer fremden IBAN oder der IBAN der Kreditkarte?
   **Antwort:** Zuerst Format des Monats (400, „Der Monat ist ungültig: erwartet JJJJ-MM.“), dann Konto nicht gefunden (404), dann Kreditkarte (422). Ein fehlender Monat ist ebenfalls 400 mit derselben Meldung.
   _→ noch nicht in der Spezifikation_
+- Soll die Kategorie in der Umsatzliste (API und Maske) erscheinen oder nur intern für die Ausgabenanalyse gelten?
+  **Antwort:** Antwort und Spalte in der Umsatzliste
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, Schema Umsatz, UC-003, umsaetze_

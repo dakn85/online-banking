@@ -51,7 +51,7 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -86,12 +86,16 @@ paths:
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: "Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)"
+          x-rules:
+            - Umsatz.buchungstag
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
         "404":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Die IBAN gehört zu keinem Konto der Kundin
+          x-rules:
+            - BR-0011
       summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst"
       tags: [ Finanzstatus ]
       x-use-cases: [ UC-003 ]
@@ -545,12 +549,16 @@ components:
         gegenpartei:
           description: Name der Gegenpartei
           type: string
+          minLength: 1
+          maxLength: 70
         saldoDanach:
           description: Saldo des Kontos nach dieser Buchung in Euro
           type: number
         verwendungszweck:
           description: Verwendungszweck der Buchung
           type: string
+          minLength: 1
+          maxLength: 140
         waehrung:
           enum:
             - EUR
@@ -558,6 +566,17 @@ components:
         gebuchtAm:
           description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
           format: date-time
+          type: string
+        kategorie:
+          description: Kategorie des Umsatzes aus der festen Liste
+          enum:
+            - Wohnen
+            - Lebensmittel
+            - Mobilität
+            - Freizeit
+            - Versicherungen
+            - Gesundheit
+            - Sonstiges
           type: string
       required:
         - buchungstag
@@ -567,6 +586,7 @@ components:
         - betrag
         - waehrung
         - saldoDanach
+        - kategorie
       type: object
       x-entity: Umsatz
     Empfaengervorlage:
