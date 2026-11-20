@@ -20,7 +20,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
-| Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
+| Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 200 geändert, Antwort 422 geändert |
 | Architektur | Geändert | Bausteinsicht geändert, Laufzeitsicht geändert |
 | Antwortzeit von Finanzstatus und Überweisung | Geändert | Maß geändert, Herkunft geändert |
 | Überweisung | Geändert | Skizze geändert |
@@ -44,6 +44,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
 - [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
 - [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
+- [ ] Überweisung vom Girokonto ausführen: Antwort 200 geändert
 - [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
 - [ ] Architektur: Bausteinsicht geändert
 - [ ] Architektur: Laufzeitsicht geändert

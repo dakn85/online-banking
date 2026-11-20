@@ -22,7 +22,7 @@ paths:
       x-use-cases: [ UC-001 ]
   /api/ueberweisungen:
     post:
-      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden Kalendertag ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro); sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
+      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden UTC-Tag des Ausführungszeitpunkts (erfasstAm) ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro; eine Summe genau in Höhe des Limits ist zulässig); sonst wird nichts gebucht. Prüfreihenfolge: IBAN, verfügbarer Betrag (BR-0004), Tageslimit; bei mehreren Verletzungen gilt die Meldung der zuerst verletzten. Eine wiederholte Bestätigung mit derselben auftragsId (200) bucht nicht erneut und wird nicht erneut gegen das Tageslimit geprüft. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
       operationId: ueberweisungAusfuehren
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }
@@ -30,13 +30,16 @@ paths:
       responses:
         "200":
           content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }
-          description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung
+          description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung, keine erneute Tageslimitprüfung
         "201":
           content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }
           description: "Auftrag ausgeführt, Saldo des Girokontos gemindert"
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: "IBAN ungültig oder gehört zu keinem SEPA-Land, oder Betrag kleiner als 0,10 Euro"
+          x-rules:
+            - Überweisung.empfaengerIban
+            - Überweisung.betrag
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
@@ -45,7 +48,7 @@ paths:
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
         "422":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: Betrag übersteigt den verfügbaren Betrag des Girokontos, oder der Betrag zusammen mit den heutigen Überweisungen übersteigt das Tageslimit der Kundin; nichts wird gebucht
+          description: "Zwei Ursachen, im Feld fehler unterscheidbar: „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“ (BR-0004) oder „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“ (BR-0070); nichts wird gebucht"
           x-rules:
             - BR-0004
             - BR-0070
