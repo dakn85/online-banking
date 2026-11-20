@@ -30,6 +30,7 @@ export default class StepImplementation {
     await StepImplementation.page?.context().clearCookies();
     await StepImplementation.page?.unrouteAll({ behavior: 'ignoreErrors' });
     StepImplementation.export = undefined;
+    StepImplementation.umsatzstaende = [];
   }
 
   @AfterSuite()
@@ -136,20 +137,24 @@ export default class StepImplementation {
   @Step('Die Kundin öffnet die Überweisung vom Girokonto')
   public async ueberweisungOeffnen() {
     const page = await this.kontentabelle();
-    await page.locator('.kontentabelle tbody tr[data-konto="Girokonto"]').getByRole('link', { name: 'Überweisen' }).click();
+    const zeile = page.locator('.kontentabelle tbody tr[data-konto="Girokonto"]');
+    // Das Girokonto der angemeldeten Kundin (Lena und Jonas haben eigene IBANs).
+    const iban = sichtbar(await zeile.locator('td.iban').textContent());
+    await zeile.getByRole('link', { name: 'Überweisen' }).click();
     const konto = page.getByRole('form', { name: 'Überweisung' }).getByLabel('Auftraggeberkonto', { exact: true });
     await konto.waitFor();
-    assert.match(await konto.inputValue(), /DE02 5001 0517 5407 3249 31/, 'Auftraggeberkonto ist nicht das Girokonto');
+    assert.ok((await konto.inputValue()).includes(iban), `Auftraggeberkonto ist nicht das Girokonto ${iban}`);
   }
 
   /** Füllt das Formular der Überweisung und wählt „Weiter“. */
-  private async erfassen(empfaenger: string, iban: string, betrag: string, zweck: string): Promise<Page> {
+  private async erfassen(empfaenger: string, iban: string, betrag: string, zweck: string, ausfuehrungstag?: string): Promise<Page> {
     const page = await this.seite();
     const form = page.getByRole('form', { name: 'Überweisung' });
     await form.getByLabel('Empfänger', { exact: true }).fill(text(empfaenger));
     await form.getByLabel('IBAN des Empfängers').fill(text(iban));
     await form.getByLabel('Betrag in Euro').fill(text(betrag));
     await form.getByLabel('Verwendungszweck').fill(text(zweck));
+    if (ausfuehrungstag !== undefined) await form.getByLabel('Ausführungstag').fill(StepImplementation.tag(ausfuehrungstag));
     await form.getByRole('button', { name: 'Weiter' }).click();
     return page;
   }
@@ -214,6 +219,8 @@ export default class StepImplementation {
     await page.locator(`.kontentabelle tbody tr[data-konto="${text(konto)}"]`).getByRole('link', { name: 'Umsätze' }).click();
     await page.waitForURL(/\/umsaetze\?/);
     await this.umsaetzeGeladen();
+    // Stand der Umsätze je Aufruf, für „gegenüber vorher unverändert“.
+    StepImplementation.umsatzstaende.push(await page.locator('#umsaetze-ergebnis tbody tr').allInnerTexts());
   }
 
   @Step('Die Kundin öffnet die Umsätze des Kontos mit der IBAN <iban>')
@@ -538,6 +545,191 @@ export default class StepImplementation {
     });
     assert.strictEqual(setzen.status, 401, 'PUT /api/tageslimit ohne Sitzung');
     await page.goto(`${basisUrl}/tageslimit`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
+  /* ---------------------------------------------------------------- UC-002 A9 Terminüberweisung, UC-017 Vorgemerkte Überweisungen */
+
+  /** Stände der Umsatzliste je „Die Kundin öffnet die Umsätze des Kontos …“ im laufenden Szenario. */
+  private static umsatzstaende: string[][] = [];
+
+  /** BR-0079: heute in Europe/Berlin plus n Tage, JJJJ-MM-TT. */
+  private static inTagen(n: number): string {
+    const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const d = new Date(`${heute}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+
+  /** „heute“, „morgen“, „in 5 Tagen“ relativ zu heute; „31.02.2027“ wörtlich als „2027-02-31“. */
+  private static tag(wert: unknown): string {
+    const t = text(wert).trim();
+    if (t === 'heute') return StepImplementation.inTagen(0);
+    if (t === 'morgen') return StepImplementation.inTagen(1);
+    const relativ = /^in (\d+) Tagen?$/.exec(t);
+    if (relativ) return StepImplementation.inTagen(Number(relativ[1]));
+    const datum = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(t);
+    if (datum) return `${datum[3]}-${datum[2]}-${datum[1]}`;
+    return t;
+  }
+
+  /** Der Tag im Anzeigeformat TT.MM.JJJJ. */
+  private static anzeigetag(wert: unknown): string {
+    return StepImplementation.tag(wert).split('-').reverse().join('.');
+  }
+
+  /** „3.200,00 €“ → 3200 */
+  private static betrag(wert: unknown): number {
+    return Number(text(wert).replace(/[\s€ ]/g, '').replace(/\./g, '').replace(',', '.'));
+  }
+
+  @Step('Die Kundin erfasst Empfänger <empfaenger>, IBAN <iban>, Betrag <betrag>, Verwendungszweck <zweck> und Ausführungstag <tag> und wählt „Weiter“')
+  public async erfassenMitTagUndWeiter(empfaenger: string, iban: string, betrag: string, zweck: string, tag: string) {
+    await this.erfassen(empfaenger, iban, betrag, zweck, tag);
+  }
+
+  @Step('Die Zusammenfassung zeigt die Zeile <zeile> mit dem Wert <tag> im Format TT.MM.JJJJ')
+  public async zusammenfassungZeigtTag(zeile: string, tag: string) {
+    const page = await this.seite();
+    const zusammenfassung = page.getByRole('region', { name: 'Zusammenfassung' });
+    await zusammenfassung.waitFor();
+    const werte = Object.fromEntries(await zusammenfassung.locator('dl > div').evaluateAll(zeilen =>
+      zeilen.map(z => [z.querySelector('dt')!.textContent!.trim(), z.querySelector('dd')!.textContent!.trim()])));
+    assert.strictEqual(werte[text(zeile)], StepImplementation.anzeigetag(tag), `Zeile „${zeile}“ der Zusammenfassung`);
+  }
+
+  @Step('Die Umsätze des Kontos sind gegenüber vorher unverändert')
+  public async umsaetzeUnveraendert() {
+    const staende = StepImplementation.umsatzstaende;
+    assert.ok(staende.length >= 2, 'Die Umsätze wurden im Szenario nicht zweimal geöffnet');
+    assert.deepStrictEqual(staende[staende.length - 1], staende[staende.length - 2]);
+  }
+
+  /** Ein gültiger Terminauftrag von Lenas Girokonto, den die Tabelle des Szenarios Feld für Feld überschreibt. */
+  private static terminauftrag(tabelle: Table): Record<string, unknown> {
+    const auftrag: Record<string, unknown> = {
+      auftragsId: `test-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      auftraggeberIban: 'DE02500105175407324931', empfaenger: 'Möbel Nord GmbH', empfaengerIban: 'DE89370400440532013000',
+      betrag: 50, waehrung: 'EUR', verwendungszweck: 'Rechnung 4711', ausfuehrungstag: StepImplementation.inTagen(5),
+    };
+    for (const zeile of tabelle.getTableRows()) {
+      const feld = text(zeile.getCell('feld')).trim();
+      const wert = zeile.getCell('wert');
+      auftrag[feld] = feld === 'betrag' ? StepImplementation.betrag(wert) : feld === 'ausfuehrungstag' ? StepImplementation.tag(wert) : text(wert).trim();
+    }
+    return auftrag;
+  }
+
+  /** „POST /api/…“ → Methode und Pfad; {auftragsId} kommt aus den Angaben. */
+  private static aufruf(operation: string, angaben: Record<string, unknown>): { methode: string; pfad: string } {
+    const [methode, pfad] = text(operation).trim().split(/\s+/);
+    return { methode, pfad: pfad.replace('{auftragsId}', encodeURIComponent(text(angaben.auftragsId))) };
+  }
+
+  @Step('Die angemeldete Kundin ruft <operation> mit den Angaben auf und erhält den Status <status> <tabelle>')
+  public async angemeldetAufrufen(operation: string, status: string, tabelle: Table) {
+    const page = await this.seite();
+    const angaben = StepImplementation.terminauftrag(tabelle);
+    const { methode, pfad } = StepImplementation.aufruf(operation, angaben);
+    // page.request teilt die Cookies der Seite, also die Sitzung der angemeldeten Kundin.
+    const antwort = await page.request.fetch(`${basisUrl}${pfad}`, {
+      method: methode, ...(methode === 'POST' ? { data: angaben } : {}),
+    });
+    assert.strictEqual(antwort.status(), Number(status), `${methode} ${pfad}: ${await antwort.text()}`);
+  }
+
+  @Step('Der Aufruf <operation> ohne Anmeldung antwortet mit dem Status <status>')
+  public async ohneAnmeldungAufrufen(operation: string, status: string) {
+    const { methode, pfad } = StepImplementation.aufruf(operation, { auftragsId: 'ohne-anmeldung' });
+    const antwort = await fetch(`${basisUrl}${pfad}`, {
+      method: methode,
+      ...(methode === 'POST' ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ auftragsId: 'ohne-anmeldung', ausfuehrungstag: StepImplementation.inTagen(5) }) } : {}),
+    });
+    assert.strictEqual(antwort.status, Number(status), `${methode} ${pfad} ohne Sitzung`);
+  }
+
+  /** Die Seite der vorgemerkten Überweisungen, fertig gezeichnet. */
+  private async vorgemerktSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/vorgemerkte-ueberweisungen') await page.goto(`${basisUrl}/vorgemerkte-ueberweisungen`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.vorgemerkt:not([data-alt])').waitFor();
+    return page;
+  }
+
+  /** UC-017 Schritt 1: „Vorgemerkte Überweisungen“ in der Überweisung; ruft die Überweisung auf, wenn die Seite woanders steht. */
+  @Step('Die Kundin öffnet in der Überweisung die vorgemerkten Überweisungen')
+  public async vorgemerktOeffnen() {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/ueberweisung') await page.goto(`${basisUrl}/ueberweisung`, { waitUntil: 'domcontentloaded' });
+    await page.getByRole('form', { name: 'Überweisung' }).getByRole('link', { name: 'Vorgemerkte Überweisungen' }).click();
+    await page.waitForURL(/\/vorgemerkte-ueberweisungen$/);
+    await this.vorgemerktSeite();
+  }
+
+  @Step('Die vorgemerkten Überweisungen zeigen <anzahl> Aufträge')
+  public async vorgemerktAnzahl(anzahl: string) {
+    const page = await this.vorgemerktSeite();
+    assert.strictEqual(await page.locator('.vorgemerkt table tbody tr').count(), Number(anzahl), 'Zahl der vorgemerkten Aufträge');
+  }
+
+  @Step('Die vorgemerkten Überweisungen zeigen die Aufträge <tabelle>')
+  public async vorgemerktZeigen(tabelle: Table) {
+    const page = await this.vorgemerktSeite();
+    const spalten = tabelle.getColumnNames();
+    const erwartet = tabelle.getTableRows().map(z => spalten.map(s =>
+      s === 'Ausführungstag' ? StepImplementation.anzeigetag(z.getCell(s)) : sichtbar(text(z.getCell(s)))));
+    const tab = page.locator('.vorgemerkt table');
+    const ist: string[][] = [];
+    if (await tab.count()) {
+      const kopf = (await tab.locator('thead th').allInnerTexts()).map(sichtbar);
+      const index = spalten.map(s => {
+        const i = kopf.indexOf(s);
+        assert.ok(i >= 0, `Spalte „${s}“ fehlt, da sind: ${kopf.join(', ')}`);
+        return i;
+      });
+      const zeilen = tab.locator('tbody tr');
+      for (let n = 0; n < await zeilen.count(); n++) {
+        const zellen = (await zeilen.nth(n).locator('th, td').allInnerTexts()).map(sichtbar);
+        ist.push(index.map(i => zellen[i]));
+      }
+    }
+    assert.deepStrictEqual(ist, erwartet);
+  }
+
+  @Step('Die vorgemerkten Überweisungen zeigen die Meldung <meldung>')
+  public async vorgemerktMeldung(meldung: string) {
+    const page = await this.vorgemerktSeite();
+    await page.locator('.vorgemerkt').getByText(text(meldung), { exact: true }).waitFor();
+  }
+
+  /** Die Seite zeichnet nach jeder Aktion neu; gewartet wird auf die neu gezeichnete Fläche. */
+  private async vorgemerktNeu(page: Page, aktion: () => Promise<void>) {
+    await page.locator('.vorgemerkt').evaluate(e => e.setAttribute('data-alt', ''));
+    await aktion();
+    await page.locator('.vorgemerkt:not([data-alt])').waitFor();
+  }
+
+  @Step('Die Kundin wählt den vorgemerkten Auftrag an <empfaenger> zum Löschen und antwortet auf die Sicherheitsabfrage <antwort>')
+  public async vorgemerktLoeschen(empfaenger: string, antwort: string) {
+    const page = await this.vorgemerktSeite();
+    const form = page.getByRole('form', { name: 'Auftrag löschen' });
+    const auswahl = form.getByLabel('Auftrag zum Löschen');
+    const wert = await auswahl.locator('option').filter({ hasText: text(empfaenger) }).first().getAttribute('value');
+    assert.ok(wert, `Kein vorgemerkter Auftrag an „${empfaenger}“ zur Auswahl`);
+    await auswahl.selectOption(wert);
+    await this.vorgemerktNeu(page, () => form.getByRole('button', { name: 'Löschen' }).click());
+    const abfrage = page.getByRole('group', { name: 'Sicherheitsabfrage' });
+    await abfrage.getByText('Vorgemerkten Auftrag löschen?').waitFor();
+    await this.vorgemerktNeu(page, () => abfrage.getByRole('button', { name: text(antwort), exact: true }).click());
+  }
+
+  @Step('Die Seite der vorgemerkten Überweisungen ist ohne Anmeldung nicht erreichbar')
+  public async vorgemerktOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const api = await fetch(`${basisUrl}/api/terminueberweisungen`);
+    assert.strictEqual(api.status, 401, 'GET /api/terminueberweisungen ohne Sitzung');
+    await page.goto(`${basisUrl}/vorgemerkte-ueberweisungen`, { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/anmelden$/);
   }
 

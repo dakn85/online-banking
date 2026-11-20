@@ -22,12 +22,14 @@
       // UC-015 Schritt 1: „Tageslimit“ im Kopf des Finanzstatus.
       document.getElementById('kopf-aktion').innerHTML = '<a class="knopf knopf--still" href="/tageslimit">Tageslimit</a>';
       // UC-002 Schritt 9: nach der Überweisung einmal die Meldung, die Adresse wird wieder schlicht.
-      const ausgefuehrt = parameter && parameter.get('ausgefuehrt') === '1';
+      // UC-002 A9 Schritt 6: nach dem Vormerken „Überweisung vorgemerkt.“ bei unverändertem Saldo.
+      const ausgefuehrt = parameter && parameter.get('ausgefuehrt') === '1' ? 'Überweisung ausgeführt.'
+        : parameter && parameter.get('vorgemerkt') === '1' ? 'Überweisung vorgemerkt.' : '';
       if (ausgefuehrt) history.replaceState(null, '', '/finanzstatus');
       const stand = new Date().toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
       flaeche.innerHTML = `${ausgefuehrt ? `<p class="meldung meldung--erfolg finanzstatus__meldung" role="status">
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m5.5 9.2 2.3 2.3 4.7-4.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Überweisung ausgeführt.</p>` : ''}
+          ${ausgefuehrt}</p>` : ''}
         <section class="vermoegen" aria-label="Gesamtvermögen">
           <div>
             <p class="vermoegen__titel">Gesamtvermögen</p>

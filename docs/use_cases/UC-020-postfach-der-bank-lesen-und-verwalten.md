@@ -7,7 +7,7 @@
 **Bereich:** Postfach  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin liest die Nachrichten der Bank an sie, löscht Nachrichten, die sie nicht mehr braucht, und sieht in der Navigation, wie viele Nachrichten ungelesen sind, damit sie keine Nachricht der Bank übersieht.  
-**Ziele:** Z-8  
+**Ziele:** Z-10  
 **Anforderungen:** NFR-001
 
 ## Vorbedingungen

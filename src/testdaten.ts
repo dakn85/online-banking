@@ -49,7 +49,7 @@ export function lastdatenZuruecksetzen(): void {
 function zuruecksetzenFuer(auswahl: Auswahl): void {
   beendenFuer(auswahl);
   kontenZuruecksetzen(auswahl);
-  auftraegeZuruecksetzen(auswahl);
+  auftraegeZuruecksetzen(auswahl); // ausgeführte und vorgemerkte Aufträge samt verbrauchter Auftrags-Kennungen
   umsaetzeZuruecksetzen(auswahl); // nach den Konten: der Saldo danach ergibt sich aus dem Kontosaldo
   vorlagenZuruecksetzen(auswahl);
   tageslimitZuruecksetzen(auswahl);
