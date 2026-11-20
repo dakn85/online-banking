@@ -10,9 +10,14 @@ export interface Umsatz {
   verwendungszweck: string;
   /** Eingang positiv, Ausgang negativ (BR-0009). */
   betrag: number;
+  /** Kategorie aus der festen Liste (UC-019). */
+  kategorie: Kategorie;
   waehrung: 'EUR';
   saldoDanach: number;
 }
+
+export const KATEGORIEN = ['Wohnen', 'Lebensmittel', 'Mobilität', 'Freizeit', 'Versicherungen', 'Gesundheit', 'Sonstiges'] as const;
+export type Kategorie = typeof KATEGORIEN[number];
 
 export type Richtung = 'alle' | 'eingang' | 'ausgang';
 
@@ -35,15 +40,15 @@ type Demo = Omit<Umsatz, 'waehrung' | 'saldoDanach'>;
  * als Suchtext vor. Der Saldo danach ergibt sich rückwärts aus dem Kontosaldo: Der jüngste trägt ihn (BR-0008).
  */
 const GIRO: Demo[] = [
-  { buchungstag: '2026-02-12', gebuchtAm: '2026-02-12T09:30:00.000Z', gegenpartei: 'Bäckerei Krause', verwendungszweck: 'Einkauf', betrag: -12 },
-  { buchungstag: '2026-02-10', gebuchtAm: '2026-02-10T07:15:00.000Z', gegenpartei: 'Energieversorgung Nord', verwendungszweck: 'Abschlag Februar', betrag: -86 },
-  { buchungstag: '2026-02-01', gebuchtAm: '2026-02-01T06:00:00.000Z', gegenpartei: 'Lindner Logistik GmbH', verwendungszweck: 'Gehalt Januar', betrag: 2640 },
-  { buchungstag: '2026-01-28', gebuchtAm: '2026-01-28T14:20:00.000Z', gegenpartei: 'Hausverwaltung Berger', verwendungszweck: 'Miete Februar', betrag: -950 },
+  { buchungstag: '2026-02-12', gebuchtAm: '2026-02-12T09:30:00.000Z', gegenpartei: 'Bäckerei Krause', verwendungszweck: 'Einkauf', betrag: -12, kategorie: 'Lebensmittel' },
+  { buchungstag: '2026-02-10', gebuchtAm: '2026-02-10T07:15:00.000Z', gegenpartei: 'Energieversorgung Nord', verwendungszweck: 'Abschlag Februar', betrag: -86, kategorie: 'Wohnen' },
+  { buchungstag: '2026-02-01', gebuchtAm: '2026-02-01T06:00:00.000Z', gegenpartei: 'Lindner Logistik GmbH', verwendungszweck: 'Gehalt Januar', betrag: 2640, kategorie: 'Sonstiges' },
+  { buchungstag: '2026-01-28', gebuchtAm: '2026-01-28T14:20:00.000Z', gegenpartei: 'Hausverwaltung Berger', verwendungszweck: 'Miete Februar', betrag: -950, kategorie: 'Wohnen' },
 ];
 const KARTE: Demo[] = [
-  { buchungstag: '2026-02-11', gebuchtAm: '2026-02-11T18:45:00.000Z', gegenpartei: 'Buchhandlung Seitenweise', verwendungszweck: 'Kartenzahlung', betrag: -42.95 },
-  { buchungstag: '2026-02-05', gebuchtAm: '2026-02-05T12:10:00.000Z', gegenpartei: 'Reisebüro Fernweh', verwendungszweck: 'Bahnticket', betrag: -129.5 },
-  { buchungstag: '2026-02-02', gebuchtAm: '2026-02-02T08:00:00.000Z', gegenpartei: 'Aventa Bank', verwendungszweck: 'Ausgleich Abrechnung Januar', betrag: 500 },
+  { buchungstag: '2026-02-11', gebuchtAm: '2026-02-11T18:45:00.000Z', gegenpartei: 'Buchhandlung Seitenweise', verwendungszweck: 'Kartenzahlung', betrag: -42.95, kategorie: 'Freizeit' },
+  { buchungstag: '2026-02-05', gebuchtAm: '2026-02-05T12:10:00.000Z', gegenpartei: 'Reisebüro Fernweh', verwendungszweck: 'Bahnticket', betrag: -129.5, kategorie: 'Mobilität' },
+  { buchungstag: '2026-02-02', gebuchtAm: '2026-02-02T08:00:00.000Z', gegenpartei: 'Aventa Bank', verwendungszweck: 'Ausgleich Abrechnung Januar', betrag: 500, kategorie: 'Sonstiges' },
 ];
 /** Lena und Jonas haben dieselben Demo-Umsätze auf ihren eigenen Konten; Lastkunden haben keine. */
 const DEMO: Record<string, { kennung: string; umsaetze: Demo[] }> = {
@@ -57,6 +62,8 @@ const runden = (betrag: number) => Math.round(betrag * 100) / 100;
 
 /** Umsätze je IBAN in der Reihenfolge der Buchung. Jede IBAN gehört genau einer Kennung (konten.ts). */
 const umsaetze = new Map<string, Umsatz[]>();
+/** Alle Umsätze je IBAN ohne die Grenze der Lastkunden: Grundlage der Ausgabenanalyse (BR-0083). */
+const alleUmsaetze = new Map<string, Umsatz[]>();
 
 /** Setzt die Umsätze der Konten der ausgewählten Kennungen zurück: Demo-Umsätze, sonst keine. Ohne Auswahl die Demo-Kundinnen. */
 export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
@@ -71,6 +78,7 @@ export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
         saldo -= u.betrag;
       }
       umsaetze.set(iban, mitSaldo);
+      alleUmsaetze.set(iban, [...mitSaldo]);
     }
   }
 }
@@ -81,6 +89,9 @@ export function buchen(iban: string, umsatz: Omit<Umsatz, 'waehrung'>, grenze?: 
   let liste = umsaetze.get(iban);
   if (!liste) umsaetze.set(iban, liste = []);
   liste.push({ ...umsatz, waehrung: 'EUR' });
+  let alle = alleUmsaetze.get(iban);
+  if (!alle) alleUmsaetze.set(iban, alle = []);
+  alle.push({ ...umsatz, waehrung: 'EUR' });
   if (grenze !== undefined && liste.length > grenze) liste.splice(0, liste.length - grenze);
 }
 
@@ -125,4 +136,30 @@ export function umsaetzeVon(kennung: string, iban: string, filter: Filter = {}):
     .filter(({ u }) => filter.richtung === 'eingang' ? u.betrag > 0 : filter.richtung === 'ausgang' ? u.betrag < 0 : true)
     .sort((a, b) => b.u.buchungstag.localeCompare(a.u.buchungstag) || b.u.gebuchtAm.localeCompare(a.u.gebuchtAm) || b.nr - a.nr)
     .map(({ u }) => ({ ...u }));
+}
+
+export const MONAT_FEHLER = 'Der Monat ist ungültig: erwartet JJJJ-MM.';
+const MONAT = /^[0-9]{4}-(0[1-9]|1[0-2])$/;
+
+export interface Kategorieausgabe { kategorie: Kategorie; summe: number; anteil: number }
+export interface Ausgabenanalyse { monat: string; gesamtausgaben: number; kategorien: Kategorieausgabe[] }
+
+/** UC-019: Prüft den Monat, sonst Abfragefehler (400). Fehlender Monat gilt als ungültig. */
+export function monatPruefen(monat: unknown): string {
+  if (typeof monat !== 'string' || !MONAT.test(monat)) throw new Abfragefehler(MONAT_FEHLER);
+  return monat;
+}
+
+/** UC-019, BR-0083: Ausgänge des Monats (BR-0009) je Kategorie, aus allen Umsätzen des Kontos ohne die Grenze von 200. */
+export function ausgabenanalyse(iban: string, monat: string): Ausgabenanalyse {
+  monatPruefen(monat);
+  const cent = new Map<Kategorie, number>();
+  for (const u of alleUmsaetze.get(iban) ?? []) {
+    if (u.betrag >= 0 || !u.buchungstag.startsWith(monat)) continue;
+    cent.set(u.kategorie, (cent.get(u.kategorie) ?? 0) + Math.round(-u.betrag * 100));
+  }
+  const gesamt = [...cent.values()].reduce((a, b) => a + b, 0);
+  const kategorien = [...cent].map(([kategorie, c]) => ({ kategorie, summe: c / 100, anteil: Math.round(c * 1000 / gesamt) / 10 }))
+    .sort((a, b) => b.summe - a.summe || a.kategorie.localeCompare(b.kategorie, 'de-DE'));
+  return { monat, gesamtausgaben: gesamt / 100, kategorien };
 }
