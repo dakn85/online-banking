@@ -12,10 +12,10 @@ erDiagram
     Umbuchung }o--|| Konto : "bucht zu auf"
     Dauerauftrag }o--|| Konto : "geht ab von"
     Dauerauftrag }o--|| Kunde : "gehört zu"
+    Nachricht }o--|| Kunde : "gehört zu"
     Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
-    Nachricht }o--|| Kunde : "gehört zu"
 ```
 
 ## Entitäten
@@ -95,8 +95,11 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 | saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30 |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
 | kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
+| umsatzId | Kennung des Umsatzes, vom Dienst vergeben; die Zeilenaktion „Zurückgeben“ der Umsätze führt sie mit | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-0007 |
+| sepaLastschrift | Kennzeichen: der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche | Boolean |  | Pflicht; Standard false; Beispiel true |
+| zurueckgegeben | Rückgabestatus der SEPA-Lastschrift (BR-0094). Die Spalte Rückgabe der Umsätze zeigt bei sepaLastschrift true und zurueckgegeben false „Zurückgeben“, bei zurueckgegeben true „Zurückgegeben“, sonst keinen Text | Boolean |  | Pflicht; Standard false; Beispiel false |
 
-**Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009).
+**Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009). Ein Umsatz mit zurueckgegeben true ist eine SEPA-Lastschrift (sepaLastschrift true).
 
 ### Empfaengervorlage
 

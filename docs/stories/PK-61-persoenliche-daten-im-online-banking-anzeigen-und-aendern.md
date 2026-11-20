@@ -17,12 +17,11 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst | Geändert | Beschreibung geändert |
 | Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert, Use Cases geändert |
 | Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
-| Lastschrift zurückgeben und Betrag gutschreiben | Entfällt | Endpunkt entfällt |
 | Persönliche Daten der angemeldeten Kundin | Neu | Endpunkt neu |
 | Persönliche Daten mit TAN ändern | Neu | Endpunkt neu |
 | Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb) | Neu | Endpunkt neu |
-| Rueckgabe | Entfällt | Schema entfällt |
-| Umsatz | Geändert | Eigenschaft umsatzId entfällt, Eigenschaft sepaLastschrift entfällt, Eigenschaft zurueckgegeben entfällt, Beschreibung geändert, Attribut umsatzId entfällt, Attribut sepaLastschrift entfällt, und 2 weitere |
+| Rueckgabe | Geändert | Beschreibung neu, Eigenschaft lastschriftUmsatzId geändert |
+| Umsatz | Geändert | Eigenschaft betrag geändert, Eigenschaft buchungstag geändert, Eigenschaft gegenpartei geändert, und 8 weitere, Beschreibung geändert |
 | Kundendaten | Neu | Schema neu |
 | Kundendatenauftrag | Neu | Schema neu |
 | Architektur | Geändert | Einführung und Ziele geändert, Bausteinsicht geändert, Laufzeitsicht geändert, und 1 weitere |
@@ -61,14 +60,22 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Use Cases geändert
 - [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
-- [ ] Lastschrift zurückgeben und Betrag gutschreiben: Endpunkt entfällt
 - [ ] Persönliche Daten der angemeldeten Kundin: Endpunkt neu
 - [ ] Persönliche Daten mit TAN ändern: Endpunkt neu
 - [ ] Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb): Endpunkt neu
-- [ ] Rueckgabe: Schema entfällt
-- [ ] Umsatz: Eigenschaft umsatzId entfällt
-- [ ] Umsatz: Eigenschaft sepaLastschrift entfällt
-- [ ] Umsatz: Eigenschaft zurueckgegeben entfällt
+- [ ] Rueckgabe: Beschreibung neu
+- [ ] Rueckgabe: Eigenschaft lastschriftUmsatzId geändert
+- [ ] Umsatz: Eigenschaft betrag geändert
+- [ ] Umsatz: Eigenschaft buchungstag geändert
+- [ ] Umsatz: Eigenschaft gegenpartei geändert
+- [ ] Umsatz: Eigenschaft saldoDanach geändert
+- [ ] Umsatz: Eigenschaft verwendungszweck geändert
+- [ ] Umsatz: Eigenschaft waehrung geändert
+- [ ] Umsatz: Eigenschaft gebuchtAm geändert
+- [ ] Umsatz: Eigenschaft umsatzId geändert
+- [ ] Umsatz: Eigenschaft sepaLastschrift geändert
+- [ ] Umsatz: Eigenschaft zurueckgegeben geändert
+- [ ] Umsatz: Eigenschaft kategorie geändert
 - [ ] Kundendaten: Schema neu
 - [ ] Kundendatenauftrag: Schema neu
 - [ ] Architektur: Einführung und Ziele geändert
@@ -83,10 +90,6 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 - [ ] Kunde: Attribut tan neu
 - [ ] Kunde: Einschränkungen geändert
 - [ ] Umsatz: Beschreibung geändert
-- [ ] Umsatz: Attribut umsatzId entfällt
-- [ ] Umsatz: Attribut sepaLastschrift entfällt
-- [ ] Umsatz: Attribut zurueckgegeben entfällt
-- [ ] Umsatz: Einschränkungen geändert
 - [ ] Nachricht: Einschränkungen geändert
 - [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
 - [ ] Zugriffsschutz des Finanzstatus: Maß geändert
