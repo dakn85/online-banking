@@ -72,12 +72,12 @@ test('UC-003/BR-0075: CSV mit BOM, Kopfzeile, CRLF, Datum TT.MM.JJJJ und Dezimal
   ausgangsstand();
   const csv = csvAus(umsaetzeVon(LENA, GIRO, { von: '2026-02-10', bis: '2026-02-12' })!);
   assert.equal(csv, '﻿Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach\r\n'
-    + '12.02.2026;Bäckerei Krause;Einkauf;-12,00;2145,30\r\n'
-    + '10.02.2026;Energieversorgung Nord;Abschlag Februar;-86,00;2157,30\r\n');
+    + '12.02.2026;Bäckerei Krause;Einkauf;-12,00;2190,10\r\n'
+    + '10.02.2026;Energieversorgung Nord;Abschlag Februar;-86,00;2202,10\r\n');
 });
 
 test('UC-003/BR-0075: Texte mit Semikolon oder Anführungszeichen stehen in Anführungszeichen', () => {
-  const csv = csvAus([{ buchungstag: '2026-02-01', gebuchtAm: '2026-02-01T00:00:00.000Z', gegenpartei: 'A "B"', verwendungszweck: 'Teil 1; Rest 2', betrag: 1250, kategorie: 'Sonstiges', waehrung: 'EUR', saldoDanach: 3000.5 }]);
+  const csv = csvAus([{ buchungstag: '2026-02-01', gebuchtAm: '2026-02-01T00:00:00.000Z', gegenpartei: 'A "B"', verwendungszweck: 'Teil 1; Rest 2', betrag: 1250, kategorie: 'Sonstiges', waehrung: 'EUR', saldoDanach: 3000.5, umsatzId: 'U-1', sepaLastschrift: false, zurueckgegeben: false }]);
   assert.ok(csv.endsWith('01.02.2026;"A ""B""";"Teil 1; Rest 2";1250,00;3000,50\r\n'));
 });
 

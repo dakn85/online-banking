@@ -58,7 +58,7 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -402,6 +402,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben:
+    post:
+      summary: Lastschrift zurückgeben und Betrag gutschreiben
+      description: Gibt die SEPA-Lastschrift mit dieser umsatzId auf dem Girokonto mit dieser IBAN zurück und schreibt den Betrag gut (BR-0095). Eine umsatzId, die die Feldbedingung des Datenmodells verletzt (Länge 1 bis 36), beantwortet der Dienst mit 400. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011), eine unbekannte umsatzId mit 404 (BR-0094). Ist der Umsatz keine SEPA-Lastschrift oder schon zurückgegeben, antwortet er mit 422 (BR-0094), liegt der Buchungstag mehr als 56 Tage zurück, mit 422 (BR-0093); es wird nichts gebucht. Eine zweite Rückgabe derselben Lastschrift bucht nicht erneut. Beträge in Euro.
+      operationId: lastschriftZurueckgeben
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-022
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+        - name: umsatzId
+          in: path
+          required: true
+          description: Kennung der SEPA-Lastschrift
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "201":
+          description: Lastschrift zurückgegeben, Betrag gutgeschrieben
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rueckgabe"
+        "400":
+          description: Die umsatzId verletzt die Feldbedingung (Länge 1 bis 36)
+          x-rules:
+            - Umsatz.umsatzId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin oder das Konto hat keinen Umsatz mit dieser Kennung
+          x-rules:
+            - BR-0011
+            - BR-0094
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: Der Umsatz ist keine SEPA-Lastschrift, die Lastschrift ist schon zurückgegeben oder die Rückgabefrist von 8 Wochen ist abgelaufen
+          x-rules:
+            - BR-0093
+            - BR-0094
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
   /api/dauerauftraege:
     get:
       summary: Daueraufträge der angemeldeten Kundin
@@ -1217,6 +1280,18 @@ components:
       required:
         - umsaetze
       type: object
+    Rueckgabe:
+      type: object
+      properties:
+        lastschriftUmsatzId:
+          type: string
+          description: Kennung der zurückgegebenen Lastschrift
+        gutschrift:
+          $ref: "#/components/schemas/Umsatz"
+      required:
+        - lastschriftUmsatzId
+        - gutschrift
+
     Umsatz:
       properties:
         betrag:
@@ -1247,6 +1322,17 @@ components:
           description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
           format: date-time
           type: string
+        umsatzId:
+          type: string
+          description: Kennung des Umsatzes, vom Dienst vergeben
+          minLength: 1
+          maxLength: 36
+        sepaLastschrift:
+          type: boolean
+          description: Der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche
+        zurueckgegeben:
+          type: boolean
+          description: Die SEPA-Lastschrift wurde zurückgegeben (BR-0094)
         kategorie:
           description: Kategorie des Umsatzes aus der festen Liste
           enum:
@@ -1259,6 +1345,7 @@ components:
             - Sonstiges
           type: string
       required:
+        - umsatzId
         - buchungstag
         - gebuchtAm
         - gegenpartei
@@ -1266,6 +1353,8 @@ components:
         - betrag
         - waehrung
         - saldoDanach
+        - sepaLastschrift
+        - zurueckgegeben
         - kategorie
       type: object
       x-entity: Umsatz

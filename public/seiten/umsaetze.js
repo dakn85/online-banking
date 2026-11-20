@@ -15,6 +15,13 @@
     return p.toString();
   }
 
+  /** UC-022: „Zurückgeben“ an einer SEPA-Lastschrift, „Zurückgegeben“ nach der Rückgabe, sonst nichts. */
+  function rueckgabe(u) {
+    if (u.zurueckgegeben) return 'Zurückgegeben';
+    if (!u.sepaLastschrift) return '';
+    return `<button type="button" class="knopf knopf--klein knopf--text" data-rueckgabe="${html(u.umsatzId)}" data-gegenpartei="${html(u.gegenpartei)}" data-betrag="${html(Aventa.euro(Math.abs(u.betrag)))}">Zurückgeben</button>`;
+  }
+
   Aventa.seite('/umsaetze', {
     titel: 'Umsätze',
     async zeigen(flaeche, _kunde, parameter) {
@@ -35,12 +42,13 @@
           <label class="feld"><span>Ein-/Ausgang</span><select name="richtung"><option value="alle">Alle</option><option value="eingang">Eingang</option><option value="ausgang">Ausgang</option></select></label>
         </form>` : ''}
         <div class="aktionen"><button type="button" id="umsaetze-export">Als CSV exportieren</button>${konto && konto.art === 'Girokonto' ? ` <a class="knopf knopf--klein knopf--text" href="/ausgabenanalyse?iban=${encodeURIComponent(konto.iban)}">Ausgabenanalyse</a>` : ''}</div>
+        <section id="umsaetze-rueckfrage" class="rueckfrage" aria-label="Lastschrift zurückgeben" hidden></section>
         <section id="umsaetze-ergebnis" class="umsaetze" aria-label="Umsätze" aria-live="polite"></section>`;
       const ergebnis = flaeche.querySelector('#umsaetze-ergebnis');
       const form = flaeche.querySelector('form.filter');
 
       let laufend = 0;
-      async function laden() {
+      async function laden(meldung) {
         const q = form ? abfrage(form) : '';
         const nummer = ++laufend;
         let inhalt;
@@ -48,10 +56,11 @@
           const { umsaetze } = await Aventa.api(`/api/konten/${encodeURIComponent(gesucht || '-')}/umsaetze${q ? `?${q}` : ''}`);
           inhalt = umsaetze.length ? `<table class="umsatztabelle">
               <caption class="unsichtbar">Umsätze ${html(konto ? konto.kontoname : '')}</caption>
-              <thead><tr><th scope="col">Buchungstag</th><th scope="col">Gegenpartei</th><th scope="col">Verwendungszweck</th><th scope="col">Kategorie</th><th scope="col" class="zahl">Betrag</th><th scope="col" class="zahl">Saldo danach</th></tr></thead>
+              <thead><tr><th scope="col">Buchungstag</th><th scope="col">Gegenpartei</th><th scope="col">Verwendungszweck</th><th scope="col">Kategorie</th><th scope="col" class="zahl">Betrag</th><th scope="col" class="zahl">Saldo danach</th><th scope="col">Rückgabe</th></tr></thead>
               <tbody>${umsaetze.map(u => `<tr>
                 <td>${datum(u.buchungstag)}</td><td>${html(u.gegenpartei)}</td><td class="leise">${html(u.verwendungszweck)}</td><td>${html(u.kategorie)}</td>
                 <td class="zahl${u.betrag < 0 ? ' minus' : ' plus'}">${Aventa.euro(u.betrag)}</td><td class="zahl">${Aventa.euro(u.saldoDanach)}</td>
+                <td>${rueckgabe(u)}</td>
               </tr>`).join('')}</tbody>
             </table>`
             : `<p class="leer">Für diese Auswahl gibt es keine Umsätze.</p>`;
@@ -62,8 +71,37 @@
         }
         if (nummer !== laufend) return;
         ergebnis.innerHTML = inhalt;
+        if (meldung) ergebnis.insertAdjacentHTML('afterbegin', meldung);
         ergebnis.dataset.abfrage = q;
       }
+
+      /** UC-022 Schritte 1 bis 7: Rückfrage zeigen, bei „Bestätigen“ die Rückgabe auslösen, Umsätze neu laden und die Meldung zeigen. */
+      const rueckfrage = flaeche.querySelector('#umsaetze-rueckfrage');
+      ergebnis.addEventListener('click', ev => {
+        const knopf = ev.target.closest('button[data-rueckgabe]');
+        if (!knopf) return;
+        rueckfrage.innerHTML = `<p class="meldung" role="status">Lastschrift über ${html(knopf.dataset.betrag)} von ${html(knopf.dataset.gegenpartei)} zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.</p>
+          <div class="aktionen"><button type="button" class="knopf" data-bestaetigen>Bestätigen</button> <button type="button" class="knopf knopf--text" data-abbrechen>Abbrechen</button></div>`;
+        rueckfrage.dataset.umsatz = knopf.dataset.rueckgabe;
+        rueckfrage.hidden = false;
+      });
+      rueckfrage.addEventListener('click', async ev => {
+        if (ev.target.closest('[data-abbrechen]')) { rueckfrage.hidden = true; rueckfrage.innerHTML = ''; return; }
+        const bestaetigen = ev.target.closest('[data-bestaetigen]');
+        if (!bestaetigen || bestaetigen.disabled) return;
+        bestaetigen.disabled = true;
+        let meldung;
+        try {
+          const r = await Aventa.api(`/api/konten/${encodeURIComponent(gesucht)}/umsaetze/${encodeURIComponent(rueckfrage.dataset.umsatz)}/rueckgaben`, { method: 'POST' });
+          meldung = `<p class="meldung" role="status">Lastschrift zurückgegeben: ${html(Aventa.euro(r.gutschrift.betrag))} gutgeschrieben, neuer Saldo ${html(Aventa.euro(r.gutschrift.saldoDanach))}.</p>`;
+        } catch (fehler) {
+          if (![400, 404, 422].includes(fehler.status)) throw fehler;
+          meldung = `<p class="meldung" role="alert">${html(fehler.message)}</p>`;
+        }
+        await laden(meldung);
+        rueckfrage.hidden = true;
+        rueckfrage.innerHTML = '';
+      });
 
       /** UC-003 Schritte 9 und 10: die Datei mit den Filtern der Liste holen und herunterladen; Fehler als Meldung über der Liste. */
       async function exportieren() {

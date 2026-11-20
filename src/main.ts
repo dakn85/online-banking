@@ -4,6 +4,7 @@ import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
+import { Rueckgabefehler, zurueckgeben } from './lastschrift';
 import { Umbuchungsfehler, ausfuehren as umbuchen } from './umbuchung';
 import * as vorlagen from './empfaengervorlagen';
 import * as dauerauftraege from './dauerauftraege';
@@ -141,6 +142,16 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   const liste = umsaetzeVon(res.locals.kunde.kennung, req.params.iban, filter);
   if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
   res.json({ umsaetze: liste });
+});
+
+// UC-022: Lastschrift zurückgeben (BR-0093 bis BR-0095); Prüfreihenfolge 400, 404 Konto, 404 Umsatz, 422
+app.post('/api/konten/:iban/umsaetze/:umsatzId/rueckgaben', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.status(201).json(zurueckgeben(res.locals.kunde, req.params.iban, req.params.umsatzId));
+  } catch (fehler) {
+    if (!(fehler instanceof Rueckgabefehler)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
 });
 
 // UC-019: Ausgabenanalyse des Girokontos; Prüfreihenfolge Monat 400, Konto 404, Kreditkarte 422 (BR-0083, BR-0084)

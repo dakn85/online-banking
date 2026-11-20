@@ -92,6 +92,14 @@ export function belasten(kennung: string, iban: string, betrag: number): void {
   konto.saldo = runden(konto.saldo - betrag);
 }
 
+/** BR-0095: den Saldo eines Kontos der Kundin um den Betrag erhöhen; gibt den neuen Saldo zurück. */
+export function gutschreiben(kennung: string, iban: string, betrag: number): number {
+  const konto = eigene(kennung).find(k => k.iban === iban);
+  if (!konto) throw new Error('Gutschrift: Konto gehört nicht zur Kundin');
+  konto.saldo = runden(konto.saldo + betrag);
+  return konto.saldo;
+}
+
 /** Nur für Tests: Konten einer Kennung setzen, ohne den Ausgangsstand zu ändern. */
 export function kontenSetzen(kennung: string, neu: Konto[]): void {
   konten.set(kennung, neu.map(k => ({ ...k })));
