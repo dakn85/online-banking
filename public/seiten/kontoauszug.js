@@ -2,28 +2,29 @@
    Konto und Monat prüft der Dienst; die Maske zeigt seine Meldung bei 400 und 404 (ADR-004), sonst die feste Meldung aus A5. */
 (function () {
   const iban = wert => wert.replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim();
-  const html = wert => String(wert ?? '').replace(/[&<>"]/g, z => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[z]);
+  const { html } = Aventa;
   const laufenderMonat = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; };
   const fehlgeschlagen = 'Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.';
 
   Aventa.seite('/kontoauszug', {
     titel: 'Kontoauszug',
     async zeigen(flaeche, _kunde, parameter) {
-      document.querySelector('.navigation a[data-seite="/finanzstatus"]')?.setAttribute('aria-current', 'page');
       const { konten } = await Aventa.api('/api/konten');
       const gesucht = ((parameter && parameter.get('iban')) || '').replace(/\s+/g, '').toUpperCase();
       // Eine IBAN der Adresse bleibt Auswahl, auch wenn sie keinem Konto der Kundin gehört; der Dienst lehnt sie ab (A3).
       const auswahl = konten.map(k => ({ iban: k.iban, text: `${k.kontoname} (${iban(k.iban)})` }));
       if (gesucht && !konten.some(k => k.iban === gesucht)) auswahl.unshift({ iban: gesucht, text: iban(gesucht) });
       const vorgewaehlt = gesucht || (konten.find(k => k.art === 'Girokonto') || konten[0] || {}).iban;
-      flaeche.innerHTML = `
-        <p class="zurueck"><a href="/umsaetze${vorgewaehlt ? `?iban=${encodeURIComponent(vorgewaehlt)}` : ''}">← Umsätze</a></p>
-        <form class="filter" aria-label="Kontoauszug" onsubmit="return false">
-          <label class="feld"><span>Konto</span><select name="konto">${auswahl.map(a => `<option value="${html(a.iban)}"${a.iban === vorgewaehlt ? ' selected' : ''}>${html(a.text)}</option>`).join('')}</select></label>
-          <label class="feld"><span>Monat</span><input name="monat" placeholder="2026-02" autocomplete="off" value="${laufenderMonat()}"></label>
-          <div class="aktionen"><button type="submit" class="knopf" id="kontoauszug-laden">Kontoauszug herunterladen</button></div>
-        </form>
-        <section id="kontoauszug-meldung" aria-live="polite"></section>`;
+      flaeche.innerHTML = `<a class="zurueck" href="/umsaetze${vorgewaehlt ? `?iban=${encodeURIComponent(vorgewaehlt)}` : ''}">${Aventa.symbol('zurueck', 16)}Umsätze</a>
+        <div class="formseite formseite--schmal">
+          <form class="formkarte" aria-label="Kontoauszug" onsubmit="return false">
+            <div class="formkarte__kopf"><div><h2>Kontoauszug als PDF</h2><p>Alle Buchungen eines Monats mit Anfangs- und Endsaldo.</p></div></div>
+            <div class="feld"><label for="ka-konto">Konto</label><select id="ka-konto" name="konto">${auswahl.map(a => `<option value="${html(a.iban)}"${a.iban === vorgewaehlt ? ' selected' : ''}>${html(a.text)}</option>`).join('')}</select></div>
+            <div class="feld"><label for="ka-monat">Monat</label><input id="ka-monat" name="monat" placeholder="2026-02" autocomplete="off" value="${laufenderMonat()}"><p class="hinweis">Als JJJJ-MM, zum Beispiel 2026-02.</p></div>
+            <section id="kontoauszug-meldung" aria-live="polite"></section>
+            <div class="formkarte__aktionen"><button type="submit" class="knopf knopf--haupt" id="kontoauszug-laden">${Aventa.symbol('herunterladen', 18)}Kontoauszug herunterladen</button></div>
+          </form>
+        </div>`;
       const form = flaeche.querySelector('form');
       const meldung = flaeche.querySelector('#kontoauszug-meldung');
       const zeigen = text => { meldung.innerHTML = text ? `<p class="meldung" role="alert">${html(text)}</p>` : ''; };

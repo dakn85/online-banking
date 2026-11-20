@@ -2,7 +2,7 @@
    Maske: docs/ui/tageslimit.html. Die Seite prüft vorab (ADR-004), maßgeblich ist der Dienst (BR-0070). */
 (function () {
   const FEHLER = 'Das Tageslimit muss zwischen 0,00 EUR und 5.000,00 EUR liegen.';
-  const html = wert => String(wert ?? '').replace(/[&<>"]/g, z => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[z]);
+  const { html } = Aventa;
 
   /** „1.000,00 €“ → 1000; null, wenn es kein Betrag mit höchstens zwei Nachkommastellen ist. */
   function alsBetrag(text) {
@@ -19,21 +19,22 @@
       let eingabe = '';
 
       function zeigen({ erfolg = '', fehler = '' } = {}) {
-        flaeche.innerHTML = `<div class="tageslimit">
-          <p class="meldung meldung--erfolg" role="status"${erfolg ? '' : ' hidden'}>${html(erfolg)}</p>
-          <p class="meldung meldung--fehler" role="alert"${fehler ? '' : ' hidden'}>${html(fehler)}</p>
-          <div class="ueberweisung__raster">
-            <form class="ueberweisung__form" novalidate aria-label="Tageslimit ändern">
-              <div><h2>Tageslimit ändern</h2><p class="ueberweisung__unter">Höchstbetrag Ihrer Überweisungen je Kalendertag.</p></div>
-              <div class="feld${fehler ? ' feld--fehler' : ''}"><label for="tageslimit">Neues Tageslimit in Euro</label>
+        const anteil = stand.standardlimit ? Math.min(100, Math.round(stand.tageslimit / stand.standardlimit * 100)) : 0;
+        flaeche.innerHTML = `<div class="seite tageslimit">
+          ${Aventa.meldungen({ erfolg, fehler })}
+          <div class="formseite">
+            <form class="formkarte" novalidate aria-label="Tageslimit ändern">
+              <div class="formkarte__kopf"><div><h2>Tageslimit ändern</h2><p>Höchstbetrag Ihrer Überweisungen je Kalendertag.</p></div></div>
+              <div class="feld feld--betrag${fehler ? ' feld--fehler' : ''}"><label for="tageslimit">Neues Tageslimit in Euro</label>
                 <input id="tageslimit" name="tageslimit" inputmode="decimal" autocomplete="off" placeholder="1.000,00" value="${html(eingabe)}"${fehler ? ' aria-invalid="true"' : ''}>
                 <p class="hinweis">Von 0,00 € bis ${Aventa.euro(stand.standardlimit)}; 0,00 € sperrt alle Überweisungen.</p></div>
-              <div class="ueberweisung__aktionen"><button class="knopf knopf--haupt" type="submit">Speichern</button></div>
+              <div class="formkarte__aktionen"><button class="knopf knopf--haupt" type="submit">Speichern</button></div>
             </form>
-            <aside class="ueberweisung__konto" aria-label="Ihr Tageslimit">
-              <p class="ueberweisung__klein">Je Kalendertag</p>
-              <p class="ueberweisung__kontoname">Tageslimit für Überweisungen</p>
-              <dl><div><dt>Aktuelles Tageslimit</dt><dd id="aktuelles-tageslimit">${Aventa.euro(stand.tageslimit)}</dd></div>
+            <aside class="seitenkarte" aria-label="Ihr Tageslimit">
+              <div><p class="seitenkarte__titel">Je Kalendertag</p><p class="seitenkarte__name">Tageslimit für Überweisungen</p></div>
+              <div class="messung" aria-hidden="true"><div class="messung__balken"><span style="width:${anteil}%"></span></div>
+                <div class="messung__skala"><span>0 €</span><span>${anteil} % des Standardlimits</span></div></div>
+              <dl class="werte werte--gross"><div><dt>Aktuelles Tageslimit</dt><dd id="aktuelles-tageslimit">${Aventa.euro(stand.tageslimit)}</dd></div>
                   <div><dt>Standardlimit</dt><dd id="standardlimit">${Aventa.euro(stand.standardlimit)}</dd></div></dl>
             </aside>
           </div>

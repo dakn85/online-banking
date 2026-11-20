@@ -1,62 +1,58 @@
-/* UC-017 Vorgemerkte Überweisungen verwalten: Liste nach Ausführungstag, Löschen erst nach Sicherheitsabfrage.
-   Maske: docs/ui/vorgemerkte-ueberweisungen.html. Welche Aufträge die Kundin sieht und löschen darf, entscheidet der Dienst (BR-0080). */
+/* UC-017 Vorgemerkte Überweisungen: Liste nach Ausführungstag, Löschen an der Zeile erst nach Sicherheitsabfrage.
+   Maske: docs/ui/vorgemerkte-ueberweisungen.html (Inhalt und Namen). Welche Aufträge die Kundin sieht und löschen darf, entscheidet der Dienst (BR-0080). */
 (function () {
-  const html = wert => String(wert ?? '').replace(/[&<>"]/g, z => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[z]);
-  const gruppiert = iban => iban.replace(/(.{4})/g, '$1 ').trim();
-  /** „2026-12-24“ → „24.12.2026“ (Anzeigeformat TT.MM.JJJJ) */
-  const datum = tag => tag.split('-').reverse().join('.');
+  const { html, symbol } = Aventa;
+
+  const zeile = a => `<li data-zeile data-auftrag="${html(a.auftragsId)}"><div class="zeile">
+      <span class="zeile__symbol zeile__symbol--messing" aria-hidden="true">${symbol('uhr', 18)}</span>
+      <div class="zeile__haupt">
+        <span class="zeile__titel" data-feld="Empfänger">${html(a.empfaenger)}</span>
+        <span class="zeile__unter" data-feld="Verwendungszweck">${html(a.verwendungszweck)}</span>
+        <span class="zeile__meta"><span class="iban" data-feld="IBAN des Empfängers">${Aventa.iban(a.empfaengerIban)}</span></span>
+      </div>
+      <div class="zeile__wert"><span class="zeile__betrag zahl" data-feld="Betrag in Euro">${Aventa.euro(a.betrag)}</span><small>am <span data-feld="Ausführungstag">${Aventa.datum(a.ausfuehrungstag)}</span></small></div>
+      <div class="zeile__aktionen"><button type="button" class="symbolknopf symbolknopf--gefahr" data-loeschen="${html(a.auftragsId)}" aria-label="Löschen" title="Löschen">${symbol('muell')}</button></div>
+    </div></li>`;
 
   Aventa.seite('/vorgemerkte-ueberweisungen', {
     titel: 'Vorgemerkte Überweisungen',
     async zeigen(flaeche) {
       let auftraege = [];
       let loeschenId = '';
+      const kopf = document.getElementById('kopf-aktion');
+      kopf.innerHTML = `<a class="knopf knopf--haupt" href="/ueberweisung">${symbol('plus', 18)}Neue Überweisung</a>`;
 
       function zeigen({ erfolg = '', fehler = '', abfrage = false } = {}) {
-        const leer = !auftraege.length;
-        flaeche.innerHTML = `<div class="vorgemerkt">
-          <p class="zurueck"><a href="/ueberweisung">← Zur Überweisung</a></p>
-          <p class="meldung meldung--erfolg" role="status"${erfolg ? '' : ' hidden'}>${html(erfolg)}</p>
-          <p class="meldung meldung--fehler" role="alert"${fehler ? '' : ' hidden'}>${html(fehler)}</p>
-          <p class="vorgemerkt__unter">Terminüberweisungen ansehen und vor der Ausführung löschen.</p>
-          ${leer ? '<p class="vorlagen__leer">Sie haben keine vorgemerkten Überweisungen.</p>' : `
-          <div class="konten"><table class="kontentabelle vorgemerkt__tabelle">
-            <caption class="unsichtbar">Ihre vorgemerkten Überweisungen</caption>
-            <thead><tr><th scope="col">Ausführungstag</th><th scope="col">Empfänger</th><th scope="col">IBAN des Empfängers</th>
-              <th scope="col" class="zahl">Betrag in Euro</th><th scope="col">Verwendungszweck</th></tr></thead>
-            <tbody>${auftraege.map(a => `<tr data-auftrag="${html(a.auftragsId)}">
-              <td>${datum(a.ausfuehrungstag)}</td><th scope="row">${html(a.empfaenger)}</th><td class="iban">${gruppiert(a.empfaengerIban)}</td>
-              <td class="zahl">${Aventa.euro(a.betrag)}</td><td>${html(a.verwendungszweck)}</td></tr>`).join('')}</tbody>
-          </table></div>
-          <form class="ueberweisung__form vorgemerkt__loeschen" novalidate aria-label="Auftrag löschen">
-            <h2>Auftrag löschen</h2>
-            <div class="feld"><label for="auftragLoeschen">Auftrag zum Löschen</label>
-              <select id="auftragLoeschen" name="auftragLoeschen"${abfrage ? ' disabled' : ''}>${auftraege.map(a =>
-                `<option value="${html(a.auftragsId)}"${a.auftragsId === loeschenId ? ' selected' : ''}>${datum(a.ausfuehrungstag)} · ${html(a.empfaenger)} · ${Aventa.euro(a.betrag)}</option>`).join('')}</select></div>
-            ${abfrage ? `<div class="vorlagen__abfrage" role="group" aria-label="Sicherheitsabfrage">
-              <p role="status">Vorgemerkten Auftrag löschen?</p>
-              <div class="ueberweisung__aktionen"><button class="knopf knopf--still" type="button" id="nein">Nein</button><button class="knopf knopf--haupt" type="button" id="ja">Ja</button></div>
-            </div>` : '<div class="ueberweisung__aktionen"><button class="knopf knopf--still" type="submit">Löschen</button></div>'}
-          </form>`}
+        const a = auftraege.find(x => x.auftragsId === loeschenId);
+        flaeche.innerHTML = `<a class="zurueck" href="/ueberweisung">${symbol('zurueck', 16)}Zur Überweisung</a>
+          <div class="seite vorgemerkt">
+          ${Aventa.meldungen({ erfolg, fehler })}
+          <section class="abschnitt" aria-labelledby="liste-titel">
+            <div class="abschnitt__kopf"><h2 id="liste-titel">Terminüberweisungen</h2><span class="zusatz">Ansehen und vor der Ausführung löschen</span></div>
+            ${auftraege.length ? `<div class="flaeche"><ul class="liste" data-felder="Ausführungstag|Empfänger|IBAN des Empfängers|Betrag in Euro|Verwendungszweck">${auftraege.map(zeile).join('')}</ul></div>`
+              : `<div class="flaeche leer">${symbol('uhr')}<strong>Sie haben keine vorgemerkten Überweisungen.</strong>Eine Überweisung mit Ausführungstag erscheint hier, bis die Bank sie ausführt.</div>`}
+          </section>
+          ${abfrage && a ? Aventa.rueckfrage({ frage: 'Vorgemerkten Auftrag löschen?', text: `${a.empfaenger}, ${Aventa.euro(a.betrag)} am ${Aventa.datum(a.ausfuehrungstag)}. Die Bank führt ihn dann nicht aus.` }) : ''}
         </div>`;
         verdrahten();
-        if (abfrage) flaeche.querySelector('#nein').focus();
       }
 
       async function laden() { auftraege = await Aventa.api('/api/terminueberweisungen'); }
 
       function verdrahten() {
-        const form = flaeche.querySelector('.vorgemerkt__loeschen');
         // UC-017 Schritt 3 und 4: erst nachfragen, nicht sofort löschen.
-        form?.addEventListener('submit', e => {
-          e.preventDefault();
-          loeschenId = form.auftragLoeschen.value;
+        flaeche.querySelectorAll('[data-loeschen]').forEach(k => k.addEventListener('click', () => {
+          loeschenId = k.dataset.loeschen;
           zeigen({ abfrage: true });
-        });
+        }));
+        const frage = flaeche.querySelector('#rueckfrage');
+        if (!frage) return;
+        Aventa.oeffnen(frage);
         // UC-017 A2: „Nein“ zeigt die Aufträge ohne Meldung.
-        flaeche.querySelector('#nein')?.addEventListener('click', () => zeigen());
+        frage.querySelector('[data-nein]').addEventListener('click', () => zeigen());
+        frage.addEventListener('cancel', e => { e.preventDefault(); zeigen(); });
         // UC-017 Schritt 5 und 6: „Ja“ löscht endgültig.
-        flaeche.querySelector('#ja')?.addEventListener('click', async () => {
+        frage.querySelector('[data-ja]').addEventListener('click', async () => {
           try {
             await Aventa.api(`/api/terminueberweisungen/${encodeURIComponent(loeschenId)}`, { method: 'DELETE' });
             loeschenId = '';

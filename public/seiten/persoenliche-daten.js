@@ -1,7 +1,7 @@
 /* UC-023 Persönliche Daten anzeigen und ändern: Anschrift, E-Mail-Adresse und Telefonnummer zeigen, mit TAN (Mock) speichern.
    Maske: docs/ui/persoenliche-daten.html. Die Seite prüft vorab (ADR-004), maßgeblich ist der Dienst (BR-0096, BR-0097). */
 (function () {
-  const html = wert => String(wert ?? '').replace(/[&<>"]/g, z => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[z]);
+  const { html } = Aventa;
 
   const FELDER = [
     { name: 'strasse', label: 'Straße und Hausnummer', platzhalter: 'Lindenallee 12', autocomplete: 'street-address' },
@@ -34,16 +34,19 @@
       let werte = { ...stand, tan: '' };
 
       function zeigen({ erfolg = '', fehler = '', feld = '' } = {}) {
-        const felder = FELDER.map(f => `<div class="feld${feld === f.name ? ' feld--fehler' : ''}"><label for="pd-${f.name}">${f.label}</label>
-          <input id="pd-${f.name}" name="${f.name}" autocomplete="${f.autocomplete}" placeholder="${html(f.platzhalter)}" value="${html(werte[f.name])}"${feld === f.name ? ' aria-invalid="true"' : ''}></div>`).join('');
-        flaeche.innerHTML = `<div class="tageslimit persoenlich">
-          <p class="meldung meldung--erfolg" role="status"${erfolg ? '' : ' hidden'}>${html(erfolg)}</p>
-          <p class="meldung meldung--fehler" role="alert"${fehler ? '' : ' hidden'}>${html(fehler)}</p>
-          <form class="ueberweisung__form" novalidate aria-label="Persönliche Daten ändern">
-            <div><h2>Persönliche Daten ändern</h2><p class="ueberweisung__unter">Ihre Anschrift, E-Mail-Adresse und Telefonnummer. Jede Änderung bestätigen Sie mit einer TAN.</p></div>
-            ${felder}
-            <div class="ueberweisung__aktionen"><button class="knopf knopf--haupt" type="submit">Speichern</button></div>
-          </form>
+        const feldHtml = f => `<div class="feld${feld === f.name ? ' feld--fehler' : ''}${f.name === 'strasse' || f.name === 'email' ? ' breit' : ''}"><label for="pd-${f.name}">${f.label}</label>
+          <input id="pd-${f.name}" name="${f.name}" autocomplete="${f.autocomplete}" placeholder="${html(f.platzhalter)}" value="${html(werte[f.name])}"${feld === f.name ? ' aria-invalid="true"' : ''}></div>`;
+        const gruppe = namen => FELDER.filter(f => namen.includes(f.name)).map(feldHtml).join('');
+        flaeche.innerHTML = `<div class="seite persoenlich">
+          ${Aventa.meldungen({ erfolg, fehler })}
+          <div class="formseite formseite--schmal">
+          <form class="formkarte" novalidate aria-label="Persönliche Daten ändern">
+            <div class="formkarte__kopf"><div><h2>Persönliche Daten ändern</h2><p>Ihre Anschrift, E-Mail-Adresse und Telefonnummer. Jede Änderung bestätigen Sie mit einer TAN.</p></div></div>
+            <div class="formkarte__abschnitt"><h3>Anschrift</h3><div class="raster-2">${gruppe(['strasse', 'postleitzahl', 'ort'])}</div></div>
+            <div class="formkarte__abschnitt"><h3>Kontakt</h3><div class="raster-2">${gruppe(['email', 'telefonnummer'])}</div></div>
+            <div class="formkarte__abschnitt"><h3>Bestätigen</h3><div class="raster-2">${gruppe(['tan'])}</div></div>
+            <div class="formkarte__aktionen"><button class="knopf knopf--haupt" type="submit">Speichern</button></div>
+          </form></div>
         </div>`;
         const form = flaeche.querySelector('form');
         form.addEventListener('submit', e => {
@@ -61,7 +64,7 @@
           stand = await Aventa.api('/api/kunde', { method: 'PUT', body: JSON.stringify(eingabe) });
           werte = { ...stand, tan: '' };
           zeigen({ erfolg: 'Persönliche Daten gespeichert.' });
-          Aventa.api('/api/nachrichten').then(l => Aventa.postfachZahl(l.anzahlUngelesen), () => {});
+          Aventa.api('/api/nachrichten', { nebenbei: true }).then(l => Aventa.postfachZahl(l.anzahlUngelesen), () => {});
         } catch (fehler) {
           zeigen({ feld: fehler.status === 422 ? 'tan' : '', fehler: fehler.message });
         }

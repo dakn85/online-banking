@@ -18,7 +18,8 @@
   const neueKennung = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
   /** BR-0089: Girokonto Saldo plus Dispositionsrahmen, Tagesgeldkonto der Saldo. */
   const verfuegbar = konto => konto.verfuegbarerBetrag ?? konto.saldo;
-  const beschreibung = k => `${k.kontoname} · ${gruppiert(k.iban)} · Saldo ${Aventa.euro(k.saldo)}${k.art === 'Girokonto' ? ` · verfügbar ${Aventa.euro(k.verfuegbarerBetrag)}` : ''}`;
+  const beschreibung = k => `${k.kontoname} · ${gruppiert(k.iban)}`;
+  const stand = k => (k ? `Saldo ${Aventa.euro(k.saldo)}${k.art === 'Girokonto' ? `, verfügbar ${Aventa.euro(k.verfuegbarerBetrag)}` : ''}` : '');
 
   Aventa.seite('/umbuchung', {
     titel: 'Umbuchung',
@@ -33,19 +34,35 @@
       let auftragsId = neueKennung();
 
       const optionen = auswahl => umbuchbar.map(k => `<option value="${html(k.iban)}"${k === auswahl ? ' selected' : ''}>${html(beschreibung(k))}</option>`).join('');
-      flaeche.innerHTML = `<div class="ueberweisung"><div class="ueberweisung__raster">
-        <form class="ueberweisung__form" novalidate aria-label="Umbuchung">
-          <div><h2>Konten und Betrag</h2><p class="ueberweisung__unter">Sofortige Umbuchung zwischen Ihrem Girokonto und Ihrem Tagesgeldkonto.</p></div>
+      flaeche.innerHTML = `<div class="formseite formseite--schmal">
+        <form class="formkarte" novalidate aria-label="Umbuchung">
+          <div class="formkarte__kopf"><div><h2>Konten und Betrag</h2><p>Sofortige Umbuchung zwischen Ihrem Girokonto und Ihrem Tagesgeldkonto.</p></div></div>
           <p class="meldung meldung--fehler" role="alert" hidden></p>
-          <div class="feld"><label for="quellkonto">Quellkonto</label><select id="quellkonto" name="quellkonto">${optionen(quelleVorbelegt)}</select></div>
-          <div class="feld"><label for="zielkonto">Zielkonto</label><select id="zielkonto" name="zielkonto">${optionen(zielVorbelegt)}</select></div>
-          <div class="feld"><label for="betrag">Betrag in Euro</label>
+          <div class="konto-paar">
+            <div class="feld"><label for="quellkonto">Quellkonto</label><select id="quellkonto" name="quellkonto">${optionen(quelleVorbelegt)}</select><p class="hinweis" data-stand="quellkonto">${stand(quelleVorbelegt)}</p></div>
+            <button type="button" class="tauschen" id="tauschen" aria-label="Konten tauschen" title="Konten tauschen">${Aventa.symbol('tauschen', 18)}</button>
+            <div class="feld"><label for="zielkonto">Zielkonto</label><select id="zielkonto" name="zielkonto">${optionen(zielVorbelegt)}</select><p class="hinweis" data-stand="zielkonto">${stand(zielVorbelegt)}</p></div>
+          </div>
+          <div class="feld feld--betrag"><label for="betrag">Betrag in Euro</label>
             <input id="betrag" name="betrag" inputmode="decimal" autocomplete="off" placeholder="500,00"></div>
-          <div class="ueberweisung__aktionen"><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Umbuchen</button></div>
-        </form></div></div>`;
+          <div class="formkarte__aktionen"><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Umbuchen</button></div>
+        </form></div>`;
       const form = flaeche.querySelector('form');
       const meldung = form.querySelector('[role="alert"]');
       const knopf = form.querySelector('button[type="submit"]');
+      // Unter jeder Auswahl der Stand des gewählten Kontos.
+      const standZeigen = () => ['quellkonto', 'zielkonto'].forEach(n => {
+        form.querySelector(`[data-stand="${n}"]`).textContent = stand(umbuchbar.find(k => k.iban === form[n].value));
+      });
+      form.quellkonto.addEventListener('change', standZeigen);
+      form.zielkonto.addEventListener('change', standZeigen);
+      // Richtung umkehren: Quelle und Ziel tauschen ihre Wahl.
+      form.querySelector('#tauschen').addEventListener('click', () => {
+        const quelle = form.quellkonto.value;
+        form.quellkonto.value = form.zielkonto.value;
+        form.zielkonto.value = quelle;
+        standZeigen();
+      });
 
       /** Zeigt die Meldung im Formular, behält die Eingaben, gibt den Knopf frei und vergibt eine neue Kennung (BR-0092). */
       function abgelehnt(text, feld) {
