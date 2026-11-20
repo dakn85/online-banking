@@ -215,6 +215,7 @@ a { color: var(--tanne); }
 /* Tageslimit (UC-015): Kennzahlen als Karte wie das Auftraggeberkonto, daneben das Formular */
 .tageslimit { display: grid; gap: 20px; max-width: 948px; }
 .tageslimit > .meldung { margin: 0; align-items: center; font-weight: 500; }
+.persoenlich .ueberweisung__form { max-width: 560px; }
 .ueberweisung__nebenaktion { margin-right: auto; }
 
 /* Vorgemerkte Überweisungen (UC-017) */

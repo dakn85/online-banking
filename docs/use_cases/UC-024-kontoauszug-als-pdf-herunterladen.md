@@ -7,7 +7,7 @@
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin wählt eines ihrer Konten und einen Monat und lädt den Kontoauszug als PDF herunter, mit Anfangssaldo, Endsaldo und allen Umsätzen des Monats; ein Monat ohne Umsätze ergibt einen leeren Auszug mit Saldo.  
-**Ziele:** Z-8  
+**Ziele:** Z-16  
 **Anforderungen:** NFR-001, C-001
 
 ## Vorbedingungen

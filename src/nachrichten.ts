@@ -48,9 +48,30 @@ zuruecksetzen();
 
 const eigene = (kennung: string) => nachrichten.get(kennung) ?? [];
 
+let laufendeNummer = 1000;
+
+/** UC-023, BR-0097: legt eine ungelesene Nachricht mit dem heutigen Datum (UTC) an; bei gleichem Datum ist sie die neueste. */
+export function nachrichtAnlegen(kennung: string, inhalt: { absender: string; betreff: string; text: string }): Nachricht {
+  const nachricht: Nachricht = {
+    nachrichtId: `N-${new Date().getUTCFullYear()}-${String(++laufendeNummer).padStart(5, '0')}`,
+    ...inhalt,
+    versendetAm: new Date().toISOString().slice(0, 10),
+    gelesen: false,
+  };
+  nachrichten.set(kennung, [...eigene(kennung), nachricht]);
+  return { ...nachricht };
+}
+
+/** Nachrichten der Kundin, älteste zuerst; bei gleichem Datum gilt die Reihenfolge des Anlegens. Nur Testbetrieb (UC-023). */
+export function aeltesteZuerst(kennung: string): Nachricht[] {
+  return eigene(kennung).map((n, i) => ({ n, i }))
+    .sort((a, b) => a.n.versendetAm.localeCompare(b.n.versendetAm) || a.i - b.i).map(({ n }) => ({ ...n }));
+}
+
 /** BR-0085, BR-0086: Nachrichten der Kundin, neueste zuerst, und Zahl der ungelesenen. */
 export function liste(kennung: string): Nachrichtenliste {
-  const alle = [...eigene(kennung)].sort((a, b) => b.versendetAm.localeCompare(a.versendetAm));
+  const alle = eigene(kennung).map((n, i) => ({ n, i }))
+    .sort((a, b) => b.n.versendetAm.localeCompare(a.n.versendetAm) || b.i - a.i).map(({ n }) => n);
   return { nachrichten: alle.map(n => ({ ...n })), anzahlUngelesen: alle.filter(n => !n.gelesen).length };
 }
 

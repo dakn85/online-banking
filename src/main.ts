@@ -12,6 +12,7 @@ import * as dauerauftraege from './dauerauftraege';
 import * as tageslimit from './tageslimit';
 import * as debitkarte from './debitkarte';
 import * as nachrichten from './nachrichten';
+import * as kundendaten from './kundendaten';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -270,9 +271,26 @@ app.delete('/api/nachrichten/:nachrichtId', nurAngemeldet('api'), (req, res) => 
   try { nachrichten.loeschen(res.locals.kunde.kennung, req.params.nachrichtId); res.status(204).end(); } catch (fehler) { nachrichtenfehler(res, fehler); }
 });
 
+// UC-023: persönliche Daten der angemeldeten Kundin lesen und mit TAN ändern (BR-0096, BR-0097); eine Kennung im Aufruf gibt es nicht.
+app.get('/api/kunde', nurAngemeldet('api'), (_req, res) => {
+  res.json(kundendaten.lesen(res.locals.kunde.kennung));
+});
+app.put('/api/kunde', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(kundendaten.aendern(res.locals.kunde.kennung, req.body));
+  } catch (fehler) {
+    if (!(fehler instanceof kundendaten.Kundendatenfehler)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
+  // UC-023: Postfachnachrichten der angemeldeten Kundin, älteste zuerst; prüft die Bestätigungsnachricht.
+  app.get('/api/test/postfachnachrichten', nurAngemeldet('api'), (_req, res) => {
+    res.json(nachrichten.aeltesteZuerst(res.locals.kunde.kennung));
+  });
   // Lastkunden lasttest-001 bis lasttest-300, alle mit der PIN aus LASTTEST_PIN (öffentliche Testdaten, Vorgabe in testdaten.ts).
   lastkundenAnlegen(process.env.LASTTEST_PIN || undefined);
   // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine ausgeführten oder vorgemerkten Aufträge. Lastkunden bleiben.
@@ -287,7 +305,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/umbuchung', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach', '/kontoauszug']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit', '/dauerauftraege', '/umbuchung', '/vorgemerkte-ueberweisungen', '/debitkarte', '/ausgabenanalyse', '/postfach', '/kontoauszug', '/persoenliche-daten']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 
