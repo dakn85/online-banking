@@ -70,7 +70,7 @@ Tags: UC-024, PK-62, BR-0011
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet den Kontoauszug des Kontos mit der IBAN "DE00 1234 5678 9012 3456 78"
-* Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
+* Die Kundin lädt den Kontoauszug für den Monat "in 1 Monat" herunter
 * Der Kontoauszug wird mit dem Status "404" und der Meldung "Das Konto wurde nicht gefunden." abgelehnt
 
 ## A4 Monat ungültig: Ein Monat nach dem laufenden Monat wird mit Status 400 abgelehnt
@@ -98,3 +98,14 @@ Tags: UC-024, PK-62
 * Testdaten sind zurückgesetzt
 * Die Kontoauszugsseite ist ohne Anmeldung nicht erreichbar
 * Die Anmeldeseite ist zu sehen
+
+## Der Kontoauszug wird als Datei mit festem Namen heruntergeladen
+
+Tags: UC-024, PK-62
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin öffnet den Kontoauszug
+* Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
+* Der Download hat den Dateinamen "Kontoauszug_<IBAN ohne Leerzeichen>_2026-02.pdf"

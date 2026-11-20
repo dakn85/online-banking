@@ -32,6 +32,7 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 
 - `acceptance/specs/kontoauszug.spec`: A1 Nicht angemeldet: Der Abruf des Kontoauszugs ohne Sitzung wird mit Status 401 beantwortet
 - `acceptance/specs/kontoauszug.spec`: A4 Monat ungültig: Ein Monat nach dem laufenden Monat wird mit Status 400 abgelehnt
+- `acceptance/specs/kontoauszug.spec`: Der Kontoauszug wird als Datei mit festem Namen heruntergeladen
 - `acceptance/specs/kontoauszug.spec`: Der Kontoauszug zeigt Anfangssaldo, Endsaldo und alle Umsätze des Monats, neueste zuerst
 - `acceptance/specs/kontoauszug.spec`: Der laufende Monat zeigt den Zwischenstand bis heute
 - `acceptance/specs/kontoauszug.spec`: Ein Konto, das nicht zur Kundin gehört, hat keinen Kontoauszug
