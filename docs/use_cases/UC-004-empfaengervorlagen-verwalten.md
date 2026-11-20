@@ -7,7 +7,7 @@
 **Bereich:** Überweisung  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin legt Empfänger als Vorlage mit Name, IBAN und optional Verwendungszweck an, benennt sie um und löscht sie, damit sie sie bei der Überweisung auswählen kann, statt sie neu einzutippen.  
-**Ziele:** Z-6  
+**Ziele:** Z-7  
 **Anforderungen:** NFR-001
 
 ## Vorbedingungen
