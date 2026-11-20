@@ -104,7 +104,7 @@ Tags: UC-002, PK-53, BR-0079
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "201"
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
 | feld            | wert   |
 |-----------------|--------|
 | ausfuehrungstag | morgen |
@@ -126,7 +126,7 @@ Tags: UC-002, PK-53, BR-0005
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "201"
+* Die angemeldete Kundin ruft "POST /api/terminueberweisungen" mit den Angaben auf und erhält den Status "200"
 | feld            | wert         |
 |-----------------|--------------|
 | auftragsId      | wiederholt-1 |
@@ -172,6 +172,7 @@ Tags: UC-002, PK-53
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung vorgemerkt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Umsätze des Kontos sind gegenüber vorher unverändert
 
 ## Die Zusammenfassung zeigt bei einer Terminüberweisung den Ausführungstag
 
@@ -181,6 +182,7 @@ Tags: UC-002, PK-53
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
 * Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und Ausführungstag "in 5 Tagen" und wählt „Weiter“
+* Die Zusammenfassung zeigt die Zeile "Ausführungstag" mit dem Wert "in 5 Tagen" im Format TT.MM.JJJJ
 
 ## Eine gelöschte Auftrags-Kennung kann beim Vormerken nicht erneut verwendet werden
 
