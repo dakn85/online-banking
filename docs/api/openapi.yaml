@@ -105,7 +105,7 @@ paths:
             - BR-0011
       summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst"
       tags: [ Finanzstatus ]
-      x-use-cases: [ UC-003 ]
+      x-use-cases: [ UC-003, UC-022 ]
   /api/empfaengervorlagen:
     get:
       summary: Empfängervorlagen der angemeldeten Kundin

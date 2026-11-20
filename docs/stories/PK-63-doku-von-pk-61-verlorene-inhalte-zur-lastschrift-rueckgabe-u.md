@@ -10,7 +10,7 @@ Als Product Owner möchte ich, dass Datenmodell, API-Beschreibung und Architektu
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
-| Umsätze eines Kontos mit Saldo danach, neueste zuerst | Geändert | Beschreibung geändert |
+| Umsätze eines Kontos mit Saldo danach, neueste zuerst | Geändert | Beschreibung geändert, Use Cases geändert |
 | Umsatz | Geändert | Eigenschaft betrag geändert, Eigenschaft buchungstag geändert, Eigenschaft gegenpartei geändert, und 8 weitere, Beschreibung geändert, Attribut kategorie geändert |
 | Architektur | Geändert | Bausteinsicht geändert, Querschnittliche Konzepte geändert |
 | UC-004 Empfängervorlagen verwalten | Geändert | Ziele geändert |
@@ -18,6 +18,7 @@ Als Product Owner möchte ich, dass Datenmodell, API-Beschreibung und Architektu
 ## Aufgaben für die Umsetzung
 
 - [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Beschreibung geändert
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Use Cases geändert
 - [ ] Umsatz: Eigenschaft betrag geändert
 - [ ] Umsatz: Eigenschaft buchungstag geändert
 - [ ] Umsatz: Eigenschaft gegenpartei geändert
@@ -41,7 +42,7 @@ Als Product Owner möchte ich, dass Datenmodell, API-Beschreibung und Architektu
 
 - Welche Kategorie tragen die beiden Demo-Lastschriften Fitnessstudio Vital und Zeitungsverlag Nord im Ausgangsstand des Girokontos (und die Gutschrift einer Rückgabe)?
   **Antwort:** Fitnessstudio Vital Freizeit, Zeitungsverlag Nord Freizeit, Rückgabe-Umsatz wie die ursprüngliche Lastschrift
-  _→ noch nicht in der Spezifikation_
+  _→ ohne Änderung: Von Hand nach dem Code eingetragen (e94b4cf)._
 - Die Story ändert in UC-004 das Ziel von Z-6 auf Z-7. Das hat mit Lastschrift-Rückgabe und Vormerkung nichts zu tun. Soll UC-004 tatsächlich dem Ziel Z-7 zugeordnet sein?
   **Antwort:** Ja, Z-7 ist richtig und gehört zur Wiederherstellung: Z-7 in vision.md heißt „Empfänger aus Vorlage statt Neueingabe“; PK-7 legte UC-004 mit „Ziele: NEU“ an und bekam dabei Z-6 (Umsätze) statt Z-7. Gefunden bei der Prüfung der Spezifikation am 20.11., bewusst in diese Aufräum-Story mitgenommen.
-  _→ noch nicht in der Spezifikation_
+  _→ ohne Änderung: Steht schon im Zweig (9e07c1d), Story-Satz per übernommenem Vorschlag ergänzt._
