@@ -20,6 +20,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Zustand nur im Speicher, Ausgangsstand über den Test-Reset | Geändert | Entscheidung geändert, Folgen geändert |
+| Genau einmalige Ausführung über die von der Oberfläche vergebene Auftrags-Kennung | Geändert | Entscheidung geändert |
 | Demo-Testdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Vorgemerkte Aufträge der angemeldeten Kundin | Neu | Endpunkt neu |
@@ -76,6 +77,7 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Entscheidung geändert
 - [ ] Zustand nur im Speicher, Ausgangsstand über den Test-Reset: Folgen geändert
+- [ ] Genau einmalige Ausführung über die von der Oberfläche vergebene Auftrags-Kennung: Entscheidung geändert
 - [ ] Demo-Testdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Lastdaten zurücksetzen (nur Testbetrieb): Beschreibung geändert
 - [ ] Vorgemerkte Aufträge der angemeldeten Kundin: Endpunkt neu
@@ -120,10 +122,6 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-53 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-53 grün
 
-## Offene Fragen
-
-- [ ] Soll auch die Wiederholung der Kennung einer bereits ausgeführten sofortigen Überweisung über POST /api/ueberweisungen mit 422 statt wie bisher ohne erneute Buchung abgelehnt werden?
-
 ## Entscheidungen
 
 - Wie weit darf der Ausführungstag einer Terminüberweisung höchstens in der Zukunft liegen?
@@ -140,4 +138,10 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
   _→ eingearbeitet in UC-002, BR-0079, UC-017, BR-0080, Überweisung, POST /api/test/reset, POST /api/test/lasttest/reset, GET /api/terminueberweisungen, POST /api/terminueberweisungen, DELETE /api/terminueberweisungen/{auftragsId}, Schema Terminueberweisungsauftrag, Schema Terminueberweisung, ueberweisung, ueberweisung-bestaetigen, vorgemerkte-ueberweisungen, NFR-001, NFR-002, vision, ADR-002, architektur, finanzstatus · 8cf06da_
 - Was geschieht, wenn eine auftragsId erneut gesendet wird, nachdem der Auftrag gelöscht wurde, oder wenn sie schon für eine andere Überweisung der Kundin verwendet wurde (sofortige Überweisung oder anderer Inhalt)?
   **Antwort:** Die Kennung bleibt je Kundin für beide Überweisungsarten dauerhaft verbraucht. Jede Wiederholung außer der des noch vorgemerkten Auftrags (dort 200 wie bisher) wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt; es entsteht kein Auftrag. Das ergänzt die Antworten von POST /api/terminueberweisungen und BR-0005.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-002, BR-0005, POST /api/terminueberweisungen · a9533b2_
+- Soll auch die Wiederholung der Kennung einer bereits ausgeführten sofortigen Überweisung über POST /api/ueberweisungen mit 422 statt wie bisher ohne erneute Buchung abgelehnt werden?
+  **Antwort:** Nein, die Wiederholung derselben sofortigen Überweisung bleibt idempotent (A3 unverändert)
+  _→ eingearbeitet in BR-0005 · a9533b2_
+- Soll die Idempotenz-Ablage je Endpunkt getrennt geführt werden, während die Kennung je Kundin für beide Endpunkte verbraucht gilt?
+  **Antwort:** Ja, getrennte Ablagen je Endpunkt, Verbrauch je Kkundin über beide
+  _→ eingearbeitet in ADR-003_
