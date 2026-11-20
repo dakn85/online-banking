@@ -5,6 +5,7 @@
   const IBAN_FEHLER = 'Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.';
   const BETRAG_FEHLER = 'Der Betrag übersteigt den verfügbaren Betrag des Girokontos.';
   const MINDESTBETRAG_FEHLER = 'Der Betrag muss mindestens 0,10 € betragen.';
+  const TAGESLIMIT_FEHLER = 'Mit dieser Überweisung würde Ihr Tageslimit überschritten.';
   const ABGELEHNT = 'Die Überweisung konnte nicht ausgeführt werden.';
   const AUSFUEHRUNGSTAG_FEHLER = 'Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.';
   const KENNUNG_FEHLER = 'Diese Auftrags-Kennung wurde bereits verwendet.';
@@ -74,7 +75,7 @@
             <div class="feld"><label for="verwendungszweck">Verwendungszweck</label>
               <textarea id="verwendungszweck" name="verwendungszweck" maxlength="140" rows="2">${html(eingabe.verwendungszweck)}</textarea></div>
             ${feld('ausfuehrungstag', 'Ausführungstag', `type="date" min="${plusTage(heute(), 1)}" max="${plusTage(heute(), 365)}"`, 'Optional: leer lassen, um sofort zu überweisen. Mit Ausführungstag wird der Auftrag nur vorgemerkt.')}
-            <div class="ueberweisung__aktionen"><a class="knopf knopf--still ueberweisung__nebenaktion" href="/tageslimit">Tageslimit</a><a class="knopf knopf--still" href="/vorgemerkte-ueberweisungen">Vorgemerkte Überweisungen</a>< class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
+            <div class="ueberweisung__aktionen"><a class="knopf knopf--still ueberweisung__nebenaktion" href="/tageslimit">Tageslimit</a><a class="knopf knopf--still" href="/vorgemerkte-ueberweisungen">Vorgemerkte Überweisungen</a><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
           </form>${kontoKarte}</div></div>`;
         const form = flaeche.querySelector('form');
         // BR-0017: Name, IBAN und, falls vorhanden, Verwendungszweck übernehmen; den Betrag nicht. Alles bleibt änderbar.
@@ -142,6 +143,8 @@
             if (fehler.status === 422 && fehler.message === KENNUNG_FEHLER) return auftrag(KENNUNG_FEHLER);
             // UC-002 A10 Schritt 2
             if (fehler.status === 422 && fehler.message === AUSFUEHRUNGSTAG_FEHLER) return auftrag(AUSFUEHRUNGSTAG_FEHLER, 'ausfuehrungstag');
+            // UC-002 A12, ADR-004: Meldung des Dienstes im Formular, ohne Feldbezug
+            if (fehler.status === 422 && fehler.message === TAGESLIMIT_FEHLER) return auftrag(TAGESLIMIT_FEHLER);
             if (fehler.status === 422) return auftrag(BETRAG_FEHLER, 'betrag');
             auftrag(tag ? NICHT_VORGEMERKT : ABGELEHNT); // A6, bei der Terminüberweisung A9 Schritt 5
           }

@@ -23,7 +23,7 @@
 4. Das System prüft die IBAN (BR-0003) und den Betrag (BR-0004) und zeigt bei einer Abweichung die Meldung im Formular der Überweisung.
 5. Das System zeigt die Zusammenfassung mit Auftraggeberkonto, Empfänger, IBAN, Betrag in Euro und Verwendungszweck.
 6. Die Kundin bestätigt.
-7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003) und den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004).
+7. Der Dienst prüft beim Bestätigen die IBAN (BR-0003), den Betrag gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004) und den Betrag zusammen mit den heutigen Überweisungen der Kundin gegen ihr Tageslimit (BR-0070).
 8. Das System führt den Auftrag genau einmal aus und mindert den Saldo des Girokontos um den Betrag (BR-0005, BR-0006).
 9. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Überweisung ausgeführt.“.
 10. Die Kundin sieht den Auftrag als neuesten Umsatz in den Umsätzen des Girokontos (BR-0012).
@@ -46,6 +46,7 @@
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
 2. Lehnt der Dienst den Betrag beim Bestätigen ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
+2a. Übersteigt der Betrag zugleich das Tageslimit (BR-0070), gilt allein diese Ablehnung: Der Dienst antwortet mit 422 und der Meldung zu BR-0004, die Oberfläche zeigt sie am Betragsfeld, und die Tageslimit-Prüfung (A12) läuft erst, wenn der Betrag den verfügbaren Betrag nicht übersteigt.
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ### A3: Mehrfaches Bestätigen
@@ -129,6 +130,15 @@
 2. Die Wiederholung derselben Überweisung am selben Endpunkt beantwortet der Dienst wie bisher mit 200 ohne weitere Buchung oder weiteren Auftrag (A3, A9 Schritt 4). 422 gilt nur, wenn die Kennung für eine andere Überweisung verbraucht ist: bei einer Terminüberweisung durch eine sofortige Überweisung oder einen gelöschten Auftrag, bei einer sofortigen Überweisung durch einen Terminauftrag (vorgemerkt oder gelöscht).
 3. Die Kundin bestätigt erneut oder bricht ab; die Seite vergibt je Überweisung eine neue Kennung, deshalb tritt dieser Fall über die Oberfläche nicht auf.
 
+### A12: Tageslimit überschritten
+
+**Auslöser:** Der Betrag zusammen mit den am laufenden Kalendertag ausgeführten Überweisungen der Kundin übersteigt ihr Tageslimit (BR-0070), auch bei einem Tageslimit von 0,00 EUR, und der Betrag übersteigt den verfügbaren Betrag des Girokontos nicht (sonst gilt A2). (Schritt 7).  
+**Ablauf:**
+
+1. Der Dienst führt den Auftrag nicht aus, bucht keinen Umsatz, lässt den Saldo des Girokontos unverändert und antwortet mit Status 422 und der Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“.
+2. Das System springt auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei; die nächste Bestätigung trägt eine neue Auftrags-Kennung (BR-0005).
+3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -153,8 +163,12 @@ sequenceDiagram
         banking-->>kundin: Zusammenfassung
         kundin->>banking: „Bestätigen“
         banking->>banking: POST /api/ueberweisungen
-        banking->>banking: GET /api/konten
-        banking-->>kundin: Finanzstatus, neuer Saldo, „Überweisung ausgeführt.“
+        alt Tageslimit überschritten
+            banking-->>kundin: Überweisung mit Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“, Saldo unverändert
+        else Tageslimit eingehalten
+            banking->>banking: GET /api/konten
+            banking-->>kundin: Finanzstatus, neuer Saldo, „Überweisung ausgeführt.“
+        end
     else mehrfaches Bestätigen
         banking-->>kundin: Finanzstatus, Saldo einmal gemindert
     end
@@ -210,7 +224,10 @@ Der Ausführungstag einer Terminüberweisung liegt frühestens am Kalendertag na
 ## Weitere Prüfungen
 
 - **WP-1** (Unit-Test): IBAN-Prüfziffer nach ISO 7064 MOD 97-10 und Zugehörigkeit des Länderkennzeichens zur SEPA-Länderliste.
+- **WP-2** (Unit-Test): Tageslimit (BR-0070): Überweisungen kurz vor und nach Mitternacht UTC (erfasstAm) zählen zu verschiedenen Kalendertagen; die Überweisung des Vortags zählt nicht zu den heutigen Ausgängen.
+- **WP-3** (Unit-Test): Tageslimit (BR-0070): Summen werden in Cent verglichen; 0,10 € und 0,20 € bei Limit 0,30 € sind zulässig, weitere 0,01 € werden abgelehnt; ein Limit von 0,00 € lehnt jede Überweisung ab.
+- **WP-4** (Unit-Test): Tageslimit (BR-0070): Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge zählen nicht zu den heutigen Ausgängen.
 
 ## Notizen
 
-Einmalige Überweisung vom Girokonto, sofort oder als Terminüberweisung für einen späteren Ausführungstag (A9, A10); die Ausführung einer Terminüberweisung am Ausführungstag und Daueraufträge sind nicht Teil dieser Story. Die Konten und Salden sind Demo-Daten (C-001), der Dienst schreibt den Saldo selbst fort. Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt.
+Einmalige Überweisung vom Girokonto, sofort oder als Terminüberweisung für einen späteren Ausführungstag (A9, A10); die Ausführung einer Terminüberweisung am Ausführungstag und Daueraufträge sind nicht Teil dieser Story. Die Konten und Salden sind Demo-Daten (C-001), der Dienst schreibt den Saldo selbst fort. Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt. Gegen das Tageslimit zählen nur ausgeführte Überweisungen nach diesem Use Case; andere Ausgänge wie Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge zählen nicht (BR-0070). Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt.

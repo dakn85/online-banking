@@ -22,7 +22,7 @@ paths:
       x-use-cases: [ UC-001 ]
   /api/ueberweisungen:
     post:
-      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; sonst wird nichts gebucht. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId einer bereits ausgeführten sofortigen Überweisung bucht nicht erneut (200). Ist die auftragsId der Kundin schon für eine Terminüberweisung verwendet worden (vorgemerkt oder gelöscht), wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt und nichts gebucht. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
+      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden UTC-Tag des Ausführungszeitpunkts (erfasstAm) ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro; eine Summe genau in Höhe des Limits ist zulässig); sonst wird nichts gebucht. Prüfreihenfolge: IBAN, verfügbarer Betrag (BR-0004), Tageslimit; bei mehreren Verletzungen gilt die Meldung der zuerst verletzten. Übersteigt der Betrag zugleich den verfügbaren Betrag und das Tageslimit, antwortet der Dienst allein mit der Meldung zu BR-0004. Das Tageslimit gilt auch für die Lastkunden im Testbetrieb; ihre Ausgänge des Tages hängen nicht am Fenster der jüngsten 200 auftragsIds. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId einer bereits ausgeführten sofortigen Überweisung bucht nicht erneut (200). Ist die auftragsId der Kundin schon für eine Terminüberweisung verwendet worden (vorgemerkt oder gelöscht), wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt und nichts gebucht. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
       operationId: ueberweisungAusfuehren
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }
@@ -30,13 +30,16 @@ paths:
       responses:
         "200":
           content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }
-          description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung
+          description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung, keine erneute Tageslimitprüfung
         "201":
           content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }
           description: "Auftrag ausgeführt, Saldo des Girokontos gemindert"
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: "IBAN ungültig oder gehört zu keinem SEPA-Land, oder Betrag kleiner als 0,10 Euro"
+          x-rules:
+            - Überweisung.empfaengerIban
+            - Überweisung.betrag
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
@@ -45,10 +48,11 @@ paths:
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
         "422":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: Betrag übersteigt den verfügbaren Betrag des Girokontos, oder die auftragsId wurde bereits für eine Terminüberweisung verwendet („Diese Auftrags-Kennung wurde bereits verwendet.“)
+          description: Betrag übersteigt den verfügbaren Betrag des Girokontos (BR-0004; übersteigt er zugleich das Tageslimit, kommt allein diese Meldung), die Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“ (BR-0070), oder die auftragsId wurde bereits für eine Terminüberweisung verwendet („Diese Auftrags-Kennung wurde bereits verwendet.“)
           x-rules:
             - BR-0004
             - BR-0005
+            - BR-0070
       summary: Überweisung vom Girokonto ausführen
       tags: [ Überweisung ]
       x-use-cases: [ UC-002 ]

@@ -2,6 +2,7 @@
    UC-002 A9 bis A11 und UC-017: Terminüberweisung vormerken, liefern und löschen (BR-0005, BR-0079, BR-0080). */
 import { belasten, girokonto } from './konten';
 import { Auswahl, istDemokunde, Kunde } from './kunden';
+import * as tageslimit from './tageslimit';
 import { buchen } from './umsaetze';
 
 /** Länderkennzeichen des SEPA-Raums (EWR, Schweiz, Vereinigtes Königreich, Monaco, San Marino, Andorra, Vatikan). */
@@ -12,6 +13,7 @@ export const BETRAG_FEHLER = 'Der Betrag übersteigt den verfügbaren Betrag des
 export const MINDESTBETRAG_FEHLER = 'Der Betrag muss mindestens 0,10 € betragen.';
 export const AUSFUEHRUNGSTAG_FEHLER = 'Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.';
 export const DATUM_FEHLER = 'Der Ausführungstag ist kein gültiges Datum.';
+export const TAGESLIMIT_UEBERSCHRITTEN = 'Mit dieser Überweisung würde Ihr Tageslimit überschritten.';
 export const KENNUNG_FEHLER = 'Diese Auftrags-Kennung wurde bereits verwendet.';
 /** Feldregel Überweisung.betrag: mindestens 0,10 Euro, in Cent. */
 const MINDESTBETRAG_CENT = 10;
@@ -69,10 +71,12 @@ const ausgefuehrt = new Map<string, Map<string, Ueberweisung>>();
 const vorgemerkt = new Map<string, Map<string, Terminueberweisung>>();
 /** BR-0005, ADR-003: Auftrags-Kennungen je Kundin, die eine Terminüberweisung verbraucht hat (vorgemerkt oder gelöscht); nie gekappt. */
 const terminKennungen = new Map<string, Set<string>>();
+/** BR-0070: Ausgänge des Tages je Kennung und UTC-Tag in Cent; zählt nur ausgeführte Überweisungen und hängt nicht am Fenster der jüngsten 200 Auftrags-Kennungen der Lastkunden. */
+const tagesausgaenge = new Map<string, Map<string, number>>();
 
 /** Vergisst ausgeführte und vorgemerkte Aufträge der ausgewählten Kennungen; ohne Auswahl die der Demo-Kundinnen. */
 export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
-  for (const ablage of [ausgefuehrt, vorgemerkt, terminKennungen]) {
+  for (const ablage of [ausgefuehrt, vorgemerkt, terminKennungen, tagesausgaenge]) {
     for (const kennung of [...ablage.keys()]) if (auswahl(kennung)) ablage.delete(kennung);
   }
 }
@@ -105,11 +109,19 @@ export function ausfuehren(kunde: Pick<Kunde, 'kennung' | 'speichergrenze'>, auf
   if (terminKennungen.get(kunde.kennung)?.has(auftrag.auftragsId)) throw new Ablehnung(422, KENNUNG_FEHLER);
   const { konto, cent } = pruefen(kunde.kennung, auftrag);
   deckungPruefen(konto, cent);
+  const erfasstAm = new Date().toISOString();
+  const tag = erfasstAm.slice(0, 10);
+  // BR-0070 (nach BR-0003 und BR-0004): Betrag plus Ausgänge des UTC-Tages höchstens das Tageslimit; Vergleich in Cent
+  const bisher = tagesausgaenge.get(kunde.kennung)?.get(tag) ?? 0;
+  if (bisher + cent > Math.round(tageslimit.lesen(kunde.kennung).tageslimit * 100)) throw new Ablehnung(422, TAGESLIMIT_UEBERSCHRITTEN);
   belasten(kunde.kennung, konto.iban, cent / 100);
   const ueberweisung: Ueberweisung = {
     ...auftrag, empfaengerIban: ibanNormal(auftrag.empfaengerIban), betrag: cent / 100,
-    waehrung: 'EUR', status: 'ausgefuehrt', erfasstAm: new Date().toISOString(),
+    waehrung: 'EUR', status: 'ausgefuehrt', erfasstAm,
   };
+  let tage = tagesausgaenge.get(kunde.kennung);
+  if (!tage) tagesausgaenge.set(kunde.kennung, tage = new Map());
+  tage.set(tag, bisher + cent);
   // BR-0012: genau ein Umsatz je Auftrag; Buchungstag ist der Tag der Ausführung (UTC), Saldo danach der geminderte Saldo.
   buchen(konto.iban, {
     buchungstag: ueberweisung.erfasstAm.slice(0, 10), gebuchtAm: ueberweisung.erfasstAm,
