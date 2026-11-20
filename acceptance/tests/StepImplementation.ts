@@ -1471,4 +1471,135 @@ export default class StepImplementation {
     await page.goto(`${basisUrl}/umbuchung`, { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/anmelden$/);
   }
+
+  /* ---------------------------------------------------------------- UC-023 Persönliche Daten */
+
+  /** Die Maske Persönliche Daten, fertig gezeichnet; ruft sie auf, wenn die Seite woanders steht. */
+  private async datenSeite(): Promise<Page> {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname !== '/persoenliche-daten') await page.goto(`${basisUrl}/persoenliche-daten`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.persoenlich').waitFor();
+    return page;
+  }
+
+  /** UC-023 Schritt 1: „Persönliche Daten“ im Finanzstatus; ein erneutes Öffnen lädt die gespeicherten Daten. */
+  @Step('Die Kundin öffnet die persönlichen Daten')
+  public async datenOeffnen() {
+    const page = await this.seite();
+    if (new URL(page.url()).pathname === '/persoenliche-daten') {
+      await page.goto(`${basisUrl}/finanzstatus`, { waitUntil: 'domcontentloaded' });
+    }
+    const kontentabelle = await this.kontentabelle();
+    await kontentabelle.locator('#kopf-aktion').getByRole('link', { name: 'Persönliche Daten' }).click();
+    await page.waitForURL(/\/persoenliche-daten$/);
+    await page.locator('.persoenlich').waitFor();
+  }
+
+  @Step('Die persönlichen Daten zeigen bei <feld> den Wert <wert>')
+  public async datenZeigenWert(feld: string, wert: string) {
+    const page = await this.datenSeite();
+    assert.strictEqual(await page.getByLabel(text(feld), { exact: true }).inputValue(), text(wert), `Feld „${feld}“`);
+  }
+
+  /** Trägt die Angaben ein, wählt „Speichern“ und wartet auf die neu gezeichnete Maske. */
+  private async datenSpeichern(angaben: Record<string, string>, tan: string) {
+    const page = await this.datenSeite();
+    const form = page.getByRole('form', { name: 'Persönliche Daten ändern' });
+    for (const [feld, wert] of Object.entries(angaben)) await form.getByLabel(feld, { exact: true }).fill(wert);
+    await form.getByLabel('TAN', { exact: true }).fill(tan);
+    await page.locator('.persoenlich').evaluate(e => e.setAttribute('data-alt', ''));
+    await form.getByRole('button', { name: 'Speichern' }).click();
+    await page.locator('.persoenlich:not([data-alt])').waitFor();
+  }
+
+  @Step('Die Kundin ändert in den persönlichen Daten <feld> auf <wert> und bestätigt mit der TAN <tan>')
+  public async datenAendern(feld: string, wert: string, tan: string) {
+    await this.datenSpeichern({ [text(feld)]: text(wert) }, text(tan));
+  }
+
+  @Step('Die Kundin ändert mehrere Angaben der persönlichen Daten und bestätigt mit der TAN <tan> <tabelle>')
+  public async datenMehrereAendern(tan: string, tabelle: Table) {
+    const angaben: Record<string, string> = {};
+    for (const zeile of tabelle.getTableRows()) angaben[text(zeile.getCell('feld'))] = text(zeile.getCell('wert'));
+    await this.datenSpeichern(angaben, text(tan));
+  }
+
+  @Step('Die persönlichen Daten zeigen die Meldung <meldung>')
+  public async datenMelden(meldung: string) {
+    const page = await this.datenSeite();
+    await page.locator('.persoenlich > [role="status"], .persoenlich > [role="alert"]').filter({ hasText: text(meldung) }).waitFor();
+  }
+
+  /** Ändert per Aufruf nur die Postleitzahl; die übrigen Angaben sind die gespeicherten. */
+  @Step('Die Änderung der persönlichen Daten mit Postleitzahl <plz> und TAN <tan> antwortet mit dem Status <status>')
+  public async datenAendernAufruf(plz: string, tan: string, status: string) {
+    const page = await this.seite();
+    const anfrage = page.context().request;
+    const aktuell = await (await anfrage.get(`${basisUrl}/api/kunde`)).json();
+    const antwort = await anfrage.put(`${basisUrl}/api/kunde`, { data: { ...aktuell, postleitzahl: text(plz), tan: text(tan) } });
+    assert.strictEqual(antwort.status(), Number(status), `PUT /api/kunde: ${await antwort.text()}`);
+  }
+
+  @Step('Der Aufruf <methode> <pfad> ohne Anmeldung antwortet mit dem Status <status>')
+  public async aufrufOhneAnmeldung(methode: string, pfad: string, status: string) {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const antwort = await fetch(`${basisUrl}${text(pfad)}`, {
+      method: text(methode),
+      ...(text(methode) === 'PUT' ? { headers: { 'Content-Type': 'application/json' }, body: '{}' } : {}),
+    });
+    assert.strictEqual(antwort.status, Number(status), `${methode} ${pfad} ohne Sitzung`);
+  }
+
+  @Step('Die persönlichen Daten sind ohne Anmeldung nicht erreichbar')
+  public async datenOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    await page.goto(`${basisUrl}/persoenliche-daten`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
+  /** Postfachnachrichten der angemeldeten Kundin über die Testschnittstelle, älteste zuerst. */
+  private async postfachNachrichten(): Promise<{ absender: string; betreff: string; text: string; versendetAm: string; gelesen: boolean }[]> {
+    const page = await this.seite();
+    const antwort = await page.context().request.get(`${basisUrl}/api/test/postfachnachrichten`);
+    assert.strictEqual(antwort.status(), 200, 'GET /api/test/postfachnachrichten');
+    return antwort.json();
+  }
+
+  @Step('Das Postfach der Kundin enthält <anzahl> Nachrichten')
+  public async postfachEnthaeltAnzahl(anzahl: string) {
+    assert.strictEqual((await this.postfachNachrichten()).length, Number(anzahl), 'Zahl der Nachrichten im Postfach');
+  }
+
+  @Step('Das Postfach der Kundin enthält die Nachricht <satz>')
+  public async postfachEnthaeltNachricht(satz: string) {
+    const alle = await this.postfachNachrichten();
+    assert.ok(alle.some(n => n.text.includes(text(satz))), `Keine Nachricht mit „${satz}“, da sind: ${alle.map(n => n.text).join(' | ')}`);
+  }
+
+  private async neuesteNachricht() {
+    const alle = await this.postfachNachrichten();
+    assert.ok(alle.length > 0, 'Das Postfach ist leer');
+    return alle[alle.length - 1];
+  }
+
+  @Step('Die neueste Nachricht im Postfach der Kundin ist ungelesen und hat den Betreff <betreff>')
+  public async neuesteUngelesenMitBetreff(betreff: string) {
+    const nachricht = await this.neuesteNachricht();
+    assert.strictEqual(nachricht.gelesen, false, 'Lesestatus der neuesten Nachricht');
+    assert.strictEqual(nachricht.betreff, text(betreff), 'Betreff der neuesten Nachricht');
+  }
+
+  @Step('Die neueste Nachricht im Postfach der Kundin hat den Text <inhalt>')
+  public async neuesteMitText(inhalt: string) {
+    assert.strictEqual((await this.neuesteNachricht()).text, text(inhalt), 'Text der neuesten Nachricht');
+  }
+
+  @Step('Die neueste Nachricht im Postfach der Kundin stammt von <absender> und wurde <tag> versendet')
+  public async neuesteVonAm(absender: string, tag: string) {
+    const nachricht = await this.neuesteNachricht();
+    assert.strictEqual(nachricht.absender, text(absender), 'Absender der neuesten Nachricht');
+    assert.strictEqual(nachricht.versendetAm, this.datum(tag), 'versendetAm der neuesten Nachricht');
+  }
 }

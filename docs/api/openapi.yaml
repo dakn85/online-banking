@@ -58,7 +58,7 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -241,7 +241,7 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Nachrichten mit ihrem Lesestatus, Tageslimit und Debitkarte auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte und vorgemerkte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen, Daueraufträge, Nachrichten mit ihrem Lesestatus, Tageslimit, Debitkarte und persönliche Daten (Anschrift, E-Mail-Adresse, Telefonnummer) auf den Ausgangsstand (Tageslimit gleich Standardlimit, Debitkarte mit Status aktiv und ohne Sperrgrund). Nachrichten stehen danach wieder im Ausgangsstand; Bestätigungsnachrichten einer Änderung der persönlichen Daten sind entfernt. Im Ausgangsstand führt jonas.weber den Dauerauftrag „Hausverwaltung Weber“ (650,00 €, Miete, monatlich) mit erstem Ausführungstag 30 Tage vor dem Zurücksetzen und ohne Enddatum; lena.hoffmann hat keinen Dauerauftrag. Ausgeführte und vorgemerkte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen, persönlichen Daten, Postfachnachrichten und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -249,10 +249,11 @@ paths:
       x-use-cases:
         - UC-018
         - UC-020
+        - UC-023
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten und vorgemerkten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset ändert daran nichts. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze), ihr Tageslimit auf das Standardlimit und ihre persönlichen Daten auf den Ausgangsstand; ihre ausgeführten und vorgemerkten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben im Ausgangsstand keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset leert es wieder, wenn eine Bestätigungsnachricht einer Änderung der persönlichen Daten angelegt wurde. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -402,69 +403,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
-  /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben:
-    post:
-      summary: Lastschrift zurückgeben und Betrag gutschreiben
-      description: Gibt die SEPA-Lastschrift mit dieser umsatzId auf dem Girokonto mit dieser IBAN zurück und schreibt den Betrag gut (BR-0095). Eine umsatzId, die die Feldbedingung des Datenmodells verletzt (Länge 1 bis 36), beantwortet der Dienst mit 400. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011), eine unbekannte umsatzId mit 404 (BR-0094). Ist der Umsatz keine SEPA-Lastschrift oder schon zurückgegeben, antwortet er mit 422 (BR-0094), liegt der Buchungstag mehr als 56 Tage zurück, mit 422 (BR-0093); es wird nichts gebucht. Eine zweite Rückgabe derselben Lastschrift bucht nicht erneut. Beträge in Euro.
-      operationId: lastschriftZurueckgeben
-      tags:
-        - Finanzstatus
-      x-use-cases:
-        - UC-022
-      parameters:
-        - name: iban
-          in: path
-          required: true
-          description: IBAN des Girokontos der Kundin
-          schema:
-            type: string
-        - name: umsatzId
-          in: path
-          required: true
-          description: Kennung der SEPA-Lastschrift
-          schema:
-            type: string
-            minLength: 1
-            maxLength: 36
-      responses:
-        "201":
-          description: Lastschrift zurückgegeben, Betrag gutgeschrieben
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Rueckgabe"
-        "400":
-          description: Die umsatzId verletzt die Feldbedingung (Länge 1 bis 36)
-          x-rules:
-            - Umsatz.umsatzId
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fehler"
-        "401":
-          description: Keine gültige Sitzung
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fehler"
-        "404":
-          description: Die IBAN gehört zu keinem Konto der Kundin oder das Konto hat keinen Umsatz mit dieser Kennung
-          x-rules:
-            - BR-0011
-            - BR-0094
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fehler"
-        "422":
-          description: Der Umsatz ist keine SEPA-Lastschrift, die Lastschrift ist schon zurückgegeben oder die Rückgabefrist von 8 Wochen ist abgelaufen
-          x-rules:
-            - BR-0093
-            - BR-0094
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fehler"
   /api/dauerauftraege:
     get:
       summary: Daueraufträge der angemeldeten Kundin
@@ -1102,6 +1040,162 @@ paths:
         - Überweisung
       x-use-cases:
         - UC-021
+  /api/kunde:
+    get:
+      summary: Persönliche Daten der angemeldeten Kundin
+      description: Liefert Anschrift (Straße mit Hausnummer, Postleitzahl, Ort), E-Mail-Adresse und Telefonnummer der angemeldeten Kundin. Ohne gültige Sitzung 401.
+      operationId: kundeLesen
+      tags:
+        - Kundendaten
+      x-use-cases:
+        - UC-023
+      responses:
+        "200":
+          description: Persönliche Daten der Kundin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Kundendaten"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+    put:
+      summary: Persönliche Daten mit TAN ändern
+      description: Speichert Anschrift, E-Mail-Adresse und Telefonnummer der angemeldeten Kundin, wenn die TAN (Mock) stimmt, und legt bei geänderten Angaben eine Bestätigungsnachricht (Nachricht der Aventa Bank) im Postfach an. Alle Felder und die TAN sind Pflicht. Der Dienst entfernt zuerst führende und folgende Leerzeichen von Straße, Ort, E-Mail-Adresse und Telefonnummer. Danach prüft er die Feldregeln des Datenmodells (Muster und Längen) auf den bereinigten Werten; ein Verstoß ergibt 400. Das Schema lässt Randleerzeichen deshalb zu. Ohne gültige Sitzung 401.
+      operationId: kundeAendern
+      tags:
+        - Kundendaten
+      x-use-cases:
+        - UC-023
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Kundendatenauftrag"
+      responses:
+        "200":
+          description: Persönliche Daten gespeichert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Kundendaten"
+        "400":
+          description: Ein Feld oder die TAN fehlt oder verletzt seine Feldregel (nach Entfernen der Randleerzeichen)
+          x-rules:
+            - Kunde.strasse
+            - Kunde.postleitzahl
+            - Kunde.ort
+            - Kunde.email
+            - Kunde.telefonnummer
+            - Kunde.tan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "422":
+          description: Die TAN ist falsch; nichts gespeichert
+          x-rules:
+            - BR-0096
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+  /api/test/postfachnachrichten:
+    get:
+      summary: Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb)
+      description: Liefert die Postfachnachrichten der angemeldeten Kundin, älteste zuerst. Nur im Testbetrieb (TEST_MODE=1) vorhanden; dient der Prüfung der Bestätigungsnachricht einer Änderung der persönlichen Daten. Die Kundin selbst liest ihr Postfach über GET /api/nachrichten. Ohne gültige Sitzung 401.
+      operationId: postfachnachrichtenLesenTest
+      tags:
+        - Test
+      x-intern: "Testbetrieb: Prüfung der Bestätigungsnachricht; das Postfach der Kundin liest GET /api/nachrichten (UC-020)"
+      responses:
+        "200":
+          description: Nachrichten der Kundin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Nachricht"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+  /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben:
+    post:
+      summary: Lastschrift zurückgeben und Betrag gutschreiben
+      description: Gibt die SEPA-Lastschrift mit dieser umsatzId auf dem Girokonto mit dieser IBAN zurück und schreibt den Betrag gut (BR-0095). Eine umsatzId, die die Feldbedingung des Datenmodells verletzt (Länge 1 bis 36), beantwortet der Dienst mit 400. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011), eine unbekannte umsatzId mit 404 (BR-0094). Ist der Umsatz keine SEPA-Lastschrift oder schon zurückgegeben, antwortet er mit 422 (BR-0094), liegt der Buchungstag mehr als 56 Tage zurück, mit 422 (BR-0093); es wird nichts gebucht. Eine zweite Rückgabe derselben Lastschrift bucht nicht erneut. Beträge in Euro.
+      operationId: lastschriftZurueckgeben
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-022
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Girokontos der Kundin
+          schema:
+            type: string
+        - name: umsatzId
+          in: path
+          required: true
+          description: Kennung der SEPA-Lastschrift
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+      responses:
+        "201":
+          description: Lastschrift zurückgegeben, Betrag gutgeschrieben
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rueckgabe'
+        "400":
+          description: Die umsatzId verletzt die Feldbedingung (Länge 1 bis 36)
+          x-rules:
+            - Umsatz.umsatzId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin oder das Konto hat keinen Umsatz mit dieser Kennung
+          x-rules:
+            - BR-0011
+            - BR-0094
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Der Umsatz ist keine SEPA-Lastschrift, die Lastschrift ist schon zurückgegeben oder die Rückgabefrist von 8 Wochen ist abgelaufen
+          x-rules:
+            - BR-0093
+            - BR-0094
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
 components:
   schemas:
     Anmeldedaten:
@@ -1280,18 +1374,6 @@ components:
       required:
         - umsaetze
       type: object
-    Rueckgabe:
-      type: object
-      properties:
-        lastschriftUmsatzId:
-          type: string
-          description: Kennung der zurückgegebenen Lastschrift
-        gutschrift:
-          $ref: "#/components/schemas/Umsatz"
-      required:
-        - lastschriftUmsatzId
-        - gutschrift
-
     Umsatz:
       properties:
         betrag:
@@ -1322,19 +1404,7 @@ components:
           description: Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag der jüngere Umsatz zuerst (BR-0008)
           format: date-time
           type: string
-        umsatzId:
-          type: string
-          description: Kennung des Umsatzes, vom Dienst vergeben
-          minLength: 1
-          maxLength: 36
-        sepaLastschrift:
-          type: boolean
-          description: Der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche
-        zurueckgegeben:
-          type: boolean
-          description: Die SEPA-Lastschrift wurde zurückgegeben (BR-0094)
         kategorie:
-          description: Kategorie des Umsatzes aus der festen Liste
           enum:
             - Wohnen
             - Lebensmittel
@@ -1344,18 +1414,17 @@ components:
             - Gesundheit
             - Sonstiges
           type: string
-      required:
-        - umsatzId
-        - buchungstag
-        - gebuchtAm
-        - gegenpartei
-        - verwendungszweck
-        - betrag
-        - waehrung
-        - saldoDanach
-        - sepaLastschrift
-        - zurueckgegeben
-        - kategorie
+        umsatzId:
+          description: Kennung des Umsatzes, vom Dienst vergeben
+          type: string
+          minLength: 1
+          maxLength: 36
+        sepaLastschrift:
+          description: Der Umsatz ist eine SEPA-Lastschrift
+          type: boolean
+        zurueckgegeben:
+          description: Rückgabestatus der SEPA-Lastschrift (BR-0094)
+          type: boolean
       type: object
       x-entity: Umsatz
     Empfaengervorlage:
@@ -1849,3 +1918,91 @@ components:
         erfasstAm:
           type: string
           format: date-time
+    Kundendaten:
+      type: object
+      x-entity: Kunde
+      properties:
+        strasse:
+          type: string
+          minLength: 1
+          maxLength: 100
+        postleitzahl:
+          type: string
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        ort:
+          type: string
+          minLength: 1
+          maxLength: 60
+        email:
+          type: string
+          minLength: 3
+          maxLength: 254
+          pattern: ^[^@ ]+@[^@ ]+\.[^@ ]+$
+        telefonnummer:
+          type: string
+          minLength: 6
+          maxLength: 20
+          pattern: ^\+?[0-9 /()-]+$
+      required:
+        - strasse
+        - postleitzahl
+        - ort
+        - email
+        - telefonnummer
+    Kundendatenauftrag:
+      type: object
+      x-entity: Kunde
+      properties:
+        strasse:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (max. 100).
+        postleitzahl:
+          type: string
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        ort:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (max. 60).
+        email:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          pattern: ^\s*[^@\s]+@[^@\s]+\.[^@\s]+\s*$
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (3 bis 254 Zeichen).
+        telefonnummer:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          pattern: ^\s*\+?[0-9 /()-]+\s*$
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (6 bis 20 Zeichen).
+        tan:
+          type: string
+          minLength: 6
+          maxLength: 6
+          pattern: ^[0-9]{6}$
+      required:
+        - strasse
+        - postleitzahl
+        - ort
+        - email
+        - telefonnummer
+        - tan
+    Rueckgabe:
+      type: object
+      description: "Ergebnis einer Rückgabe: die zurückgegebene Lastschrift und der Umsatz der Gutschrift"
+      required:
+        - lastschriftUmsatzId
+        - gutschrift
+      properties:
+        lastschriftUmsatzId:
+          type: string
+          description: umsatzId der zurückgegebenen Lastschrift
+        gutschrift:
+          $ref: '#/components/schemas/Umsatz'

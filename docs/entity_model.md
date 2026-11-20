@@ -12,10 +12,10 @@ erDiagram
     Umbuchung }o--|| Konto : "bucht zu auf"
     Dauerauftrag }o--|| Konto : "geht ab von"
     Dauerauftrag }o--|| Kunde : "gehört zu"
+    Nachricht }o--|| Kunde : "gehört zu"
     Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
-    Nachricht }o--|| Kunde : "gehört zu"
 ```
 
 ## Entitäten
@@ -33,8 +33,14 @@ Die angemeldete Privatkundin, deren Konten der Finanzstatus zeigt.
 | nachname | Nachname der Kundin | String | 1..60 | Pflicht; Länge 1..60 |
 | tageslimit | Tageslimit der Kundin für Überweisungen je Kalendertag in Euro; anfangs das Standardlimit, von der Kundin senk- und bis zum Standardlimit anhebbar | Decimal |  | Pflicht; Wertebereich 0..5000; Standard 5000.00; Beispiel 1000.00; höchstens zwei Nachkommastellen |
 | standardlimit | Standardlimit für das Tageslimit in Euro; für alle Kundinnen gleich, nicht änderbar | Decimal |  | Pflicht; Standard 5000.00; Beispiel 5000.00; für alle Kundinnen gleich |
+| strasse | Straße mit Hausnummer der Anschrift der Kundin | String | 1..100 | Pflicht; Länge 1..100; Beispiel Lindenallee 12; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
+| postleitzahl | Postleitzahl der Anschrift, nur Deutschland | String | 5..5 | Pflicht; Länge 5..5; Muster ^[0-9]{5}$; Beispiel 50667 |
+| ort | Ort der Anschrift, nur Deutschland; ein Land wird nicht gespeichert | String | 1..60 | Pflicht; Länge 1..60; Beispiel Köln; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
+| email | E-Mail-Adresse der Kundin | String | 3..254 | Pflicht; Länge 3..254; Muster ^[^@ ]+@[^@ ]+\.[^@ ]+$; Beispiel lena.hoffmann@example.org; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
+| telefonnummer | Telefonnummer der Kundin | String | 6..20 | Pflicht; Länge 6..20; Muster ^\+?[0-9 /()-]+$; Beispiel +49 221 1234567; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt, nur Leerzeichen gilt als leer |
+| tan | TAN (Mock) zur Bestätigung einer Änderung der persönlichen Daten; nur Eingabe im Auftrag, wird nicht gespeichert | String | 6..6 | Pflicht; Länge 6..6; Muster ^[0-9]{6}$; Beispiel 123456 |
 
-**Einschränkungen:** Das Tageslimit gilt je Kundin, nicht je Konto, und liegt nur im Speicher (ADR-002).
+**Einschränkungen:** Das Tageslimit gilt je Kundin, nicht je Konto, und liegt nur im Speicher (ADR-002). Anschrift, E-Mail-Adresse und Telefonnummer gelten je Kundin, liegen ebenfalls nur im Speicher (ADR-002) und gehören zum Ausgangsstand des Test-Resets; die Anschrift gilt nur für Deutschland. Bei Straße, Ort, E-Mail-Adresse und Telefonnummer entfernt der Dienst führende und folgende Leerzeichen vor Prüfung, Speicherung und Vergleich; verglichen wird danach genau, auch in der Groß-/Kleinschreibung. Die TAN ist keine gespeicherte Angabe der Kundin.
 
 ### Konto
 
@@ -77,7 +83,7 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 
 **Bereich:** Finanzstatus  
 
-Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); das Tagesgeldkonto hat im Ausgangsstand keine. Weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist, und aus einer ausgeführten Umbuchung (BR-0090), die auf beiden Konten je einen Umsatz mit der Gegenpartei Kontoname des anderen Kontos und dem Verwendungszweck Umbuchung erzeugt, und aus der Rückgabe einer Lastschrift (BR-0095). Das Girokonto trägt im Ausgangsstand zwei SEPA-Lastschriften mit gebuchtAm 08:00:00 UTC und Buchungstag relativ zum Tag des Resets: Fitnessstudio Vital, Mitgliedsbeitrag, -29.90, Buchungstag der letzte Tag des Vormonats des Resettags (damit nie im Monat des Resets, höchstens 31 Tage davor und somit in der Rückgabefrist von 8 Wochen, BR-0093), Saldo danach 2145.30, und Zeitungsverlag Nord, Zeitungsabo, -14.90, 70 Tage davor, Saldo danach 2175.20; die Lastschrift Fitnessstudio Vital ist damit der jüngste Umsatz, der Kontosaldo bleibt 2145.30, die Salden danach der älteren Demo-Umsätze des Girokontos liegen um 44.80 über den bisherigen.
+Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); das Tagesgeldkonto hat im Ausgangsstand keine. Weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist, und aus einer ausgeführten Umbuchung (BR-0090), die auf beiden Konten je einen Umsatz mit der Gegenpartei Kontoname des anderen Kontos und dem Verwendungszweck Umbuchung erzeugt.
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
@@ -88,10 +94,10 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30 |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
+| kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 | umsatzId | Kennung des Umsatzes, vom Dienst vergeben; die Zeilenaktion „Zurückgeben“ der Umsätze führt sie mit | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-0007 |
 | sepaLastschrift | Kennzeichen: der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche | Boolean |  | Pflicht; Standard false; Beispiel true |
 | zurueckgegeben | Rückgabestatus der SEPA-Lastschrift (BR-0094). Die Spalte Rückgabe der Umsätze zeigt bei sepaLastschrift true und zurueckgegeben false „Zurückgeben“, bei zurueckgegeben true „Zurückgegeben“, sonst keinen Text | Boolean |  | Pflicht; Standard false; Beispiel false |
-| kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 
 **Einschränkungen:** Ein Eingang hat einen positiven, ein Ausgang einen negativen Betrag; der Betrag 0 kommt nicht vor (BR-0009). Ein Umsatz mit zurueckgegeben true ist eine SEPA-Lastschrift (sepaLastschrift true).
 
@@ -127,6 +133,7 @@ Eine sofortige Umbuchung zwischen dem Girokonto und dem Tagesgeldkonto der Kundi
 | erfasstAm | Zeitpunkt der Ausführung | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
 
 **Einschränkungen:** Quell- und Zielkonto gehören derselben Kundin und sind ein Girokonto und ein Tagesgeldkonto (BR-0088).
+
 ### Dauerauftrag
 
 **Bereich:** Dauerauftrag  
@@ -163,7 +170,7 @@ Eine Nachricht der Bank an die Kundin im Postfach mit Absender, Betreff, Text, D
 | versendetAm | Datum, an dem die Bank die Nachricht versendet hat; angezeigt als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-11-17 |
 | gelesen | Lesestatus: false, solange die Kundin die Nachricht nicht geöffnet hat, true ab dem Öffnen | Boolean |  | Pflicht; Standard false; Beispiel false |
 
-**Einschränkungen:** Eine Nachricht gehört genau einer Kundin und liegt nur im Speicher (ADR-002). Die Kundin setzt den Lesestatus nur durch Öffnen von false auf true und löscht Nachrichten endgültig; die Bank erzeugt die Nachrichten (hier als Demo-Daten, C-001).
+**Einschränkungen:** Eine Nachricht gehört genau einer Kundin und liegt nur im Speicher (ADR-002). Die Kundin setzt den Lesestatus nur durch Öffnen von false auf true und löscht Nachrichten endgültig; die Bank erzeugt die Nachrichten (hier als Demo-Daten, C-001). Außerdem entsteht eine Nachricht durch eine bestätigte Änderung der persönlichen Daten (UC-023): absender Aventa Bank, betreff z. B. Ihre persönlichen Daten wurden geändert, text nennt, welche Angaben geändert wurden, ohne Werte (Beispiel Ihre E-Mail-Adresse wurde geändert.), versendetAm der Tag der Änderung, gelesen false. Der Test-Reset stellt den Ausgangsstand der Nachrichten wieder her und entfernt damit auch solche Bestätigungsnachrichten.
 
 ### Ausgabenanalyse
 
