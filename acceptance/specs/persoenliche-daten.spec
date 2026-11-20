@@ -144,3 +144,13 @@ Tags: UC-023, PK-61, BR-0097
 * Das Postfach der Kundin enthält "1" Nachrichten
 * Die neueste Nachricht im Postfach der Kundin ist ungelesen und hat den Betreff "Ihre persönlichen Daten wurden geändert"
 * Die neueste Nachricht im Postfach der Kundin hat den Text "Ihre Anschrift wurde geändert. Ihre Telefonnummer wurde geändert."
+
+## Die Bestätigungsnachricht kommt von der Aventa Bank und trägt das Datum der Änderung
+
+Tags: UC-023, PK-61, BR-0097
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die persönlichen Daten
+* Die Kundin ändert in den persönlichen Daten "Straße und Hausnummer" auf "Rosenweg 3" und bestätigt mit der TAN "123456"
+* Die neueste Nachricht im Postfach der Kundin stammt von "Aventa Bank" und wurde "heute" versendet

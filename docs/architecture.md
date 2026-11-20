@@ -84,7 +84,7 @@ C4Component
         Component(konten, "Konten und Finanzstatus", "Kontenbestand im Speicher", "Salden, Gesamtvermögen, verfügbarer Betrag, Belastung, Gutschrift")
         Component(auftrag, "Überweisungsauftrag", "Auftragsannahme", "IBAN, Betragsgrenze, Auftraggeberkonto, genau einmalige Ausführung")
         Component(umbuchung, "Umbuchungsauftrag", "Auftragsannahme", "Quell- und Zielkonto, Betragsgrenze des Quellkontos, genau einmalige Ausführung")
-        Component(daten, "Persönliche Daten", "Kundendaten im Speicher", "Anschrift, E-Mail-Adresse, Telefonnummer, TAN-Bestätigung, Postfachnachricht")
+        Component(daten, "Persönliche Daten", "Kundendaten im Speicher", "Anschrift, E-Mail-Adresse, Telefonnummer, TAN-Bestätigung, Bestätigungsnachricht im Postfach")
     }
     Rel(oberflaeche, seiten, "ruft Seiten und API", "HTTP, REST laut OpenAPI")
     Rel(seiten, sitzung, "meldet an, prüft Sitzung", "intern")
