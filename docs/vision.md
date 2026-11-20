@@ -28,7 +28,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 - Überweisung: nur als einmalige Überweisung vom Girokonto; Termin- und Daueraufträge folgen später.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.
-- Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download, Export und Storno von Umsätzen folgen später; ausgenommen ist die Rückgabe einer SEPA-Lastschrift des Girokontos innerhalb von 8 Wochen ohne Rückgabegrund und ohne Abwicklung mit dem Einreicher.
+- Umsätze: nur die im Dienst erfassten Buchungen (C-001); Eingänge von Dritten, Beleg-Download und Storno von Umsätzen folgen später; ausgenommen vom Storno ist die Rückgabe einer SEPA-Lastschrift des Girokontos innerhalb von 8 Wochen ohne Rückgabegrund und ohne Abwicklung mit dem Einreicher; der Export der Umsätze eines Kontos als CSV-Datei mit den Filtern der Umsatzliste ist enthalten, weitere Exportformate folgen später.
 - Empfängervorlagen: ein Empfänger je Vorlage mit genau einer IBAN, kein Adressbuch mit mehreren Konten je Empfänger, kein Teilen von Vorlagen zwischen Kundinnen, kein Import und Export und keine Vorlagen aus einer Kernbank.
 - Tageslimit: kein Anheben über das Standardlimit, keine Freigabe per TAN oder zweitem Faktor, keine Benachrichtigung und keine Historie der Änderungen, kein befristetes Limit, keine Verwaltung der Standardlimits durch die Bank und kein Limit je Konto oder Empfänger.
 

@@ -16,6 +16,7 @@
     {"name":"rueckgabe","label":"Rückgabe","kind":"anzeige","attribute":"Umsatz.zurueckgegeben"}
   ],
   "actions": [
+    {"label":"Als CSV exportieren","useCase":"UC-003#9","operation":"GET /api/konten/{iban}/umsaetze/export","screen":"umsaetze"},
     {"label":"Zurückgeben","useCase":"UC-022#1","screen":"umsaetze"},
     {"label":"Bestätigen","useCase":"UC-022#3","operation":"POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben","screen":"umsaetze"},
     {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"}
@@ -24,6 +25,7 @@
 <header data-wf="kopf">
   <h1>Umsätze</h1>
   <p>Die Buchungen Ihres Kontos, die neuesten zuerst.</p>
+  <div data-wf="aktionen"><button>Als CSV exportieren</button></div>
 </header>
 <dl data-wf="kennzahl">
   <div><dt>Konto</dt><dd>Girokonto</dd></div>
@@ -37,6 +39,8 @@
 </div>
 <p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
 <p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+<p data-wf="meldung" role="alert">Für diese Auswahl gibt es keine Umsätze zum Export.</p>
+<p data-wf="meldung" role="alert">Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.</p>
 <p data-wf="meldung" role="alert">Der Umsatz wurde nicht gefunden.</p>
 <p data-wf="meldung" role="alert">Dieser Umsatz ist keine SEPA-Lastschrift.</p>
 <p data-wf="meldung" role="alert">Die Lastschrift wurde bereits zurückgegeben.</p>

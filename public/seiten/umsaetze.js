@@ -34,6 +34,7 @@
           <label class="feld"><span>Zeitraum bis</span><input name="zeitraumBis" type="date"></label>
           <label class="feld"><span>Ein-/Ausgang</span><select name="richtung"><option value="alle">Alle</option><option value="eingang">Eingang</option><option value="ausgang">Ausgang</option></select></label>
         </form>` : ''}
+        <div class="aktionen"><button type="button" id="umsaetze-export">Als CSV exportieren</button></div>
         <section id="umsaetze-ergebnis" class="umsaetze" aria-label="Umsätze" aria-live="polite"></section>`;
       const ergebnis = flaeche.querySelector('#umsaetze-ergebnis');
       const form = flaeche.querySelector('form.filter');
@@ -64,6 +65,35 @@
         ergebnis.dataset.abfrage = q;
       }
 
+      /** UC-003 Schritte 9 und 10: die Datei mit den Filtern der Liste holen und herunterladen; Fehler als Meldung über der Liste. */
+      async function exportieren() {
+        const q = form ? abfrage(form) : '';
+        const fehlgeschlagen = 'Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.';
+        let meldung = '';
+        try {
+          const antwort = await fetch(`/api/konten/${encodeURIComponent(gesucht)}/umsaetze/export${q ? `?${q}` : ''}`);
+          if (antwort.status === 401) { location.href = '/anmelden'; return; }
+          if (antwort.ok) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(await antwort.blob());
+            link.download = `umsaetze-${gesucht}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+          } else if ([400, 404, 422].includes(antwort.status)) {
+            meldung = ((await antwort.json().catch(() => null)) || {}).fehler || fehlgeschlagen;
+          } else {
+            meldung = fehlgeschlagen;
+          }
+        } catch {
+          meldung = fehlgeschlagen;
+        }
+        ergebnis.querySelector('.exportmeldung')?.remove();
+        if (meldung) ergebnis.insertAdjacentHTML('afterbegin', `<p class="meldung exportmeldung" role="alert">${html(meldung)}</p>`);
+      }
+
+      flaeche.querySelector('#umsaetze-export').addEventListener('click', exportieren);
       if (form) {
         let warten;
         form.addEventListener('input', () => { clearTimeout(warten); warten = setTimeout(laden, 250); });

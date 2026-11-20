@@ -84,6 +84,19 @@ export function buchen(iban: string, umsatz: Omit<Umsatz, 'waehrung'>, grenze?: 
   if (grenze !== undefined && liste.length > grenze) liste.splice(0, liste.length - grenze);
 }
 
+export const EXPORT_LEER = 'Für diese Auswahl gibt es keine Umsätze zum Export.';
+
+const csvText = (wert: string) => (/[;"\r\n]/.test(wert) ? `"${wert.replace(/"/g, '""')}"` : wert);
+const csvBetrag = (betrag: number) => betrag.toFixed(2).replace('.', ',');
+const csvTag = (tag: string) => tag.split('-').reverse().join('.');
+
+/** UC-003, BR-0075: die Umsätze der Liste als CSV (UTF-8 mit BOM, Semikolon, CRLF); die Datei wird nicht gespeichert. */
+export function csvAus(liste: Umsatz[]): string {
+  const zeilen = ['Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach',
+    ...liste.map(u => [csvTag(u.buchungstag), csvText(u.gegenpartei), csvText(u.verwendungszweck), csvBetrag(u.betrag), csvBetrag(u.saldoDanach)].join(';'))];
+  return `﻿${zeilen.join('\r\n')}\r\n`;
+}
+
 const DATUM = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Prüft die Abfrage (400 bei Fehlern) und gibt den Filter zurück. */
