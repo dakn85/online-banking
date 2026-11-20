@@ -47,6 +47,7 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Eine zurückgegebene Lastschrift lässt sich nicht erneut zurückgeben
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Ohne gültige Sitzung weist der Dienst die Rückgabe mit 401 ab
 - `acceptance/specs/lastschrift-zurueckgeben.spec`: Umsätze der Kreditkarte bieten keine Rückgabe an
+- `acceptance/specs/umsaetze.spec`: Die CSV-Datei schreibt den Buchungstag als TT.MM.JJJJ und Beträge mit Dezimalkomma
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
 ## Aufgaben für die Umsetzung
