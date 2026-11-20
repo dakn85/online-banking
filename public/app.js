@@ -118,7 +118,8 @@
     document.getElementById('zeichen').outerHTML = Marke.zeichen();
     const kunde = await Aventa.api('/api/sitzung');
     document.getElementById('kunde-name').textContent = `${kunde.vorname} ${kunde.nachname}`;
-    document.getElementById('kunde-nummer').textContent = `Kundennummer ${kunde.kundennummer}`;
+    // Die Nummer bleibt zusammen; umbrechen darf nur davor.
+    document.getElementById('kunde-nummer').innerHTML = `Kundennummer <span class="nummer">${Aventa.html(kunde.kundennummer)}</span>`;
     document.getElementById('kunde-kuerzel').textContent = `${kunde.vorname[0] || ''}${kunde.nachname[0] || ''}`;
     // Telefon: „Mehr“ schiebt die ganze Navigation von unten herein; ein Tipp daneben schließt sie.
     const rahmen = document.querySelector('.rahmen');
