@@ -6,6 +6,7 @@ import { beendenFuer } from './sitzung';
 import { zuruecksetzen as auftraegeZuruecksetzen } from './ueberweisung';
 import { zuruecksetzen as umsaetzeZuruecksetzen } from './umsaetze';
 import { zuruecksetzen as vorlagenZuruecksetzen } from './empfaengervorlagen';
+import { zuruecksetzen as tageslimitZuruecksetzen } from './tageslimit';
 
 export const LASTKUNDEN_ANZAHL = 300;
 /** Öffentliche Testdaten: die PIN aller Lastkunden, wenn LASTTEST_PIN nicht gesetzt ist. */
@@ -33,7 +34,7 @@ export function deutscheIban(blz: string, kontonummer: string): string {
 /** IBAN des Girokontos des Lastkunden mit dieser Nummer, eindeutig je Nummer. */
 export const lastIban = (nr: number) => deutscheIban(BLZ, String(9900000000 + nr));
 
-/** Demo-Reset (POST /api/test/reset): Sitzungen, Konten, Umsätze, Aufträge und Vorlagen der Demo-Kundinnen. */
+/** Demo-Reset (POST /api/test/reset): Sitzungen, Konten, Umsätze, Aufträge, Vorlagen und Tageslimits der Demo-Kundinnen. */
 export function demoZuruecksetzen(): void {
   zuruecksetzenFuer(istDemokunde);
 }
@@ -49,6 +50,7 @@ function zuruecksetzenFuer(auswahl: Auswahl): void {
   auftraegeZuruecksetzen(auswahl);
   umsaetzeZuruecksetzen(auswahl); // nach den Konten: der Saldo danach ergibt sich aus dem Kontosaldo
   vorlagenZuruecksetzen(auswahl);
+  tageslimitZuruecksetzen(auswahl);
 }
 
 /** Legt im Testbetrieb die Lastkunden mit einem Girokonto ohne Umsätze an. */

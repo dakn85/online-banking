@@ -13,11 +13,15 @@
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Umsatz.verwendungszweck"},
     {"name":"betrag","label":"Betrag","kind":"anzeige","attribute":"Umsatz.betrag"},
     {"name":"saldoDanach","label":"Saldo danach","kind":"anzeige","attribute":"Umsatz.saldoDanach"}
+  ],
+  "actions": [
+    {"label":"Als CSV exportieren","useCase":"UC-003#9","operation":"GET /api/konten/{iban}/umsaetze/export","screen":"umsaetze"}
   ]
 } -->
 <header data-wf="kopf">
   <h1>Umsätze</h1>
   <p>Die Buchungen Ihres Kontos, die neuesten zuerst.</p>
+  <div data-wf="aktionen"><button>Als CSV exportieren</button></div>
 </header>
 <dl data-wf="kennzahl">
   <div><dt>Konto</dt><dd>Girokonto</dd></div>
@@ -30,6 +34,9 @@
   <label data-wf="feld"><span>Ein-/Ausgang</span><select name="richtung"><option>Alle</option><option>Eingang</option><option>Ausgang</option></select></label>
 </div>
 <p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
+<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+<p data-wf="meldung" role="alert">Für diese Auswahl gibt es keine Umsätze zum Export.</p>
+<p data-wf="meldung" role="alert">Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.</p>
 <table data-wf="tabelle">
   <caption>Umsätze Girokonto</caption>
   <thead>
