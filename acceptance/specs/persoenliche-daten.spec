@@ -128,3 +128,19 @@ Tags: UC-023, PK-61, BR-0096
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Änderung der persönlichen Daten mit Postleitzahl "5066" und TAN "000000" antwortet mit dem Status "400"
+
+## Mehrere geänderte Angaben ergeben genau eine Nachricht in fester Reihenfolge
+
+Tags: UC-023, PK-61, BR-0097
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die persönlichen Daten
+* Die Kundin ändert mehrere Angaben der persönlichen Daten und bestätigt mit der TAN "123456"
+| feld                  | wert           |
+|-----------------------|----------------|
+| Telefonnummer         | +49 30 7654321 |
+| Straße und Hausnummer | Rosenweg 3     |
+* Das Postfach der Kundin enthält "1" Nachrichten
+* Die neueste Nachricht im Postfach der Kundin ist ungelesen und hat den Betreff "Ihre persönlichen Daten wurden geändert"
+* Die neueste Nachricht im Postfach der Kundin hat den Text "Ihre Anschrift wurde geändert. Ihre Telefonnummer wurde geändert."

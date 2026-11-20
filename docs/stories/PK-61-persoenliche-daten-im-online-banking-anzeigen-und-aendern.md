@@ -46,6 +46,7 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 - `acceptance/specs/persoenliche-daten.spec`: Eine Postleitzahl ohne 5 Ziffern wird abgelehnt
 - `acceptance/specs/persoenliche-daten.spec`: Eine TAN ohne 6 Ziffern wird abgelehnt
 - `acceptance/specs/persoenliche-daten.spec`: Eine ungültige Postleitzahl wird vom Dienst mit 400 beantwortet
+- `acceptance/specs/persoenliche-daten.spec`: Mehrere geänderte Angaben ergeben genau eine Nachricht in fester Reihenfolge
 - `acceptance/specs/persoenliche-daten.spec`: Ungültiges Feld und falsche TAN werden mit 400 beantwortet, die TAN wird erst danach geprüft
 - `acceptance/specs/persoenliche-daten.spec`: Unveränderte Angaben legen keine Bestätigungsnachricht an
 
