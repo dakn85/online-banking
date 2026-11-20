@@ -298,6 +298,99 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/kunde:
+    get:
+      summary: Persönliche Daten der angemeldeten Kundin
+      description: Liefert Anschrift (Straße mit Hausnummer, Postleitzahl, Ort), E-Mail-Adresse und Telefonnummer der angemeldeten Kundin. Ohne gültige Sitzung 401.
+      operationId: kundeLesen
+      tags:
+        - Kundendaten
+      x-use-cases:
+        - UC-023
+      responses:
+        "200":
+          description: Persönliche Daten der Kundin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kundendaten'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+    put:
+      summary: Persönliche Daten mit TAN ändern
+      description: Speichert Anschrift, E-Mail-Adresse und Telefonnummer der angemeldeten Kundin, wenn die TAN (Mock) stimmt, und legt bei geänderten Angaben eine Bestätigungsnachricht im Postfach an. Alle Felder und die TAN sind Pflicht. Ohne gültige Sitzung 401.
+      operationId: kundeAendern
+      tags:
+        - Kundendaten
+      x-use-cases:
+        - UC-023
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kundendatenauftrag'
+      responses:
+        "200":
+          description: Persönliche Daten gespeichert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kundendaten'
+        "400":
+          description: Ein Feld oder die TAN fehlt oder verletzt seine Feldregel
+          x-rules:
+            - Kunde.strasse
+            - Kunde.postleitzahl
+            - Kunde.ort
+            - Kunde.email
+            - Kunde.telefonnummer
+            - Kunde.tan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Die TAN ist falsch; nichts gespeichert
+          x-rules:
+            - BR-0096
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+  /api/test/postfachnachrichten:
+    get:
+      summary: Postfachnachrichten der angemeldeten Kundin (nur Testbetrieb)
+      description: Liefert die Postfachnachrichten der angemeldeten Kundin, älteste zuerst. Nur im Testbetrieb (TEST_MODE=1) vorhanden; dient der Prüfung der Bestätigungsnachricht, eine Postfach-Oberfläche gibt es nicht. Ohne gültige Sitzung 401.
+      operationId: postfachnachrichtenLesenTest
+      tags:
+        - Test
+      x-intern: "Testbetrieb: Prüfung der Bestätigungsnachricht, Postfach lesen gehört zu PK-57"
+      responses:
+        "200":
+          description: Nachrichten der Kundin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Postfachnachricht'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
 components:
   schemas:
     Anmeldedaten:
@@ -593,3 +686,102 @@ components:
           multipleOf: 0.01
       required:
         - tageslimit
+    Kundendaten:
+      type: object
+      x-entity: Kunde
+      properties:
+        strasse:
+          type: string
+          minLength: 1
+          maxLength: 100
+        postleitzahl:
+          type: string
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        ort:
+          type: string
+          minLength: 1
+          maxLength: 60
+        email:
+          type: string
+          minLength: 3
+          maxLength: 254
+          pattern: ^[^@ ]+@[^@ ]+\.[^@ ]+$
+        telefonnummer:
+          type: string
+          minLength: 6
+          maxLength: 20
+          pattern: ^\+?[0-9 /()-]+$
+      required:
+        - strasse
+        - postleitzahl
+        - ort
+        - email
+        - telefonnummer
+    Kundendatenauftrag:
+      type: object
+      x-entity: Kunde
+      properties:
+        strasse:
+          type: string
+          minLength: 1
+          maxLength: 100
+        postleitzahl:
+          type: string
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        ort:
+          type: string
+          minLength: 1
+          maxLength: 60
+        email:
+          type: string
+          minLength: 3
+          maxLength: 254
+          pattern: ^[^@ ]+@[^@ ]+\.[^@ ]+$
+        telefonnummer:
+          type: string
+          minLength: 6
+          maxLength: 20
+          pattern: ^\+?[0-9 /()-]+$
+        tan:
+          type: string
+          minLength: 6
+          maxLength: 6
+          pattern: ^[0-9]{6}$
+      required:
+        - strasse
+        - postleitzahl
+        - ort
+        - email
+        - telefonnummer
+        - tan
+    Postfachnachricht:
+      type: object
+      x-entity: Postfachnachricht
+      properties:
+        nachrichtId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        betreff:
+          type: string
+          minLength: 1
+          maxLength: 100
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        erstelltAm:
+          type: string
+          format: date-time
+        gelesen:
+          type: boolean
+      required:
+        - nachrichtId
+        - betreff
+        - text
+        - erstelltAm
+        - gelesen

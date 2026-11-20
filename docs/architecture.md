@@ -72,7 +72,7 @@ Die Oberfläche kennt nur das JSON der API und keine Entität; der Dienst kennt 
 
 ### Online-Banking-Dienst
 
-Der Dienst besteht aus vier Components; die fachlichen Teile kennen kein HTTP, die Seitenauslieferung enthält keine Regel.
+Der Dienst besteht aus fünf Components; die fachlichen Teile kennen kein HTTP, die Seitenauslieferung enthält keine Regel.
 
 ```mermaid
 C4Component
@@ -83,12 +83,14 @@ C4Component
         Component(sitzung, "Anmeldung und Sitzung", "Sitzungsverwaltung", "Anmeldung gegen Demo-Kunden, Sitzungscookie, Zugriffsschutz")
         Component(konten, "Konten und Finanzstatus", "Kontenbestand im Speicher", "Salden, Gesamtvermögen, verfügbarer Betrag, Belastung")
         Component(auftrag, "Überweisungsauftrag", "Auftragsannahme", "IBAN, Betragsgrenze, Auftraggeberkonto, genau einmalige Ausführung")
+        Component(daten, "Persönliche Daten", "Kundendaten im Speicher", "Anschrift, E-Mail-Adresse, Telefonnummer, TAN-Bestätigung, Postfachnachricht")
     }
     Rel(oberflaeche, seiten, "ruft Seiten und API", "HTTP, REST laut OpenAPI")
     Rel(seiten, sitzung, "meldet an, prüft Sitzung", "intern")
     Rel(seiten, konten, "liest Finanzstatus", "intern")
     Rel(seiten, auftrag, "gibt Auftrag weiter", "intern")
     Rel(auftrag, konten, "belastet Girokonto", "intern")
+    Rel(seiten, daten, "gibt Änderung weiter", "intern")
 ```
 
 | Component | Verantwortung | Regeln |
@@ -97,6 +99,7 @@ C4Component
 | Anmeldung und Sitzung | Prüft Kennung und PIN gegen die Demo-Kunden (im Testbetrieb auch die Lastkunden), legt Sitzungen an, schützt Seiten wie API und nennt jeder Anfrage die angemeldete Kundin | keine |
 | Konten und Finanzstatus | Führt die Konten je Kundin mit Salden und verfügbarem Betrag und bucht Belastungen; jede Abfrage nennt die Kennung der Sitzung | BR-0001, BR-0002, BR-0006 |
 | Überweisungsauftrag | Nimmt Aufträge an, prüft Empfänger, Betrag und Auftraggeberkonto und führt sie genau einmal aus | BR-0003, BR-0004, BR-0005, BR-0007 |
+| Persönliche Daten | Führt Anschrift, E-Mail-Adresse und Telefonnummer je Kundin, prüft die TAN (Mock) einer Änderung und legt die Bestätigungsnachricht im Postfach an | TAN-Bestätigung, Bestätigungsnachricht |
 
 Keine Component greift an der Seitenauslieferung vorbei; der Überweisungsauftrag kennt Konten und Finanzstatus, aber nicht umgekehrt.
 
@@ -204,7 +207,7 @@ Der Bestand ist nach Kennung geordnet: Konten, Umsätze (über die IBAN der eige
 | Demo-Kundinnen | `lena.hoffmann` (PIN 24680), `jonas.weber` (PIN 13579) | je ein Girokonto (2.145,30 Euro, Rahmen 1.000 Euro) und eine Kreditkarte (-387,45 Euro) mit Demo-Umsätzen; Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs und dazu 50 Empfängervorlagen | `POST /api/test/reset` |
 | Lastkunden, nur im Testbetrieb | `lasttest-001` bis `lasttest-300`, alle mit der PIN aus `LASTTEST_PIN` (Vorgabe `97531`, öffentliche Testdaten) | je ein Girokonto mit 10.000 Euro und Rahmen 1.000 Euro, ohne Umsätze; IBAN `DEpp500105179900000nnn`, nnn die Nummer, pp die Prüfziffer nach MOD 97-10 | `POST /api/test/lasttest/reset` |
 
-Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen und Tageslimit nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.
+Jeder Reset beendet die Sitzungen seiner Gruppe und setzt Konten, Umsätze, Idempotenz-Ablage, Empfängervorlagen, Tageslimit, persönliche Daten und Postfachnachrichten nur dieser Gruppe zurück; die andere bleibt, wie sie ist. So stören sich ein Akzeptanzlauf und ein Lastlauf gegen dieselbe Testumgebung nicht. Beide Routen antworten mit 204 und brauchen keine Anmeldung.
 
 Speicher: Jede Überweisung legt einen Umsatz und einen Eintrag in der Idempotenz-Ablage an. Für Lastkunden hält der Dienst je Konto nur die jüngsten 200 Umsätze und je Kundin die jüngsten 200 Auftrags-Kennungen, ältere fallen weg; bei 300 Lastkunden bleibt der Bestand damit bei höchstens je 60.000 Umsätzen und Aufträgen. Eine Wiederholung derselben Auftrags-Kennung kommt im Lasttest sofort und liegt damit im Fenster. Die Demo-Kundinnen haben keine Grenze, ihr Bestand wächst nur in Akzeptanzläufen und wird je Szenario zurückgesetzt. Sitzungen laufen nicht ab: Ein Lastskript meldet sich je virtuellem Nutzer einmal an und nicht je Iteration, sonst wächst die Sitzungsablage bis zum nächsten Last-Reset.
 

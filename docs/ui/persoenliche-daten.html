@@ -1,0 +1,43 @@
+<!-- maske: {
+  "title": "Persönliche Daten",
+  "useCases": ["UC-023"],
+  "fields": [
+    {"name":"strasse","label":"Straße und Hausnummer","kind":"text","attribute":"Kunde.strasse","rules":{"required":true,"minLength":1,"maxLength":100}},
+    {"name":"postleitzahl","label":"Postleitzahl","kind":"text","attribute":"Kunde.postleitzahl","rules":{"required":true,"minLength":5,"maxLength":5,"pattern":"^[0-9]{5}$"}},
+    {"name":"ort","label":"Ort","kind":"text","attribute":"Kunde.ort","rules":{"required":true,"minLength":1,"maxLength":60}},
+    {"name":"email","label":"E-Mail-Adresse","kind":"text","attribute":"Kunde.email","rules":{"required":true,"minLength":3,"maxLength":254,"pattern":"^[^@ ]+@[^@ ]+\\.[^@ ]+$"}},
+    {"name":"telefonnummer","label":"Telefonnummer","kind":"text","attribute":"Kunde.telefonnummer","rules":{"required":true,"minLength":6,"maxLength":20,"pattern":"^\\+?[0-9 /()-]+$"}},
+    {"name":"tan","label":"TAN","kind":"text","attribute":"Kunde.tan","rules":{"required":true,"minLength":6,"maxLength":6,"pattern":"^[0-9]{6}$"}}
+  ],
+  "actions": [
+    {"label":"Speichern","useCase":"UC-023#3","operation":"PUT /api/kunde","screen":"persoenliche-daten"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Persönliche Daten</h1>
+  <p>Ihre Anschrift, E-Mail-Adresse und Telefonnummer. Jede Änderung bestätigen Sie mit einer TAN.</p>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#" aria-current="page">Persönliche Daten</a>
+</nav>
+<p data-wf="meldung" role="status">Persönliche Daten gespeichert.</p>
+<p data-wf="meldung" role="alert">Bitte geben Sie Straße und Hausnummer an.</p>
+<p data-wf="meldung" role="alert">Die Postleitzahl muss aus 5 Ziffern bestehen.</p>
+<p data-wf="meldung" role="alert">Bitte geben Sie den Ort an.</p>
+<p data-wf="meldung" role="alert">Die E-Mail-Adresse ist ungültig.</p>
+<p data-wf="meldung" role="alert">Die Telefonnummer ist ungültig.</p>
+<p data-wf="meldung" role="alert">Die TAN muss aus 6 Ziffern bestehen.</p>
+<p data-wf="meldung" role="alert">Die TAN ist falsch. Die Änderung wurde nicht gespeichert.</p>
+<form data-wf="formular">
+  <h2>Persönliche Daten ändern</h2>
+  <label data-wf="feld"><span>Straße und Hausnummer</span><input type="text" name="strasse" placeholder="Lindenallee 12" required></label>
+  <label data-wf="feld"><span>Postleitzahl</span><input type="text" name="postleitzahl" placeholder="50667" required></label>
+  <label data-wf="feld"><span>Ort</span><input type="text" name="ort" placeholder="Köln" required></label>
+  <label data-wf="feld"><span>E-Mail-Adresse</span><input type="text" name="email" placeholder="lena.hoffmann@example.org" required></label>
+  <label data-wf="feld"><span>Telefonnummer</span><input type="text" name="telefonnummer" placeholder="+49 221 1234567" required></label>
+  <label data-wf="feld"><span>TAN</span><input type="text" name="tan" placeholder="123456" required></label>
+  <div data-wf="aktionen">
+    <button data-wf="primaer">Speichern</button>
+  </div>
+</form>
