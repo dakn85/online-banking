@@ -21,13 +21,13 @@ Tags: UC-016, PK-52
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Daueraufträge
-* Die Kundin legt einen Dauerauftrag an Empfänger "Stadtwerke Nord" mit IBAN "DE02 5001 0517 5407 3249 31", Betrag "85,00 €", Verwendungszweck "Abschlag Strom", Turnus "vierteljährlich", erstem Ausführungstag "in 20 Tagen" und Enddatum "" an
+* Die Kundin legt einen Dauerauftrag an Empfänger "Stadtwerke Nord" mit IBAN "DE44 5001 0517 5407 3249 31", Betrag "85,00 €", Verwendungszweck "Abschlag Strom", Turnus "vierteljährlich", erstem Ausführungstag "in 20 Tagen" und Enddatum "" an
 * Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711", Turnus "jährlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "" an
 * Die Daueraufträge zeigen die Einträge
 | Empfänger       | IBAN                        | Betrag  | Zweck          | Turnus          | Erster Ausführungstag | Enddatum |
 |-----------------|-----------------------------|---------|----------------|-----------------|-----------------------|----------|
 | Möbel Nord GmbH | DE89 3704 0044 0532 0130 00 | 50,00 € | Rechnung 4711  | jährlich        | in 5 Tagen            |          |
-| Stadtwerke Nord | DE02 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | vierteljährlich | in 20 Tagen           |          |
+| Stadtwerke Nord | DE44 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | vierteljährlich | in 20 Tagen           |          |
 
 ## Ein Dauerauftrag ohne Verwendungszweck wird abgelehnt
 
@@ -127,13 +127,13 @@ Tags: UC-016, PK-52
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Daueraufträge
 * Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "" an
-* Die Kundin legt einen Dauerauftrag an Empfänger "Stadtwerke Nord" mit IBAN "DE02 5001 0517 5407 3249 31", Betrag "85,00 €", Verwendungszweck "Abschlag Strom", Turnus "vierteljährlich", erstem Ausführungstag "in 20 Tagen" und Enddatum "" an
+* Die Kundin legt einen Dauerauftrag an Empfänger "Stadtwerke Nord" mit IBAN "DE44 5001 0517 5407 3249 31", Betrag "85,00 €", Verwendungszweck "Abschlag Strom", Turnus "vierteljährlich", erstem Ausführungstag "in 20 Tagen" und Enddatum "" an
 * Die Kundin wählt den Dauerauftrag "Möbel Nord GmbH" zum Löschen und antwortet auf die Sicherheitsabfrage "Ja"
 * Die Daueraufträge zeigen die Meldung "Dauerauftrag gelöscht."
 * Die Daueraufträge zeigen die Einträge
 | Empfänger       | IBAN                        | Betrag  | Zweck          | Turnus          | Erster Ausführungstag | Enddatum |
 |-----------------|-----------------------------|---------|----------------|-----------------|-----------------------|----------|
-| Stadtwerke Nord | DE02 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | vierteljährlich | in 20 Tagen           |          |
+| Stadtwerke Nord | DE44 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | vierteljährlich | in 20 Tagen           |          |
 
 ## Bricht die Kundin die Sicherheitsabfrage ab, bleibt der Dauerauftrag bestehen
 
@@ -173,13 +173,13 @@ Tags: UC-016, PK-52
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Daueraufträge
-* Die Kundin legt einen Dauerauftrag an Empfänger "Stadtwerke Nord" mit IBAN "DE02 5001 0517 5407 3249 31", Betrag "85,00 €", Verwendungszweck "Abschlag Strom", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "" an
+* Die Kundin legt einen Dauerauftrag an Empfänger "Stadtwerke Nord" mit IBAN "DE44 5001 0517 5407 3249 31", Betrag "85,00 €", Verwendungszweck "Abschlag Strom", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "" an
 * Die Kundin legt einen Dauerauftrag an Empfänger "Möbel Nord GmbH" mit IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711", Turnus "monatlich", erstem Ausführungstag "in 5 Tagen" und Enddatum "" an
 * Die Daueraufträge zeigen die Einträge
 | Empfänger       | IBAN                        | Betrag  | Zweck          | Turnus    | Erster Ausführungstag | Enddatum |
 |-----------------|-----------------------------|---------|----------------|-----------|-----------------------|----------|
 | Möbel Nord GmbH | DE89 3704 0044 0532 0130 00 | 50,00 € | Rechnung 4711  | monatlich | in 5 Tagen            |          |
-| Stadtwerke Nord | DE02 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | monatlich | in 5 Tagen            |          |
+| Stadtwerke Nord | DE44 5001 0517 5407 3249 31 | 85,00 € | Abschlag Strom | monatlich | in 5 Tagen            |          |
 
 ## Ein erster Ausführungstag heute wird akzeptiert
 
