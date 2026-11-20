@@ -823,9 +823,7 @@ components:
             - endgültig gesperrt
         sperrgrund:
           type: string
-          description: Grund der endgültigen Sperre. Nur beim Zielstatus endgültig gesperrt Pflicht und auf Verlust oder Diebstahl geprüft (sonst 400); bei anderem Zielstatus wird jeder Wert ignoriert, nicht geprüft und nicht gespeichert
-          enum:
-            - Verlust
-            - Diebstahl
+          description: Grund der endgültigen Sperre, erlaubt sind Verlust und Diebstahl. Nur beim Zielstatus endgültig gesperrt Pflicht und darauf geprüft (sonst 400, vom Dienst geprüft, nicht per Enum am Feld); bei anderem Zielstatus wird jeder Wert ignoriert, nicht geprüft und nicht gespeichert
+          enum: [ Verlust, Diebstahl ]
       required:
         - status
