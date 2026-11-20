@@ -70,6 +70,13 @@
 1. Das System bucht nichts und leitet auf die Anmeldeseite um.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
 
+### A7: umsatzId verletzt die Feldbedingung
+
+**Auslöser:** Die umsatzId verletzt die Feldbedingung des Datenmodells (Entität Umsatz, umsatzId); der Dienst antwortet mit 400 (Formatfehler). (Schritt 4).  
+**Ablauf:**
+
+1. Das System schließt die Rückfrage, lädt die Umsätze neu und zeigt die Meldung aus dem Feld fehler der Antwort; es bucht nichts.
+
 ## Sequenzdiagramm
 
 ```mermaid
