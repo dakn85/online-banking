@@ -3,8 +3,9 @@ import { join } from 'node:path';
 import { Datenfehler, finanzstatus } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren } from './ueberweisung';
-import { Abfragefehler, filterAus, umsaetzeVon } from './umsaetze';
+import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
+import * as tageslimit from './tageslimit';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
 import { demoZuruecksetzen, lastdatenZuruecksetzen, lastkundenAnlegen } from './testdaten';
 
@@ -80,6 +81,24 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   res.json({ umsaetze: liste });
 });
 
+// UC-003, BR-0075, BR-0076: Export der Umsätze als CSV; Prüfreihenfolge 404, 400, 422
+app.get('/api/konten/:iban/umsaetze/export', nurAngemeldet('api'), (req, res) => {
+  const kennung = res.locals.kunde.kennung;
+  if (!umsaetzeVon(kennung, req.params.iban)) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  let filter;
+  try {
+    filter = filterAus(req.query as Record<string, unknown>);
+  } catch (fehler) {
+    if (!(fehler instanceof Abfragefehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  const liste = umsaetzeVon(kennung, req.params.iban, filter)!;
+  if (!liste.length) return res.status(422).json({ fehler: EXPORT_LEER });
+  res.type('text/csv; charset=utf-8')
+    .set('Content-Disposition', `attachment; filename="umsaetze-${req.params.iban.replace(/\s+/g, '')}.csv"`)
+    .send(csvAus(liste));
+});
+
 // UC-004: Empfängervorlagen der angemeldeten Kundin (BR-0013 bis BR-0016, BR-0018)
 const vorlagenfehler = (res: express.Response, fehler: unknown) => {
   if (!(fehler instanceof vorlagen.Vorlagenfehler)) throw fehler;
@@ -98,12 +117,25 @@ app.delete('/api/empfaengervorlagen/:vorlagenId', nurAngemeldet('api'), (req, re
   try { vorlagen.loeschen(res.locals.kunde.kennung, req.params.vorlagenId); res.status(204).end(); } catch (fehler) { vorlagenfehler(res, fehler); }
 });
 
+// UC-015: Tageslimit der angemeldeten Kundin lesen und setzen (BR-0070); eine Kennung im Aufruf gibt es nicht.
+app.get('/api/tageslimit', nurAngemeldet('api'), (_req, res) => {
+  res.json(tageslimit.lesen(res.locals.kunde.kennung));
+});
+app.put('/api/tageslimit', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(tageslimit.setzen(res.locals.kunde.kennung, req.body?.tageslimit));
+  } catch (fehler) {
+    if (!(fehler instanceof tageslimit.Tageslimitfehler)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
+  }
+});
+
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
 
 if (testbetrieb) {
   // Lastkunden lasttest-001 bis lasttest-300, alle mit der PIN aus LASTTEST_PIN (öffentliche Testdaten, Vorgabe in testdaten.ts).
   lastkundenAnlegen(process.env.LASTTEST_PIN || undefined);
-  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze und Empfängervorlagen auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
+  // Demo-Testdaten zurücksetzen: Sitzungen der Demo-Kundinnen beenden, ihre Konten, Umsätze, Empfängervorlagen und Tageslimits auf den Ausgangsstand, keine Aufträge. Lastkunden bleiben.
   app.post('/api/test/reset', (_req, res) => { demoZuruecksetzen(); res.status(204).end(); });
   // Lastdaten zurücksetzen: dasselbe nur für die Lastkunden. Demo-Kundinnen bleiben.
   app.post('/api/test/lasttest/reset', (_req, res) => { lastdatenZuruecksetzen(); res.status(204).end(); });
@@ -115,7 +147,7 @@ app.get('/anmelden', (req, res) => {
   res.sendFile(join(oeffentlich, 'anmelden.html'));
 });
 app.get('/', (_req, res) => res.redirect('/finanzstatus'));
-for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen']) {
+for (const seite of ['/finanzstatus', '/ueberweisung', '/umsaetze', '/empfaengervorlagen', '/tageslimit']) {
   app.get(seite, nurAngemeldet('seite'), (_req, res) => res.sendFile(join(oeffentlich, 'app.html')));
 }
 

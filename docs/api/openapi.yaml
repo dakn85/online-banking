@@ -233,7 +233,7 @@ paths:
   /api/test/reset:
     post:
       summary: Demo-Testdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen und Tageslimit auf den Ausgangsstand (Tageslimit gleich Standardlimit); ausgeführte und vorgemerkte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Demo-Kundinnen und setzt deren Konten, Umsätze, Empfängervorlagen und Tageslimit auf den Ausgangsstand (Tageslimit gleich Standardlimit); ausgeführte und vorgemerkte Aufträge der Demo-Kundinnen sind vergessen. Lastkunden (lasttest-…) mit ihren Konten, Umsätzen, Aufträgen und Sitzungen bleiben unberührt. Ohne Anmeldung aufrufbar.
       operationId: testdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -241,7 +241,7 @@ paths:
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten und vorgemerkten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze) und ihr Tageslimit auf das Standardlimit; ihre ausgeführten und vorgemerkten Aufträge und Empfängervorlagen sind vergessen. Demo-Kundinnen bleiben unberührt. Ohne Anmeldung aufrufbar.
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -301,6 +301,95 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/konten/{iban}/umsaetze/export:
+    get:
+      summary: Umsätze eines Kontos als CSV-Datei exportieren
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Abfrageparametern, derselben Auswahl, Reihenfolge und demselben Saldo danach wie GET /api/konten/{iban}/umsaetze (BR-0075, BR-0008, BR-0009, BR-0010). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); passt kein Umsatz zur Auswahl, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
+      operationId: umsaetzeExportieren
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-003
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Kontos der Kundin
+          schema:
+            type: string
+        - name: suchtext
+          in: query
+          required: false
+          description: Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)
+          schema:
+            type: string
+        - name: von
+          in: query
+          required: false
+          description: Nur Umsätze mit Buchungstag ab diesem Tag, einschließlich (BR-0010); liegt dieser Tag nach dem Bis-Datum, antwortet der Dienst mit 400
+          schema:
+            type: string
+            format: date
+        - name: bis
+          in: query
+          required: false
+          description: Nur Umsätze mit Buchungstag bis zu diesem Tag, einschließlich (BR-0010)
+          schema:
+            type: string
+            format: date
+        - name: richtung
+          in: query
+          required: false
+          description: Nur Umsätze mit positivem (eingang) oder negativem (ausgang) Betrag; alle schränkt nicht ein (BR-0009)
+          schema:
+            type: string
+            default: alle
+            enum:
+              - alle
+              - eingang
+              - ausgang
+      responses:
+        "200":
+          description: CSV-Datei mit den Umsätzen des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert
+          headers:
+            Content-Disposition:
+              description: attachment mit dem Dateinamen umsaetze-<IBAN ohne Leerzeichen>.csv
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+        "400":
+          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)
+          x-rules:
+            - Umsatz.buchungstag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin (BR-0011)
+          x-rules:
+            - BR-0011
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Zur Auswahl passt kein Umsatz (BR-0076)
+          x-rules:
+            - BR-0076
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
   /api/terminueberweisungen:
     post:
       summary: Terminüberweisung vormerken
@@ -315,20 +404,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Terminueberweisungsauftrag'
+              $ref: "#/components/schemas/Terminueberweisungsauftrag"
       responses:
         "200":
           description: Auftrag mit dieser auftragsId war bereits vorgemerkt; kein weiterer Auftrag
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Terminueberweisung'
+                $ref: "#/components/schemas/Terminueberweisung"
         "201":
           description: Auftrag vorgemerkt, nichts gebucht
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Terminueberweisung'
+                $ref: "#/components/schemas/Terminueberweisung"
         "400":
           description: IBAN ungültig oder gehört zu keinem SEPA-Land, Betrag kleiner als 0,10 Euro oder Ausführungstag kein gültiges Datum
           x-rules:
@@ -338,13 +427,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
         "401":
           description: Keine gültige Sitzung
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
         "403":
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
           x-rules:
@@ -352,7 +441,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
         "422":
           description: "fehler „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“ (BR-0004), fehler „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“ (BR-0079) oder fehler „Diese Auftrags-Kennung wurde bereits verwendet.“ (BR-0005: Kennung ist für eine andere Überweisung der Kundin verbraucht, auch für einen gelöschten Auftrag; es entsteht kein Auftrag)"
           x-rules:
@@ -362,7 +451,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
     get:
       summary: Vorgemerkte Aufträge der angemeldeten Kundin
       description: Liefert die Aufträge mit Status vorgemerkt der angemeldeten Kundin (BR-0080), nach Ausführungstag aufsteigend, bei gleichem Tag der früher vorgemerkte zuerst. Ohne vorgemerkten Auftrag ist die Liste leer; ohne gültige Sitzung antwortet der Dienst mit 401.
@@ -377,14 +466,15 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Terminueberweisung'
+                  $ref: "#/components/schemas/Terminueberweisung"
         "401":
           description: Keine gültige Sitzung
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
-      x-use-cases: [ UC-017 ]
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-017
   /api/terminueberweisungen/{auftragsId}:
     delete:
       summary: Vorgemerkten Auftrag löschen
@@ -409,7 +499,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
+                $ref: "#/components/schemas/Fehler"
         "404":
           description: Kein vorgemerkter Auftrag der Kundin mit dieser Kennung
           x-rules:
@@ -417,8 +507,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fehler'
-      x-use-cases: [ UC-017 ]
+                $ref: "#/components/schemas/Fehler"
+      x-use-cases:
+        - UC-017
 components:
   schemas:
     Anmeldedaten:
