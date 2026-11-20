@@ -24,7 +24,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 | Architektur | Geändert | Bausteinsicht geändert, Laufzeitsicht geändert |
 | Antwortzeit von Finanzstatus und Überweisung | Geändert | Maß geändert, Herkunft geändert |
 | Überweisung | Geändert | Skizze geändert |
-| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, Schritt 7 geändert, A9 neu: Tageslimit überschritten, und 4 weitere |
+| UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, Schritt 7 geändert, A12 neu: Tageslimit überschritten, und 4 weitere |
 | UC-015 Tageslimit für Überweisungen festlegen | Geändert | Notizen geändert, BR-0070 geändert |
 | BR-0070 Tageslimit der Kundin | Geändert | Text geändert |
 
@@ -40,31 +40,25 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - `acceptance/specs/ueberweisung.spec`: Heutige Ausgänge zählen zum Tageslimit
 - `acceptance/specs/ueberweisung.spec`: Übersteigt ein Betrag Tageslimit und verfügbaren Betrag, gilt die Meldung zum verfügbaren Betrag
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Kontext geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Entscheidung geändert
-- [ ] Fachliche Prüfungen doppelt, maßgeblich ist der Dienst: Folgen geändert
-- [ ] Überweisung vom Girokonto ausführen: Beschreibung geändert
-- [ ] Überweisung vom Girokonto ausführen: Antwort 200 geändert
-- [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
-- [ ] Architektur: Bausteinsicht geändert
-- [ ] Architektur: Laufzeitsicht geändert
-- [ ] Antwortzeit von Finanzstatus und Überweisung: Maß geändert
-- [ ] Antwortzeit von Finanzstatus und Überweisung: Herkunft geändert
-- [ ] Überweisung: Skizze geändert
-- [ ] UC-002: Notizen geändert
-- [ ] UC-002: Schritt 7 geändert
-- [ ] UC-002: A9 neu: Tageslimit überschritten
-- [ ] UC-002: Sequenzdiagramm neu
-- [ ] UC-002: WP-2 neu
-- [ ] UC-002: WP-3 neu
-- [ ] UC-002: WP-4 neu
-- [ ] UC-015: Notizen geändert
-- [ ] UC-015: BR-0070 geändert
-- [ ] BR-0070: Text geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-60 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-60 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine (docs/architecture.md)
+- **Überweisungsauftrag** (`src/ueberweisung.ts`): Tageslimit-Prüfung beim Ausführen; führt je Kundin die Tagessumme der ausgeführten Überweisungen in Cent je UTC-Tag (eigene Ablage, unabhängig vom 200er-Fenster der Auftrags-Kennungen, damit Lastkunden stimmen).
+- **Tageslimit** (`src/tageslimit.ts`): `lesen()` liefert das Limit, wird nur gelesen.
+- **Testdaten/Reset**: Tagessummen werden in `zuruecksetzen()` der Überweisung gelöscht und damit von beiden Resets (Demo und Lastkunden) erfasst (BR-0070).
+- **Oberfläche** (`public/seiten/ueberweisung.js`): 422 mit der Tageslimit-Meldung als Formularmeldung ohne Feldbezug (ADR-004).
+- **Akzeptanztests**: fehlende Steps (Bestätigen/Abbrechen, direkter Aufruf mit Status und Meldung).
+
+## Schritte
+1. UC-002 A12/BR-0070: Prüfreihenfolge Auftraggeberkonto, IBAN, Mindestbetrag, BR-0004, dann Tageslimit; 422 „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“; Vergleich in Cent, Summe genau in Höhe des Limits zulässig, auch Limit 0,00.
+2. BR-0005/BR-0070: Wiederholung mit bekannter Auftrags-Kennung (200) wird vor der Limitprüfung beantwortet, nicht erneut geprüft.
+3. Abgelehnte Aufträge erhöhen die Tagessumme nicht; nur ausgeführte Überweisungen zählen (keine Umbuchungen, Termin- oder Daueraufträge).
+4. Oberfläche und Steps wie oben; Unit-Tests mit @BR-0070 im Namen.
+
+## Rahmenänderung
+Keine neue Bibliothek.
 
 ## Entscheidungen
 
