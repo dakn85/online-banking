@@ -43,10 +43,10 @@
 
 ### A3: Betrag fehlt oder liegt unter dem Mindestbetrag
 
-**Auslöser:** Der Betrag (Feld Betrag in Euro oder Neuer Betrag in Euro) unterschreitet den Mindestbetrag von Dauerauftrag.betrag im Datenmodell (mindestens 0,10, höchstens zwei Nachkommastellen), auch wenn er fehlt oder keine Zahl ist; mehr als zwei Nachkommastellen gehören zu A1. (Schritt 4).  
+**Auslöser:** Der Betrag (Feld Betrag in Euro oder Neuer Betrag in Euro) unterschreitet den Mindestbetrag von Dauerauftrag.betrag im Datenmodell (mindestens 0,10), auch wenn er fehlt oder keine Zahl ist; mehr als zwei Nachkommastellen gehören zu A1. (Schritt 4).  
 **Ablauf:**
 
-1. Das System speichert den Dauerauftrag nicht und zeigt „Der Betrag muss mindestens 0,10 € betragen und höchstens zwei Nachkommastellen haben.“ im Formular; der Betrag wird nicht gerundet und nicht gegen den verfügbaren Betrag des Girokontos geprüft.
+1. Das System speichert den Dauerauftrag nicht und zeigt „Der Betrag muss mindestens 0,10 € betragen.“ im Formular; der Betrag wird nicht gerundet und nicht gegen den verfügbaren Betrag des Girokontos geprüft.
 2. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 3 weiter, oder sie bricht ab.
 
 ### A4: Erster Ausführungstag liegt in der Vergangenheit
