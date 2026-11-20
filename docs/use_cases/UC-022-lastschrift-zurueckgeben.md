@@ -7,7 +7,7 @@
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin gibt eine SEPA-Lastschrift aus den Umsätzen ihres Girokontos innerhalb von 8 Wochen nach der Belastung zurück, der Betrag wird ihrem Girokonto wieder gutgeschrieben und die Gutschrift erscheint als Umsatz mit Saldo danach.  
-**Ziele:** Z-8  
+**Ziele:** Z-14  
 **Anforderungen:** NFR-001, C-001
 
 ## Vorbedingungen
