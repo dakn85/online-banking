@@ -30,6 +30,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 ## Akzeptanztests
 
 - `acceptance/specs/ueberweisung.spec`: Ein Betrag genau in Höhe des Tageslimits wird ausgeführt
+- `acceptance/specs/ueberweisung.spec`: Ein gesenktes Tageslimit zählt frühere Ausgänge des Tages mit
 - `acceptance/specs/ueberweisung.spec`: Ein Tageslimit von 0,00 € lehnt jede Überweisung ab
 - `acceptance/specs/ueberweisung.spec`: Eine abgelehnte Überweisung zählt nicht zu den Ausgängen des Tages
 - `acceptance/specs/ueberweisung.spec`: Eine Überweisung über dem Tageslimit wird abgelehnt und der Saldo bleibt unverändert
@@ -56,6 +57,11 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-60 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-60 grün
 
+## Offene Fragen
+
+- [ ] Welche Ablehnung gilt, wenn ein Betrag zugleich den verfügbaren Betrag des Girokontos (BR-0004) und das Tageslimit (BR-0070) übersteigt?
+- [ ] Gilt das Tageslimit auch für die Lastkunden (lasttest-001 bis lasttest-300), und setzt POST /api/test/lasttest/reset deren Tageslimit und Tagesausgänge zurück?
+
 ## Entscheidungen
 
 - Soll die Maske Überweisung das Tageslimit schon bei „Weiter“ prüfen, oder prüft nur der Dienst beim Bestätigen?
@@ -63,4 +69,4 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
   _→ eingearbeitet in UC-015, BR-0070, UC-002, POST /api/ueberweisungen, ueberweisung, architektur · 495ae6c_
 - Zählen zu den „heutigen Ausgängen“ nur die am laufenden UTC-Tag ausgeführten Überweisungen vom Girokonto (UC-002), oder auch andere Ausgänge wie Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge?
   **Antwort:** Nur ausgeführte Überweisungen nach UC-002; andere Ausgänge zählen nicht und werden als „Nicht im Scope“ benannt.
-  _→ eingearbeitet in UC-015, BR-0070, UC-002_
+  _→ eingearbeitet in UC-015, BR-0070, UC-002 · b1d1336_
