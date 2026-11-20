@@ -104,13 +104,6 @@ Tags: UC-022, PK-59, BR-0011
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Der Dienst weist die Rückgabe auf dem Konto mit der IBAN "DE00 1234 5678 9012 3456 78" mit Status "404" und der Meldung "Das Konto wurde nicht gefunden." ab
 
-## Ohne Anmeldung ist die Rückgabe nicht möglich
-
-Tags: UC-022, PK-59
-
-* Testdaten sind zurückgesetzt
-* Ohne Anmeldung weist der Dienst die Rückgabe einer Lastschrift mit Status "401" ab
-
 ## Umsätze der Kreditkarte bieten keine Rückgabe an
 
 Tags: UC-022, PK-59, BR-0094
@@ -119,3 +112,18 @@ Tags: UC-022, PK-59, BR-0094
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Kreditkarte"
 * Die Umsätze zeigen keine Rückgabe
+
+## Eine zu lange umsatzId wird bei der Rückgabe mit 400 abgewiesen
+
+Tags: UC-022, PK-59
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Der Dienst weist die Rückgabe mit einer umsatzId von "37" Zeichen mit Status "400" ab
+
+## Ohne gültige Sitzung weist der Dienst die Rückgabe mit 401 ab
+
+Tags: UC-022, PK-59
+
+* Testdaten sind zurückgesetzt
+* Ohne Anmeldung weist der Dienst die Rückgabe einer Lastschrift mit Status "401" ab
