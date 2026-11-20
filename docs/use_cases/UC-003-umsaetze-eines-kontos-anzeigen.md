@@ -140,7 +140,7 @@ Der Zeitraumfilter zeigt die Umsätze, deren Buchungstag zwischen dem gewählten
 
 ### BR-0011: Umsätze nur für Konten der Kundin
 
-Umsätze liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“.
+Umsätze liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“. Dasselbe gilt für den Kontoauszug (UC-024): Ihn liefert der Dienst nur zu einer IBAN eines Kontos der angemeldeten Kundin; sonst antwortet er mit 404 und die Maske Kontoauszug zeigt „Das Konto wurde nicht gefunden.“.
 
 ### BR-0075: Export mit den Umsätzen der Liste
 
