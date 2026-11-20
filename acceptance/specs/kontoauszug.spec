@@ -9,7 +9,7 @@ Tags: UC-024, PK-62, BR-0098
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2026-06" herunter
-* Der Kontoauszug zeigt Anfangssaldo "2.145,30 €" und Endsaldo "2.145,30 €"
+* Der Kontoauszug zeigt Anfangssaldo "2.190,10 €" und Endsaldo "2.190,10 €"
 * Der Kontoauszug zeigt die Zeilen
 | Buchungstag | Gegenpartei |
 |-------------|-------------|
@@ -24,13 +24,13 @@ Tags: UC-024, PK-62, BR-0098
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
 * Der Kontoauszug zeigt im Kopf Kontoname "Girokonto", IBAN "DE02 5001 0517 5407 3249 31" und Monat "2026-02"
-* Der Kontoauszug zeigt Anfangssaldo "-396,70 €" und Endsaldo "2.145,30 €"
+* Der Kontoauszug zeigt Anfangssaldo "-351,90 €" und Endsaldo "2.190,10 €"
 * Der Kontoauszug zeigt die Zeilen
 | Buchungstag | Gegenpartei            | Verwendungszweck | Betrag     | Saldo danach |
 |-------------|------------------------|------------------|------------|--------------|
-| 12.02.2026  | Bäckerei Krause        | Einkauf          | -12,00 €   | 2.145,30 €   |
-| 10.02.2026  | Energieversorgung Nord | Abschlag Februar | -86,00 €   | 2.157,30 €   |
-| 01.02.2026  | Lindner Logistik GmbH  | Gehalt Januar    | 2.640,00 € | 2.243,30 €   |
+| 12.02.2026  | Bäckerei Krause        | Einkauf          | -12,00 €   | 2.190,10 €   |
+| 10.02.2026  | Energieversorgung Nord | Abschlag Februar | -86,00 €   | 2.202,10 €   |
+| 01.02.2026  | Lindner Logistik GmbH  | Gehalt Januar    | 2.640,00 € | 2.288,10 €   |
 
 ## Ein Monat vor dem ersten Umsatz zeigt den Saldo vor dem ersten Umsatz
 
@@ -41,7 +41,7 @@ Tags: UC-024, PK-62, BR-0098
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2025-12" herunter
-* Der Kontoauszug zeigt Anfangssaldo "553,30 €" und Endsaldo "553,30 €"
+* Der Kontoauszug zeigt Anfangssaldo "598,10 €" und Endsaldo "598,10 €"
 * Der Kontoauszug zeigt die Zeilen
 | Buchungstag | Gegenpartei |
 |-------------|-------------|
@@ -137,7 +137,7 @@ Tags: UC-024, PK-62, BR-0098
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2026-01" herunter
-* Der Kontoauszug zeigt Anfangssaldo "553,30 €" und Endsaldo "-396,70 €"
+* Der Kontoauszug zeigt Anfangssaldo "598,10 €" und Endsaldo "-351,90 €"
 * Der Kontoauszug zeigt die Zeilen
 | Buchungstag | Gegenpartei           |
 |-------------|-----------------------|

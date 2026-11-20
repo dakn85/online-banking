@@ -67,10 +67,6 @@ _Platform Admin (Agent „coding laptop“), 2026-11-20_
 ## Rahmenänderung
 - Neue Bibliothek `pdfkit` (reines JavaScript, keine native Abhängigkeit) im Dienst, gemäß ADR-008; `pdfjs-dist` nur in den Akzeptanztests zum Lesen des PDF-Texts.
 
-## Offene Fragen
-
-- [ ] Soll die Meldung „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“ für alle unerwarteten Fehler und den nicht erreichbaren Dienst gelten?
-
 ## Entscheidungen
 
 - Welchen Saldo zeigt der leere Auszug eines Monats vor dem ersten Umsatz des Kontos, etwa Januar 2026 bei der Kreditkarte? Der Demo-Bestand beginnt am 28.01.2026.
@@ -88,3 +84,9 @@ _Platform Admin (Agent „coding laptop“), 2026-11-20_
 - Was sieht die Kundin, wenn der Auszug beim Herunterladen nicht erzeugt werden kann oder der Dienst nicht erreichbar ist, und was passiert, wenn die Sitzung bis dahin abgelaufen ist?
   **Antwort:** Neue Alternative A5 „Kontoauszug fehlgeschlagen“: Der Dienst antwortet mit 500 und dem Feld fehler, die Maske zeigt „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“ und liefert keine Datei; läuft die Sitzung bis zum Herunterladen ab, antwortet der Dienst mit 401 und die Maske leitet auf die Anmeldeseite um (wie UC-003 A1). Vertrag, Maske und je ein Szenario wer
   _→ noch nicht in der Spezifikation_
+- Soll die Meldung „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“ für alle unerwarteten Fehler und den nicht erreichbaren Dienst gelten?
+  **Antwort:** Ja, eine Meldung für alle unerwarteten Fehler und den nicht erreichbaren Dienst
+  _→ eingearbeitet in UC-024 · 351d9b1_
+- Vier Szenarien in acceptance/specs/kontoauszug.spec (Zeilen 12, 27, 44, 140) erwarten Salden, die zu den Demo-Daten auf main nicht passen. Die Szenarien rechnen das Girokonto ohne die beiden Demo-Lastschriften (Fitnessstudio Vital -29,90 und Zeitungsverlag Nord -14,90): Feb. 2026 Anfangssaldo -396,70 €, Endsaldo 2.145,30 €; Dez. 2025 und Jan. 2026 Anfangssaldo 553,30 €; Juni 2026 2.145,30 €. Laut docs/entity_model.md (Umsatz) und umsaetze.spec liegen die Salden der älteren Girokonto-Umsätze aber um 44,80 € höher: Bäckerei Krause hat Saldo danach 2.190,10 €. Nach BR-0098 ergibt das für Feb. 2026 Anfangssaldo -351,90 € und Endsaldo 2.190,10 €, für Dez. 2025 und Jan. 2026 598,10 €, für Juni 2026 2.190,10 €. Der Dienst liefert diese Werte, die vier Szenarien sind rot (Differenz genau 44,80 €). Die Kreditkarte und der laufende Monat stimmen.
+  **Antwort:** Die Szenarien werden an die Demo-Daten angepasst: Feb. 2026 Anfangssaldo -351,90 € und Endsaldo 2.190,10 €, Dez. 2025 und Jan. 2026 Anfangssaldo 598,10 €, Juni 2026 2.190,10 € (Salden der Zeilen im Feb. entsprechend 2.190,10 €, 2.202,10 € usw. wie in umsaetze.spec).
+  _→ eingearbeitet_
