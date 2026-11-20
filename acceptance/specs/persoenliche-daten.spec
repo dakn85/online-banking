@@ -114,3 +114,9 @@ Tags: UC-023, PK-61
 
 * Testdaten sind zurückgesetzt
 * Der Aufruf "GET" "/api/test/postfachnachrichten" ohne Anmeldung antwortet mit dem Status "401"
+
+## Die Maske Persönliche Daten führt ohne Anmeldung auf die Anmeldeseite
+
+Tags: UC-023, PK-61, NFR-001
+
+* Die persönlichen Daten sind ohne Anmeldung nicht erreichbar

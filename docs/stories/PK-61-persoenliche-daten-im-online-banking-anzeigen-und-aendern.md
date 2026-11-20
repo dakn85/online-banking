@@ -36,6 +36,7 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 - `acceptance/specs/persoenliche-daten.spec`: Das Lesen der persönlichen Daten ohne Anmeldung wird mit 401 beantwortet
 - `acceptance/specs/persoenliche-daten.spec`: Das Lesen der Postfachnachrichten ohne Anmeldung wird mit 401 beantwortet
 - `acceptance/specs/persoenliche-daten.spec`: Die Kundin ändert ihre E-Mail-Adresse mit richtiger TAN
+- `acceptance/specs/persoenliche-daten.spec`: Die Maske Persönliche Daten führt ohne Anmeldung auf die Anmeldeseite
 - `acceptance/specs/persoenliche-daten.spec`: Die persönlichen Daten zeigen die gespeicherten Angaben
 - `acceptance/specs/persoenliche-daten.spec`: Eine Änderung der Anschrift legt eine Bestätigungsnachricht im Postfach an
 - `acceptance/specs/persoenliche-daten.spec`: Eine falsche TAN speichert nichts und legt keine Nachricht an
@@ -82,13 +83,16 @@ Als Privatkundin möchte ich meine Anschrift, E-Mail-Adresse und Telefonnummer i
 
 - Wie wird die Anschrift gespeichert und geprüft?
   **Antwort:** Strukturiert in vier Feldern: Straße mit Hausnummer, Postleitzahl (5 Ziffern), Ort, ohne Land; Anschrift nur in Deutschland.
-  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur_
+  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur · 5cc6839_
 - Welche TAN (Mock) gilt für die Bestätigung einer Datenänderung?
   **Antwort:** Eine feste TAN für alle Kundinnen und alle Änderungen (6 Ziffern, zum Beispiel 123456), in der Regel dokumentiert.
-  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur_
+  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur · 5cc6839_
 - Was nennt die Bestätigungsnachricht im Postfach von den geänderten Daten?
   **Antwort:** Nur, welche Angaben geändert wurden (zum Beispiel „Ihre E-Mail-Adresse wurde geändert.“), ohne Werte.
-  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur_
+  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur · 5cc6839_
 - Wie verhält sich PK-61 zu PK-57 (Postfach: Nachrichten lesen und löschen), das ebenfalls Nachrichten im Postfach braucht?
   **Antwort:** PK-61 legt die Entität Postfachnachricht mit den nötigen Attributen an und prüft die Nachricht nur über den Testbetrieb; Lesen und Löschen bleiben bei PK-57.
-  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur_
+  _→ eingearbeitet in Kunde, Postfachnachricht, UC-023, BR-0096, BR-0097, GET /api/kunde, PUT /api/kunde, GET /api/test/postfachnachrichten, Schema Kundendaten, Schema Kundendatenauftrag, Schema Postfachnachricht, persoenliche-daten, finanzstatus, NFR-001, vision, architektur · 5cc6839_
+- Wie behandelt der Dienst Leerzeichen am Rand der Eingaben (Straße, Ort, E-Mail, Telefonnummer), und was gilt als „geändert“ für die Bestätigungsnachricht (BR-0097)?
+  **Antwort:** Der Dienst entfernt führende und folgende Leerzeichen vor Prüfung, Speicherung und Vergleich. Nur Leerzeichen gilt als leer und ergibt 400 mit der Feldmeldung. Verglichen wird genau, auch Groß-/Kleinschreibung; eine reine Schreibweisenänderung der E-Mail-Adresse ist eine Änderung und löst die Nachricht aus.
+  _→ noch nicht in der Spezifikation_
