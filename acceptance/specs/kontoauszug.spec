@@ -108,7 +108,7 @@ Tags: UC-024, PK-62
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin öffnet den Kontoauszug
 * Die Kundin lädt den Kontoauszug für den Monat "2026-02" herunter
-* Der Download hat den Dateinamen "Kontoauszug_<IBAN ohne Leerzeichen>_2026-02.pdf"
+* Der Download hat den Dateinamen "Kontoauszug_DE02500105175407324931_2026-02.pdf"
 
 ## Die Kreditkarte zeigt einen negativen Anfangssaldo aus dem Saldo vor dem ersten Umsatz
 
