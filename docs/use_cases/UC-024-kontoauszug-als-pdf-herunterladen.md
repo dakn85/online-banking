@@ -13,11 +13,10 @@
 ## Vorbedingungen
 
 - Die Kundin ist angemeldet, es gibt eine gültige Sitzung (NFR-001).
-- Die Kundin hat auf den Umsätzen eines Kontos „Kontoauszug“ gewählt.
 
 ## Standardablauf
 
-1. Die Kundin wählt auf den Umsätzen eines Kontos „Kontoauszug“.
+1. Die Kundin wählt auf den Umsätzen eines Kontos „Kontoauszug“ oder ruft die Maske Kontoauszug direkt mit der IBAN in der Adresse auf.
 2. Das System zeigt die Maske Kontoauszug mit den Konten der Kundin zur Auswahl (GET /api/konten) und wählt das Konto vor, dessen IBAN die Adresse nennt.
 3. Die Kundin wählt Konto und Monat im Format JJJJ-MM, höchstens den laufenden Monat, und wählt „Kontoauszug herunterladen“.
 4. Das System prüft zuerst das Konto (BR-0011) und dann den Monat (Feldregeln von Kontoauszug.monat), liest die Umsätze des Kontos mit Buchungstag im Monat (Demo-Daten, C-001), ordnet sie mit dem neuesten zuerst (BR-0008) und ermittelt Anfangs- und Endsaldo (BR-0098).
