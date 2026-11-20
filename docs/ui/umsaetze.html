@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Umsätze",
-  "useCases": ["UC-003","UC-022"],
+  "useCases": ["UC-003","UC-019","UC-022"],
   "fields": [
     {"name":"kontoname","label":"Konto","kind":"anzeige","attribute":"Konto.kontoname"},
     {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
@@ -11,12 +11,14 @@
     {"name":"buchungstag","label":"Buchungstag","kind":"anzeige","attribute":"Umsatz.buchungstag"},
     {"name":"gegenpartei","label":"Gegenpartei","kind":"anzeige","attribute":"Umsatz.gegenpartei"},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Umsatz.verwendungszweck"},
+    {"name":"kategorie","label":"Kategorie","kind":"anzeige","attribute":"Umsatz.kategorie"},
     {"name":"betrag","label":"Betrag","kind":"anzeige","attribute":"Umsatz.betrag"},
     {"name":"saldoDanach","label":"Saldo danach","kind":"anzeige","attribute":"Umsatz.saldoDanach"},
     {"name":"rueckgabe","label":"Rückgabe","kind":"anzeige","attribute":"Umsatz.zurueckgegeben"}
   ],
   "actions": [
     {"label":"Als CSV exportieren","useCase":"UC-003#9","operation":"GET /api/konten/{iban}/umsaetze/export","screen":"umsaetze"},
+    {"label":"Ausgabenanalyse","useCase":"UC-019#1","operation":"GET /api/konten/{iban}/ausgabenanalyse","screen":"ausgabenanalyse"},
     {"label":"Zurückgeben","useCase":"UC-022#1","screen":"umsaetze"},
     {"label":"Bestätigen","useCase":"UC-022#3","operation":"POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben","screen":"umsaetze"},
     {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"}
@@ -24,9 +26,16 @@
 } -->
 <header data-wf="kopf">
   <h1>Umsätze</h1>
-  <p>Die Buchungen Ihres Kontos, die neuesten zuerst.</p>
-  <div data-wf="aktionen"><button>Als CSV exportieren</button></div>
+  <p>Die Buchungen Ihres Kontos, die neuesten zuerst. Der Knopf Ausgabenanalyse steht nur bei den Umsätzen des Girokontos, nicht bei der Kreditkarte.</p>
+  <div data-wf="aktionen"><button>Als CSV exportieren</button><button>Ausgabenanalyse</button></div>
 </header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#" aria-current="page">Umsätze</a>
+  <a href="#">Überweisung</a>
+  <a href="#">Empfängervorlagen</a>
+  <a href="#">Postfach (2)</a>
+</nav>
 <dl data-wf="kennzahl">
   <div><dt>Konto</dt><dd>Girokonto</dd></div>
   <div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 31</dd></div>
@@ -49,10 +58,11 @@
 <table data-wf="tabelle">
   <caption>Umsätze Girokonto</caption>
   <thead>
-    <tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Betrag</th><th>Saldo danach</th><th>Rückgabe</th></tr>
+    <tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Kategorie</th><th>Betrag</th><th>Saldo danach</th><th>Rückgabe</th></tr>
   </thead>
   <tbody>
-    <tr><td>05.11.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td></tr>
+    <tr><td>05.11.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>Sonstiges</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td></tr>
+    <tr><td>12.02.2026</td><td>Bäckerei Krause</td><td>Einkauf</td><td>Lebensmittel</td><td>-12,00 €</td><td>2.145,30 €</td><td></td></tr>
   </tbody>
 </table>
 <div data-wf="leer">

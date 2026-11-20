@@ -167,6 +167,7 @@ a { color: var(--tanne); }
 .konto { display: inline-flex; align-items: center; gap: 12px; }
 .konto__symbol { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: #e6efed; color: var(--tanne); }
 .konto__symbol--kreditkarte { background: #f6ecd6; color: #7a5a1c; }
+.konto__symbol--tagesgeldkonto { background: #e2efe9; color: #14532f; }
 
 /* Überweisung (UC-002) */
 .finanzstatus__meldung { margin: 0 0 18px; align-items: center; font-weight: 500; }
@@ -216,6 +217,14 @@ a { color: var(--tanne); }
 .tageslimit > .meldung { margin: 0; align-items: center; font-weight: 500; }
 .ueberweisung__nebenaktion { margin-right: auto; }
 
+/* Vorgemerkte Überweisungen (UC-017) */
+.vorgemerkt { display: grid; gap: 20px; max-width: 980px; }
+.vorgemerkt > .meldung { margin: 0; align-items: center; font-weight: 500; }
+.vorgemerkt > .zurueck, .vorgemerkt__unter { margin: 0; }
+.vorgemerkt__unter { color: var(--tinte-2); }
+.vorgemerkt__tabelle td:last-child { white-space: normal; }
+.vorgemerkt__loeschen { max-width: 480px; }
+
 @media (max-width: 860px) {
   .vermoegen { padding: 24px; }
   .vermoegen__summe { font-size: 34px; }
@@ -258,3 +267,8 @@ a { color: var(--tanne); }
 .kontentabelle th, .kontentabelle td { padding-left: 10px; padding-right: 10px; }
 @media (max-width: 900px) { .filter { grid-template-columns: 1fr 1fr; } .umsaetze { overflow-x: auto; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.navigation__zahl { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 11px; background: var(--messing); color: var(--tanne-tief); font-size: 12px; font-weight: 600; text-align: center; }
+.navigation__zahl[hidden] { display: none; }
+.postfach__text { margin: 12px 0 0; }
+.postfach__text dt { color: var(--tinte-2); font-size: 13px; }
+.postfach__text dd { margin: 4px 0 0; }

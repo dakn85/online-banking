@@ -6,6 +6,14 @@
   const BETRAG_FEHLER = 'Der Betrag übersteigt den verfügbaren Betrag des Girokontos.';
   const MINDESTBETRAG_FEHLER = 'Der Betrag muss mindestens 0,10 € betragen.';
   const ABGELEHNT = 'Die Überweisung konnte nicht ausgeführt werden.';
+  const AUSFUEHRUNGSTAG_FEHLER = 'Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.';
+  const KENNUNG_FEHLER = 'Diese Auftrags-Kennung wurde bereits verwendet.';
+  const NICHT_VORGEMERKT = 'Die Terminüberweisung konnte nicht vorgemerkt werden.';
+  /** BR-0079: heute ist der Kalendertag in Europe/Berlin (JJJJ-MM-TT), wie im Dienst. */
+  const heute = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const plusTage = (tag, n) => { const d = new Date(`${tag}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  /** „2026-12-24“ → „24.12.2026“ (Anzeigeformat TT.MM.JJJJ) */
+  const datum = tag => tag.split('-').reverse().join('.');
   const normal = wert => wert.replace(/\s+/g, '').toUpperCase();
   const gruppiert = wert => normal(wert).replace(/(.{4})/g, '$1 ').trim();
   const html = wert => String(wert).replace(/[&<>"]/g, z => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[z]);
@@ -32,7 +40,7 @@
     async zeigen(flaeche) {
       const [{ konten }, vorlagen] = await Promise.all([Aventa.api('/api/konten'), Aventa.api('/api/empfaengervorlagen')]);
       const giro = konten.find(k => k.art === 'Girokonto');
-      let eingabe = { vorlage: '', empfaenger: '', empfaengerIban: '', betrag: '', verwendungszweck: '' };
+      let eingabe = { vorlage: '', empfaenger: '', empfaengerIban: '', betrag: '', verwendungszweck: '', ausfuehrungstag: '' };
 
       const schritte = aktiv => `<ol class="schritte" aria-label="Schritte">${['Auftrag', 'Bestätigen'].map((s, i) =>
         `<li${i === aktiv ? ' aria-current="step"' : ''}${i < aktiv ? ' class="erledigt"' : ''}><span>${i + 1}</span>${s}</li>`).join('')}</ol>`;
@@ -65,7 +73,8 @@
             ${feld('betrag', 'Betrag in Euro', 'inputmode="decimal" autocomplete="off" placeholder="0,00"', `Höchstens ${Aventa.euro(giro.verfuegbarerBetrag)}`)}
             <div class="feld"><label for="verwendungszweck">Verwendungszweck</label>
               <textarea id="verwendungszweck" name="verwendungszweck" maxlength="140" rows="2">${html(eingabe.verwendungszweck)}</textarea></div>
-            <div class="ueberweisung__aktionen"><a class="knopf knopf--still ueberweisung__nebenaktion" href="/tageslimit">Tageslimit</a><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
+            ${feld('ausfuehrungstag', 'Ausführungstag', `type="date" min="${plusTage(heute(), 1)}" max="${plusTage(heute(), 365)}"`, 'Optional: leer lassen, um sofort zu überweisen. Mit Ausführungstag wird der Auftrag nur vorgemerkt.')}
+            <div class="ueberweisung__aktionen"><a class="knopf knopf--still ueberweisung__nebenaktion" href="/tageslimit">Tageslimit</a><a class="knopf knopf--still" href="/vorgemerkte-ueberweisungen">Vorgemerkte Überweisungen</a>< class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="submit">Weiter</button></div>
           </form>${kontoKarte}</div></div>`;
         const form = flaeche.querySelector('form');
         // BR-0017: Name, IBAN und, falls vorhanden, Verwendungszweck übernehmen; den Betrag nicht. Alles bleibt änderbar.
@@ -78,7 +87,8 @@
         });
         form.addEventListener('submit', e => {
           e.preventDefault();
-          eingabe = { vorlage: form.vorlage.value, empfaenger: form.empfaenger.value.trim(), empfaengerIban: form.empfaengerIban.value.trim(), betrag: form.betrag.value.trim(), verwendungszweck: form.verwendungszweck.value.trim() };
+          eingabe = { vorlage: form.vorlage.value, empfaenger: form.empfaenger.value.trim(), empfaengerIban: form.empfaengerIban.value.trim(), betrag: form.betrag.value.trim(), verwendungszweck: form.verwendungszweck.value.trim(), ausfuehrungstag: form.ausfuehrungstag.value };
+          const tagUngueltig = form.ausfuehrungstag.validity.badInput;
           const betrag = alsBetrag(eingabe.betrag);
           if (!eingabe.empfaenger || !eingabe.empfaengerIban || !eingabe.betrag || !eingabe.verwendungszweck) return auftrag('Bitte füllen Sie alle Felder aus.');
           if (!ibanGueltig(eingabe.empfaengerIban)) return auftrag(IBAN_FEHLER, 'empfaengerIban');
@@ -86,6 +96,9 @@
           if (betrag === null || !(Math.round(betrag * 100) >= 10)) return auftrag(MINDESTBETRAG_FEHLER, 'betrag');
           // BR-0004: höchstens der verfügbare Betrag
           if (Math.round(betrag * 100) > Math.round(giro.verfuegbarerBetrag * 100)) return auftrag(BETRAG_FEHLER, 'betrag');
+          // UC-002 A10, BR-0079: frühestens morgen, höchstens 365 Tage nach heute; ohne Tag sofortige Überweisung
+          const tag = eingabe.ausfuehrungstag;
+          if (tagUngueltig || (tag && !(tag > heute() && tag <= plusTage(heute(), 365)))) return auftrag(AUSFUEHRUNGSTAG_FEHLER, 'ausfuehrungstag');
           bestaetigen(betrag);
         });
         if (meldung) (flaeche.querySelector('[aria-invalid="true"]') || flaeche.querySelector('[role="alert"]')).focus?.();
@@ -93,9 +106,10 @@
 
       function bestaetigen(betrag) {
         const auftragsId = kennung();
+        const tag = eingabe.ausfuehrungstag; // UC-002 A9: mit Ausführungstag nur vormerken
         flaeche.innerHTML = `<div class="ueberweisung">${schritte(1)}<div class="ueberweisung__raster">
           <section class="ueberweisung__form" aria-label="Zusammenfassung">
-            <div><h2>Überweisung bestätigen</h2><p class="ueberweisung__unter">Bitte prüfen Sie Ihre Angaben.</p></div>
+            <div><h2>Überweisung bestätigen</h2><p class="ueberweisung__unter">Bitte prüfen Sie Ihre Angaben.${tag ? ' Mit einem Ausführungstag wird der Auftrag nur vorgemerkt und noch nicht gebucht.' : ''}</p></div>
             <p class="ueberweisung__betrag">${Aventa.euro(betrag)}</p>
             <dl class="zusammenfassung">
               <div><dt>Auftraggeberkonto</dt><dd>${html(giro.kontoname)} · ${gruppiert(giro.iban)}</dd></div>
@@ -103,6 +117,7 @@
               <div><dt>IBAN des Empfängers</dt><dd class="iban">${gruppiert(eingabe.empfaengerIban)}</dd></div>
               <div><dt>Betrag in Euro</dt><dd>${Aventa.euro(betrag)}</dd></div>
               <div><dt>Verwendungszweck</dt><dd>${html(eingabe.verwendungszweck)}</dd></div>
+              ${tag ? `<div><dt>Ausführungstag</dt><dd>${datum(tag)}</dd></div>` : ''}
             </dl>
             <div class="ueberweisung__aktionen"><a class="knopf knopf--still" href="/finanzstatus">Abbrechen</a><button class="knopf knopf--haupt" type="button" id="bestaetigen">Bestätigen</button></div>
           </section>${kontoKarte}</div></div>`;
@@ -110,18 +125,25 @@
         knopf.addEventListener('click', async () => {
           if (knopf.disabled) return;
           knopf.disabled = true; // BR-0005: Sperre während des Absendens
+          const daten = { auftragsId, auftraggeberIban: giro.iban, empfaenger: eingabe.empfaenger, empfaengerIban: normal(eingabe.empfaengerIban), betrag, verwendungszweck: eingabe.verwendungszweck, waehrung: 'EUR' };
           try {
-            await Aventa.api('/api/ueberweisungen', {
+            await Aventa.api(tag ? '/api/terminueberweisungen' : '/api/ueberweisungen', {
               method: 'POST',
-              body: JSON.stringify({ auftragsId, auftraggeberIban: giro.iban, empfaenger: eingabe.empfaenger, empfaengerIban: normal(eingabe.empfaengerIban), betrag, verwendungszweck: eingabe.verwendungszweck, waehrung: 'EUR' }),
+              body: JSON.stringify(tag ? { ...daten, ausfuehrungstag: tag } : daten),
             });
-            location.href = '/finanzstatus?ausgefuehrt=1';
+            location.href = tag ? '/finanzstatus?vorgemerkt=1' : '/finanzstatus?ausgefuehrt=1';
           } catch (fehler) {
             // UC-002 A8.2: den Mindestbetrag lehnt der Dienst ebenfalls mit 400 ab, erkennbar an der Meldung
             if (fehler.status === 400 && fehler.message === MINDESTBETRAG_FEHLER) return auftrag(MINDESTBETRAG_FEHLER, 'betrag');
+            // UC-002 A10 Schritt 3: kein gültiges Datum
+            if (fehler.status === 400 && tag && fehler.message !== IBAN_FEHLER) return auftrag(fehler.message, 'ausfuehrungstag');
             if (fehler.status === 400) return auftrag(IBAN_FEHLER, 'empfaengerIban');
+            // UC-002 A11: Kennung verbraucht; die nächste Zusammenfassung vergibt eine neue
+            if (fehler.status === 422 && fehler.message === KENNUNG_FEHLER) return auftrag(KENNUNG_FEHLER);
+            // UC-002 A10 Schritt 2
+            if (fehler.status === 422 && fehler.message === AUSFUEHRUNGSTAG_FEHLER) return auftrag(AUSFUEHRUNGSTAG_FEHLER, 'ausfuehrungstag');
             if (fehler.status === 422) return auftrag(BETRAG_FEHLER, 'betrag');
-            auftrag(ABGELEHNT); // A6
+            auftrag(tag ? NICHT_VORGEMERKT : ABGELEHNT); // A6, bei der Terminüberweisung A9 Schritt 5
           }
         });
       }

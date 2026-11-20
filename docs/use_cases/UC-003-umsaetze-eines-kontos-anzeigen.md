@@ -6,7 +6,7 @@
 **Name:** Umsätze eines Kontos anzeigen  
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
-**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum und Ein-/Ausgang ein; sie lädt die so eingeschränkten Umsätze als CSV-Datei herunter.  
+**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum und Ein-/Ausgang ein; sie lädt die so eingeschränkten Umsätze als CSV-Datei herunter.  
 **Ziele:** Z-6  
 **Anforderungen:** NFR-001, C-001
 
@@ -21,7 +21,7 @@
 2. Das System liest die Umsätze des Kontos (Demo-Daten, C-001).
 3. Das System ordnet die Umsätze mit dem neuesten Buchungstag zuerst (BR-0008).
 4. Das System zeigt Kontoname und IBAN des Kontos sowie die Felder für die Textsuche und die Filter nach Zeitraum und Ein-/Ausgang.
-5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag in Euro, Saldo danach in Euro und Rückgabe; bei einer SEPA-Lastschrift steht dort „Zurückgeben“, bei einer zurückgegebenen „Zurückgegeben“ (UC-022).
+5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag in Euro, Saldo danach in Euro und Rückgabe; bei einer SEPA-Lastschrift steht dort „Zurückgeben“, bei einer zurückgegebenen „Zurückgegeben“ (UC-022).
 6. Die Kundin gibt einen Suchtext ein, wählt einen Zeitraum oder eine Richtung.
 7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt und deren Betrag zur gewählten Richtung passt (BR-0009, BR-0010).
 8. Die Kundin liest Betrag und Saldo danach der Umsätze ab.
@@ -115,7 +115,7 @@ sequenceDiagram
 
 ### Erfolg
 
-- Die Umsätze des gewählten Kontos sind mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach sichtbar, den neuesten zuerst.
+- Die Umsätze des gewählten Kontos sind mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach sichtbar, den neuesten zuerst.
 - Suchtext, Zeitraum und Richtung sind auf die angezeigten Umsätze angewendet.
 - Nach einem Export liegt die CSV-Datei mit den Umsätzen der eingestellten Filter beim Browser der Kundin; im System ist nichts gespeichert.
 
