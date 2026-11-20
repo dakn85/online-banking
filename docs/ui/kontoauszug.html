@@ -1,0 +1,23 @@
+<!-- maske: {
+  "title": "Kontoauszug",
+  "useCases": ["UC-024"],
+  "fields": [
+    {"name":"konto","label":"Konto","kind":"auswahl","attribute":"Konto.iban"},
+    {"name":"monat","label":"Monat","kind":"text","attribute":"Kontoauszug.monat","rules":{"required":true,"minLength":7,"maxLength":7,"pattern":"^[0-9]{4}-(0[1-9]|1[0-2])$"}}
+  ],
+  "actions": [
+    {"label":"Kontoauszug herunterladen","useCase":"UC-024#3","operation":"GET /api/konten/{iban}/kontoauszug","screen":"kontoauszug"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Kontoauszug</h1>
+  <p>Laden Sie den Kontoauszug eines Kontos für einen Monat als PDF herunter.</p>
+</header>
+<form data-wf="formular">
+  <label data-wf="feld"><span>Konto</span><select name="konto"><option>Girokonto</option><option>Kreditkarte</option></select></label>
+  <label data-wf="feld"><span>Monat</span><input name="monat" placeholder="2026-02" required></label>
+  <div data-wf="aktionen"><button data-wf="primaer">Kontoauszug herunterladen</button></div>
+</form>
+<p data-wf="meldung" role="alert">Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.</p>
+<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+<p data-wf="meldung" role="alert">Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.</p>

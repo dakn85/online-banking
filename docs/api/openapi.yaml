@@ -1040,6 +1040,72 @@ paths:
         - Überweisung
       x-use-cases:
         - UC-021
+  /api/konten/{iban}/kontoauszug:
+    get:
+      summary: Kontoauszug eines Kontos für einen Monat als PDF
+      description: "Erzeugt den Kontoauszug des Kontos mit dieser IBAN für den Kalendermonat monat als PDF und liefert ihn als Download (Content-Disposition attachment, Dateiname Kontoauszug_<IBAN ohne Leerzeichen>_<monat>.pdf). Das PDF enthält Anfangssaldo, Endsaldo und alle Umsätze des Monats, neueste zuerst; ein Monat ohne Umsätze ergibt einen leeren Auszug mit Saldo (BR-0098, BR-0008). Der Dienst prüft in dieser Reihenfolge: ohne gültige Sitzung 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, 404 mit dem Feld fehler „Das Konto wurde nicht gefunden.“ (BR-0011 gilt auch für den Kontoauszug), ohne den Monat zu prüfen; ein Monat, der fehlt, nicht das Format JJJJ-MM hat oder nach dem laufenden Monat liegt, 400 mit dem Feld fehler „Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.“. Kann das PDF nicht erzeugt werden, antwortet der Dienst mit 500 und dem Feld fehler; die Maske zeigt dann unabhängig vom Text in fehler die Meldung „Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.“ und liefert keine Datei. Beträge in Euro, auf Cent gerundet (ADR-005)."
+      operationId: kontoauszugErzeugen
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-024
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Kontos der Kundin (Konto.iban); jede IBAN, die zu keinem Konto der Kundin gehört, ergibt 404
+          schema:
+            type: string
+        - name: monat
+          in: query
+          required: true
+          description: Kalendermonat des Auszugs, JJJJ-MM, höchstens der laufende Monat (Kontoauszug.monat)
+          schema:
+            type: string
+            minLength: 7
+            maxLength: 7
+            pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+      responses:
+        "200":
+          description: Kontoauszug als PDF-Datei
+          headers:
+            Content-Disposition:
+              description: attachment mit dem Dateinamen des Auszugs
+              schema:
+                type: string
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Monat fehlt, hat nicht das Format JJJJ-MM oder liegt nach dem laufenden Monat; geprüft nach dem Konto
+          x-rules:
+            - Kontoauszug.monat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin; fehler lautet „Das Konto wurde nicht gefunden.“
+          x-rules:
+            - BR-0011
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
+        "500":
+          description: Das PDF konnte nicht erzeugt werden; fehler nennt den Fehler, die Maske zeigt unabhängig davon ihre eigene Meldung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fehler"
   /api/kunde:
     get:
       summary: Persönliche Daten der angemeldeten Kundin

@@ -27,6 +27,7 @@
 8. Die Kundin liest Betrag und Saldo danach der Umsätze ab.
 9. Die Kundin wählt „Als CSV exportieren“.
 10. Das System liefert die Umsätze, die zu den eingestellten Werten für Suchtext, Zeitraum und Ein-/Ausgang passen, mit derselben Reihenfolge und demselben Saldo danach als CSV-Datei, die der Browser herunterlädt; es speichert die Datei nicht (BR-0075).
+11. Die Kundin wählt „Kontoauszug“; das System öffnet die Maske Kontoauszug für das Konto mit der IBAN der angezeigten Umsätze, weiter mit UC-024.
 
 ## Alternativabläufe
 
@@ -139,7 +140,7 @@ Der Zeitraumfilter zeigt die Umsätze, deren Buchungstag zwischen dem gewählten
 
 ### BR-0011: Umsätze und Rückgaben nur für Konten der Kundin
 
-Umsätze liefert der Dienst und eine Rückgabe (UC-022) bucht er nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“.
+Umsätze liefert der Dienst und eine Rückgabe (UC-022) bucht er nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“. Dasselbe gilt für den Kontoauszug (UC-024): Ihn liefert der Dienst nur zu einer IBAN eines Kontos der angemeldeten Kundin; sonst antwortet er mit 404 und die Maske Kontoauszug zeigt „Das Konto wurde nicht gefunden.“.
 
 ### BR-0075: Export mit den Umsätzen der Liste
 

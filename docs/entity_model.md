@@ -16,6 +16,7 @@ erDiagram
     Ausgabenanalyse }o--|| Konto : "bezieht sich auf"
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
+    Kontoauszug }o--|| Konto : "gehört zu"
 ```
 
 ## Entitäten
@@ -87,12 +88,12 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
-| buchungstag | Tag der Buchung | Date |  | Pflicht; Beispiel 2026-02-14; Anzeige in der Umsatzliste und in der CSV-Datei als TT.MM.JJJJ, Beispiel 14.02.2026 |
+| buchungstag | Tag der Buchung | Date |  | Pflicht; Beispiel 2026-02-14; Anzeige in der Umsatzliste, in der CSV-Datei und im Kontoauszug als TT.MM.JJJJ, Beispiel 14.02.2026 |
 | gegenpartei | Name der Gegenpartei | String | 1..70 | Pflicht; Länge 1..70; Beispiel Möbel Nord GmbH |
 | verwendungszweck | Verwendungszweck der Buchung | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rechnung 4711 |
-| betrag | Betrag in Euro; beim Ausgang negativ. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel -1.250,00 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel -50,00 | Decimal |  | Pflicht; Beispiel -50.00 |
+| betrag | Betrag in Euro; beim Ausgang negativ. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel -1.250,00 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel -50,00 | Decimal |  | Pflicht; Beispiel -50.00; Anzeige im Kontoauszug in Euro mit Tausenderpunkt und Komma, Beispiel -50,00 € |
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
-| saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30 |
+| saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30; Anzeige im Kontoauszug in Euro mit Tausenderpunkt und Komma, Beispiel 2.095,30 € |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
 | kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 | umsatzId | Kennung des Umsatzes, vom Dienst vergeben; die Zeilenaktion „Zurückgeben“ der Umsätze führt sie mit | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-0007 |
@@ -208,3 +209,18 @@ Die Debitkarte zum Girokonto der Kundin mit ihrem Sperrstatus. Die Kundin erkenn
 | sperrgrund | Grund der endgültigen Sperre, von der Kundin beim endgültigen Sperren gewählt; nur belegt, wenn der Status endgültig gesperrt ist | String |  | Werte Verlust, Diebstahl; Beispiel Verlust; Pflicht beim endgültigen Sperren, sonst nicht belegt; ein bei anderem Zielstatus mitgeschickter Sperrgrund wird ignoriert und nicht gespeichert |
 
 **Einschränkungen:** Zu einem Girokonto gibt es höchstens eine Debitkarte, zu einer Kreditkarte keine. Die Debitkarte liegt nur im Speicher (ADR-002); im Ausgangsstand haben die Demo-Kundinnen je eine Debitkarte mit Status aktiv.
+
+### Kontoauszug
+
+**Bereich:** Finanzstatus  
+
+Der Kontoauszug eines Kontos der Kundin für einen Kalendermonat mit Anfangssaldo, Endsaldo und den Umsätzen des Monats. Das Konto ist über die Beziehung bestimmt (Konto.iban). Er wird beim Abruf als PDF erzeugt und nicht gespeichert (ADR-002, ADR-008); die Umsätze sind die des Kontos (Entität Umsatz).
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| monat | Kalendermonat des Auszugs im Format JJJJ-MM; vergangene Monate und der laufende Monat, ein zukünftiger Monat ist ungültig | String | 7..7 | Pflicht; Länge 7..7; Muster ^[0-9]{4}-(0[1-9]\|1[0-2])$; Beispiel 2026-02; höchstens der laufende Monat |
+| anfangssaldo | Saldo des Kontos zu Beginn des Monats in Euro (BR-0098) | Decimal |  | Pflicht; Beispiel -396.70; Anzeige im PDF in Euro mit Tausenderpunkt und Komma, Beispiel -396,70 € |
+| endsaldo | Saldo des Kontos am Ende des Monats in Euro, im laufenden Monat der Stand bis heute (BR-0098) | Decimal |  | Pflicht; Beispiel 2145.30; Anzeige im PDF in Euro mit Tausenderpunkt und Komma, Beispiel 2.145,30 € |
+| waehrung | Währung der Salden | String |  | Pflicht; Werte EUR; Standard EUR |
+
+**Einschränkungen:** Der Auszug gehört zu einem Konto der angemeldeten Kundin (BR-0011).

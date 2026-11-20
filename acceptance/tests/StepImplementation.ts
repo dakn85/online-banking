@@ -1,6 +1,9 @@
 import { AfterScenario, AfterSuite, BeforeSuite, Step, Table } from 'gauge-ts';
 import assert = require('assert');
 import { Browser, chromium, Locator, Page } from 'playwright';
+// pdfjs-dist 3 (CommonJS) liest den Text des Kontoauszugs aus dem PDF.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
 
 const basisUrl = process.env.BANKING_URL || 'http://localhost:18300';
 
@@ -30,6 +33,7 @@ export default class StepImplementation {
     await StepImplementation.page?.context().clearCookies();
     await StepImplementation.page?.unrouteAll({ behavior: 'ignoreErrors' });
     StepImplementation.export = undefined;
+    StepImplementation.auszug = undefined;
     StepImplementation.umsatzstaende = [];
     StepImplementation.umsaetzeGefiltert = false;
   }
@@ -1470,6 +1474,163 @@ export default class StepImplementation {
     assert.strictEqual(api.status, Number(status), 'POST /api/umbuchungen ohne Sitzung');
     await page.goto(`${basisUrl}/umbuchung`, { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/anmelden$/);
+  }
+
+  /* ---------------------------------------------------------------- UC-024 Kontoauszug */
+
+  /** Die letzte Antwort auf den Abruf des Kontoauszugs: Status, Dateiname des Downloads und die Textzeilen des PDF. */
+  private static auszug?: { status: number; dateiname?: string; zeilen: string[][] };
+
+  /** Monatsangaben der Szenarien: „dieser Monat“, „in n Monat(en)“ oder JJJJ-MM (UTC wie im Dienst). */
+  private monatswert(angabe: string): string {
+    const jetzt = new Date();
+    const n = text(angabe) === 'dieser Monat' ? 0 : Number(/^in (\d+) Monat/.exec(text(angabe))?.[1] ?? NaN);
+    if (Number.isNaN(n)) return text(angabe);
+    return new Date(Date.UTC(jetzt.getUTCFullYear(), jetzt.getUTCMonth() + n, 1)).toISOString().slice(0, 7);
+  }
+
+  /** Die Textzeilen des PDF, je Zeile die Zellen von links nach rechts. */
+  private async pdfZeilen(daten: Buffer): Promise<string[][]> {
+    const dok = await pdfjs.getDocument({ data: new Uint8Array(daten), useSystemFonts: true }).promise;
+    const zeilen: { y: number; zellen: { x: number; t: string }[] }[] = [];
+    for (let nr = 1; nr <= dok.numPages; nr++) {
+      const inhalt = await (await dok.getPage(nr)).getTextContent();
+      for (const item of inhalt.items as { str: string; transform: number[] }[]) {
+        if (!item.str.trim()) continue;
+        const y = Math.round(item.transform[5]) - nr * 10000;
+        let zeile = zeilen.find(z => Math.abs(z.y - y) <= 2);
+        if (!zeile) zeilen.push(zeile = { y, zellen: [] });
+        zeile.zellen.push({ x: item.transform[4], t: sichtbar(item.str) });
+      }
+    }
+    return zeilen.sort((a, b) => b.y - a.y).map(z => z.zellen.sort((a, b) => a.x - b.x).map(c => c.t));
+  }
+
+  private async auszugSeite(): Promise<Page> {
+    const page = await this.seite();
+    await page.getByRole('button', { name: 'Kontoauszug herunterladen' }).waitFor();
+    return page;
+  }
+
+  @Step('Die Kundin öffnet den Kontoauszug')
+  public async kontoauszugOeffnen() {
+    const page = await this.seite();
+    await page.getByRole('link', { name: 'Kontoauszug' }).click();
+    await page.waitForURL(/\/kontoauszug\?/);
+    await this.auszugSeite();
+  }
+
+  @Step('Die Kundin öffnet den Kontoauszug des Kontos mit der IBAN <iban>')
+  public async kontoauszugMitIban(iban: string) {
+    const page = await this.seite();
+    await page.goto(`${basisUrl}/kontoauszug?iban=${encodeURIComponent(text(iban))}`, { waitUntil: 'domcontentloaded' });
+    await this.auszugSeite();
+  }
+
+  @Step('Die Kundin lädt den Kontoauszug für den Monat <monat> herunter')
+  public async kontoauszugLaden(monat: string) {
+    const page = await this.auszugSeite();
+    await page.getByLabel('Monat').fill(this.monatswert(monat));
+    const antwort = page.waitForResponse(r => /\/api\/konten\/[^/]+\/kontoauszug\?/.test(r.url()));
+    const download = page.waitForEvent('download', { timeout: 5000 }).catch(() => undefined);
+    await page.getByRole('button', { name: 'Kontoauszug herunterladen' }).click();
+    const r = await antwort;
+    const datei = r.status() === 200 ? await download : undefined;
+    const rumpf = r.status() === 200 ? await page.request.get(r.url()) : undefined;
+    StepImplementation.auszug = {
+      status: r.status(),
+      dateiname: datei?.suggestedFilename(),
+      zeilen: rumpf ? await this.pdfZeilen(await rumpf.body()) : [],
+    };
+  }
+
+  private auszugDatei() {
+    const a = StepImplementation.auszug;
+    assert.ok(a && a.status === 200, `Es gibt keinen heruntergeladenen Kontoauszug (Status ${a?.status})`);
+    return a;
+  }
+
+  /** Der Wert hinter „Beschriftung:“ in der Kopfzeile des PDF. */
+  private auszugKopf(beschriftung: string): string {
+    const zeile = this.auszugDatei().zeilen.map(z => z.join(' ')).find(z => z.startsWith(`${beschriftung}:`));
+    assert.ok(zeile, `Zeile „${beschriftung}“ fehlt im PDF`);
+    return zeile.slice(beschriftung.length + 1).trim();
+  }
+
+  @Step('Der Kontoauszug zeigt im Kopf Kontoname <name>, IBAN <iban> und Monat <monat>')
+  public async kontoauszugKopf(name: string, iban: string, monat: string) {
+    assert.strictEqual(this.auszugKopf('Kontoname'), text(name));
+    assert.strictEqual(this.auszugKopf('IBAN'), text(iban));
+    assert.strictEqual(this.auszugKopf('Monat'), text(monat));
+  }
+
+  @Step('Der Kontoauszug zeigt Anfangssaldo <anfang> und Endsaldo <ende>')
+  public async kontoauszugSalden(anfang: string, ende: string) {
+    assert.strictEqual(this.auszugKopf('Anfangssaldo'), sichtbar(text(anfang)));
+    assert.strictEqual(this.auszugKopf('Endsaldo'), sichtbar(text(ende)));
+  }
+
+  @Step('Der Kontoauszug zeigt die Zeilen <tabelle>')
+  public async kontoauszugZeilen(tabelle: Table) {
+    const alle = this.auszugDatei().zeilen;
+    const kopfNr = alle.findIndex(z => z[0] === 'Buchungstag');
+    assert.ok(kopfNr >= 0, 'Tabellenkopf fehlt im PDF');
+    const kopf = alle[kopfNr];
+    const daten = alle.slice(kopfNr + 1).filter(z => /^\d{2}\.\d{2}\.\d{4}$/.test(z[0]));
+    const erwartet = tabelle.getTableRows();
+    assert.strictEqual(daten.length, erwartet.length, `Zeilen im PDF: ${daten.length}, erwartet ${erwartet.length}`);
+    const spalten = tabelle.getColumnNames();
+    erwartet.forEach((zeile, i) => {
+      for (const spalte of spalten) {
+        const nr = kopf.indexOf(spalte);
+        assert.ok(nr >= 0, `Spalte ${spalte} fehlt im Tabellenkopf`);
+        assert.strictEqual(daten[i][nr], sichtbar(text(zeile.getCell(spalte) ?? '')), `Zeile ${i + 1}, Spalte ${spalte}`);
+      }
+    });
+  }
+
+  @Step('Der Download hat den Dateinamen <name>')
+  public async kontoauszugDateiname(name: string) {
+    assert.strictEqual(this.auszugDatei().dateiname, text(name));
+  }
+
+  @Step('Der Kontoauszug wird mit dem Status <status> und der Meldung <meldung> abgelehnt')
+  public async kontoauszugAbgelehnt(status: string, meldung: string) {
+    const a = StepImplementation.auszug;
+    assert.strictEqual(a?.status, Number(status), 'Status der Antwort auf den Kontoauszug');
+    assert.strictEqual(a?.dateiname, undefined, 'Es darf keine Datei geliefert werden');
+    const page = await this.seite();
+    await page.locator('#kontoauszug-meldung').getByText(text(meldung), { exact: true }).waitFor();
+  }
+
+  @Step('Der Kontoauszug antwortet ohne Anmeldung mit dem Status <status>')
+  public async kontoauszugOhneAnmeldung(status: string) {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const antwort = await fetch(`${basisUrl}/api/konten/DE02500105175407324931/kontoauszug?monat=2026-02`);
+    assert.strictEqual(antwort.status, Number(status), 'GET /api/konten/{iban}/kontoauszug ohne Sitzung');
+  }
+
+  @Step('Die Kontoauszugsseite ist ohne Anmeldung nicht erreichbar')
+  public async kontoauszugsseiteOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    await page.goto(`${basisUrl}/kontoauszug?iban=DE02500105175407324931`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
+  }
+
+  /** Der Dienst antwortet auf den Kontoauszug mit 500; die Umleitung gilt bis zum Ende des Szenarios. */
+  @Step('Der Kontoauszug-Dienst antwortet mit einem Fehler')
+  public async kontoauszugFehler() {
+    const page = await this.seite();
+    await page.route(/\/api\/konten\/[^/]+\/kontoauszug(\?|$)/, route => route.fulfill({ status: 500, contentType: 'application/json', body: '{"fehler":"Interner Fehler"}' }));
+  }
+
+  /** Die Sitzung endet, wie wenn sie abläuft: der Browser hat kein gültiges Cookie mehr. */
+  @Step('Die Sitzung der Kundin ist abgelaufen')
+  public async sitzungAbgelaufen() {
+    const page = await this.seite();
+    await page.context().clearCookies();
   }
 
   /* ---------------------------------------------------------------- UC-023 Persönliche Daten */

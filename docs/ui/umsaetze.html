@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Umsätze",
-  "useCases": ["UC-003","UC-019","UC-022"],
+  "useCases": ["UC-003","UC-019","UC-022","UC-024"],
   "fields": [
     {"name":"kontoname","label":"Konto","kind":"anzeige","attribute":"Konto.kontoname"},
     {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
@@ -19,6 +19,7 @@
   "actions": [
     {"label":"Als CSV exportieren","useCase":"UC-003#9","operation":"GET /api/konten/{iban}/umsaetze/export","screen":"umsaetze"},
     {"label":"Ausgabenanalyse","useCase":"UC-019#1","operation":"GET /api/konten/{iban}/ausgabenanalyse","screen":"ausgabenanalyse"},
+    {"label":"Kontoauszug","useCase":"UC-024#1","screen":"kontoauszug"},
     {"label":"Zurückgeben","useCase":"UC-022#1","screen":"umsaetze"},
     {"label":"Bestätigen","useCase":"UC-022#3","operation":"POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben","screen":"umsaetze"},
     {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"}
@@ -27,7 +28,7 @@
 <header data-wf="kopf">
   <h1>Umsätze</h1>
   <p>Die Buchungen Ihres Kontos, die neuesten zuerst. Der Knopf Ausgabenanalyse steht nur bei den Umsätzen des Girokontos, nicht bei der Kreditkarte.</p>
-  <div data-wf="aktionen"><button>Als CSV exportieren</button><button>Ausgabenanalyse</button></div>
+  <div data-wf="aktionen"><button>Als CSV exportieren</button><button>Ausgabenanalyse</button><button>Kontoauszug</button></div>
 </header>
 <nav data-wf="navigation">
   <a href="#">Finanzstatus</a>
