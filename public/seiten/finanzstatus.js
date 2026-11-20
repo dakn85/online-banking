@@ -21,7 +21,7 @@
         return;
       }
       // UC-015 Schritt 1: „Tageslimit“ im Kopf des Finanzstatus.
-      document.getElementById('kopf-aktion').innerHTML = '<a class="knopf knopf--still" href="/umbuchung">Umbuchen</a> <a class="knopf knopf--still" href="/tageslimit">Tageslimit</a> <a class="knopf knopf--still" href="/dauerauftraege">Daueraufträge</a>';
+      document.getElementById('kopf-aktion').innerHTML = '<a class="knopf knopf--still" href="/umbuchung">Umbuchen</a> <a class="knopf knopf--still" href="/tageslimit">Tageslimit</a> <a class="knopf knopf--still" href="/dauerauftraege">Daueraufträge</a> <a class="knopf knopf--still" href="/persoenliche-daten">Persönliche Daten</a>';
       // UC-002 Schritt 9: nach der Überweisung einmal die Meldung, die Adresse wird wieder schlicht.
       // UC-002 A9 Schritt 6: nach dem Vormerken „Überweisung vorgemerkt.“ bei unverändertem Saldo.
       const ausgefuehrt = parameter && parameter.get('ausgefuehrt') === '1' ? 'Überweisung ausgeführt.'
