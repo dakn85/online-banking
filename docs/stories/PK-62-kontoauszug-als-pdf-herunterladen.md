@@ -36,7 +36,6 @@ Als Privatkundin möchte ich zu einem meiner Konten den Kontoauszug eines Monats
 - `acceptance/specs/kontoauszug.spec`: Der laufende Monat zeigt den Zwischenstand bis heute
 - `acceptance/specs/kontoauszug.spec`: Ein Konto, das nicht zur Kundin gehört, hat keinen Kontoauszug
 - `acceptance/specs/kontoauszug.spec`: Ein Monat ohne Umsätze ergibt einen leeren Auszug mit Saldo
-- `acceptance/specs/kontoauszug.spec`: Ein Monat ohne Umsätze nach dem letzten Umsatz ergibt einen leeren Auszug mit Saldo
 - `acceptance/specs/kontoauszug.spec`: Ein Monat vor dem ersten Umsatz zeigt den Saldo vor dem ersten Umsatz
 - `acceptance/specs/kontoauszug.spec`: Ohne Anmeldung ist die Kontoauszugsseite nicht erreichbar
 

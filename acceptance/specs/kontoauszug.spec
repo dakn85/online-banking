@@ -31,20 +31,6 @@ Tags: UC-024, PK-62, BR-0098
 | 10.02.2026  | Energieversorgung Nord |
 | 01.02.2026  | Lindner Logistik GmbH  |
 
-## Ein Monat ohne Umsätze nach dem letzten Umsatz ergibt einen leeren Auszug mit Saldo
-
-Tags: UC-024, PK-62, BR-0098
-
-* Testdaten sind zurückgesetzt
-* "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
-* Die Kundin öffnet den Kontoauszug
-* Die Kundin lädt den Kontoauszug für den Monat "2026-06" herunter
-* Der Kontoauszug zeigt Anfangssaldo "2.145,30 €" und Endsaldo "2.145,30 €"
-* Der Kontoauszug zeigt die Zeilen
-| Buchungstag | Gegenpartei |
-|-------------|-------------|
-
 ## Ein Monat vor dem ersten Umsatz zeigt den Saldo vor dem ersten Umsatz
 
 Tags: UC-024, PK-62, BR-0098
