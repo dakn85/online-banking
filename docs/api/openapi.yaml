@@ -389,7 +389,7 @@ paths:
                 $ref: '#/components/schemas/Fehler'
   /api/umbuchungen:
     post:
-      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Prüfreihenfolge: 401, 400 (Feldregeln inklusive Mindestbetrag), 403, 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze); die erste Verletzung lehnt ab. Im Feld fehler steht bei 400 wegen des Mindestbetrags und bei 422 der Fachtext aus UC-021. Eine wiederholte Anfrage mit derselben auftragsId bucht nicht erneut; die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
+      description: "Legt die Umbuchung an und führt sie sofort genau einmal aus: Der Betrag wird vom Quellkonto abgezogen und dem Zielkonto gutgeschrieben, auf beiden Konten entsteht ein Umsatz. Quell- und Zielkonto gehören der angemeldeten Kundin und sind ein Girokonto und ein Tagesgeldkonto; der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Quellkontos nicht übersteigen (Girokonto: Saldo plus Dispositionsrahmen, Tagesgeldkonto: Saldo); sonst wird nichts gebucht. Prüfreihenfolge: 401, 400 (Feldregeln inklusive Mindestbetrag), Wiederholung derselben auftragsId der Kundin (200 mit der ursprünglichen Umbuchung, ohne weitere Prüfung und ohne Buchung), 403, 422 BR-0088 (Kontenpaarung), 422 BR-0089 (Betragsgrenze); die erste Verletzung lehnt ab. Im Feld fehler steht bei 400 wegen des Mindestbetrags und bei 422 der Fachtext aus UC-021. Die auftragsId gilt je Kundin. Keine IBAN-Eingabe des Empfängers und keine TAN. Beträge in Euro."
       operationId: umbuchungAusfuehren
       requestBody:
         required: true
@@ -399,7 +399,7 @@ paths:
               $ref: "#/components/schemas/Umbuchungsauftrag"
       responses:
         "200":
-          description: Umbuchung mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung
+          description: Umbuchung mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung, auch wenn Konten oder Betrag jetzt nicht mehr zulässig wären
           content:
             application/json:
               schema:
