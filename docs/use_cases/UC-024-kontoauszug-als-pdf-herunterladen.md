@@ -27,10 +27,10 @@
 
 ### A1: Nicht angemeldet
 
-**Auslöser:** Es gibt keine gültige Sitzung. (Schritt 1).  
+**Auslöser:** Es gibt keine gültige Sitzung, beim Öffnen der Maske (Schritt 1) oder weil sie bis zum Herunterladen abgelaufen ist (Schritt 3, Antwort 401). (Schritt 1).  
 **Ablauf:**
 
-1. Das System leitet auf die Anmeldeseite um; ein Abruf der Operation ohne Sitzung wird mit 401 beantwortet.
+1. Das System leitet auf die Anmeldeseite um und liefert keine Datei; ein Abruf der Operation ohne Sitzung wird mit 401 beantwortet.
 2. Die Kundin meldet sich an; danach beginnt der Standardablauf erneut, oder sie bricht ab.
 
 ### A2: Monat ohne Umsätze
@@ -54,6 +54,13 @@
 **Ablauf:**
 
 1. Das System zeigt die Meldung „Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.“ und liefert keine Datei; die Operation antwortet mit 400.
+
+### A5: Kontoauszug fehlgeschlagen
+
+**Auslöser:** Der Dienst antwortet mit einem anderen Fehler als in A1, A3 und A4, etwa weil das PDF nicht erzeugt werden kann, oder ist nicht erreichbar. (Schritt 5).  
+**Ablauf:**
+
+1. Das System liefert keine Datei und zeigt die Meldung „Der Kontoauszug ist fehlgeschlagen. Bitte versuchen Sie es später erneut.“.
 
 ## Sequenzdiagramm
 
