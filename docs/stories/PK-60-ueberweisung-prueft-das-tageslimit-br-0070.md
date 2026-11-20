@@ -22,6 +22,7 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 | Fachliche Prüfungen doppelt, maßgeblich ist der Dienst | Geändert | Kontext geändert, Entscheidung geändert, Folgen geändert |
 | Überweisung vom Girokonto ausführen | Geändert | Beschreibung geändert, Antwort 422 geändert |
 | Architektur | Geändert | Bausteinsicht geändert, Laufzeitsicht geändert |
+| Antwortzeit von Finanzstatus und Überweisung | Geändert | Maß geändert, Herkunft geändert |
 | Überweisung | Geändert | Skizze geändert |
 | UC-002 Überweisung vom Girokonto | Geändert | Notizen geändert, Schritt 7 geändert, A9 neu: Tageslimit überschritten, und 4 weitere |
 | UC-015 Tageslimit für Überweisungen festlegen | Geändert | Notizen geändert, BR-0070 geändert |
@@ -46,6 +47,8 @@ Als Privatkundin möchte ich, dass eine Überweisung abgelehnt wird, die zusamme
 - [ ] Überweisung vom Girokonto ausführen: Antwort 422 geändert
 - [ ] Architektur: Bausteinsicht geändert
 - [ ] Architektur: Laufzeitsicht geändert
+- [ ] Antwortzeit von Finanzstatus und Überweisung: Maß geändert
+- [ ] Antwortzeit von Finanzstatus und Überweisung: Herkunft geändert
 - [ ] Überweisung: Skizze geändert
 - [ ] UC-002: Notizen geändert
 - [ ] UC-002: Schritt 7 geändert
