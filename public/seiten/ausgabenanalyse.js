@@ -21,7 +21,7 @@
           <div><dt>Konto</dt><dd>${html(konto.kontoname)}</dd></div>
           <div><dt>IBAN</dt><dd class="iban">${iban(konto.iban)}</dd></div>
         </dl>` : ''}
-        <form class="filter" aria-label="Monat" onsubmit="return false">
+        <form class="filter" aria-label="Monatswahl" onsubmit="return false">
           <label class="feld"><span>Monat</span><input name="monat" placeholder="2026-02" autocomplete="off" value="${html(start)}"></label>
         </form>
         <section id="ausgaben-ergebnis" class="umsaetze" aria-label="Ausgaben nach Kategorien" aria-live="polite"></section>`;
