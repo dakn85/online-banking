@@ -6,7 +6,7 @@
 **Name:** Umsätze eines Kontos anzeigen  
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
-**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum und Ein-/Ausgang ein; sie lädt die so eingeschränkten Umsätze als CSV-Datei herunter.  
+**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum und Ein-/Ausgang ein; sie lädt die so eingeschränkten Umsätze als CSV-Datei herunter.  
 **Ziele:** Z-6  
 **Anforderungen:** NFR-001, C-001
 
@@ -21,7 +21,7 @@
 2. Das System liest die Umsätze des Kontos (Demo-Daten, C-001).
 3. Das System ordnet die Umsätze mit dem neuesten Buchungstag zuerst (BR-0008).
 4. Das System zeigt Kontoname und IBAN des Kontos sowie die Felder für die Textsuche und die Filter nach Zeitraum und Ein-/Ausgang.
-5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag in Euro und Saldo danach in Euro.
+5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag in Euro, Saldo danach in Euro und Rückgabe; bei einer SEPA-Lastschrift steht dort „Zurückgeben“, bei einer zurückgegebenen „Zurückgegeben“ (UC-022).
 6. Die Kundin gibt einen Suchtext ein, wählt einen Zeitraum oder eine Richtung.
 7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt und deren Betrag zur gewählten Richtung passt (BR-0009, BR-0010).
 8. Die Kundin liest Betrag und Saldo danach der Umsätze ab.
@@ -116,7 +116,7 @@ sequenceDiagram
 
 ### Erfolg
 
-- Die Umsätze des gewählten Kontos sind mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach sichtbar, den neuesten zuerst.
+- Die Umsätze des gewählten Kontos sind mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach sichtbar, den neuesten zuerst.
 - Suchtext, Zeitraum und Richtung sind auf die angezeigten Umsätze angewendet.
 - Nach einem Export liegt die CSV-Datei mit den Umsätzen der eingestellten Filter beim Browser der Kundin; im System ist nichts gespeichert.
 
@@ -138,9 +138,9 @@ Ein Eingang hat einen positiven Betrag, ein Ausgang einen negativen Betrag; der 
 
 Der Zeitraumfilter zeigt die Umsätze, deren Buchungstag zwischen dem gewählten Von- und Bis-Datum liegt, beide Grenzen eingeschlossen; fehlt eine Grenze, gilt sie als offen. Liegt das Von-Datum nach dem Bis-Datum, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keinen Hinweis nach A2. Die Textsuche zeigt die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung. Ohne Eingabe schränkt ein Filter nicht ein.
 
-### BR-0011: Umsätze nur für Konten der Kundin
+### BR-0011: Umsätze und Rückgaben nur für Konten der Kundin
 
-Umsätze liefert der Dienst nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“. Dasselbe gilt für den Kontoauszug (UC-024): Ihn liefert der Dienst nur zu einer IBAN eines Kontos der angemeldeten Kundin; sonst antwortet er mit 404 und die Maske Kontoauszug zeigt „Das Konto wurde nicht gefunden.“.
+Umsätze liefert der Dienst und eine Rückgabe (UC-022) bucht er nur zu einer IBAN, die zu einem Konto der angemeldeten Kundin gehört; sonst antwortet er mit 404 und die Seite zeigt „Das Konto wurde nicht gefunden.“. Dasselbe gilt für den Kontoauszug (UC-024): Ihn liefert der Dienst nur zu einer IBAN eines Kontos der angemeldeten Kundin; sonst antwortet er mit 404 und die Maske Kontoauszug zeigt „Das Konto wurde nicht gefunden.“.
 
 ### BR-0075: Export mit den Umsätzen der Liste
 
@@ -152,6 +152,6 @@ Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu Suchtext, 
 
 ## Notizen
 
-Der Ausgangsstand führt je Konto einige Demo-Umsätze mit festen Buchungstagen; der jüngste Umsatz eines Kontos trägt als Saldo danach den aktuellen Kontosaldo (C-001, BR-0008). Weitere Umsätze entstehen aus einer ausgeführten Überweisung (UC-002, BR-0012). Die Umsatzliste ist eine eigene Seite, die der Knopf „Umsätze“ in der Zeile des Finanzstatus öffnet.
+Der Ausgangsstand führt je Konto einige Demo-Umsätze mit festen Buchungstagen; das Girokonto trägt dazu zwei SEPA-Lastschriften mit Buchungstag relativ zum Tag des Resets (UC-022); der jüngste Umsatz eines Kontos trägt als Saldo danach den aktuellen Kontosaldo (C-001, BR-0008). Weitere Umsätze entstehen aus einer ausgeführten Überweisung (UC-002, BR-0012) und aus der Rückgabe einer Lastschrift (UC-022). Die Umsatzliste ist eine eigene Seite, die der Knopf „Umsätze“ in der Zeile des Finanzstatus öffnet.
 
 Export (Schritte 9 und 10): Die Datei hat Semikolon als Trennzeichen und UTF-8 mit BOM, damit Excel in Deutschland sie direkt richtig öffnet. Sie beginnt mit der Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach folgt je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt; sonst werden Texte unverändert geschrieben. Der Dateiname lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Ohne gültige Sitzung gilt A1.

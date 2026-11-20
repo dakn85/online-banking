@@ -1,0 +1,52 @@
+<!-- maske: {
+  "title": "Vorgemerkte Überweisungen",
+  "useCases": ["UC-017"],
+  "fields": [
+    {"name":"ausfuehrungstag","label":"Ausführungstag","kind":"anzeige","attribute":"Überweisung.ausfuehrungstag"},
+    {"name":"empfaenger","label":"Empfänger","kind":"anzeige","attribute":"Überweisung.empfaenger"},
+    {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"anzeige","attribute":"Überweisung.empfaengerIban"},
+    {"name":"betrag","label":"Betrag in Euro","kind":"anzeige","attribute":"Überweisung.betrag"},
+    {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Überweisung.verwendungszweck"},
+    {"name":"auftragLoeschen","label":"Auftrag zum Löschen","kind":"auswahl","attribute":"Überweisung.auftragsId"}
+  ],
+  "actions": [
+    {"label":"Löschen","useCase":"UC-017#3","screen":"vorgemerkte-ueberweisungen"},
+    {"label":"Ja","useCase":"UC-017#5","operation":"DELETE /api/terminueberweisungen/{auftragsId}","screen":"vorgemerkte-ueberweisungen"},
+    {"label":"Nein","useCase":"UC-017#5","screen":"vorgemerkte-ueberweisungen"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Vorgemerkte Überweisungen</h1>
+  <p>Terminüberweisungen ansehen und vor der Ausführung löschen.</p>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#">Überweisung</a>
+  <a href="#" aria-current="page">Vorgemerkte Überweisungen</a>
+</nav>
+<p data-wf="meldung" role="status">Vorgemerkter Auftrag gelöscht.</p>
+<table data-wf="tabelle">
+  <caption>Ihre vorgemerkten Überweisungen</caption>
+  <thead>
+    <tr><th>Ausführungstag</th><th>Empfänger</th><th>IBAN des Empfängers</th><th>Betrag in Euro</th><th>Verwendungszweck</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>24.12.2026</td><td>Möbel Nord GmbH</td><td>DE89 3704 0044 0532 0130 00</td><td>50,00 €</td><td>Rechnung 4711</td></tr>
+    <tr><td>15.01.2027</td><td>Stadtwerke Nord</td><td>DE44 5001 0517 5407 3249 31</td><td>85,00 €</td><td>Abschlag Strom</td></tr>
+  </tbody>
+</table>
+<div data-wf="leer">
+  <p>Sie haben keine vorgemerkten Überweisungen.</p>
+</div>
+<section data-wf="gruppe" data-merkmal="Auftrag löschen">
+  <h2>Auftrag löschen</h2>
+  <p data-wf="meldung" role="status">Vorgemerkten Auftrag löschen?</p>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Auftrag zum Löschen</span><select name="auftragLoeschen"><option>24.12.2026 · Möbel Nord GmbH · 50,00 €</option><option>15.01.2027 · Stadtwerke Nord · 85,00 €</option></select></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Löschen</button>
+      <button>Ja</button>
+      <button>Nein</button>
+    </div>
+  </form>
+</section>

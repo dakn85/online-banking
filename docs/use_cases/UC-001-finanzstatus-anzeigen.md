@@ -25,6 +25,7 @@
 7. Das System zeigt in der Zeile des Girokontos den Knopf „Überweisen“; er öffnet die Überweisung mit dem Girokonto als Auftraggeberkonto (UC-002).
 8. Das System zeigt in jeder Zeile den Knopf „Umsätze“; er öffnet die Umsätze des Kontos (UC-003).
 9. Die Kundin liest Salden und Gesamtvermögen ab.
+10. Das System zeigt im Kopf den Knopf „Umbuchen“; er öffnet die Umbuchung zwischen den eigenen Konten (UC-021).
 
 ## Alternativabläufe
 
