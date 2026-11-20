@@ -305,7 +305,7 @@ paths:
   /api/konten/{iban}/ausgabenanalyse:
     get:
       summary: Ausgaben des Girokontos eines Monats nach Kategorien mit Summe und Anteil
-      description: Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Summen in Euro als positive Zahl, Gesamtausgaben nicht negativ, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); die IBAN einer Kreditkarte mit 422 (BR-0084). Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0.
+      description: "Liefert zum Girokonto mit dieser IBAN und zum Monat die Ausgänge (BR-0009), gruppiert nach Kategorie, je Kategorie mit Summe und Anteil sowie die Gesamtausgaben (BR-0083). Summen in Euro als positive Zahl, Gesamtausgaben nicht negativ, Anteile in Prozent mit einer Nachkommastelle. Ohne gültige Sitzung antwortet der Dienst mit 401. Danach prüft er in dieser Reihenfolge: zuerst den Monat (400, auch bei fehlendem Monat, mit der Meldung „Der Monat ist ungültig: erwartet JJJJ-MM.“), dann das Konto (404 für eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, BR-0011, BR-0084), zuletzt die Kreditkarte (422 für die IBAN einer Kreditkarte, BR-0084). Treffen mehrere Fälle zu, gilt der erste. Ein Monat ohne Ausgänge liefert eine leere Liste kategorien und gesamtausgaben 0."
       operationId: ausgabenanalyseLesen
       tags:
         - Finanzstatus
@@ -335,7 +335,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Ausgabenanalyse'
         "400":
-          description: Monat ungültig, etwa nicht im Format JJJJ-MM oder Monat außerhalb 01 bis 12
+          description: Monat fehlt oder ist ungültig, etwa nicht im Format JJJJ-MM oder Monat außerhalb 01 bis 12; wird vor Konto und Kreditkarte geprüft
           x-rules:
             - Ausgabenanalyse.monat
           content:
@@ -349,7 +349,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "404":
-          description: Die IBAN gehört zu keinem Konto der Kundin
+          description: Die IBAN gehört zu keinem Konto der Kundin; wird nach dem Monat und vor der Kreditkarte geprüft
           x-rules:
             - BR-0084
           content:
@@ -357,7 +357,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "422":
-          description: Die IBAN gehört zu einer Kreditkarte; die Ausgabenanalyse gibt es nur für das Girokonto
+          description: Die IBAN gehört zu einer Kreditkarte; die Ausgabenanalyse gibt es nur für das Girokonto; wird zuletzt geprüft
           x-rules:
             - BR-0084
           content:

@@ -44,6 +44,8 @@ Automatische Kategorisierung per Regeln im Hintergrund: Unklar, ob nötig. Die H
 - `acceptance/specs/ausgabenanalyse.spec`: Ein anderer Monat zeigt dessen Ausgaben
 - `acceptance/specs/ausgabenanalyse.spec`: Ein Konto, das nicht zur Kundin gehört, zeigt keine Ausgabenanalyse
 - `acceptance/specs/ausgabenanalyse.spec`: Ein Monat ohne Ausgaben zeigt den Hinweis
+- `acceptance/specs/ausgabenanalyse.spec`: Ein ungültiger Monat geht der Prüfung der Kreditkarte voraus
+- `acceptance/specs/ausgabenanalyse.spec`: Ein ungültiger Monat geht der Prüfung des Kontos voraus
 - `acceptance/specs/ausgabenanalyse.spec`: Ein ungültiger Monat zeigt die Meldung zum Monat
 - `acceptance/specs/ausgabenanalyse.spec`: Eine neue Überweisung erscheint in der Kategorie Sonstiges
 - `acceptance/specs/ausgabenanalyse.spec`: Eingänge zählen in der Ausgabenanalyse nicht

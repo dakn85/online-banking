@@ -122,3 +122,27 @@ Tags: UC-019, PK-56, BR-0083
 | Wohnen       | 86,00 € | 87,8 % |
 | Lebensmittel | 12,00 € | 12,2 % |
 * Die Ausgabenanalyse zeigt "Gesamtausgaben" mit dem Text "98,00 €"
+
+## Ein ungültiger Monat geht der Prüfung des Kontos voraus
+
+Tags: UC-019, PK-56, BR-0084
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Ausgabenanalyse des Kontos "DE00 1234 5678 9012 3456 78" für den Monat "2026-13"
+* Die Abfrage der Ausgabenanalyse antwortet mit dem Status "400"
+* Die Ausgabenanalyse zeigt "Meldung" mit dem Text "Der Monat ist ungültig: erwartet JJJJ-MM."
+* Die Ausgabenanalyse zeigt "Hinweis" nicht
+* Die Ausgabenanalyse zeigt die Kategorien
+
+## Ein ungültiger Monat geht der Prüfung der Kreditkarte voraus
+
+Tags: UC-019, PK-56, BR-0084
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Ausgabenanalyse des Kontos "Kreditkarte" für den Monat "2026-13"
+* Die Abfrage der Ausgabenanalyse antwortet mit dem Status "400"
+* Die Ausgabenanalyse zeigt "Meldung" mit dem Text "Der Monat ist ungültig: erwartet JJJJ-MM."
+* Die Ausgabenanalyse zeigt "Hinweis" nicht
+* Die Ausgabenanalyse zeigt die Kategorien

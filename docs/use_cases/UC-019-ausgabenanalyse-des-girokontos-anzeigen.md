@@ -18,7 +18,7 @@
 ## Standardablauf
 
 1. Die Kundin wählt im Finanzstatus in der Zeile des Girokontos oder in den Umsätzen „Ausgabenanalyse“.
-2. Das System liest das Konto der Kundin und seine Umsätze (Demo-Daten, C-001) und prüft, dass es ein Konto der Kundin und das Girokonto ist (BR-0084).
+2. Das System prüft zuerst den Monat (Ausgabenanalyse.monat), dann dass die IBAN zu einem Konto der Kundin gehört und zuletzt dass es das Girokonto ist (BR-0084), und liest das Konto der Kundin und seine Umsätze (Demo-Daten, C-001).
 3. Das System zeigt Kontoname und IBAN des Kontos und das Feld Monat, vorbelegt mit dem laufenden Monat.
 4. Das System wählt die Ausgänge des Monats (BR-0009), gruppiert sie nach Kategorie und bildet je Kategorie Summe und Anteil sowie die Gesamtausgaben (BR-0083).
 5. Das System zeigt die Gesamtausgaben und die Kategorien in einer Tabelle mit Kategorie, Summe in Euro und Anteil in Prozent.
@@ -45,25 +45,26 @@
 
 ### A3: Konto nicht gefunden
 
-**Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin (BR-0084). (Schritt 2).  
+**Auslöser:** Der Monat ist gültig, aber die IBAN gehört zu keinem Konto der angemeldeten Kundin (BR-0084). (Schritt 2).  
 **Ablauf:**
 
 1. Das System zeigt die Meldung „Das Konto wurde nicht gefunden.“ und keine Kategorien.
 
 ### A4: Konto ist kein Girokonto
 
-**Auslöser:** Die IBAN gehört zu einer Kreditkarte der Kundin (BR-0084). (Schritt 2).  
+**Auslöser:** Der Monat ist gültig und die IBAN gehört zu einer Kreditkarte der Kundin (BR-0084). (Schritt 2).  
 **Ablauf:**
 
 1. Das System zeigt die Meldung „Die Ausgabenanalyse gibt es nur für das Girokonto.“ und keine Kategorien.
 
 ### A5: Monat ungültig
 
-**Auslöser:** Der Monat entspricht nicht den Feldregeln von Ausgabenanalyse.monat (Format JJJJ-MM, Monat 01 bis 12). (Schritt 6).  
+**Auslöser:** Der Monat fehlt oder entspricht nicht den Feldregeln von Ausgabenanalyse.monat (Format JJJJ-MM, Monat 01 bis 12). Das System prüft den Monat vor dem Konto (BR-0084). (Schritt 2).  
 **Ablauf:**
 
 1. Das System zeigt die Meldung „Der Monat ist ungültig: erwartet JJJJ-MM.“ statt der Tabelle und keine Kategorien.
 2. Einen Hinweis nach A2 zeigt das System nicht.
+3. Trifft zugleich A3 oder A4 zu, zeigt das System nur diese Meldung zum Monat.
 
 ## Sequenzdiagramm
 
