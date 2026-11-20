@@ -144,4 +144,4 @@ Als Privatkundin möchte ich eine Überweisung für einen späteren Ausführungs
   _→ eingearbeitet in BR-0005 · a9533b2_
 - Soll die Idempotenz-Ablage je Endpunkt getrennt geführt werden, während die Kennung je Kundin für beide Endpunkte verbraucht gilt?
   **Antwort:** Ja, getrennte Ablagen je Endpunkt, Verbrauch je Kkundin über beide
-  _→ eingearbeitet in ADR-003_
+  _→ eingearbeitet in ADR-003 · b7cab8b_
