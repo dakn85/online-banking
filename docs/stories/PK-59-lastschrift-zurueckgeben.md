@@ -50,42 +50,25 @@ Als Privatkundin möchte ich eine SEPA-Lastschrift aus den Umsätzen meines Giro
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei schreibt den Buchungstag als TT.MM.JJJJ und Beträge mit Dezimalkomma
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst: Beschreibung geändert
-- [ ] Lastschrift zurückgeben und Betrag gutschreiben: Endpunkt neu
-- [ ] Umsatz: Eigenschaft umsatzId neu
-- [ ] Umsatz: Eigenschaft sepaLastschrift neu
-- [ ] Umsatz: Eigenschaft zurueckgegeben neu
-- [ ] Rueckgabe: Schema neu
-- [ ] Architektur: Bausteinsicht geändert
-- [ ] Architektur: Querschnittliche Konzepte geändert
-- [ ] Umsatz: Beschreibung geändert
-- [ ] Umsatz: Attribut umsatzId neu
-- [ ] Umsatz: Attribut sepaLastschrift neu
-- [ ] Umsatz: Attribut zurueckgegeben neu
-- [ ] Umsatz: Einschränkungen geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Umsätze: Use Case UC-022 neu
-- [ ] Umsätze: Feld Rückgabe neu
-- [ ] Umsätze: Aktion Zurückgeben neu
-- [ ] Umsätze: Aktion Bestätigen neu
-- [ ] Umsätze: Aktion Abbrechen neu
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Notizen geändert
-- [ ] UC-003: Schritt 5 geändert
-- [ ] UC-003: BR-0011 geändert
-- [ ] BR-0011: Titel geändert
-- [ ] BR-0011: Text geändert
-- [ ] UC-022: Use Case neu
-- [ ] BR-0093: Neu in UC-022
-- [ ] BR-0094: Neu in UC-022
-- [ ] BR-0095: Neu in UC-022
-- [ ] Vision: Z-8 neu
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-59 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-59 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+## Bausteine (docs/architecture.md)
+- **Konten und Finanzstatus** (`src/konten.ts`, `src/umsaetze.ts`): neue Funktion zum Gutschreiben auf dem Girokonto; der Umsatz bekommt `umsatzId`, `sepaLastschrift`, `zurueckgegeben`. Die neue Rückgabe-Logik liegt in `src/lastschrift.ts` (kein HTTP, Speicherzustand nach ADR-002).
+- **Seitenauslieferung**: `POST /api/konten/:iban/umsaetze/:umsatzId/rueckgaben` in `src/main.ts` hinter `nurAngemeldet('api')` (NFR-001).
+- **Oberfläche** (`public/seiten/umsaetze.js`): Spalte Rückgabe mit „Zurückgeben“ / „Zurückgegeben“, Rückfrage mit Bestätigen/Abbrechen (Bestätigen bis zur Antwort gesperrt), Meldungen aus dem Feld `fehler`, danach Umsätze neu laden.
+- **Testdaten** (`src/umsaetze.ts`, Reset): Girokonto bekommt zwei SEPA-Lastschriften (Fitnessstudio Vital, 14 Tage vor Reset-Tag, -29,90; Zeitungsverlag Nord, 70 Tage davor, -14,90) mit Salden nach C-001; ältere Demo-Umsätze rutschen um 44,80 nach oben.
+- **Akzeptanztests**: fehlende Steps in `acceptance/tests/StepImplementation.ts` (Rückgabe wählen, bestätigen, abbrechen, Rückfrage, keine Rückgabe angeboten, Dienst weist Rückgabe ab per HTTP mit Sitzung).
+
+## Schritte
+1. Umsatz um `umsatzId` (1..36, vom Dienst vergeben), `sepaLastschrift`, `zurueckgegeben` erweitern; GET liefert sie (UC-003, UC-022).
+2. Rückgabe prüft in der Reihenfolge Konto 404 (BR-0011), Umsatz 404, keine Lastschrift 422, schon zurückgegeben 422 (BR-0094), Frist 56 Tage gegen heutigen UTC-Tag 422 (BR-0093); umsatzId-Länge vorab 400.
+3. Gutschrift: Saldo erhöhen, genau ein Umsatz (Verwendungszweck „Rückgabe Lastschrift“, Gegenpartei der Lastschrift, Eingang, nicht Lastschrift), Lastschrift als zurückgegeben markieren; Beträge auf Cent (BR-0095, ADR-005). Unit-Tests mit BR-0093/0094/0095 im Namen.
+4. Umsatzseite und Steps wie oben (UC-022, UC-003).
+
+## Rahmenänderung
+Keine neue Bibliothek, kein neues Muster. Hinweis: Merge von origin/main in den Story-Zweig hatte Konflikte in docs/; sie sind durch Vereinigung beider Seiten gelöst. Die Ziel-ID Z-8 der Story kollidiert mit Z-8 (Debitkarte) auf main; dazu Rückmeldung mit Vorschlag Z-14.
 
 ## Entscheidungen
 
