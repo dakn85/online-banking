@@ -288,13 +288,96 @@ export default class StepImplementation {
   @Step('Die Umsätze zeigen die Meldung <meldung>')
   public async umsaetzeMeldung(meldung: string) {
     const page = await this.umsaetzeGeladen();
-    await page.locator('#umsaetze-ergebnis').getByRole('alert').filter({ hasText: text(meldung) }).waitFor();
+    const ergebnis = page.locator('#umsaetze-ergebnis');
+    // Fehler als alert, die Erfolgsmeldung einer Rückgabe (UC-022) als status.
+    await ergebnis.getByRole('alert').or(ergebnis.getByRole('status')).filter({ hasText: text(meldung) }).waitFor();
   }
 
   @Step('Die Umsätze zeigen den Hinweis <hinweis> nicht')
   public async umsaetzeOhneHinweis(hinweis: string) {
     const page = await this.umsaetzeGeladen();
     assert.strictEqual(await page.locator('#umsaetze-ergebnis').getByText(text(hinweis)).count(), 0, `Der Hinweis „${hinweis}“ ist zu sehen`);
+  }
+
+  /* ---------------------------------------------------------------- UC-022 Lastschrift zurückgeben */
+
+  @Step('Die Kundin wählt bei der Lastschrift von <gegenpartei> die Rückgabe')
+  public async rueckgabeWaehlen(gegenpartei: string) {
+    const page = await this.umsaetzeGeladen();
+    const zeile = page.locator('#umsaetze-ergebnis tbody tr').filter({ hasText: text(gegenpartei) }).filter({ has: page.getByRole('button', { name: 'Zurückgeben' }) });
+    await zeile.getByRole('button', { name: 'Zurückgeben' }).click();
+  }
+
+  @Step('Die Umsätze zeigen die Rückfrage <rueckfrage>')
+  public async rueckfrageZeigt(rueckfrage: string) {
+    const page = await this.umsaetzeGeladen();
+    await page.locator('#umsaetze-rueckfrage').filter({ hasText: text(rueckfrage) }).waitFor();
+  }
+
+  @Step('Die Kundin bestätigt die Rückgabe')
+  public async rueckgabeBestaetigen() {
+    const page = await this.umsaetzeGeladen();
+    await page.locator('#umsaetze-rueckfrage').getByRole('button', { name: 'Bestätigen' }).click();
+    // Die Rückfrage schließt erst, wenn die Umsätze neu geladen sind.
+    await page.locator('#umsaetze-rueckfrage').waitFor({ state: 'hidden' });
+  }
+
+  @Step('Die Kundin bricht die Rückgabe ab')
+  public async rueckgabeAbbrechen() {
+    const page = await this.umsaetzeGeladen();
+    await page.locator('#umsaetze-rueckfrage').getByRole('button', { name: 'Abbrechen' }).click();
+    await page.locator('#umsaetze-rueckfrage').waitFor({ state: 'hidden' });
+  }
+
+  @Step('Die Umsätze zeigen keine Rückgabe')
+  public async keineRueckgabe() {
+    const page = await this.umsaetzeGeladen();
+    const ergebnis = page.locator('#umsaetze-ergebnis');
+    assert.strictEqual(await ergebnis.getByRole('button', { name: 'Zurückgeben' }).count(), 0, 'Zurückgeben ist zu sehen');
+    assert.strictEqual(await ergebnis.getByText('Zurückgegeben').count(), 0, 'Zurückgegeben ist zu sehen');
+  }
+
+  private async girokontoIban(page: Page): Promise<string> {
+    const konten = await (await page.context().request.get(`${basisUrl}/api/konten`)).json() as { konten: { kontoname: string; iban: string }[] };
+    return konten.konten.find(k => k.kontoname === 'Girokonto')!.iban;
+  }
+
+  private async rueckgabeAbgewiesen(iban: string, umsatzId: string, status: string, meldung?: string) {
+    const page = await this.seite();
+    const antwort = await page.context().request.post(`${basisUrl}/api/konten/${encodeURIComponent(iban)}/umsaetze/${encodeURIComponent(umsatzId)}/rueckgaben`);
+    assert.strictEqual(antwort.status(), Number(status), `POST Rückgabe ${umsatzId}`);
+    if (meldung !== undefined) assert.strictEqual(((await antwort.json()) as { fehler: string }).fehler, text(meldung));
+  }
+
+  @Step('Der Dienst weist die Rückgabe der Lastschrift von <gegenpartei> mit Status <status> und der Meldung <meldung> ab')
+  public async dienstWeistRueckgabeAb(gegenpartei: string, status: string, meldung: string) {
+    const page = await this.seite();
+    const iban = await this.girokontoIban(page);
+    const liste = await (await page.context().request.get(`${basisUrl}/api/konten/${iban}/umsaetze`)).json() as { umsaetze: { umsatzId: string; gegenpartei: string; sepaLastschrift: boolean }[] };
+    // Unbekannte Gegenpartei: keine Zeile, also eine Kennung, die es nicht gibt.
+    // Nach einer Rückgabe trägt auch die Gutschrift diese Gegenpartei: die Lastschrift selbst zählt.
+    const treffer = liste.umsaetze.filter(u => u.gegenpartei === text(gegenpartei));
+    const umsatz = treffer.find(u => u.sepaLastschrift) ?? treffer[0];
+    await this.rueckgabeAbgewiesen(iban, umsatz?.umsatzId ?? 'unbekannt', status, meldung);
+  }
+
+  @Step('Der Dienst weist die Rückgabe auf dem Konto mit der IBAN <iban> mit Status <status> und der Meldung <meldung> ab')
+  public async dienstWeistRueckgabeFremdAb(iban: string, status: string, meldung: string) {
+    await this.rueckgabeAbgewiesen(text(iban).replace(/\s+/g, ''), 'unbekannt', status, meldung);
+  }
+
+  @Step('Der Dienst weist die Rückgabe mit einer umsatzId von <laenge> Zeichen mit Status <status> ab')
+  public async dienstWeistRueckgabeLangAb(laenge: string, status: string) {
+    const page = await this.seite();
+    await this.rueckgabeAbgewiesen(await this.girokontoIban(page), 'u'.repeat(Number(laenge)), status);
+  }
+
+  @Step('Ohne Anmeldung weist der Dienst die Rückgabe einer Lastschrift mit Status <status> ab')
+  public async ohneAnmeldungRueckgabe(status: string) {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const antwort = await fetch(`${basisUrl}/api/konten/DE02500105175407324931/umsaetze/unbekannt/rueckgaben`, { method: 'POST' });
+    assert.strictEqual(antwort.status, Number(status), 'POST Rückgabe ohne Sitzung');
   }
 
   @Step('Die Umsatzseite ist ohne Anmeldung nicht erreichbar')

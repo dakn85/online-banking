@@ -1,8 +1,11 @@
 /* UC-003 Umsätze eines Kontos: Demo-Umsätze (C-001), Reihenfolge und Saldo danach (BR-0008), Filter (BR-0009, BR-0010). */
+import { randomUUID } from 'node:crypto';
 import { ibansJeKennung, kontoMitIban } from './konten';
 import { Auswahl, istDemokunde } from './kunden';
 
 export interface Umsatz {
+  /** Kennung des Umsatzes, vom Dienst vergeben (1..36 Zeichen). */
+  umsatzId: string;
   buchungstag: string;
   /** Zeitpunkt der Buchung in UTC; bei gleichem Buchungstag steht der jüngere oben (BR-0008). */
   gebuchtAm: string;
@@ -14,6 +17,10 @@ export interface Umsatz {
   kategorie: Kategorie;
   waehrung: 'EUR';
   saldoDanach: number;
+  /** UC-022: der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche (BR-0094). */
+  sepaLastschrift: boolean;
+  /** UC-022: die Lastschrift wurde zurückgegeben (BR-0094). */
+  zurueckgegeben: boolean;
 }
 
 export const KATEGORIEN = ['Wohnen', 'Lebensmittel', 'Mobilität', 'Freizeit', 'Versicherungen', 'Gesundheit', 'Sonstiges'] as const;
@@ -33,13 +40,18 @@ export const ZEITRAUM_FEHLER = 'Der Zeitraum ist ungültig: von liegt nach bis.'
 /** Ungültige Abfrage (Vertrag: 400). */
 export class Abfragefehler extends Error {}
 
-type Demo = Omit<Umsatz, 'waehrung' | 'saldoDanach'>;
+type Demo = Omit<Umsatz, 'umsatzId' | 'waehrung' | 'saldoDanach' | 'sepaLastschrift' | 'zurueckgegeben'> & { sepaLastschrift?: boolean };
 
 /**
  * Demo-Umsätze je IBAN, neueste zuerst (C-001). Gegenparteien und Verwendungszwecke kommen in keinem Szenario
  * als Suchtext vor. Der Saldo danach ergibt sich rückwärts aus dem Kontosaldo: Der jüngste trägt ihn (BR-0008).
  */
-const GIRO: Demo[] = [
+const lastschriften = (): Demo[] => [
+  // UC-022: Buchungstag relativ zum Tag des Resets (UTC), eine Lastschrift in der Frist und eine darüber hinaus.
+  { buchungstag: vorTagen(14), gebuchtAm: `${vorTagen(14)}T08:00:00.000Z`, gegenpartei: 'Fitnessstudio Vital', verwendungszweck: 'Mitgliedsbeitrag', betrag: -29.9, kategorie: 'Freizeit', sepaLastschrift: true },
+  { buchungstag: vorTagen(70), gebuchtAm: `${vorTagen(70)}T08:00:00.000Z`, gegenpartei: 'Zeitungsverlag Nord', verwendungszweck: 'Zeitungsabo', betrag: -14.9, kategorie: 'Freizeit', sepaLastschrift: true },
+];
+const GIRO_ALT: Demo[] = [
   { buchungstag: '2026-02-12', gebuchtAm: '2026-02-12T09:30:00.000Z', gegenpartei: 'Bäckerei Krause', verwendungszweck: 'Einkauf', betrag: -12, kategorie: 'Lebensmittel' },
   { buchungstag: '2026-02-10', gebuchtAm: '2026-02-10T07:15:00.000Z', gegenpartei: 'Energieversorgung Nord', verwendungszweck: 'Abschlag Februar', betrag: -86, kategorie: 'Wohnen' },
   { buchungstag: '2026-02-01', gebuchtAm: '2026-02-01T06:00:00.000Z', gegenpartei: 'Lindner Logistik GmbH', verwendungszweck: 'Gehalt Januar', betrag: 2640, kategorie: 'Sonstiges' },
@@ -51,14 +63,23 @@ const KARTE: Demo[] = [
   { buchungstag: '2026-02-02', gebuchtAm: '2026-02-02T08:00:00.000Z', gegenpartei: 'Aventa Bank', verwendungszweck: 'Ausgleich Abrechnung Januar', betrag: 500, kategorie: 'Sonstiges' },
 ];
 /** Lena und Jonas haben dieselben Demo-Umsätze auf ihren eigenen Konten; Lastkunden haben keine. */
-const DEMO: Record<string, { kennung: string; umsaetze: Demo[] }> = {
-  DE02500105175407324931: { kennung: 'lena.hoffmann', umsaetze: GIRO },
-  DE44500105175407324955: { kennung: 'lena.hoffmann', umsaetze: KARTE },
-  DE61500105175407325013: { kennung: 'jonas.weber', umsaetze: GIRO },
-  DE39500105175407325021: { kennung: 'jonas.weber', umsaetze: KARTE },
+const DEMO: Record<string, { kennung: string; umsaetze: () => Demo[] }> = {
+  DE02500105175407324931: { kennung: 'lena.hoffmann', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
+  DE44500105175407324955: { kennung: 'lena.hoffmann', umsaetze: () => KARTE },
+  DE61500105175407325013: { kennung: 'jonas.weber', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
+  DE39500105175407325021: { kennung: 'jonas.weber', umsaetze: () => KARTE },
 };
 
 const runden = (betrag: number) => Math.round(betrag * 100) / 100;
+
+/** Heutiger Kalendertag in UTC, JJJJ-MM-TT. */
+export const heuteUtc = () => new Date().toISOString().slice(0, 10);
+/** Der Kalendertag n Tage vor heute (UTC), JJJJ-MM-TT. */
+function vorTagen(n: number): string {
+  const d = new Date(`${heuteUtc()}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - n);
+  return d.toISOString().slice(0, 10);
+}
 
 /** Umsätze je IBAN in der Reihenfolge der Buchung. Jede IBAN gehört genau einer Kennung (konten.ts). */
 const umsaetze = new Map<string, Umsatz[]>();
@@ -70,11 +91,11 @@ export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
   for (const [kennung, ibans] of ibansJeKennung()) {
     if (!auswahl(kennung)) continue;
     for (const iban of ibans) {
-      const demo = DEMO[iban]?.kennung === kennung ? DEMO[iban].umsaetze : [];
+      const demo = DEMO[iban]?.kennung === kennung ? DEMO[iban].umsaetze() : [];
       let saldo = kontoMitIban(kennung, iban)?.saldo ?? 0;
       const mitSaldo: Umsatz[] = [];
       for (const u of demo) {
-        mitSaldo.push({ ...u, waehrung: 'EUR', saldoDanach: runden(saldo) });
+        mitSaldo.push({ ...u, umsatzId: randomUUID(), sepaLastschrift: u.sepaLastschrift ?? false, zurueckgegeben: false, waehrung: 'EUR', saldoDanach: runden(saldo) });
         saldo -= u.betrag;
       }
       umsaetze.set(iban, mitSaldo);
@@ -85,14 +106,22 @@ export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
 zuruecksetzen();
 
 /** BR-0012: der Umsatz einer ausgeführten Überweisung. Mit Grenze (nur Lastkunden) bleiben nur die jüngsten so vielen Umsätze. */
-export function buchen(iban: string, umsatz: Omit<Umsatz, 'waehrung'>, grenze?: number): void {
+export function buchen(iban: string, umsatz: Omit<Umsatz, 'waehrung' | 'umsatzId' | 'sepaLastschrift' | 'zurueckgegeben'> & Partial<Pick<Umsatz, 'sepaLastschrift' | 'zurueckgegeben'>>, grenze?: number): Umsatz {
+  // Dasselbe Objekt in beiden Listen, damit ein Rückgabestatus in beiden gilt.
+  const neu: Umsatz = { sepaLastschrift: false, zurueckgegeben: false, ...umsatz, umsatzId: randomUUID(), waehrung: 'EUR' };
   let liste = umsaetze.get(iban);
   if (!liste) umsaetze.set(iban, liste = []);
-  liste.push({ ...umsatz, waehrung: 'EUR' });
+  liste.push(neu);
   let alle = alleUmsaetze.get(iban);
   if (!alle) alleUmsaetze.set(iban, alle = []);
-  alle.push({ ...umsatz, waehrung: 'EUR' });
+  alle.push(neu);
   if (grenze !== undefined && liste.length > grenze) liste.splice(0, liste.length - grenze);
+  return { ...neu };
+}
+
+/** UC-022: der gespeicherte Umsatz dieses Kontos mit dieser Kennung (veränderbar), sonst nichts. */
+export function umsatzMitId(iban: string, umsatzId: string): Umsatz | undefined {
+  return umsaetze.get(iban)?.find(u => u.umsatzId === umsatzId);
 }
 
 export const EXPORT_LEER = 'Für diese Auswahl gibt es keine Umsätze zum Export.';
