@@ -105,7 +105,7 @@ Automatisches Löschen oder Aufbewahrungsfristen: Ein zeitgesteuerter Prozess is
   _→ eingearbeitet in vision, Nachricht, UC-020, BR-0085, BR-0086, BR-0087, POST /api/test/reset, GET /api/nachrichten, PATCH /api/nachrichten/{nachrichtId}, DELETE /api/nachrichten/{nachrichtId}, Schema Nachricht, Schema Nachrichtenliste, postfach, finanzstatus, empfaengervorlagen, NFR-001, ADR-002, architektur · c456f2f_
 - Der Use Case verlangt den Eintrag „Postfach“ mit der Zahl ungelesener Nachrichten in der Navigation „jeder angemeldeten Seite“. Die Skizzen zeigen ihn nur auf Finanzstatus, Empfängervorlagen und Postfach. Auf welchen Seiten erscheint der Eintrag mit der Zahl? (GET /api/nachrichten, anzahlUngelesen)
   **Antwort:** Auf jeder angemeldeten Seite, auch Überweisung, Überweisung bestätigen, Umsätze und Tageslimit: Skizzen dieser Seiten ergänzen, UC-020 Schritt 1 bleibt.
-  _→ eingearbeitet in UC-020, postfach, umsaetze, ueberweisung-bestaetigen_
+  _→ eingearbeitet in UC-020, postfach, umsaetze, ueberweisung-bestaetigen · 71560c8_
 - Was zeigt das Postfach, wenn die Kundin keine Nachricht (mehr) hat, etwa nach dem Löschen der letzten, und wie verhalten sich dann „Öffnen“ und „Löschen“?
   **Antwort:** Die Tabelle zeigt statt Zeilen den Hinweis „Keine Nachrichten.“, die Zahl ungelesener steht auf 0, die Auswahllisten sind leer und „Öffnen“ und „Löschen“ sind nicht auswählbar; ein vorher angezeigter Text wird geleert.
-  _→ eingearbeitet in UC-020, postfach, umsaetze, ueberweisung-bestaetigen_
+  _→ eingearbeitet in UC-020, postfach, umsaetze, ueberweisung-bestaetigen · 71560c8_
