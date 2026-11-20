@@ -199,6 +199,36 @@ export default class StepImplementation {
     await page.locator('.kontentabelle').waitFor();
   }
 
+  @Step('Die Kundin bestätigt die Überweisung')
+  public async bestaetigenEinmal() {
+    const page = await this.seite();
+    await page.getByRole('button', { name: 'Bestätigen' }).click();
+  }
+
+  @Step('Die Kundin bricht die Überweisung ab')
+  public async ueberweisungAbbrechen() {
+    const page = await this.seite();
+    await page.getByRole('form', { name: 'Überweisung' }).getByRole('link', { name: 'Abbrechen' }).click();
+    await page.locator('.kontentabelle').waitFor();
+  }
+
+  @Step('Die Kundin führt die Überweisung an <empfaenger> mit IBAN <iban> und Betrag <betrag> direkt beim Dienst aus und der Dienst antwortet mit dem Status <status> und der Meldung <meldung>')
+  public async ueberweisungDirekt(empfaenger: string, iban: string, betrag: string, status: string, meldung: string) {
+    const page = await this.seite();
+    const { konten } = await (await page.context().request.get(`${basisUrl}/api/konten`)).json() as { konten: { kontoname: string; iban: string }[] };
+    const giro = konten.find(k => k.kontoname === 'Girokonto');
+    assert.ok(giro, 'Die Kundin hat kein Girokonto');
+    const antwort = await page.context().request.post(`${basisUrl}/api/ueberweisungen`, {
+      data: {
+        auftragsId: `test-${Date.now()}-${Math.random().toString(16).slice(2)}`, auftraggeberIban: giro.iban, empfaenger: text(empfaenger).trim(),
+        empfaengerIban: text(iban).trim(), betrag: StepImplementation.betrag(betrag), verwendungszweck: 'Rechnung 4711', waehrung: 'EUR',
+      },
+    });
+    const koerper = await antwort.text();
+    assert.strictEqual(antwort.status(), Number(status), `POST /api/ueberweisungen: ${koerper}`);
+    assert.strictEqual((JSON.parse(koerper) as { fehler: string }).fehler, text(meldung));
+  }
+
   @Step('Die Überweisung zeigt keine Zusammenfassung')
   public async dieUeberweisungZeigtKeineZusammenfassung() {
     const page = await this.seite();

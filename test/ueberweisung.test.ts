@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { finanzstatus, zuruecksetzen as kontenZuruecksetzen } from '../src/konten';
+import { setzen, zuruecksetzen as limitZuruecksetzen } from '../src/tageslimit';
 import { Ablehnung, ausfuehren, ibanGueltig, zuruecksetzen } from '../src/ueberweisung';
 
 const LENA = { kennung: 'lena.hoffmann' };
 const GIRO = 'DE02500105175407324931';
 const auftrag = (mehr = {}) => ({ auftragsId: 'a-1', auftraggeberIban: GIRO, empfaenger: 'Möbel Nord GmbH', empfaengerIban: 'DE89 3704 0044 0532 0130 00', betrag: 50, verwendungszweck: 'Rechnung 4711', ...mehr });
-const frisch = () => { kontenZuruecksetzen(); zuruecksetzen(); };
+const frisch = () => { kontenZuruecksetzen(); zuruecksetzen(); limitZuruecksetzen(); };
 const status = (fn: () => unknown) => { try { fn(); } catch (e) { return (e as Ablehnung).status; } return 0; };
 
 test('WP-1: IBAN-Prüfziffer nach ISO 7064 MOD 97-10 und SEPA-Länderliste', () => {
@@ -46,4 +47,30 @@ test('UC-002 A8: ein Betrag unter 0,10 € wird mit 400 abgelehnt und bucht nich
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.3);
   assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'm-5', betrag: 0.1 }))), 0, 'genau 0,10 € geht');
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2145.2);
+});
+
+test('BR-0070: Tageslimit zählt die Ausgänge des Tages, Grenze zulässig, abgelehnte zählen nicht', () => {
+  frisch();
+  setzen(LENA.kennung, 100);
+  assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'l-1', betrag: 150 }))), 422);
+  assert.equal(ausfuehren(LENA, auftrag({ auftragsId: 'l-2', betrag: 60 })).neu, true);
+  assert.equal(status(() => ausfuehren(LENA, auftrag({ auftragsId: 'l-3', betrag: 50 }))), 422);
+  assert.equal(ausfuehren(LENA, auftrag({ auftragsId: 'l-4', betrag: 40 })).neu, true, 'Summe genau in Höhe des Limits');
+  assert.equal(ausfuehren(LENA, auftrag({ auftragsId: 'l-2', betrag: 60 })).neu, false, 'Wiederholung wird nicht erneut geprüft');
+});
+
+test('BR-0070: Tageslimit 0,00 sperrt jede Überweisung, BR-0004 geht vor', () => {
+  frisch();
+  setzen(LENA.kennung, 0);
+  assert.equal(status(() => ausfuehren(LENA, auftrag())), 422);
+  assert.throws(() => ausfuehren(LENA, auftrag({ auftragsId: 'z-2', betrag: 99999 })), /verfügbaren Betrag/);
+});
+
+test('BR-0070: der Reset leert die Ausgänge des Tages', () => {
+  frisch();
+  setzen(LENA.kennung, 50);
+  ausfuehren(LENA, auftrag());
+  frisch();
+  setzen(LENA.kennung, 50);
+  assert.equal(ausfuehren(LENA, auftrag({ auftragsId: 'n-1' })).neu, true);
 });
