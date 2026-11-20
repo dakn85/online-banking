@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { Datenfehler, finanzstatus } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren } from './ueberweisung';
-import { Abfragefehler, filterAus, umsaetzeVon } from './umsaetze';
+import { Abfragefehler, EXPORT_LEER, csvAus, filterAus, umsaetzeVon } from './umsaetze';
 import * as vorlagen from './empfaengervorlagen';
 import * as tageslimit from './tageslimit';
 import { angemeldeterKunde, anlegen, beenden, nurAngemeldet } from './sitzung';
@@ -79,6 +79,24 @@ app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
   const liste = umsaetzeVon(res.locals.kunde.kennung, req.params.iban, filter);
   if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
   res.json({ umsaetze: liste });
+});
+
+// UC-003, BR-0075, BR-0076: Export der Umsätze als CSV; Prüfreihenfolge 404, 400, 422
+app.get('/api/konten/:iban/umsaetze/export', nurAngemeldet('api'), (req, res) => {
+  const kennung = res.locals.kunde.kennung;
+  if (!umsaetzeVon(kennung, req.params.iban)) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
+  let filter;
+  try {
+    filter = filterAus(req.query as Record<string, unknown>);
+  } catch (fehler) {
+    if (!(fehler instanceof Abfragefehler)) throw fehler;
+    return res.status(400).json({ fehler: fehler.message });
+  }
+  const liste = umsaetzeVon(kennung, req.params.iban, filter)!;
+  if (!liste.length) return res.status(422).json({ fehler: EXPORT_LEER });
+  res.type('text/csv; charset=utf-8')
+    .set('Content-Disposition', `attachment; filename="umsaetze-${req.params.iban.replace(/\s+/g, '')}.csv"`)
+    .send(csvAus(liste));
 });
 
 // UC-004: Empfängervorlagen der angemeldeten Kundin (BR-0013 bis BR-0016, BR-0018)
