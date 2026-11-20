@@ -38,21 +38,18 @@ Als Privatkundin möchte ich, dass mein Girokonto und meine Kreditkarte eine IBA
 - `acceptance/specs/umbuchung.spec`: Eine wiederholte Anfrage mit derselben Auftrags-Kennung ändert die Salden nicht erneut
 - `acceptance/specs/umsaetze.spec`: Die CSV-Datei ist UTF-8 mit BOM, durch Semikolon getrennt und nach dem Konto benannt
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Konto: Attribut iban geändert
-- [ ] Überweisung: Attribut empfaengerIban geändert
-- [ ] Umbuchung: Attribut quellIban geändert
-- [ ] Ausgabenanalyse: Skizze geändert
-- [ ] Debitkarte: Skizze geändert
-- [ ] Empfängervorlagen: Skizze geändert
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Überweisung bestätigen: Skizze geändert
-- [ ] Überweisung: Skizze geändert
-- [ ] Umbuchung: Skizze geändert
-- [ ] Umsätze: Skizze geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-64 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-64 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-20_
+
+**Bausteine:** Testdaten der Demo-Kundinnen (src/konten.ts, src/umsaetze.ts), Unit-Tests, StepImplementation der Akzeptanztests.
+
+**Schritte**
+1. Girokonto und Kreditkarte der Demo-Kundinnen bekommen neue Kontonummern mit gültiger Prüfziffer nach ISO 7064 MOD 97-10 (UC-002, BR-0003): DE02 5001 0517 5407 3249 11 und DE44 5001 0517 5407 3250 28. Nur die Prüfziffer zu reparieren hätte DE44 … 3249 31 ergeben, die IBAN des Empfängers „Stadtwerke Nord“.
+2. Code, Unit-Tests, Specs und Steps nutzen die neuen Werte; Protokolle alter Stories unter docs/stories bleiben unverändert.
+3. Neuer Unit-Test: jede IBAN der Demo-Konten besteht ibanGueltig (UC-002).
+
+**Rahmen:** keine Änderung.
 
 ## Entscheidungen
 
