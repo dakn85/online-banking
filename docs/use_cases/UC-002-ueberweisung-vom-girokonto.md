@@ -126,7 +126,7 @@
 **Ablauf:**
 
 1. Das System legt keinen Auftrag an und bucht nichts, springt auf die Überweisung zurück, zeigt den Text des Dienstes im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei; für die nächste Bestätigung vergibt die Seite eine neue Auftrags-Kennung (BR-0005).
-2. Nur die Wiederholung der Kennung eines noch vorgemerkten Auftrags beantwortet der Dienst wie bisher ohne weiteren Auftrag mit 200 (A9 Schritt 4); eine Kennung eines gelöschten Auftrags gilt als verbraucht.
+2. Die Wiederholung derselben Überweisung am selben Endpunkt beantwortet der Dienst wie bisher mit 200 ohne weitere Buchung oder weiteren Auftrag (A3, A9 Schritt 4). 422 gilt nur, wenn die Kennung für eine andere Überweisung verbraucht ist: bei einer Terminüberweisung durch eine sofortige Überweisung oder einen gelöschten Auftrag, bei einer sofortigen Überweisung durch einen Terminauftrag (vorgemerkt oder gelöscht).
 3. Die Kundin bestätigt erneut oder bricht ab; die Seite vergibt je Überweisung eine neue Kennung, deshalb tritt dieser Fall über die Oberfläche nicht auf.
 
 ## Sequenzdiagramm
@@ -185,7 +185,7 @@ Der Betrag übersteigt den verfügbaren Betrag des Girokontos (Saldo plus Dispos
 
 ### BR-0005: Genau einmalige Ausführung
 
-Ein Auftrag wird genau einmal ausgeführt. Die Seite sperrt den Knopf „Bestätigen“ während des Absendens, gibt je Überweisung eine Auftrags-Kennung mit und vergibt nach jeder Ablehnung eine neue Auftrags-Kennung; eine wiederholte Bestätigung derselben Kennung ändert den Saldo nicht erneut. Die Auftrags-Kennung gilt je Kundin für sofortige Überweisungen und Terminüberweisungen und bleibt dauerhaft verbraucht, auch nach dem Löschen eines vorgemerkten Auftrags. Nur die Wiederholung der Kennung eines noch vorgemerkten Auftrags bleibt 200 ohne weiteren Auftrag; jede andere Wiederverwendung einer verbrauchten Kennung für eine andere Überweisung lehnt der Dienst mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ ab, es entsteht kein Auftrag.
+Ein Auftrag wird genau einmal ausgeführt. Die Seite sperrt den Knopf „Bestätigen“ während des Absendens, gibt je Überweisung eine Auftrags-Kennung mit und vergibt nach jeder Ablehnung eine neue Auftrags-Kennung; eine wiederholte Bestätigung derselben Kennung ändert den Saldo nicht erneut. Die Auftrags-Kennung gilt je Kundin für sofortige Überweisungen und Terminüberweisungen und bleibt dauerhaft verbraucht, auch nach dem Löschen eines vorgemerkten Auftrags. Die Wiederholung derselben Überweisung am selben Endpunkt bleibt 200 ohne weitere Buchung und ohne weiteren Auftrag: bei POST /api/ueberweisungen die Wiederholung der Kennung einer ausgeführten sofortigen Überweisung, bei POST /api/terminueberweisungen die Wiederholung der Kennung eines noch vorgemerkten Auftrags. Jede Verwendung einer verbrauchten Kennung für eine andere Überweisung lehnt der Dienst mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ ab, es entsteht kein Auftrag und es wird nichts gebucht. Das gilt an beiden Endpunkten: bei POST /api/terminueberweisungen für die Kennung einer sofortigen Überweisung oder eines gelöschten Auftrags, bei POST /api/ueberweisungen für die Kennung eines Terminauftrags (vorgemerkt oder gelöscht).
 
 ### BR-0006: Saldo nach der Überweisung
 
