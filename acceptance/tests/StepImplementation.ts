@@ -661,7 +661,7 @@ export default class StepImplementation {
 
   /** Wartet auf die Antwort der Abfrage, die `aktion` auslöst, und die gezeichnete Seite dazu. */
   private async ausgabenAbfrage(page: Page, monat: string, aktion: () => Promise<unknown>) {
-    const antwort = page.waitForResponse(r => /\/ausgabenanalyse\?/.test(r.url()) && new URL(r.url()).searchParams.get('monat') === monat);
+    const antwort = page.waitForResponse(r => /\/api\/konten\/[^/]+\/ausgabenanalyse\?/.test(r.url()) && new URL(r.url()).searchParams.get('monat') === monat);
     await aktion();
     StepImplementation.ausgabenStatus = (await antwort).status();
     await page.locator(`#ausgaben-ergebnis[data-abfrage="${monat.replace(/"/g, '\\"')}"]`).waitFor();
