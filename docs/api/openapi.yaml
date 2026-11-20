@@ -413,7 +413,7 @@ paths:
                 $ref: "#/components/schemas/Fehler"
     put:
       summary: Persönliche Daten mit TAN ändern
-      description: Speichert Anschrift, E-Mail-Adresse und Telefonnummer der angemeldeten Kundin, wenn die TAN (Mock) stimmt, und legt bei geänderten Angaben eine Bestätigungsnachricht im Postfach an. Alle Felder und die TAN sind Pflicht. Der Dienst entfernt führende und folgende Leerzeichen von Straße, Ort, E-Mail-Adresse und Telefonnummer vor Prüfung, Speicherung und Vergleich. Ohne gültige Sitzung 401.
+      description: Speichert Anschrift, E-Mail-Adresse und Telefonnummer der angemeldeten Kundin, wenn die TAN (Mock) stimmt, und legt bei geänderten Angaben eine Bestätigungsnachricht im Postfach an. Alle Felder und die TAN sind Pflicht. Der Dienst entfernt zuerst führende und folgende Leerzeichen von Straße, Ort, E-Mail-Adresse und Telefonnummer. Danach prüft er die Feldregeln des Datenmodells (Muster und Längen) auf den bereinigten Werten; ein Verstoß ergibt 400. Das Schema lässt Randleerzeichen deshalb zu. Ohne gültige Sitzung 401.
       operationId: kundeAendern
       tags:
         - Kundendaten
@@ -433,7 +433,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Kundendaten"
         "400":
-          description: Ein Feld oder die TAN fehlt oder verletzt seine Feldregel
+          description: Ein Feld oder die TAN fehlt oder verletzt seine Feldregel (nach Entfernen der Randleerzeichen)
           x-rules:
             - Kunde.strasse
             - Kunde.postleitzahl
@@ -817,7 +817,8 @@ components:
         strasse:
           type: string
           minLength: 1
-          maxLength: 100
+          maxLength: 1000
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (max. 100).
         postleitzahl:
           type: string
           minLength: 5
@@ -826,17 +827,20 @@ components:
         ort:
           type: string
           minLength: 1
-          maxLength: 60
+          maxLength: 1000
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (max. 60).
         email:
           type: string
-          minLength: 3
-          maxLength: 254
-          pattern: ^[^@ ]+@[^@ ]+\.[^@ ]+$
+          minLength: 1
+          maxLength: 1000
+          pattern: ^\s*[^@\s]+@[^@\s]+\.[^@\s]+\s*$
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (3 bis 254 Zeichen).
         telefonnummer:
           type: string
-          minLength: 6
-          maxLength: 20
-          pattern: ^\+?[0-9 /()-]+$
+          minLength: 1
+          maxLength: 1000
+          pattern: ^\s*\+?[0-9 /()-]+\s*$
+          description: Randleerzeichen werden vor der Prüfung entfernt; Feldregel gilt danach (6 bis 20 Zeichen).
         tan:
           type: string
           minLength: 6
