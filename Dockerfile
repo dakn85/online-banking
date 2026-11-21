@@ -1,11 +1,14 @@
-FROM node:22-alpine AS build
+FROM node:22-alpine3.24 AS build
 WORKDIR /app
 COPY package.json package-lock.json tsconfig.json ./
 RUN npm ci
 COPY src ./src
 RUN npm run build
 
-FROM node:22-alpine
+FROM node:22-alpine3.24
+# Übergang (PK-69): Das Basisimage hinkt den Sicherheitsupdates von Alpine hinterher
+# (openssl 3.5.9-r1, zlib 1.4-r0 fehlen noch). Entfernen, sobald node:22-alpine3.24 sie mitbringt.
+RUN apk upgrade --no-cache
 WORKDIR /app
 # Commit des Arbeitsstands; GET /api/version nennt ihn (scripts/testumgebung.sh setzt ihn).
 ARG VERSION=unbekannt
