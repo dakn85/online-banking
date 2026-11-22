@@ -1262,6 +1262,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/version:
+    get:
+      summary: Im Code vorhanden (src/main.ts:287)
+      description: Nachgezogen aus dem Code. Zweck, Use Case (x-use-cases), Antworten und Schemas sind noch zu beschreiben.
+      responses:
+        "200":
+          description: Noch zu beschreiben
 components:
   schemas:
     Anmeldedaten:
