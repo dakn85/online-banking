@@ -7,6 +7,9 @@
     {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"anzeige","attribute":"Überweisung.empfaengerIban"},
     {"name":"betrag","label":"Betrag in Euro","kind":"anzeige","attribute":"Überweisung.betrag"},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Überweisung.verwendungszweck"},
+    {"name":"ausfuehrungsart","label":"Ausführungsart","kind":"anzeige","attribute":"Überweisung.ausfuehrungsart"},
+    {"name":"entgelt","label":"Entgelt","kind":"anzeige","attribute":"Überweisung.entgelt"},
+    {"name":"gesamtbetrag","label":"Gesamtbetrag","kind":"anzeige"},
     {"name":"ausfuehrungstag","label":"Ausführungstag","kind":"anzeige","attribute":"Überweisung.ausfuehrungstag"}
   ],
   "actions": [
@@ -17,7 +20,7 @@
 } -->
 <header data-wf="kopf">
   <h1>Überweisung bestätigen</h1>
-  <p>Bitte prüfen Sie Ihre Angaben. Mit einem Ausführungstag wird der Auftrag nur vorgemerkt und noch nicht gebucht.</p>
+  <p>Bitte prüfen Sie Ihre Angaben. Mit einem Ausführungstag wird der Auftrag nur vorgemerkt und noch nicht gebucht. Eine Echtzeitüberweisung wird sofort ausgeführt und kostet ein Entgelt.</p>
   <div data-wf="aktionen">
     <button data-wf="primaer">Bestätigen</button>
     <button>Abbrechen</button>
@@ -37,6 +40,9 @@
     <div><dt>IBAN des Empfängers</dt><dd>DE02 5001 0517 5407 3249 11</dd></div>
     <div><dt>Betrag in Euro</dt><dd>50,00 €</dd></div>
     <div><dt>Verwendungszweck</dt><dd>Rechnung 4711</dd></div>
+    <div><dt>Ausführungsart</dt><dd>Echtzeit</dd></div>
+    <div><dt>Entgelt</dt><dd>0,50 €</dd></div>
+    <div><dt>Gesamtbetrag</dt><dd>50,50 €</dd></div>
     <div><dt>Ausführungstag</dt><dd>24.12.2026</dd></div>
   </dl>
 </section>

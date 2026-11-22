@@ -66,7 +66,7 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 
 **Bereich:** Überweisung  
 
-Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisung erfasst und genau einmal ausführt. Ein Auftrag für einen späteren Ausführungstag (Terminüberweisung) ist bis zu seiner Ausführung oder Löschung vorgemerkt und bucht nichts.
+Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisung erfasst und genau einmal ausführt. Ein Auftrag für einen späteren Ausführungstag (Terminüberweisung) ist bis zu seiner Ausführung oder Löschung vorgemerkt und bucht nichts. Mit der Ausführungsart echtzeit wird der Auftrag sofort ausgeführt und das Girokonto zusätzlich mit einem festen Entgelt belastet (BR-0099, BR-0100).
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
@@ -79,6 +79,8 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 | status | Stand des Auftrags: ausgefuehrt nach der Ausführung, vorgemerkt bei einer Terminüberweisung | String |  | Pflicht; Werte ausgefuehrt, vorgemerkt; Beispiel ausgefuehrt |
 | erfasstAm | Zeitpunkt der Ausführung, bei einem vorgemerkten Auftrag der Zeitpunkt der Vormerkung | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
 | ausfuehrungstag | Kalendertag, an dem eine Terminüberweisung ausgeführt werden soll; nur bei einem vorgemerkten Auftrag belegt | Date |  | Pflicht bei Status vorgemerkt; nur bei Status vorgemerkt; Anzeigeformat TT.MM.JJJJ; Beispiel 2026-12-24 |
+| ausfuehrungsart | Art der Ausführung: normal für die bisherige Überweisung und die Terminüberweisung, echtzeit für die sofortige Ausführung mit Entgelt; ohne Angabe im Auftrag gilt normal | String |  | Werte normal, echtzeit; Standard normal; Beispiel echtzeit |
+| entgelt | Entgelt der Überweisung in Euro, vom Dienst gesetzt: bei echtzeit der feste Betrag 0,50, sonst 0,00; Anzeige mit Dezimalkomma und Währungszeichen, Beispiel 0,50 € | Decimal |  | Wertebereich 0.00..; Standard 0.00; Beispiel 0.50 |
 
 ### Umsatz
 

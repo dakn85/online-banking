@@ -33,7 +33,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 
 ## Abgrenzung
 
-- Überweisung: einmalige Überweisung vom Girokonto, sofort oder als Terminüberweisung mit Ausführungstag ab morgen bis 365 Tage voraus; eine Terminüberweisung wird nur vorgemerkt, angezeigt und gelöscht, die Ausführung am Ausführungstag, das Ändern eines vorgemerkten Auftrags folgen später.
+- Überweisung: einmalige Überweisung vom Girokonto, sofort, als Echtzeitüberweisung mit festem Entgelt von 0,50 € oder als Terminüberweisung mit Ausführungstag ab morgen bis 365 Tage voraus; eine Terminüberweisung wird nur vorgemerkt, angezeigt und gelöscht, die Ausführung am Ausführungstag, das Ändern eines vorgemerkten Auftrags folgen später; Echtzeit bei Terminüberweisung, Dauerauftrag und Umbuchung, eine Empfängerprüfung (Verification of Payee) und ein eigenes Limit für Echtzeitüberweisungen gibt es nicht.
 - Daueraufträge: nur Anlegen, Anzeigen, Ändern und Löschen mit den Turnus-Arten monatlich, vierteljährlich und jährlich; die automatische Ausführung zum Fälligkeitstermin mit Umsatzbuchung, die Prüfung von Deckung, Dispositionsrahmen und Tageslimit, Benachrichtigungen, Aussetzen, weitere Turnus-Arten, das Anlegen aus einer Empfängervorlage, die Anzeige ausgeführter Daueraufträge in den Umsätzen und eine Höchstzahl je Kundin folgen später.
 - Kernbanksystem: Die Konten liefert der Dienst als Demo-Daten (C-001); eine Anbindung an eine Kernbank gibt es nicht.
 - Konten anlegen, ändern oder schließen.

@@ -22,7 +22,7 @@ paths:
       x-use-cases: [ UC-001 ]
   /api/ueberweisungen:
     post:
-      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden UTC-Tag des Ausführungszeitpunkts (erfasstAm) ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro; eine Summe genau in Höhe des Limits ist zulässig); sonst wird nichts gebucht. Prüfreihenfolge: IBAN, verfügbarer Betrag (BR-0004), Tageslimit; bei mehreren Verletzungen gilt die Meldung der zuerst verletzten. Übersteigt der Betrag zugleich den verfügbaren Betrag und das Tageslimit, antwortet der Dienst allein mit der Meldung zu BR-0004. Das Tageslimit gilt auch für die Lastkunden im Testbetrieb; ihre Ausgänge des Tages hängen nicht am Fenster der jüngsten 200 auftragsIds. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId einer bereits ausgeführten sofortigen Überweisung bucht nicht erneut (200). Ist die auftragsId der Kundin schon für eine Terminüberweisung verwendet worden (vorgemerkt oder gelöscht), wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt und nichts gebucht. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Beträge in Euro."
+      description: "Legt den Überweisungsauftrag an und führt ihn genau einmal aus. Die IBAN des Empfängers muss gültig sein und zu einem SEPA-Land gehören, der Betrag muss mindestens 0,10 Euro betragen und darf den verfügbaren Betrag des Girokontos nicht übersteigen; der Betrag zusammen mit den am laufenden UTC-Tag des Ausführungszeitpunkts (erfasstAm) ausgeführten Überweisungen der Kundin darf ihr Tageslimit nicht übersteigen (BR-0070, auch bei einem Tageslimit von 0,00 Euro; eine Summe genau in Höhe des Limits ist zulässig); sonst wird nichts gebucht. Prüfreihenfolge: Kombination echtzeit mit ausfuehrungstag (BR-0100), IBAN, verfügbarer Betrag (BR-0004), Tageslimit; bei mehreren Verletzungen gilt die Meldung der zuerst verletzten. Übersteigt der Betrag zugleich den verfügbaren Betrag und das Tageslimit, antwortet der Dienst allein mit der Meldung zu BR-0004. Das Tageslimit gilt auch für die Lastkunden im Testbetrieb; ihre Ausgänge des Tages hängen nicht am Fenster der jüngsten 200 auftragsIds. Das Auftraggeberkonto ist ein Girokonto der angemeldeten Kundin. Eine wiederholte Bestätigung mit derselben auftragsId einer bereits ausgeführten sofortigen Überweisung bucht nicht erneut (200). Ist die auftragsId der Kundin schon für eine Terminüberweisung verwendet worden (vorgemerkt oder gelöscht), wird mit 422 und dem Text „Diese Auftrags-Kennung wurde bereits verwendet.“ abgelehnt und nichts gebucht. Die auftragsId gilt je Kundin, dieselbe Kennung einer anderen Kundin ist ein eigener Auftrag. Lastkunden im Testbetrieb: Der Dienst merkt sich je Kundin nur die jüngsten 200 auftragsIds. Ausführungsart: ohne ausfuehrungsart gilt normal. Bei echtzeit führt der Dienst den Auftrag sofort aus, belastet das Entgelt von 0,50 Euro zusätzlich (BR-0099), prüft den verfügbaren Betrag (BR-0004) gegen Betrag plus Entgelt und das Tageslimit gegen den Betrag ohne Entgelt, und legt zwei Umsätze an (BR-0012). Echtzeit zusammen mit einem ausfuehrungstag lehnt der Dienst mit 422 und dem Text „Eine Echtzeitüberweisung kann nicht mit einem Ausführungstag erfasst werden.“ ab und bucht nichts (BR-0100). Beträge in Euro."
       operationId: ueberweisungAusfuehren
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisungsauftrag' } } }
@@ -33,13 +33,14 @@ paths:
           description: Auftrag mit dieser auftragsId war bereits ausgeführt; keine weitere Buchung, keine erneute Tageslimitprüfung
         "201":
           content: { application/json: { schema: { $ref: '#/components/schemas/Ueberweisung' } } }
-          description: "Auftrag ausgeführt, Saldo des Girokontos gemindert"
+          description: "Auftrag ausgeführt, Saldo des Girokontos gemindert, bei echtzeit um Betrag und Entgelt"
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: "IBAN ungültig oder gehört zu keinem SEPA-Land, oder Betrag kleiner als 0,10 Euro"
+          description: "IBAN ungültig oder gehört zu keinem SEPA-Land, Betrag kleiner als 0,10 Euro oder Ausführungsart kein gültiger Wert"
           x-rules:
             - Überweisung.empfaengerIban
             - Überweisung.betrag
+            - Überweisung.ausfuehrungsart
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
@@ -48,11 +49,12 @@ paths:
           description: Auftraggeberkonto gehört nicht zu einem Girokonto der angemeldeten Kundin
         "422":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: Betrag übersteigt den verfügbaren Betrag des Girokontos (BR-0004; übersteigt er zugleich das Tageslimit, kommt allein diese Meldung), die Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“ (BR-0070), oder die auftragsId wurde bereits für eine Terminüberweisung verwendet („Diese Auftrags-Kennung wurde bereits verwendet.“)
+          description: Betrag, bei echtzeit Betrag plus Entgelt, übersteigt den verfügbaren Betrag des Girokontos (BR-0004; übersteigt der Betrag zugleich das Tageslimit, kommt allein diese Meldung), die Meldung „Mit dieser Überweisung würde Ihr Tageslimit überschritten.“ (BR-0070), die auftragsId wurde bereits für eine Terminüberweisung verwendet („Diese Auftrags-Kennung wurde bereits verwendet.“) oder echtzeit mit Ausführungstag („Eine Echtzeitüberweisung kann nicht mit einem Ausführungstag erfasst werden.“, hat Vorrang vor allen anderen Prüfungen)
           x-rules:
             - BR-0004
             - BR-0005
             - BR-0070
+            - BR-0100
       summary: Überweisung vom Girokonto ausführen
       tags: [ Überweisung ]
       x-use-cases: [ UC-002 ]
@@ -1360,14 +1362,21 @@ components:
       properties:
         auftragsId:
           type: string
+          minLength: 1
+          maxLength: 36
         auftraggeberIban:
           type: string
         betrag:
           type: number
+          minimum: 0.1
         empfaenger:
           type: string
+          minLength: 1
+          maxLength: 70
         empfaengerIban:
           type: string
+          minLength: 15
+          maxLength: 34
         erfasstAm:
           format: date-time
           type: string
@@ -1377,10 +1386,20 @@ components:
           type: string
         verwendungszweck:
           type: string
+          minLength: 1
+          maxLength: 140
         waehrung:
           enum:
             - EUR
           type: string
+        ausfuehrungsart:
+          enum:
+            - normal
+            - echtzeit
+          type: string
+        entgelt:
+          type: number
+          minimum: 0
       required:
         - auftragsId
         - betrag
@@ -1402,7 +1421,7 @@ components:
           minLength: 1
           type: string
         betrag:
-          description: Betrag in Euro, mindestens 0,10; höchstens der verfügbare Betrag des Girokontos
+          description: Betrag in Euro, mindestens 0,10; höchstens der verfügbare Betrag des Girokontos, bei echtzeit zusammen mit dem Entgelt
           type: number
           minimum: 0.1
         empfaenger:
@@ -1422,6 +1441,17 @@ components:
           default: EUR
           enum:
             - EUR
+          type: string
+        ausfuehrungsart:
+          description: Art der Ausführung; ohne Angabe normal, echtzeit führt sofort aus und fällt mit einem Entgelt an
+          default: normal
+          enum:
+            - normal
+            - echtzeit
+          type: string
+        ausfuehrungstag:
+          description: "Nur zur Ablehnung der Kombination: bei echtzeit lehnt der Dienst jeden Ausführungstag mit 422 ab; eine Terminüberweisung legt die Oberfläche über POST /api/terminueberweisungen an"
+          format: date
           type: string
       required:
         - auftragsId

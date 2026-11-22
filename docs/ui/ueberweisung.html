@@ -7,8 +7,11 @@
     {"name":"vorlage","label":"Vorlage","kind":"auswahl","attribute":"Empfaengervorlage.name"},
     {"name":"empfaenger","label":"Empfänger","kind":"text","attribute":"Überweisung.empfaenger","rules":{"required":true,"maxLength":70}},
     {"name":"empfaengerIban","label":"IBAN des Empfängers","kind":"text","attribute":"Überweisung.empfaengerIban","rules":{"required":true,"minLength":15,"maxLength":34}},
-    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Überweisung.betrag","rules":{"required":true,"min":"0.10","max":"Konto.verfuegbarerBetrag"}},
+    {"name":"betrag","label":"Betrag in Euro","kind":"betrag","attribute":"Überweisung.betrag","rules":{"required":true,"min":"0.10","max":"Konto.verfuegbarerBetrag, bei Echtzeit abzüglich Überweisung"}},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"mehrzeilig","attribute":"Überweisung.verwendungszweck","rules":{"required":true,"maxLength":140}},
+    {"name":"ausfuehrungsart","label":"Ausführungsart","kind":"auswahl","attribute":"Überweisung.ausfuehrungsart"},
+    {"name":"entgelt","label":"Entgelt","kind":"anzeige","attribute":"Überweisung.entgelt"},
+    {"name":"gesamtbetrag","label":"Gesamtbetrag der Belastung","kind":"anzeige"},
     {"name":"ausfuehrungstag","label":"Ausführungstag","kind":"datum","attribute":"Überweisung.ausfuehrungstag"}
   ],
   "actions": [

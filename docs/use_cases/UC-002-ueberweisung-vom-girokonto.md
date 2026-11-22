@@ -41,13 +41,13 @@
 
 ### A2: Betrag über dem verfügbaren Betrag
 
-**Auslöser:** Der Betrag übersteigt den verfügbaren Betrag des Girokontos (BR-0004). (Schritt 4).  
+**Auslöser:** Der Betrag, bei einer Echtzeitüberweisung Betrag plus Entgelt, übersteigt den verfügbaren Betrag des Girokontos (BR-0004). (Schritt 4).  
 **Ablauf:**
 
 1. Das System führt den Auftrag nicht aus und zeigt die Meldung „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
 2. Lehnt der Dienst den Betrag beim Bestätigen ab (Schritt 7), springt das System auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei.
-2a. Übersteigt der Betrag zugleich das Tageslimit (BR-0070), gilt allein diese Ablehnung: Der Dienst antwortet mit 422 und der Meldung zu BR-0004, die Oberfläche zeigt sie am Betragsfeld, und die Tageslimit-Prüfung (A12) läuft erst, wenn der Betrag den verfügbaren Betrag nicht übersteigt.
-3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
+3. Übersteigt der Betrag zugleich das Tageslimit (BR-0070), gilt allein diese Ablehnung: Der Dienst antwortet mit 422 und der Meldung zu BR-0004, die Oberfläche zeigt sie am Betragsfeld, und die Tageslimit-Prüfung (A12) läuft erst, wenn der Betrag den verfügbaren Betrag nicht übersteigt.
+4. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
 ### A3: Mehrfaches Bestätigen
 
@@ -55,7 +55,7 @@
 **Ablauf:**
 
 1. Das System führt den Auftrag nur einmal aus; weitere Bestätigungen mit derselben Auftrags-Kennung buchen nicht erneut (BR-0005).
-2. Die Kundin sieht den Finanzstatus mit dem einmal geminderten Saldo und der Meldung „Überweisung ausgeführt.“.
+2. Die Kundin sieht den Finanzstatus mit dem einmal geminderten Saldo und der Meldung „Überweisung ausgeführt.“; bei einer Echtzeitüberweisung sind Betrag und Entgelt nur einmal belastet und die Meldung ist die aus A13 Schritt 6.
 
 ### A4: Abbrechen
 
@@ -139,6 +139,28 @@
 2. Das System springt auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei; die nächste Bestätigung trägt eine neue Auftrags-Kennung (BR-0005).
 3. Die Kundin ändert den Betrag; der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
 
+### A13: Echtzeitüberweisung mit Entgeltanzeige vor dem Absenden
+
+**Auslöser:** Die Kundin wählt im Feld „Ausführungsart“ den Wert „Echtzeit“; ohne Auswahl gilt „Normal“ und der Ablauf bleibt unverändert. (Schritt 2).  
+**Ablauf:**
+
+1. Das System zeigt auf der Überweisung das Entgelt von 0,50 € und den Gesamtbetrag der Belastung (Betrag plus Entgelt) und sperrt das Feld „Ausführungstag“, solange „Echtzeit“ gewählt ist (BR-0099, BR-0100).
+2. Die Kundin wählt „Weiter“; das System prüft die IBAN (BR-0003) und den Betrag zusammen mit dem Entgelt gegen den verfügbaren Betrag (BR-0004) wie in Schritt 4 und zeigt bei einer Abweichung die Meldung im Formular (A1, A2, A8).
+3. Das System zeigt die Zusammenfassung mit den Zeilen „Ausführungsart“ (Echtzeit), „Entgelt“ und „Gesamtbetrag“ zusätzlich zu den bisherigen Zeilen; bei einer normalen Überweisung entfallen „Entgelt“ und „Gesamtbetrag“.
+4. Bestätigt die Kundin, ruft die Oberfläche POST /api/ueberweisungen mit der Ausführungsart echtzeit auf; der Dienst prüft die IBAN (BR-0003), Betrag plus Entgelt gegen den aktuellen verfügbaren Betrag des Girokontos (BR-0004) und den Betrag ohne Entgelt zusammen mit den heutigen Überweisungen der Kundin gegen ihr Tageslimit (BR-0070), führt den Auftrag sofort und genau einmal aus (BR-0005, BR-0100), speichert Ausführungsart und Entgelt und mindert den Saldo des Girokontos um Betrag und Entgelt (BR-0006, BR-0099).
+5. Das System legt zwei Umsätze an, einen über den Betrag mit dem Empfänger und einen über das Entgelt (BR-0012).
+6. Das System zeigt den Finanzstatus mit dem neuen Saldo und der Meldung „Echtzeitüberweisung ausgeführt: <Betrag> überwiesen, Entgelt <Entgelt>.“ mit beiden Beträgen im Anzeigeformat, zum Beispiel „Echtzeitüberweisung ausgeführt: 50,00 € überwiesen, Entgelt 0,50 €.“.
+7. Verstößt der Auftrag gegen eine Prüfung (A1, A2, A12), führt der Dienst nichts aus und das System zeigt die dortige Meldung unverändert; bestätigt die Kundin mehrfach, gilt A3. Ist die Ausführungsart kein Wert der Feldregel von Überweisung.ausfuehrungsart im Datenmodell, lehnt der Dienst mit 400 ab; die Auswahl der Maske lässt nur gültige Werte zu.
+
+### A14: Echtzeit zusammen mit Ausführungstag
+
+**Auslöser:** Der Dienst erhält die Ausführungsart echtzeit zusammen mit einem Ausführungstag (BR-0100). (Schritt 7).  
+**Ablauf:**
+
+1. Der Dienst prüft diese Kombination vor IBAN, verfügbarem Betrag und Tageslimit; bei mehreren Verletzungen gilt allein diese Meldung. Er führt den Auftrag nicht aus, bucht nichts, lässt den Saldo des Girokontos unverändert und antwortet mit Status 422 und der Meldung „Eine Echtzeitüberweisung kann nicht mit einem Ausführungstag erfasst werden.“.
+2. Das System springt auf die Überweisung zurück, zeigt die Meldung im Formular mit den bisherigen Eingaben und gibt den Knopf „Bestätigen“ wieder frei; die nächste Bestätigung trägt eine neue Auftrags-Kennung (BR-0005).
+3. Über die Oberfläche tritt der Fall nicht auf, weil die Maske den Ausführungstag bei „Echtzeit“ sperrt; die Kundin wählt „Normal“ oder lässt den Ausführungstag leer, der Ablauf geht bei Schritt 2 weiter, oder sie bricht ab.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -182,6 +204,7 @@ sequenceDiagram
 - Der Finanzstatus zeigt den neuen Saldo und die Meldung „Überweisung ausgeführt.“.
 - Der Auftrag steht als neuester Umsatz in den Umsätzen des Girokontos.
 - Bei einer Terminüberweisung (A9) gilt stattdessen: Der Auftrag ist genau einmal mit Status vorgemerkt und Ausführungstag angelegt, der Saldo des Girokontos ist unverändert, es entsteht kein Umsatz, und der Finanzstatus zeigt die Meldung „Überweisung vorgemerkt.“.
+- Bei einer Echtzeitüberweisung (A13) gilt stattdessen: Der Auftrag ist genau einmal sofort ausgeführt, Ausführungsart echtzeit und Entgelt sind gespeichert, der Saldo des Girokontos ist um Betrag und Entgelt gemindert, die Umsätze zeigen das Entgelt als neuesten und den Betrag als zweitneuesten Umsatz, und der Finanzstatus zeigt die Meldung „Echtzeitüberweisung ausgeführt: <Betrag> überwiesen, Entgelt <Entgelt>.“.
 
 ### Fehlschlag
 
@@ -195,7 +218,7 @@ Die IBAN des Empfängers ist gültig: 15 bis 34 Stellen, gültige Prüfziffer na
 
 ### BR-0004: Betragsgrenze des Girokontos
 
-Der Betrag übersteigt den verfügbaren Betrag des Girokontos (Saldo plus Dispositionsrahmen nach BR-0002) nicht. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“.
+Der Betrag übersteigt den verfügbaren Betrag des Girokontos (Saldo plus Dispositionsrahmen nach BR-0002) nicht. Sonst führt das System den Auftrag nicht aus und zeigt „Der Betrag übersteigt den verfügbaren Betrag des Girokontos.“. Bei einer Echtzeitüberweisung gilt die Grenze für Betrag plus Entgelt (BR-0099); der Dienst lehnt mit 422 und derselben Meldung ab.
 
 ### BR-0005: Genau einmalige Ausführung
 
@@ -203,7 +226,7 @@ Ein Auftrag wird genau einmal ausgeführt. Die Seite sperrt den Knopf „Bestät
 
 ### BR-0006: Saldo nach der Überweisung
 
-Nach der Ausführung ist der Saldo des Girokontos um den Betrag gemindert; das Gesamtvermögen des Finanzstatus folgt daraus nach BR-0001.
+Nach der Ausführung ist der Saldo des Girokontos um den Betrag gemindert; das Gesamtvermögen des Finanzstatus folgt daraus nach BR-0001. Bei einer Echtzeitüberweisung ist der Saldo um den Betrag und das Entgelt gemindert (BR-0099).
 
 ### BR-0007: Auftraggeberkonto der Kundin
 
@@ -211,7 +234,7 @@ Die auftraggeberIban im Auftrag gehört zu einem Girokonto der angemeldeten Kund
 
 ### BR-0012: Umsatz einer ausgeführten Überweisung
 
-Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchungstag ist der Tag der Ausführung, gebuchtAm der Ausführungszeitpunkt als Zeitpunkt in UTC (erfasstAm des Auftrags), Gegenpartei der eingegebene Empfänger, Verwendungszweck der eingegebene Verwendungszweck, Betrag der Betrag als Ausgang (negativ), Kategorie „Sonstiges“ und Saldo danach der nach BR-0006 geminderte Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt keinen weiteren Umsatz (BR-0005).
+Mit der Ausführung entsteht genau ein Umsatz auf dem Auftraggeberkonto: Buchungstag ist der Tag der Ausführung, gebuchtAm der Ausführungszeitpunkt als Zeitpunkt in UTC (erfasstAm des Auftrags), Gegenpartei der eingegebene Empfänger, Verwendungszweck der eingegebene Verwendungszweck, Betrag der Betrag als Ausgang (negativ), Kategorie „Sonstiges“ und Saldo danach der nach BR-0006 geminderte Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt keinen weiteren Umsatz (BR-0005). Bei einer Echtzeitüberweisung entsteht abweichend zusätzlich ein zweiter Umsatz über das Entgelt: Der Umsatz über den Betrag trägt als Saldo danach den Saldo nach Abzug des Betrags; der Umsatz über das Entgelt hat denselben Buchungstag, gebuchtAm eine Millisekunde nach dem des Betragsumsatzes (damit er nach BR-0008 oben steht), Gegenpartei „Aventa Bank“, Verwendungszweck „Entgelt Echtzeitüberweisung“, das Entgelt als Ausgang (negativ), Kategorie „Sonstiges“ und als Saldo danach den nach BR-0006 geminderten Saldo des Girokontos. Eine weitere Bestätigung derselben Auftrags-Kennung erzeugt auch keinen weiteren Entgelt-Umsatz.
 
 ### BR-0017: Empfänger aus Vorlage übernehmen
 
@@ -221,6 +244,14 @@ Wählt die Kundin eine Empfängervorlage, übernimmt das System den Namen der Vo
 
 Der Ausführungstag einer Terminüberweisung liegt frühestens am Kalendertag nach heute und höchstens 365 Tage nach heute; heute ist der aktuelle Kalendertag in Europe/Berlin. Jeder Kalendertag in diesem Bereich ist erlaubt, auch ein Wochenende oder Feiertag. Sonst legt das System den Auftrag nicht an, der Dienst antwortet mit 422 und das System zeigt „Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.“. Die Grenzen werden gegen den heutigen Tag gemessen, nie gegen ein festes Datum.
 
+### BR-0099: Entgelt der Echtzeitüberweisung
+
+Das Entgelt einer Echtzeitüberweisung ist ein fester Betrag von 0,50 € je Überweisung, unabhängig vom Überweisungsbetrag; bei der Ausführungsart normal beträgt das Entgelt 0,00 €. Wählt die Kundin „Echtzeit“, zeigt das System das Entgelt und den Gesamtbetrag der Belastung (Betrag plus Entgelt, auf Cent gerundet nach ADR-005) vor dem Absenden auf der Überweisung und in der Zusammenfassung. Der Dienst belastet das Girokonto mit dem Gesamtbetrag und speichert das Entgelt an der Überweisung; eine wiederholte Bestätigung derselben Auftrags-Kennung belastet das Entgelt nicht erneut (BR-0005). Gegen den verfügbaren Betrag zählt der Gesamtbetrag (BR-0004), gegen das Tageslimit nur der Betrag ohne Entgelt (BR-0070).
+
+### BR-0100: Ausführungsart der Überweisung
+
+Die Ausführungsart einer Überweisung ist normal oder echtzeit; ohne Angabe gilt normal, auch bei einer Terminüberweisung. Eine Überweisung mit der Ausführungsart echtzeit führt der Dienst sofort aus und gilt damit als beim Empfänger gutgeschrieben; eine Empfängerprüfung oder Erreichbarkeitsprüfung der Empfängerbank gibt es nicht (C-001). Ausführungsart und Entgelt speichert der Dienst an der Überweisung. Die Ausführungsart echtzeit gilt nicht mit einem Ausführungstag: Sonst führt das System den Auftrag nicht aus, der Dienst antwortet mit 422 und das System zeigt „Eine Echtzeitüberweisung kann nicht mit einem Ausführungstag erfasst werden.“. Der Dienst prüft diese Kombination vor IBAN, verfügbarem Betrag und Tageslimit; bei mehreren Verletzungen gilt allein diese Meldung. Die Maske sperrt den Ausführungstag, solange „Echtzeit“ gewählt ist.
+
 ## Weitere Prüfungen
 
 - **WP-1** (Unit-Test): IBAN-Prüfziffer nach ISO 7064 MOD 97-10 und Zugehörigkeit des Länderkennzeichens zur SEPA-Länderliste.
@@ -229,5 +260,7 @@ Der Ausführungstag einer Terminüberweisung liegt frühestens am Kalendertag na
 - **WP-4** (Unit-Test): Tageslimit (BR-0070): Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge zählen nicht zu den heutigen Ausgängen.
 
 ## Notizen
+
+**A2:** 2a. Übersteigt der Betrag zugleich das Tageslimit (BR-0070), gilt allein diese Ablehnung: Der Dienst antwortet mit 422 und der Meldung zu BR-0004, die Oberfläche zeigt sie am Betragsfeld, und die Tageslimit-Prüfung (A12) läuft erst, wenn der Betrag den verfügbaren Betrag nicht übersteigt.
 
 Einmalige Überweisung vom Girokonto, sofort oder als Terminüberweisung für einen späteren Ausführungstag (A9, A10); die Ausführung einer Terminüberweisung am Ausführungstag und Daueraufträge sind nicht Teil dieser Story. Die Konten und Salden sind Demo-Daten (C-001), der Dienst schreibt den Saldo selbst fort. Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt. Gegen das Tageslimit zählen nur ausgeführte Überweisungen nach diesem Use Case; andere Ausgänge wie Umbuchungen, Lastschriften, Kartenzahlungen und Daueraufträge zählen nicht (BR-0070). Die Grenze der Tageslimit-Prüfung ist das Tageslimit der Kundin, das sie in UC-015 festlegt.
