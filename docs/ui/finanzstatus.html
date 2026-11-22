@@ -1,6 +1,6 @@
 <!-- maske: {
   "title": "Finanzstatus",
-  "useCases": ["UC-001","UC-003","UC-015","UC-016","UC-018","UC-019","UC-021","UC-023"],
+  "useCases": ["UC-001","UC-003","UC-015","UC-016","UC-018","UC-019","UC-021","UC-023","UC-025"],
   "fields": [
     {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
     {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
@@ -18,13 +18,14 @@
     {"label":"Ausgabenanalyse","useCase":"UC-019#1","operation":"GET /api/konten/{iban}/ausgabenanalyse","screen":"ausgabenanalyse"},
     {"label":"Debitkarte","useCase":"UC-018#1","screen":"debitkarte"},
     {"label":"Umbuchen","useCase":"UC-001#10","screen":"umbuchung"},
-    {"label":"Persönliche Daten","useCase":"UC-023#1","screen":"persoenliche-daten"}
+    {"label":"Persönliche Daten","useCase":"UC-023#1","screen":"persoenliche-daten"},
+    {"label":"Sparziel","useCase":"UC-025#1","screen":"sparziel"}
   ]
 } -->
 <header data-wf="kopf">
   <h1>Finanzstatus</h1>
   <p>Ihre Konten und Ihr Gesamtvermögen auf einen Blick.</p>
-  <div data-wf="aktionen"><button>Umbuchen</button> <button>Tageslimit</button><button>Daueraufträge</button> <button>Persönliche Daten</button></div>
+  <div data-wf="aktionen"><button>Umbuchen</button> <button>Tageslimit</button><button>Daueraufträge</button> <button>Sparziel</button> <button>Persönliche Daten</button></div>
 </header>
 <p data-wf="meldung" role="status">Umbuchung ausgeführt.</p>
 <nav data-wf="navigation">

@@ -2,7 +2,7 @@
 
 ## Zweck
 
-Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze, analysiert die Ausgaben ihres Girokontos eines Monats nach Kategorien, überweist von ihrem Girokonto, bucht Geld zwischen Girokonto und Tagesgeldkonto um, verwaltet Daueraufträge vom Girokonto, sperrt ihre Debitkarte vorübergehend oder endgültig, liest die Nachrichten der Bank in ihrem Postfach und ändert ihre persönlichen Daten mit TAN.
+Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Kennung und PIN an, sieht auf dem Finanzstatus alle ihre Konten mit Saldo und ihr Gesamtvermögen, sieht zu jedem Konto die Umsätze, analysiert die Ausgaben ihres Girokontos eines Monats nach Kategorien, überweist von ihrem Girokonto, bucht Geld zwischen Girokonto und Tagesgeldkonto um, verwaltet Daueraufträge vom Girokonto, legt ein Sparziel für ihr Tagesgeldkonto an und bekommt die monatliche Sparrate samt Dauerauftrag vom Girokonto eingerichtet, sperrt ihre Debitkarte vorübergehend oder endgültig, liest die Nachrichten der Bank in ihrem Postfach und ändert ihre persönlichen Daten mit TAN.
 
 ## Stakeholder
 
@@ -30,6 +30,7 @@ Online-Banking der Aventa Bank für Privatkunden. Die Kundin meldet sich mit Ken
 | Z-12 | Daueraufträge vom Girokonto verwalten | Anteil der angelegten Daueraufträge, die die Maske Daueraufträge mit Empfänger, IBAN, Betrag, Verwendungszweck, Turnus, erstem Ausführungstag und ggf. Enddatum zeigt und die die Kundin ändern und löschen kann | 100 % |
 | Z-15 | Persönliche Daten selbst aktuell halten | Anteil der mit richtiger TAN bestätigten Änderungen persönlicher Daten, die am Kunden gespeichert werden und für die geänderten Angaben eine Bestätigungsnachricht im Postfach auslösen | 100 % |
 | Z-16 | Kontoauszug je Monat als PDF | Anteil der Kontoauszug-Abrufe, deren PDF Anfangssaldo, Endsaldo und alle Umsätze des gewählten Monats des Kontos zeigt | 100 % |
+| Z-17 | Auf ein Sparziel sparen | Anteil der angelegten Sparziele, für die das System die monatliche Sparrate aus Zielbetrag, Zieldatum und Saldo des Tagesgeldkontos berechnet, einen Dauerauftrag vom Girokonto mit dieser Sparrate bis zum Zieldatum einrichtet und in den Daueraufträgen zeigt | 100 % |
 
 ## Abgrenzung
 

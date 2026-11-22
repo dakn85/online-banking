@@ -1,0 +1,69 @@
+<!-- maske: {
+  "title": "Sparziel anlegen",
+  "useCases": ["UC-025","UC-016"],
+  "fields": [
+    {"name":"anzeigeKontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
+    {"name":"anzeigeIban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
+    {"name":"anzeigeSaldo","label":"Saldo","kind":"anzeige","attribute":"Konto.saldo"},
+    {"name":"zielbetrag","label":"Zielbetrag in Euro","kind":"betrag","attribute":"Sparziel.zielbetrag","rules":{"required":true,"min":"0.01"}},
+    {"name":"zieldatum","label":"Zieldatum","kind":"datum","attribute":"Sparziel.zieldatum","rules":{"required":true}},
+    {"name":"anzeigeSparrate","label":"Monatliche Sparrate","kind":"anzeige","attribute":"Sparziel.sparrate"},
+    {"name":"anzeigeAnzahlRaten","label":"Anzahl Raten","kind":"anzeige","attribute":"Sparziel.anzahlRaten"},
+    {"name":"anzeigeErsterAusfuehrungstag","label":"Erster Ausführungstag","kind":"anzeige","attribute":"Sparziel.ersterAusfuehrungstag"},
+    {"name":"anzeigeEnddatum","label":"Enddatum","kind":"anzeige","attribute":"Sparziel.zieldatum"}
+  ],
+  "actions": [
+    {"label":"Daueraufträge","useCase":"UC-016#1","screen":"dauerauftraege"},
+    {"label":"Sparrate berechnen","useCase":"UC-025#4","operation":"GET /api/sparziele/vorschlag","screen":"sparziel"},
+    {"label":"Sparziel anlegen","useCase":"UC-025#6","operation":"POST /api/sparziele","screen":"sparziel"}
+  ]
+} -->
+<header data-wf="kopf">
+  <h1>Sparziel anlegen</h1>
+  <p>Sparen Sie mit einer monatlichen Sparrate auf Ihr Tagesgeldkonto.</p>
+  <div data-wf="aktionen"><button>Daueraufträge</button></div>
+</header>
+<nav data-wf="navigation">
+  <a href="#">Finanzstatus</a>
+  <a href="#" aria-current="page">Sparziel</a>
+  <a href="#">Daueraufträge</a>
+</nav>
+<p data-wf="meldung" role="status">Sparziel angelegt.</p>
+<p data-wf="meldung" role="alert">Die Angaben zum Sparziel sind unvollständig oder ungültig.</p>
+<p data-wf="meldung" role="alert">Das Zieldatum muss in der Zukunft liegen.</p>
+<p data-wf="meldung" role="alert">Bis zum Zieldatum fällt keine monatliche Rate an.</p>
+<p data-wf="meldung" role="alert">Der Zielbetrag muss über dem Saldo des Tagesgeldkontos liegen.</p>
+<p data-wf="meldung" role="alert">Sie haben kein Tagesgeldkonto.</p>
+<table data-wf="tabelle">
+  <caption>Ihr Tagesgeldkonto</caption>
+  <thead>
+    <tr><th>Kontoname</th><th>IBAN</th><th>Saldo</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Tagesgeldkonto</td><td>DE97 5001 0517 5407 3249 47</td><td>500,00 €</td></tr>
+  </tbody>
+</table>
+<section data-wf="gruppe" data-merkmal="Neues Sparziel">
+  <h2>Neues Sparziel</h2>
+  <form data-wf="formular">
+    <label data-wf="feld"><span>Zielbetrag in Euro</span><input type="number" step="0.01" name="zielbetrag" placeholder="1.200,00" required></label>
+    <label data-wf="feld"><span>Zieldatum</span><input type="date" name="zieldatum" required></label>
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Sparrate berechnen</button>
+    </div>
+  </form>
+</section>
+<section data-wf="gruppe" data-merkmal="Vorschlag">
+  <h2>Vorschlag</h2>
+  <dl data-wf="kennzahl">
+    <div><dt>Monatliche Sparrate</dt><dd>100,00 €</dd></div>
+    <div><dt>Anzahl Raten</dt><dd>6</dd></div>
+    <div><dt>Erster Ausführungstag</dt><dd>22.12.2026</dd></div>
+    <div><dt>Enddatum</dt><dd>22.06.2027</dd></div>
+  </dl>
+  <form data-wf="formular">
+    <div data-wf="aktionen">
+      <button data-wf="primaer">Sparziel anlegen</button>
+    </div>
+  </form>
+</section>

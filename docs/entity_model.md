@@ -17,6 +17,9 @@ erDiagram
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
     Kontoauszug }o--|| Konto : "gehört zu"
+    Sparziel }o--|| Konto : "spart auf Tagesgeldkonto"
+    Sparziel ||--|| Dauerauftrag : "richtet ein"
+    Sparziel }o--|| Kunde : "gehört zu"
 ```
 
 ## Entitäten
@@ -154,7 +157,7 @@ Eine wiederkehrende Zahlung vom Girokonto der Kundin an einen Empfänger mit Bet
 | ersterAusfuehrungstag | Tag der ersten Ausführung, ab dem der Turnus läuft; die Oberfläche zeigt ihn als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
 | enddatum | Letzter Tag, bis zu dem der Dauerauftrag laufen soll; optional, ohne Enddatum läuft er unbefristet; die Oberfläche zeigt es als TT.MM.JJJJ | Date |  | Beispiel 2027-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
 
-**Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht.
+**Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht. Ein Dauerauftrag kann aus einem Sparziel entstehen (Entität Sparziel); das Sparziel verweist über dauerauftragId auf ihn, der Dauerauftrag selbst trägt keinen Verweis zurück und wird in der Liste und bei Änderung und Löschung wie jeder andere behandelt.
 
 ### Nachricht
 
@@ -224,3 +227,22 @@ Der Kontoauszug eines Kontos der Kundin für einen Kalendermonat mit Anfangssald
 | waehrung | Währung der Salden | String |  | Pflicht; Werte EUR; Standard EUR |
 
 **Einschränkungen:** Der Auszug gehört zu einem Konto der angemeldeten Kundin (BR-0011).
+
+### Sparziel
+
+**Bereich:** Sparziel  
+
+Ein Sparziel der Kundin für ihr Tagesgeldkonto mit Zielbetrag und Zieldatum, der vorgeschlagenen monatlichen Sparrate und dem Verweis auf den Dauerauftrag, der die Sparrate vom Girokonto überweist; der Dienst legt es an, ändert oder löscht es nicht.
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| sparzielId | Kennung des Sparziels | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel S-2026-00001 |
+| tagesgeldIban | IBAN des Tagesgeldkontos der angemeldeten Kundin, für das gespart wird; setzt der Dienst, die Kundin gibt sie nicht ein | String | 22..22 | Pflicht; Länge 22..22 |
+| zielbetrag | Betrag in Euro, der bis zum Zieldatum auf dem Tagesgeldkonto stehen soll; Anzeige mit Komma und Euro-Zeichen | Decimal |  | Pflicht; Wertebereich 0.01..; Beispiel 1200.00; höchstens zwei Nachkommastellen, Anzeige 1.200,00 € |
+| zieldatum | Tag, bis zu dem der Zielbetrag erreicht sein soll; zugleich Enddatum des Dauerauftrags; die Oberfläche zeigt es als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2027-06-30; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
+| sparrate | Monatliche Sparrate in Euro nach BR-0101, zugleich Betrag des Dauerauftrags; setzt der Dienst | Decimal |  | Pflicht; Wertebereich 0.10..; Beispiel 83.34; höchstens zwei Nachkommastellen, Anzeige 83,34 € |
+| anzahlRaten | Zahl der monatlichen Ausführungen bis einschließlich Zieldatum; setzt der Dienst | Integer |  | Pflicht; Wertebereich 1..; Beispiel 12 |
+| ersterAusfuehrungstag | Tag der ersten Ausführung des Dauerauftrags, Anlagetag plus 1 Monat nach BR-0101; setzt der Dienst; die Oberfläche zeigt ihn als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-12-22; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
+| dauerauftragId | Kennung des Dauerauftrags, der für die Sparrate angelegt wurde; setzt der Dienst | String | 1..36 | Pflicht; Länge 1..36; Beispiel D-2026-00001 |
+
+**Einschränkungen:** Ein Sparziel gehört zum Tagesgeldkonto der angemeldeten Kundin und ist nur für sie sichtbar. Für dasselbe Tagesgeldkonto sind mehrere Sparziele zulässig, eine Höchstzahl gibt es nicht. Sparziele liegen nur im Speicher (ADR-002) und gehören zum Ausgangsstand des Test-Resets: im Ausgangsstand gibt es keines. Zinsen des Tagesgeldkontos gehen nicht in die Sparrate ein.

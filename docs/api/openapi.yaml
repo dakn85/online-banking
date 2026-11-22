@@ -1262,6 +1262,107 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/sparziele/vorschlag:
+    get:
+      summary: Sparrate vorschlagen
+      description: "Berechnet für das Tagesgeldkonto der angemeldeten Kundin die monatliche Sparrate aus Zielbetrag, Zieldatum und aktuellem Saldo (BR-0101) und legt nichts an. Der Dienst prüft in dieser Reihenfolge: Sitzung (401), Pflicht und Format (400), Tagesgeldkonto (422, BR-0103), Zieldatum, Zahl der Raten und Zielbetrag (422, BR-0102). Bei 400 und 422 steht im Feld fehler genau der Meldungstext aus UC-025 A1 bis A5, den die Oberfläche unverändert zeigt."
+      operationId: sparrateVorschlagen
+      tags:
+        - Sparziel
+      parameters:
+        - name: zielbetrag
+          in: query
+          required: true
+          schema:
+            type: number
+            minimum: 0.01
+            multipleOf: 0.01
+          description: Zielbetrag in Euro, höchstens zwei Nachkommastellen
+        - name: zieldatum
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Vorschlag berechnet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sparratenvorschlag'
+        "400":
+          description: Zielbetrag oder Zieldatum fehlt, hat kein gültiges Format, Zielbetrag unter 0,01 oder mit mehr als zwei Nachkommastellen; das Feld fehler enthält den Text aus UC-025 A1
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - Sparziel.zielbetrag
+            - Sparziel.zieldatum
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Kein Tagesgeldkonto, Zieldatum nicht in der Zukunft, keine Rate bis zum Zieldatum oder Zielbetrag nicht über dem Saldo; das Feld fehler enthält den Text aus UC-025 A2 bis A5
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0102
+            - BR-0103
+      x-use-cases:
+        - UC-025
+  /api/sparziele:
+    post:
+      summary: Sparziel anlegen
+      description: Legt für das Tagesgeldkonto der angemeldeten Kundin ein Sparziel an und richtet in einem Schritt den Dauerauftrag vom Girokonto auf das Tagesgeldkonto ein (BR-0103). Die Sparrate berechnet der Dienst selbst (BR-0101), sie steht nicht im Auftrag; die Antwort nennt Sparrate und ersten Ausführungstag, das Enddatum ist das Zieldatum. Prüfreihenfolge und Meldungen wie bei GET /api/sparziele/vorschlag. Bei einer Abweichung wird weder Sparziel noch Dauerauftrag angelegt. Ohne gültige Sitzung antwortet der Dienst mit 401.
+      operationId: sparzielAnlegen
+      tags:
+        - Sparziel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NeuesSparziel'
+      responses:
+        "201":
+          description: Sparziel und Dauerauftrag angelegt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sparziel'
+        "400":
+          description: Zielbetrag oder Zieldatum fehlt, hat kein gültiges Format, Zielbetrag unter 0,01 oder mit mehr als zwei Nachkommastellen; das Feld fehler enthält den Text aus UC-025 A1
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - Sparziel.zielbetrag
+            - Sparziel.zieldatum
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "422":
+          description: Kein Tagesgeldkonto, Zieldatum nicht in der Zukunft, keine Rate bis zum Zieldatum oder Zielbetrag nicht über dem Saldo; es wird nichts angelegt; das Feld fehler enthält den Text aus UC-025 A2 bis A5
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          x-rules:
+            - BR-0102
+            - BR-0103
+      x-use-cases:
+        - UC-025
 components:
   schemas:
     Anmeldedaten:
@@ -2085,3 +2186,88 @@ components:
           description: umsatzId der zurückgegebenen Lastschrift
         gutschrift:
           $ref: '#/components/schemas/Umsatz'
+    Sparratenvorschlag:
+      type: object
+      properties:
+        tagesgeldIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+        saldo:
+          type: number
+          description: Aktueller Saldo des Tagesgeldkontos in Euro
+        sparrate:
+          type: number
+          minimum: 0.1
+          multipleOf: 0.01
+        anzahlRaten:
+          type: integer
+          minimum: 1
+        ersterAusfuehrungstag:
+          type: string
+          format: date
+        enddatum:
+          type: string
+          format: date
+          description: Gleich dem Zieldatum
+      required:
+        - tagesgeldIban
+        - saldo
+        - sparrate
+        - anzahlRaten
+        - ersterAusfuehrungstag
+        - enddatum
+    NeuesSparziel:
+      type: object
+      properties:
+        zielbetrag:
+          type: number
+          minimum: 0.01
+          multipleOf: 0.01
+          description: Höchstens zwei Nachkommastellen; mehr lehnt der Dienst mit 400 ab, er rundet nicht
+        zieldatum:
+          type: string
+          format: date
+      required:
+        - zielbetrag
+        - zieldatum
+    Sparziel:
+      type: object
+      x-entity: Sparziel
+      properties:
+        sparzielId:
+          type: string
+          minLength: 1
+          maxLength: 36
+        tagesgeldIban:
+          type: string
+          minLength: 22
+          maxLength: 22
+        zielbetrag:
+          type: number
+          minimum: 0.01
+        zieldatum:
+          type: string
+          format: date
+        sparrate:
+          type: number
+          minimum: 0.1
+        anzahlRaten:
+          type: integer
+          minimum: 1
+        ersterAusfuehrungstag:
+          type: string
+          format: date
+        dauerauftragId:
+          type: string
+          minLength: 1
+          maxLength: 36
+      required:
+        - sparzielId
+        - tagesgeldIban
+        - zielbetrag
+        - zieldatum
+        - sparrate
+        - anzahlRaten
+        - ersterAusfuehrungstag
+        - dauerauftragId
