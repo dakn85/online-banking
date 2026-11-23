@@ -25,7 +25,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Umsatz | Geändert | Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 17 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 18 weitere |
 | BR-0075 Export mit den Umsätzen der Liste | Geändert | Text geändert |
 | BR-0076 Export nur mit Umsätzen | Geändert | Text geändert |
 | BR-0104 Betragsfilter und Kategoriefilter der Umsatzliste | Neu | Neu in UC-003 |
@@ -45,6 +45,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 - `acceptance/specs/umsaetze.spec`: Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
+- `acceptance/specs/umsaetze.spec`: Ein Filterwechsel führt die Umsätze auf Seite 1 zurück
 - `acceptance/specs/umsaetze.spec`: Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
 - `acceptance/specs/umsaetze.spec`: Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
 - `acceptance/specs/umsaetze.spec`: Seite vor und Seite zurück blättern die Umsatzliste
@@ -93,6 +94,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] UC-003: A9 neu: Betragsbereich ungültig
 - [ ] UC-003: A10 neu: Seite hinter der letzten Trefferseite
 - [ ] UC-003: A11 neu: Betragsbereich ungültig beim Export
+- [ ] UC-003: A12 neu: Filterwechsel
 - [ ] UC-003: Sequenzdiagramm geändert
 - [ ] UC-003: Erfolg 2 geändert
 - [ ] UC-003: BR-0075 geändert
@@ -153,13 +155,13 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, umsaetze · c026169_
 - Sollen die Demo-Daten die Kategorie Sonstiges für die Überweisungen behalten oder im Szenario eine andere Kategorie verwendet werden?
   **Antwort:** Sonstiges bleibt, wie BR-0012 es vorgibt (Annahme des Vorschlags).
-  _→ eingearbeitet_
+  _→ eingearbeitet · 39292ac_
 - Soll das Szenario zum Filter Ein-/Ausgang beim Export weiter nur die Richtung prüfen oder zusätzlich Betrag und Kategorie setzen?
   **Antwort:** Zusätzlich Betrag von 10,00 bis 60,00 und Kategorie Sonstiges setzen (Annahme des Vorschlags).
-  _→ eingearbeitet_
+  _→ eingearbeitet · 39292ac_
 - Woran soll die leere Auswahl des Exports künftig gezeigt werden?
   **Antwort:** Am Zusammenspiel von Suchtext, Betrag und Kategorie (Annahme des Vorschlags).
-  _→ eingearbeitet_
+  _→ eingearbeitet · 39292ac_
 - Welche Kategorie trägt die Gutschrift einer Lastschrift-Rückgabe?
   **Antwort:** Die Kategorie der zurückgegebenen Lastschrift.
   _→ eingearbeitet in Umsatz · 41f9dfe_

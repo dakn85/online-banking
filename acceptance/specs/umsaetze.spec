@@ -446,3 +446,27 @@ Tags: UC-003, PK-73, BR-0105, BR-0009
 |----------|--------------|--------------|--------------|
 |          |              |              | Eingang      |
 * Die Umsätze zeigen den Knopf "Weiter" nicht
+
+## Ein Filterwechsel führt die Umsätze auf Seite 1 zurück
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Umsätze zeigen "2" Treffer
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+|          |              |              | Alle         |            |            | Lebensmittel |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Betrag   |
+|-----------------|----------|
+| Bäckerei Krause | -12,00 € |
+* Die Umsätze zeigen "1" Treffer
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht

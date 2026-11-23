@@ -112,6 +112,14 @@
 
 1. Das System liefert keine Datei und zeigt die Meldung „Der Betragsbereich ist ungültig: von liegt über bis.“.
 
+### A12: Filterwechsel
+
+**Auslöser:** Die Kundin ändert Suchtext, Zeitraum, Ein-/Ausgang, Betrag von, Betrag bis oder Kategorie, während die Liste eine Seite ab 2 zeigt (BR-0105). (Schritt 6).  
+**Ablauf:**
+
+1. Das System zeigt die Treffer der neuen Auswahl ab Seite 1 und nennt die Gesamtzahl der Treffer über alle Seiten (BR-0105).
+2. Einen Hinweis nach A2 zeigt das System nur, wenn die neue Auswahl keinen Treffer hat.
+
 ## Sequenzdiagramm
 
 ```mermaid
