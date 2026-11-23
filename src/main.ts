@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
-import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, umsaetzeVon } from './umsaetze';
+import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, seiteAus, trefferseite, umsaetzeVon } from './umsaetze';
 import { Monatsfehler, auszugAus, monatPruefen as auszugMonatPruefen, pdfAus } from './kontoauszug';
 import { Rueckgabefehler, zurueckgeben } from './lastschrift';
 import { Umbuchungsfehler, ausfuehren as umbuchen } from './umbuchung';
@@ -132,18 +132,19 @@ app.delete('/api/dauerauftraege/:dauerauftragId', nurAngemeldet('api'), (req, re
   try { dauerauftraege.loeschen(res.locals.kunde.kennung, req.params.dauerauftragId); res.status(204).end(); } catch (fehler) { dauerauftragsfehler(res, fehler); }
 });
 
-// UC-003: Umsätze eines Kontos der Kundin (BR-0008 bis BR-0011)
+// UC-003: Umsätze eines Kontos der Kundin (BR-0008 bis BR-0011, BR-0104), seitenweise mit Gesamtzahl (BR-0105)
 app.get('/api/konten/:iban/umsaetze', nurAngemeldet('api'), (req, res) => {
-  let filter;
+  let filter, seite;
   try {
     filter = filterAus(req.query as Record<string, unknown>);
+    seite = seiteAus(req.query as Record<string, unknown>);
   } catch (fehler) {
     if (!(fehler instanceof Abfragefehler)) throw fehler;
     return res.status(400).json({ fehler: fehler.message });
   }
   const liste = umsaetzeVon(res.locals.kunde.kennung, req.params.iban, filter);
   if (!liste) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
-  res.json({ umsaetze: liste });
+  res.json(trefferseite(liste, seite));
 });
 
 // UC-022: Lastschrift zurückgeben (BR-0093 bis BR-0095); Prüfreihenfolge 400, 404 Konto, 404 Umsatz, 422
@@ -171,7 +172,7 @@ app.get('/api/konten/:iban/ausgabenanalyse', nurAngemeldet('api'), (req, res) =>
   res.json(ausgabenanalyse(konto.iban, monat));
 });
 
-// UC-003, BR-0075, BR-0076: Export der Umsätze als CSV; Prüfreihenfolge 404, 400, 422
+// UC-003, BR-0075, BR-0076, BR-0104: Export der Umsätze als CSV über alle Seiten, ohne Seitenparameter; Prüfreihenfolge 404, 400, 422
 app.get('/api/konten/:iban/umsaetze/export', nurAngemeldet('api'), (req, res) => {
   const kennung = res.locals.kunde.kennung;
   if (!umsaetzeVon(kennung, req.params.iban)) return res.status(404).json({ fehler: 'Das Konto wurde nicht gefunden.' });
