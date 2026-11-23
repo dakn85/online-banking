@@ -25,7 +25,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Umsatz | Geändert | Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 18 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 4 geändert, und 19 weitere |
 | BR-0075 Export mit den Umsätzen der Liste | Geändert | Text geändert |
 | BR-0076 Export nur mit Umsätzen | Geändert | Text geändert |
 | BR-0104 Betragsfilter und Kategoriefilter der Umsatzliste | Neu | Neu in UC-003 |
@@ -85,6 +85,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] Umsätze: Aktion Seite vor neu
 - [ ] Umsätze: Skizze geändert
 - [ ] UC-003: Ziel geändert
+- [ ] UC-003: Notizen geändert
 - [ ] UC-003: Schritt 4 geändert
 - [ ] UC-003: Schritt 6 geändert
 - [ ] UC-003: Schritt 7 geändert
@@ -192,7 +193,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, BR-0104 · 039dd53_
 - Sollen die Szenarien der Umsatzliste Kategorie „Sonstiges“ und Betrag von 10,00 bis 60,00 setzen, wie es beim Export-Szenario schon entschieden ist?
   **Antwort:** Ja, Kategorie „Sonstiges“ und Betrag von 10,00 bis 60,00 setzen.
-  _→ eingearbeitet_
+  _→ eingearbeitet · 702cb90_
 - Soll das Blätter-Szenario mit "lena.hoffmann" laufen oder braucht es dafür eine eigene Demo-Kundin mit über 20 Umsätzen?
   **Antwort:** Eine neue Demo-Kundin mit über 20 Umsätzen wird in der Spezifikation eingeführt und das Szenario nutzt sie.
   _→ noch nicht in der Spezifikation_
