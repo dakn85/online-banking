@@ -208,4 +208,4 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, BR-0104 · de0b368_
 - Sind die Salden danach der älteren Demo-Umsätze gegenüber der Fassung ohne die beiden Lastschriften bereits um 44,80 erhöht, oder sollen sie noch einmal um 44,80 steigen?
   **Antwort:** Bereits erhöht: 2.190,10, 2.202,10, 2.288,10 und -351,90 gelten.
-  _→ eingearbeitet in Umsatz_
+  _→ eingearbeitet in Umsatz · ad2f763_
