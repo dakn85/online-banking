@@ -1,4 +1,4 @@
-/* UC-003 Umsätze eines Kontos: Demo-Umsätze (C-001), Reihenfolge und Saldo danach (BR-0008), Filter (BR-0009, BR-0010). */
+/* UC-003 Umsätze eines Kontos: Demo-Umsätze (C-001), Reihenfolge und Saldo danach (BR-0008), Filter (BR-0009, BR-0010, BR-0104), Seiten (BR-0105). */
 import { randomUUID } from 'node:crypto';
 import { ibansJeKennung, kontoMitIban } from './konten';
 import { Auswahl, istDemokunde } from './kunden';
@@ -33,9 +33,19 @@ export interface Filter {
   von?: string;
   bis?: string;
   richtung?: Richtung;
+  /** BR-0104: Betragshöhe ohne Vorzeichen in Euro, beide Grenzen eingeschlossen; fehlt eine, ist sie offen. */
+  betragVon?: number;
+  betragBis?: number;
+  /** BR-0104: Kategorie aus der Werteliste; fehlt sie, schränkt sie nicht ein. */
+  kategorie?: Kategorie;
 }
 
+/** BR-0105: Nummer der Trefferseite ab 1 und Treffer je Seite. */
+export interface Seite { seite: number; seitengroesse: number }
+export const SEITENGROESSE = 20;
+
 export const ZEITRAUM_FEHLER = 'Der Zeitraum ist ungültig: von liegt nach bis.';
+export const BETRAGSBEREICH_FEHLER = 'Der Betragsbereich ist ungültig: von liegt über bis.';
 
 /** Ungültige Abfrage (Vertrag: 400). */
 export class Abfragefehler extends Error {}
@@ -65,12 +75,43 @@ const KARTE: Demo[] = [
   { buchungstag: '2026-02-05', gebuchtAm: '2026-02-05T12:10:00.000Z', gegenpartei: 'Reisebüro Fernweh', verwendungszweck: 'Bahnticket', betrag: -129.5, kategorie: 'Mobilität' },
   { buchungstag: '2026-02-02', gebuchtAm: '2026-02-02T08:00:00.000Z', gegenpartei: 'Aventa Bank', verwendungszweck: 'Ausgleich Abrechnung Januar', betrag: 500, kategorie: 'Sonstiges' },
 ];
+/** UC-003 Notizen: Maria Schulz hat 25 Demo-Umsätze auf dem Girokonto, damit die Treffer zwei Seiten füllen (BR-0105). */
+const MARIA_GIRO: Demo[] = ([
+  ['2026-10-30', 'Stadtwerke Elbe', 'Abschlag Strom', -74, 'Wohnen'],
+  ['2026-10-28', 'Supermarkt Frisch', 'Einkauf', -46.2, 'Lebensmittel'],
+  ['2026-10-27', 'Apotheke am Markt', 'Rezeptgebühr', -10, 'Gesundheit'],
+  ['2026-10-25', 'Verkehrsverbund Elbe', 'Monatskarte', -58, 'Mobilität'],
+  ['2026-10-23', 'Kino Lichtspiel', 'Eintritt', -24, 'Freizeit'],
+  ['2026-10-21', 'Supermarkt Frisch', 'Einkauf', -32.75, 'Lebensmittel'],
+  ['2026-10-19', 'Haftpflicht Hanse', 'Jahresbeitrag', -64.9, 'Versicherungen'],
+  ['2026-10-17', 'Wochenmarkt Altona', 'Obst und Gemüse', -18.4, 'Lebensmittel'],
+  ['2026-10-15', 'Tankstelle Hafen', 'Tanken', -61.3, 'Mobilität'],
+  ['2026-10-13', 'Sportverein Eintracht', 'Mitgliedsbeitrag', -15, 'Freizeit'],
+  ['2026-10-11', 'Supermarkt Frisch', 'Einkauf', -27.6, 'Lebensmittel'],
+  ['2026-10-09', 'Zahnarztpraxis Brandt', 'Eigenanteil', -45, 'Gesundheit'],
+  ['2026-10-07', 'Hausverwaltung Kröger', 'Miete Oktober', -820, 'Wohnen'],
+  ['2026-10-05', 'Buchladen Seeseite', 'Kartenzahlung', -21.9, 'Freizeit'],
+  ['2026-10-03', 'Supermarkt Frisch', 'Einkauf', -39.15, 'Lebensmittel'],
+  ['2026-10-01', 'Reederei Hansa GmbH', 'Gehalt September', 2480, 'Sonstiges'],
+  ['2026-09-29', 'Stadtwerke Elbe', 'Abschlag Strom', -74, 'Wohnen'],
+  ['2026-09-27', 'Supermarkt Frisch', 'Einkauf', -41.8, 'Lebensmittel'],
+  ['2026-09-25', 'Verkehrsverbund Elbe', 'Monatskarte', -58, 'Mobilität'],
+  ['2026-09-23', 'Theater am Hafen', 'Eintrittskarten', -48, 'Freizeit'],
+  ['2026-09-21', 'Supermarkt Frisch', 'Einkauf', -29.4, 'Lebensmittel'],
+  ['2026-09-19', 'Krankenkasse Hanse', 'Zusatzbeitrag', -12.5, 'Versicherungen'],
+  ['2026-09-17', 'Bäckerei Sonnenschein', 'Einkauf', -8.6, 'Lebensmittel'],
+  ['2026-09-07', 'Hausverwaltung Kröger', 'Miete September', -820, 'Wohnen'],
+  ['2026-09-01', 'Reederei Hansa GmbH', 'Gehalt August', 2480, 'Sonstiges'],
+] as const).map(([tag, gegenpartei, verwendungszweck, betrag, kategorie]) => ({
+  buchungstag: tag, gebuchtAm: `${tag}T10:00:00.000Z`, gegenpartei, verwendungszweck, betrag, kategorie,
+}));
 /** Lena und Jonas haben dieselben Demo-Umsätze auf ihren eigenen Konten; Lastkunden haben keine. */
 const DEMO: Record<string, { kennung: string; umsaetze: () => Demo[] }> = {
   DE02500105175407324911: { kennung: 'lena.hoffmann', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
   DE44500105175407325028: { kennung: 'lena.hoffmann', umsaetze: () => KARTE },
   DE61500105175407325013: { kennung: 'jonas.weber', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
   DE39500105175407325021: { kennung: 'jonas.weber', umsaetze: () => KARTE },
+  DE16500105175407325047: { kennung: 'maria.schulz', umsaetze: () => MARIA_GIRO },
 };
 
 const runden = (betrag: number) => Math.round(betrag * 100) / 100;
@@ -148,10 +189,14 @@ export function csvAus(liste: Umsatz[]): string {
 }
 
 const DATUM = /^\d{4}-\d{2}-\d{2}$/;
+const BETRAG = /^\d+(\.\d+)?$/;
+const GANZZAHL = /^[1-9]\d{0,8}$/;
 
-/** Prüft die Abfrage (400 bei Fehlern) und gibt den Filter zurück. */
+const abfragewert = (abfrage: Record<string, unknown>, name: string) => (typeof abfrage[name] === 'string' ? (abfrage[name] as string).trim() : '');
+
+/** Prüft die Abfrage (400 bei Fehlern) und gibt den Filter zurück (BR-0009, BR-0010, BR-0104). */
 export function filterAus(abfrage: Record<string, unknown>): Filter {
-  const wert = (name: string) => (typeof abfrage[name] === 'string' ? (abfrage[name] as string).trim() : '');
+  const wert = (name: string) => abfragewert(abfrage, name);
   const von = wert('von');
   const bis = wert('bis');
   const richtung = (wert('richtung') || 'alle').toLowerCase();
@@ -160,10 +205,43 @@ export function filterAus(abfrage: Record<string, unknown>): Filter {
   }
   if (!['alle', 'eingang', 'ausgang'].includes(richtung)) throw new Abfragefehler('Die Richtung ist ungültig: alle, eingang oder ausgang.');
   if (von && bis && von > bis) throw new Abfragefehler(ZEITRAUM_FEHLER);
-  return { suchtext: wert('suchtext') || undefined, von: von || undefined, bis: bis || undefined, richtung: richtung as Richtung };
+  // BR-0104: Betragshöhe ohne Vorzeichen als Zahl in Euro; Grenzen in Cent verglichen (ADR-005).
+  const [betragVon, betragBis] = ['betragVon', 'betragBis'].map(name => {
+    const w = wert(name);
+    if (!w) return undefined;
+    if (!BETRAG.test(w) || !Number.isFinite(Number(w))) throw new Abfragefehler('Der Betrag ist ungültig: erwartet eine Zahl ab 0 in Euro.');
+    return Number(w);
+  });
+  if (betragVon !== undefined && betragBis !== undefined && cent(betragVon) > cent(betragBis)) throw new Abfragefehler(BETRAGSBEREICH_FEHLER);
+  // UC-003 A13: „Alle“ ist keine Kategorie; die Maske schickt den Parameter dann nicht mit.
+  const kategorie = wert('kategorie');
+  if (kategorie && !(KATEGORIEN as readonly string[]).includes(kategorie)) throw new Abfragefehler(`Die Kategorie ist ungültig: erwartet ${KATEGORIEN.join(', ')}.`);
+  return {
+    suchtext: wert('suchtext') || undefined, von: von || undefined, bis: bis || undefined, richtung: richtung as Richtung,
+    betragVon, betragBis, kategorie: (kategorie || undefined) as Kategorie | undefined,
+  };
 }
 
-/** Umsätze eines Kontos der Kundin, neueste zuerst (BR-0008), gefiltert (BR-0009, BR-0010); `undefined`, wenn es das Konto bei ihr nicht gibt (BR-0011). */
+/** BR-0105: Seite ab 1 und Seitengröße ab 1 aus der Abfrage, Vorgaben 1 und 20; sonst Abfragefehler (400). */
+export function seiteAus(abfrage: Record<string, unknown>): Seite {
+  const zahl = (name: string, vorgabe: number) => {
+    const w = abfragewert(abfrage, name);
+    if (!w) return vorgabe;
+    if (!GANZZAHL.test(w)) throw new Abfragefehler(`Der Parameter ${name} ist ungültig: erwartet eine ganze Zahl ab 1.`);
+    return Number(w);
+  };
+  return { seite: zahl('seite', 1), seitengroesse: zahl('seitengroesse', SEITENGROESSE) };
+}
+
+/** BR-0105: die Treffer der angefragten Seite in der Reihenfolge nach BR-0008 und die Gesamtzahl; hinter der letzten Seite keine Treffer. */
+export function trefferseite<T>(treffer: T[], { seite, seitengroesse }: Seite): { umsaetze: T[]; gesamt: number } {
+  const start = (seite - 1) * seitengroesse;
+  return { umsaetze: treffer.slice(start, start + seitengroesse), gesamt: treffer.length };
+}
+
+const cent = (betrag: number) => Math.round(betrag * 100);
+
+/** Umsätze eines Kontos der Kundin, neueste zuerst (BR-0008), gefiltert (BR-0009, BR-0010, BR-0104); `undefined`, wenn es das Konto bei ihr nicht gibt (BR-0011). */
 export function umsaetzeVon(kennung: string, iban: string, filter: Filter = {}): Umsatz[] | undefined {
   const konto = kontoMitIban(kennung, iban);
   if (!konto) return undefined;
@@ -173,6 +251,9 @@ export function umsaetzeVon(kennung: string, iban: string, filter: Filter = {}):
     .filter(({ u }) => !suche || u.gegenpartei.toLocaleLowerCase('de-DE').includes(suche) || u.verwendungszweck.toLocaleLowerCase('de-DE').includes(suche))
     .filter(({ u }) => (!filter.von || u.buchungstag >= filter.von) && (!filter.bis || u.buchungstag <= filter.bis))
     .filter(({ u }) => filter.richtung === 'eingang' ? u.betrag > 0 : filter.richtung === 'ausgang' ? u.betrag < 0 : true)
+    .filter(({ u }) => (filter.betragVon === undefined || Math.abs(cent(u.betrag)) >= cent(filter.betragVon))
+      && (filter.betragBis === undefined || Math.abs(cent(u.betrag)) <= cent(filter.betragBis)))
+    .filter(({ u }) => !filter.kategorie || u.kategorie === filter.kategorie)
     .sort((a, b) => b.u.buchungstag.localeCompare(a.u.buchungstag) || b.u.gebuchtAm.localeCompare(a.u.gebuchtAm) || b.nr - a.nr)
     .map(({ u }) => ({ ...u }));
 }
