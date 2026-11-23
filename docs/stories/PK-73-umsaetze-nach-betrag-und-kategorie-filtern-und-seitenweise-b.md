@@ -158,10 +158,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Welche Kategorie trägt die Gutschrift einer Lastschrift-Rückgabe?
   **Antwort:** Die Kategorie der zurückgegebenen Lastschrift.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in Umsatz_
 - Soll BR-0095 die Kategorie des Umsatzes einer Rückgabe selbst nennen, damit Regel und Datenmodell dasselbe sagen?
   **Antwort:** Ja, die Kategorie der zurückgegebenen Lastschrift in BR-0095 ergänzen.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in Umsatz_
 - An welcher Stelle der Navigation soll „Überweisung“ auf Debitkarte, Persönliche Daten und Umbuchung stehen?
   **Antwort:** Direkt nach „Finanzstatus“, wie auf den meisten Masken.
   _→ noch nicht in der Spezifikation_
