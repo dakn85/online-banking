@@ -65,7 +65,7 @@ Tags: UC-003, PK-6, BR-0010
 
 ## Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 
-Tags: UC-003, PK-6, BR-0009
+Tags: UC-003, PK-6, BR-0009, NFR-001
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -295,3 +295,124 @@ Tags: UC-003, PK-54
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die CSV-Datei hat den Content-Type "text/csv" und das Zeilenende "CRLF"
+
+## Der CSV-Export bleibt bei Suchtext, Zeitraum und Ein-/Ausgang
+
+Tags: UC-003, PK-73, BR-0075
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+|          |              |              | Alle         | 10,00      | 20,00      | Lebensmittel |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
+* Die CSV-Datei enthält die Zeilen
+| Gegenpartei         | Betrag | Saldo danach |
+|---------------------|--------|--------------|
+| Zeitungsverlag Nord | -14,90 | 2175,20      |
+| Bäckerei Krause     | -12,00 | 2190,10      |
+
+## Die Umsätze nennen die Gesamtzahl der Treffer
+
+Tags: UC-003, PK-73, BR-0105, NFR-001
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Betrag   |
+|---------------------|----------|
+| Fitnessstudio Vital | -29,90 € |
+| Zeitungsverlag Nord | -14,90 € |
+* Die Umsätze zeigen "2" Treffer
+
+## Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Betrag |
+|-------------|--------|
+* Die Umsätze zeigen "2" Treffer
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
+
+## Der Betragsfilter zeigt Ausgänge nach ihrer Höhe ohne Vorzeichen
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 10,00      | 20,00      | Alle      |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Betrag   |
+|---------------------|----------|
+| Zeitungsverlag Nord | -14,90 € |
+| Bäckerei Krause     | -12,00 € |
+
+## Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+|          |              |              | Alle         |            |            | Lebensmittel |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Betrag   |
+|-----------------|----------|
+| Bäckerei Krause | -12,00 € |
+
+## Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 100,00     | 50,00      | Alle      |
+* Die Abfrage der Umsätze antwortet mit dem Status "400"
+* Die Umsätze zeigen die Meldung "Der Betragsbereich ist ungültig: von liegt über bis."
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Betrag |
+|-------------|--------|
+
+## Betragsfilter, Kategorie und Textsuche wirken zusammen
+
+Tags: UC-003, PK-73, BR-0010
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Zeitung  |              |              | Alle         | 10,00      | 20,00      | Freizeit  |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Verwendungszweck | Betrag   |
+|---------------------|------------------|----------|
+| Zeitungsverlag Nord | Zeitungsabo      | -14,90 € |

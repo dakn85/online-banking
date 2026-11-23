@@ -6,7 +6,7 @@
 **Name:** Umsätze eines Kontos anzeigen  
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
-**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum und Ein-/Ausgang ein; sie lädt die so eingeschränkten Umsätze als CSV-Datei herunter.  
+**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie ein; sie blättert die Treffer seitenweise mit 20 Umsätzen je Seite und sieht die Gesamtzahl der Treffer, und sie lädt die Umsätze als CSV-Datei herunter.  
 **Ziele:** Z-6  
 **Anforderungen:** NFR-001, C-001
 
@@ -20,11 +20,11 @@
 1. Die Kundin wählt im Finanzstatus in der Zeile eines Kontos „Umsätze“.
 2. Das System liest die Umsätze des Kontos (Demo-Daten, C-001).
 3. Das System ordnet die Umsätze mit dem neuesten Buchungstag zuerst (BR-0008).
-4. Das System zeigt Kontoname und IBAN des Kontos sowie die Felder für die Textsuche und die Filter nach Zeitraum und Ein-/Ausgang.
+4. Das System zeigt Kontoname und IBAN des Kontos sowie die Felder für die Textsuche und die Filter nach Zeitraum, Ein-/Ausgang, Betrag von, Betrag bis und Kategorie.
 5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag in Euro, Saldo danach in Euro und Rückgabe; bei einer SEPA-Lastschrift steht dort „Zurückgeben“, bei einer zurückgegebenen „Zurückgegeben“ (UC-022).
 6. Die Kundin gibt einen Suchtext ein, wählt einen Zeitraum oder eine Richtung.
-7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt und deren Betrag zur gewählten Richtung passt (BR-0009, BR-0010).
-8. Die Kundin liest Betrag und Saldo danach der Umsätze ab.
+7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt, deren Betrag zur gewählten Richtung passt, deren Betragshöhe zwischen Betrag von und Betrag bis liegt und deren Kategorie der gewählten entspricht (BR-0009, BR-0010, BR-0104).
+8. Die Kundin blättert vor und zurück; das System zeigt die Treffer seitenweise mit 20 Umsätzen je Seite, nennt die Gesamtzahl der Treffer und behält die Reihenfolge nach BR-0008 über alle Seiten bei (BR-0105).
 9. Die Kundin wählt „Als CSV exportieren“.
 10. Das System liefert die Umsätze, die zu den eingestellten Werten für Suchtext, Zeitraum und Ein-/Ausgang passen, mit derselben Reihenfolge und demselben Saldo danach als CSV-Datei, die der Browser herunterlädt; es speichert die Datei nicht (BR-0075).
 11. Die Kundin wählt „Kontoauszug“; das System öffnet die Maske Kontoauszug für das Konto mit der IBAN der angezeigten Umsätze, weiter mit UC-024.
@@ -89,6 +89,22 @@
 
 1. Das System liefert keine Datei und zeigt die Meldung „Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.“.
 
+### A9: Betragsbereich ungültig
+
+**Auslöser:** Betrag von liegt über Betrag bis (BR-0104). (Schritt 7).  
+**Ablauf:**
+
+1. Das System zeigt die Meldung „Der Betragsbereich ist ungültig: von liegt über bis.“ statt der Tabelle und keine Umsätze.
+2. Einen Hinweis nach A2 zeigt das System nicht.
+
+### A10: Seite hinter der letzten Trefferseite
+
+**Auslöser:** Die angefragte Seite liegt hinter der letzten Trefferseite (BR-0105). (Schritt 8).  
+**Ablauf:**
+
+1. Das System zeigt keine Zeile und die Gesamtzahl der Treffer.
+2. Eine Meldung zeigt das System nicht.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -149,6 +165,14 @@ Der Export enthält genau die Umsätze, die die Umsatzliste zu denselben Werten 
 ### BR-0076: Export nur mit Umsätzen
 
 Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu Suchtext, Zeitraum und Richtung passt; sonst antwortet der Dienst mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ und liefert keine Datei. Vorher gelten in dieser Reihenfolge BR-0011 (404) und die Prüfung des Zeitraums nach BR-0010 (400); bei fremder IBAN und ungültigem Zeitraum antwortet der Dienst daher mit 404.
+
+### BR-0104: Betragsfilter und Kategoriefilter der Umsatzliste
+
+Der Betragsfilter zeigt die Umsätze, deren Betragshöhe ohne Vorzeichen zwischen Betrag von und Betrag bis liegt, beide Grenzen eingeschlossen; ein Ausgang von -950,00 Euro liegt damit zwischen 100,00 und 1.000,00, und Ein-/Ausgang bleibt der eigene Filter (BR-0009). Fehlt eine Grenze, gilt sie als offen. Der Kategoriefilter zeigt die Umsätze, deren Kategorie der gewählten entspricht; „Alle“ schränkt nicht ein. Zusammen mit Zeitraum und Textsuche (BR-0010) zeigt die Liste nur Umsätze, die alle gesetzten Filter erfüllen. Liegt Betrag von über Betrag bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ und liefert keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keinen Hinweis nach A2.
+
+### BR-0105: Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl
+
+Die Umsatzliste zeigt 20 Umsätze je Seite; die Maske schickt diese Seitengröße fest mit. Die Treffer stehen über alle Seiten hinweg in der Reihenfolge nach BR-0008, Seite 1 enthält die ersten 20 Treffer. Die Maske nennt die Gesamtzahl der Treffer über alle Seiten; sie zählt dieselben Umsätze wie die Liste, auch wenn der Testbetrieb je Konto nur die jüngsten 200 Umsätze hält. Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung; den Hinweis nach A2 zeigt die Seite nur, wenn es keinen Treffer gibt.
 
 ## Notizen
 
