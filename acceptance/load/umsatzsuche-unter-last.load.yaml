@@ -2,12 +2,18 @@ name: Umsatzsuche unter Last
 tool: k6
 script: load/umsatzsuche-unter-last.js
 measures:
+  # NFR-003 gilt für GET /api/konten und POST /api/ueberweisungen. Dieser Test liest nur;
+  # darum wird die Anforderung hier nur für GET /api/konten als Messung gebunden.
   - nfr: NFR-003
     request: GET /api/konten
-thresholds:
-  - name: umsaetze
-    metric: http_req_duration
-    threshold: p(95)<500
-  - name: export
-    metric: http_req_duration
-    threshold: p(95)<500
+  # Eigene Zielwerte des Profils für die Leseanfragen der Umsatzsuche, gleiche Grenze wie NFR-003.
+  - request: GET /api/konten/{iban}/umsaetze
+    names:
+      - umsaetze
+    metric: p95
+    limit: 500 ms
+  - request: GET /api/konten/{iban}/umsaetze/export
+    names:
+      - export
+    metric: p95
+    limit: 500 ms
