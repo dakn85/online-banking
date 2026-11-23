@@ -1,6 +1,6 @@
 # PK-73: Umsätze nach Betrag und Kategorie filtern und seitenweise blättern
 
-**Art:** Erweiterung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Änderung · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
@@ -25,7 +25,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Umsatz | Geändert | Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 4 geändert, und 19 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 4 geändert, und 20 weitere |
 | BR-0075 Export mit den Umsätzen der Liste | Geändert | Text geändert |
 | BR-0076 Export nur mit Umsätzen | Geändert | Text geändert |
 | BR-0104 Betragsfilter und Kategoriefilter der Umsatzliste | Neu | Neu in UC-003 |
@@ -100,6 +100,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] UC-003: A10 neu: Seite hinter der letzten Trefferseite
 - [ ] UC-003: A11 neu: Betragsbereich ungültig beim Export
 - [ ] UC-003: A12 neu: Filterwechsel
+- [ ] UC-003: A13 neu: Filterwert ungültig
 - [ ] UC-003: Sequenzdiagramm geändert
 - [ ] UC-003: Erfolg 2 geändert
 - [ ] UC-003: BR-0075 geändert
@@ -199,4 +200,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Wo soll „Postfach (2)“ auf Masken ohne „Empfängervorlagen“ stehen?
   **Antwort:** Am Ende der Navigation, wie vorgeschlagen.
+  _→ noch nicht in der Spezifikation_
+- Soll die Maske bei einem Formatfehler des Dienstes eine eigene Meldung zeigen, obwohl ihre Auswahlfelder nur zulässige Werte anbieten?
+  **Antwort:** Keine eigene Meldung; der Fall entsteht nur bei einem direkten Aufruf des Dienstes.
+  _→ eingearbeitet in UC-003, BR-0104_
+- Sind die Salden danach der älteren Demo-Umsätze gegenüber der Fassung ohne die beiden Lastschriften bereits um 44,80 erhöht, oder sollen sie noch einmal um 44,80 steigen?
+  **Antwort:** Bereits erhöht: 2.190,10, 2.202,10, 2.288,10 und -351,90 gelten.
   _→ noch nicht in der Spezifikation_

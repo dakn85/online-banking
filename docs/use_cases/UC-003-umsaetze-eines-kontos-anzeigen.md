@@ -84,7 +84,7 @@
 
 ### A8: Export fehlgeschlagen
 
-**Auslöser:** Der Dienst antwortet mit einem anderen Fehler als in A1, A5 bis A7 und A11 oder ist nicht erreichbar. (Schritt 10).  
+**Auslöser:** Der Dienst antwortet mit einem anderen Fehler als in A1, A5 bis A7, A11 und A13 oder ist nicht erreichbar. (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.“.
@@ -119,6 +119,14 @@
 
 1. Das System zeigt die Treffer der neuen Auswahl ab Seite 1 und nennt die Gesamtzahl der Treffer über alle Seiten (BR-0105).
 2. Einen Hinweis nach A2 zeigt das System nur, wenn die neue Auswahl keinen Treffer hat.
+
+### A13: Filterwert ungültig
+
+**Auslöser:** Ein Aufruf schickt einen Filterwert außerhalb der Feldbedingungen von Umsatz, etwa kategorie „Alle“ statt eines Werts der Werteliste von Umsatz.kategorie; der Dienst antwortet mit 400. (Schritt 7, beim Export Schritt 10). (Schritt 7).  
+**Ablauf:**
+
+1. Der Dienst antwortet mit 400 und dem Feld fehler und liefert keine Umsätze, beim Export keine Datei.
+2. Das System zeigt keinen Hinweis nach A2 und beim Export keinen nach A5.
 
 ## Sequenzdiagramm
 
@@ -183,7 +191,7 @@ Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu den gesetz
 
 ### BR-0104: Betragsfilter und Kategoriefilter der Umsatzliste
 
-Der Betragsfilter zeigt die Umsätze, deren Betragshöhe ohne Vorzeichen zwischen Betrag von und Betrag bis liegt, beide Grenzen eingeschlossen; ein Ausgang von -950,00 Euro liegt damit zwischen 100,00 und 1.000,00, und Ein-/Ausgang bleibt der eigene Filter (BR-0009). Fehlt eine Grenze, gilt sie als offen. Der Kategoriefilter zeigt die Umsätze, deren Kategorie der gewählten aus der Werteliste von Umsatz.kategorie entspricht; „Alle“ ist keine Kategorie, sondern die nicht einschränkende Auswahl der Maske, die den Parameter kategorie dann nicht mitschickt, und ohne Parameter schränkt der Filter nicht ein. Schickt ein Aufruf „Alle“ oder einen anderen Wert außerhalb der Werteliste als kategorie mit, ist das ein Formatfehler, den der Dienst mit 400 abweist. Zusammen mit Zeitraum und Textsuche (BR-0010) zeigt die Liste nur Umsätze, die alle gesetzten Filter erfüllen. Liegt Betrag von über Betrag bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ und liefert keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keinen Hinweis nach A2.
+Der Betragsfilter zeigt die Umsätze, deren Betragshöhe ohne Vorzeichen zwischen Betrag von und Betrag bis liegt, beide Grenzen eingeschlossen; ein Ausgang von -950,00 Euro liegt damit zwischen 100,00 und 1.000,00, und Ein-/Ausgang bleibt der eigene Filter (BR-0009). Fehlt eine Grenze, gilt sie als offen. Der Kategoriefilter zeigt die Umsätze, deren Kategorie der gewählten aus der Werteliste von Umsatz.kategorie entspricht; „Alle“ ist keine Kategorie, sondern die nicht einschränkende Auswahl der Maske, die den Parameter kategorie dann nicht mitschickt, und ohne Parameter schränkt der Filter nicht ein. Zusammen mit Zeitraum und Textsuche (BR-0010) zeigt die Liste nur Umsätze, die alle gesetzten Filter erfüllen. Liegt Betrag von über Betrag bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ und liefert keine Umsätze; die Seite zeigt diese Meldung statt der Tabelle und keinen Hinweis nach A2.
 
 ### BR-0105: Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl
 
