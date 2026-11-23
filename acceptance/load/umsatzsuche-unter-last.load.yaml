@@ -3,3 +3,11 @@ tool: k6
 script: load/umsatzsuche-unter-last.js
 measures:
   - nfr: NFR-003
+    request: GET /api/konten
+thresholds:
+  - name: umsaetze
+    metric: http_req_duration
+    threshold: p(95)<500
+  - name: export
+    metric: http_req_duration
+    threshold: p(95)<500
