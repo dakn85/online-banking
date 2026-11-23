@@ -25,7 +25,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Umsatz | Geändert | Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 15 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 17 weitere |
 | BR-0075 Export mit den Umsätzen der Liste | Geändert | Text geändert |
 | BR-0076 Export nur mit Umsätzen | Geändert | Text geändert |
 | BR-0104 Betragsfilter und Kategoriefilter der Umsatzliste | Neu | Neu in UC-003 |
@@ -42,6 +42,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Die Umsätze nennen die Gesamtzahl der Treffer
 - `acceptance/specs/umsaetze.spec`: Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
 - `acceptance/specs/umsaetze.spec`: Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
+- `acceptance/specs/umsaetze.spec`: Seite vor und Seite zurück blättern die Umsatzliste
 
 ## Aufgaben für die Umsetzung
 
@@ -81,6 +82,8 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] UC-003: Schritt 10 geändert
 - [ ] UC-003: A2 geändert
 - [ ] UC-003: A5 geändert
+- [ ] UC-003: A6 geändert
+- [ ] UC-003: A7 geändert
 - [ ] UC-003: A8 geändert
 - [ ] UC-003: A9 neu: Betragsbereich ungültig
 - [ ] UC-003: A10 neu: Seite hinter der letzten Trefferseite
@@ -139,10 +142,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Wie antwortet der Dienst auf kategorie=Alle?
   **Antwort:** Mit 400 als Formatfehler, weil „Alle“ kein Wert des Feldes kategorie ist.
-  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, UC-003, BR-0104_
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, UC-003, BR-0104 · c930ded_
 - Sollen „Seite vor“ und „Seite zurück“ nur seitenweise blättern, ohne auf Seite 1 bzw. die letzte Trefferseite zu springen?
   **Antwort:** Ja, ein Schritt je Knopf, ohne Sprung auf Seite 1 oder die letzte Seite.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-003, umsaetze_
 - Sollen die Demo-Daten die Kategorie Sonstiges für die Überweisungen behalten oder im Szenario eine andere Kategorie verwendet werden?
   **Antwort:** Sonstiges bleibt, wie BR-0012 es vorgibt (Annahme des Vorschlags).
   _→ noch nicht in der Spezifikation_

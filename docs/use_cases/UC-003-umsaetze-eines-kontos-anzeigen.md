@@ -24,7 +24,7 @@
 5. Das System zeigt die Umsätze in einer Tabelle mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag in Euro, Saldo danach in Euro und Rückgabe; bei einer SEPA-Lastschrift steht dort „Zurückgeben“, bei einer zurückgegebenen „Zurückgegeben“ (UC-022).
 6. Die Kundin gibt einen Suchtext ein und wählt einen Zeitraum, eine Richtung, Betrag von und Betrag bis sowie eine Kategorie.
 7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt, deren Betrag zur gewählten Richtung passt, deren Betragshöhe zwischen Betrag von und Betrag bis liegt und deren Kategorie der gewählten entspricht (BR-0009, BR-0010, BR-0104).
-8. Die Kundin blättert vor und zurück; das System zeigt die Treffer seitenweise mit 20 Umsätzen je Seite, nennt die Gesamtzahl der Treffer und behält die Reihenfolge nach BR-0008 über alle Seiten bei (BR-0105).
+8. Die Kundin blättert mit „Seite vor“ und „Seite zurück“; das System zeigt die Treffer seitenweise mit 20 Umsätzen je Seite, nennt die Gesamtzahl der Treffer und behält die Reihenfolge nach BR-0008 über alle Seiten bei (BR-0105).
 9. Die Kundin wählt „Als CSV exportieren“.
 10. Das System liefert die Umsätze, die zu den eingestellten Werten für Suchtext, Zeitraum, Ein-/Ausgang, Betrag von und Betrag bis sowie Kategorie passen, über alle Seiten und ohne Seitenparameter, mit derselben Reihenfolge und demselben Saldo danach als CSV-Datei, die der Browser herunterlädt; es speichert die Datei nicht (BR-0075, BR-0104).
 11. Die Kundin wählt „Kontoauszug“; das System öffnet die Maske Kontoauszug für das Konto mit der IBAN der angezeigten Umsätze, weiter mit UC-024.
@@ -63,21 +63,21 @@
 
 ### A5: Keine Umsätze zum Export
 
-**Auslöser:** Zu Suchtext, Zeitraum, Richtung, Betrag von/bis und Kategorie passt kein Umsatz, oder das Konto hat keine Umsätze (BR-0076). (Schritt 10).  
+**Auslöser:** Zu Suchtext, Zeitraum, Richtung, Betrag von/bis und Kategorie passt kein Umsatz, oder das Konto hat keine Umsätze; der Dienst antwortet mit 422 (BR-0076). (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Für diese Auswahl gibt es keine Umsätze zum Export.“.
 
 ### A6: Konto nicht gefunden beim Export
 
-**Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin (BR-0011). (Schritt 10).  
+**Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin; der Dienst antwortet mit 404 (BR-0011). (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Das Konto wurde nicht gefunden.“.
 
 ### A7: Zeitraum ungültig beim Export
 
-**Auslöser:** Das Von-Datum liegt nach dem Bis-Datum (BR-0010). (Schritt 10).  
+**Auslöser:** Das Von-Datum liegt nach dem Bis-Datum; der Dienst antwortet mit 400 (BR-0010). (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Der Zeitraum ist ungültig: von liegt nach bis.“.
@@ -99,7 +99,7 @@
 
 ### A10: Seite hinter der letzten Trefferseite
 
-**Auslöser:** Die angefragte Seite liegt hinter der letzten Trefferseite (BR-0105). (Schritt 8).  
+**Auslöser:** Die Kundin wählt „Seite vor“, und die angefragte Seite liegt hinter der letzten Trefferseite (BR-0105). (Schritt 8).  
 **Ablauf:**
 
 1. Das System zeigt keine Zeile und die Gesamtzahl der Treffer.
@@ -107,7 +107,7 @@
 
 ### A11: Betragsbereich ungültig beim Export
 
-**Auslöser:** Betrag von liegt über Betrag bis (BR-0104). (Schritt 10).  
+**Auslöser:** Betrag von liegt über Betrag bis; der Dienst antwortet mit 400 (BR-0104). (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Der Betragsbereich ist ungültig: von liegt über bis.“.

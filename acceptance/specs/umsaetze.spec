@@ -419,3 +419,23 @@ Tags: UC-003, PK-73, BR-0075
 | Gegenpartei     | Betrag | Saldo danach |
 |-----------------|--------|--------------|
 | Bäckerei Krause | -12,00 | 2190,10      |
+
+## Seite vor und Seite zurück blättern die Umsatzliste
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Kundin blättert in den Umsätzen "zurück"
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Betrag   |
+|---------------------|----------|
+| Fitnessstudio Vital | -29,90 € |
+| Zeitungsverlag Nord | -14,90 € |
+* Die Umsätze zeigen "2" Treffer
