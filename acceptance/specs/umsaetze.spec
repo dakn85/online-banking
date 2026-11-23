@@ -432,6 +432,7 @@ Tags: UC-003, PK-73, BR-0105
 * Die Umsätze zeigen auf der Seite "1" "20" Umsätze
 * Die Kundin blättert in den Umsätzen "vor"
 * Die Umsätze zeigen auf der Seite "2" "5" Umsätze
+* Die Umsätze zeigen die Seite "2"
 * Die Umsätze zeigen "25" Treffer
 
 ## Der Filter Ein-/Ausgang ohne Knopf Weiter

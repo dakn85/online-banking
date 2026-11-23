@@ -174,3 +174,12 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - Sollen alle Masken den Navigationseintrag mit dem Beispielwert „Postfach (2)“ zeigen?
   **Antwort:** Ja, „Postfach (2)“ wie auf den übrigen Masken und in der Skizze postfach.
   _→ noch nicht in der Spezifikation_
+- Gilt für den CSV-Export weiterhin die übernommene Annahme, dass Betrag von/bis und Kategorie nicht angewendet werden, oder die geänderte Fassung von Schritt 10, BR-0075 und Export-Endpunkt, die alle Filter anwenden?
+  **Antwort:** Der Export wendet alle Filter an (Schritt 10, BR-0075, Endpunkt); die alte Annahme entfällt.
+  _→ eingearbeitet in UC-003, BR-0105, umsaetze_
+- Woher nimmt die Maske den Wert der Kennzahl „Seite“, die sie neben der Gesamtzahl anzeigt?
+  **Antwort:** Aus dem mitgeschickten Parameter seite: die Maske merkt sich die angefragte Seite und zeigt sie an; der Vertrag bleibt unverändert.
+  _→ eingearbeitet in UC-003, BR-0105, umsaetze_
+- Welche Kategorie soll die Skizzenzeile Fitnessstudio Vital zeigen, damit Skizze und Demo-Daten übereinstimmen?
+  **Antwort:** Freizeit, wie das Datenmodell es für diesen Demo-Umsatz festlegt; die Skizze wird angepasst.
+  _→ eingearbeitet in UC-003, BR-0105, umsaetze_
