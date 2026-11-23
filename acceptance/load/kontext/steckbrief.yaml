@@ -1,0 +1,10 @@
+# Steckbrief der Lasttests: Antworten und Festlegungen. Gepflegt über die Seite Last und den Testautor.
+# Antworten auf Fragen, die für das Projekt gelten, gelten für jeden Lasttest des Projekts.
+tests:
+  load/umsatzsuche-unter-last.load.yaml:
+    draft:
+      title: Umsatzsuche unter Last
+      goal: "Hält die Umsatzsuche (PK-73) 300 angemeldete Lastkunden mit je 200 Umsätzen, die mit Betrag von/bis und Kategorie filtern und blättern? Ziel wie NFR-003: 95 % der Aufrufe in höchstens 500 ms, höchstens 0,5 % Serverfehler."
+      from: frei
+      by: Mandanten Admin
+      at: 2026-11-23T20:37:08.627Z
