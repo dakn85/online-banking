@@ -81,7 +81,7 @@ export function setup() {
   if (!pin) {
     throw new Error('LASTTEST_PIN fehlt: Der Zugang der Lastumgebung muss LASTTEST_PIN setzen.');
   }
-  const res = http.post(`${basis}/api/test/lasttest/reset`, null, { timeout: '5m' });
+  const res = http.post(`${basis}/api/test/lasttest/reset`, null, { timeout: '5m', tags: { name: 'reset' } });
   if (res.status !== 204) {
     throw new Error(`Lasttest-Reset fehlgeschlagen: HTTP ${res.status}. Laeuft der Dienst mit TEST_MODE=1?`);
   }

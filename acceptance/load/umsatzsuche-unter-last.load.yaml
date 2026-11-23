@@ -1,4 +1,5 @@
 name: Umsatzsuche unter Last
+tool: k6
 script: load/umsatzsuche-unter-last.js
 measures:
   - nfr: NFR-003
