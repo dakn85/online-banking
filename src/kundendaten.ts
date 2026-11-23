@@ -26,6 +26,7 @@ export class Kundendatenfehler extends Error {
 const AUSGANGSSTAND: Record<string, Kundendaten> = {
   'lena.hoffmann': { strasse: 'Lindenallee 12', postleitzahl: '50667', ort: 'Köln', email: 'lena.hoffmann@example.org', telefonnummer: '+49 221 1234567' },
   'jonas.weber': { strasse: 'Hauptstraße 5', postleitzahl: '80331', ort: 'München', email: 'jonas.weber@example.org', telefonnummer: '+49 89 7654321' },
+  'maria.schulz': { strasse: 'Elbchaussee 40', postleitzahl: '22763', ort: 'Hamburg', email: 'maria.schulz@example.org', telefonnummer: '+49 40 2345678' },
 };
 const lastkunde = (kennung: string): Kundendaten => ({
   strasse: 'Teststraße 1', postleitzahl: '10115', ort: 'Berlin', email: `${kennung}@example.org`, telefonnummer: '+49 30 1234567',

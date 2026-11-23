@@ -2,26 +2,27 @@
 
 ## Die Umsätze zeigen die Buchungen mit Betrag und Saldo danach, neueste zuerst
 
-Tags: UC-003, PK-6, BR-0008, BR-0012
+Tags: UC-003, PK-73, BR-0008, BR-0012, BR-0104
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
-* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Überweisung vom Girokonto
-* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "12,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "12,00 €", Verwendungszweck "Rechnung 4712" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Alle         | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
 |-----------------|------------------|----------|--------------|
 | Möbel Nord GmbH | Rechnung 4712    | -12,00 € | 2.083,30 €   |
 | Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
+* Die Umsätze zeigen "2" Treffer
 
 ## Die Textsuche zeigt nur Umsätze mit dem Suchtext
 
@@ -65,25 +66,25 @@ Tags: UC-003, PK-6, BR-0010
 
 ## Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 
-Tags: UC-003, PK-6, BR-0009
+Tags: UC-003, PK-73, BR-0009, BR-0104, NFR-001
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
-* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Eingang      |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Eingang      | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
 |-------------|------------------|--------|--------------|
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Ausgang      |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Ausgang      | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
 |-----------------|------------------|----------|--------------|
@@ -128,7 +129,7 @@ Tags: UC-003, PK-6
 
 ## Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
-Tags: UC-003, PK-59
+Tags: UC-003, PK-73, BR-0008
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -136,14 +137,14 @@ Tags: UC-003, PK-59
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          |              | 2026-02-12   | Alle         |
+|          | 2026-01-01   | 2026-02-28   | Alle         |
 * Die Umsätze zeigen die Zeilen
-| Buchungstag | Gegenpartei            |
-|-------------|------------------------|
-| 12.02.2026  | Bäckerei Krause        |
-| 10.02.2026  | Energieversorgung Nord |
-| 01.02.2026  | Lindner Logistik GmbH  |
-| 28.01.2026  | Hausverwaltung Berger  |
+| Buchungstag | Gegenpartei            | Betrag     |
+|-------------|------------------------|------------|
+| 12.02.2026  | Bäckerei Krause        | -12,00 €   |
+| 10.02.2026  | Energieversorgung Nord | -86,00 €   |
+| 01.02.2026  | Lindner Logistik GmbH  | 2.640,00 € |
+| 28.01.2026  | Hausverwaltung Berger  | -950,00 €  |
 
 ## Die CSV-Datei ist UTF-8 mit BOM, durch Semikolon getrennt und nach dem Konto benannt
 
@@ -157,7 +158,7 @@ Tags: UC-003, PK-54
 
 ## Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
 
-Tags: UC-003, PK-54, BR-0075
+Tags: UC-003, PK-73, BR-0075
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -169,9 +170,9 @@ Tags: UC-003, PK-54, BR-0075
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Alle         | 10,00      | 60,00      | Sonstiges |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
 * Die CSV-Datei enthält die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
@@ -218,15 +219,15 @@ Tags: UC-003, PK-54
 
 ## Der CSV-Export einer leeren Auswahl liefert keine Datei und zeigt die Meldung
 
-Tags: UC-003, PK-54, BR-0076
+Tags: UC-003, PK-73, BR-0076
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+| Möbel    |              |              | Alle         | 10,00      | 60,00      | Lebensmittel |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "422"
 * Die Umsätze zeigen die Meldung "Für diese Auswahl gibt es keine Umsätze zum Export."
 
@@ -272,7 +273,7 @@ Tags: UC-003, PK-54
 
 ## Der CSV-Export berücksichtigt den Filter Ein-/Ausgang
 
-Tags: UC-003, PK-54, BR-0075, BR-0009
+Tags: UC-003, PK-73, BR-0075, BR-0009
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -281,9 +282,9 @@ Tags: UC-003, PK-54, BR-0075, BR-0009
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Eingang      |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Eingang      | 10,00      | 60,00      | Sonstiges |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "422"
 
 ## Die CSV-Datei hat den Content-Type text/csv und Zeilenende CRLF
@@ -295,3 +296,239 @@ Tags: UC-003, PK-54
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die CSV-Datei hat den Content-Type "text/csv" und das Zeilenende "CRLF"
+
+## Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Betrag |
+|-------------|--------|
+* Die Umsätze zeigen "2" Treffer
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
+
+## Der Betragsfilter zeigt Ausgänge nach ihrer Höhe ohne Vorzeichen
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 100,00     | 1.000,00   | Alle      |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei           | Betrag    |
+|-----------------------|-----------|
+| Hausverwaltung Berger | -950,00 € |
+
+## Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+|          |              |              | Alle         |            |            | Lebensmittel |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Betrag   |
+|-----------------|----------|
+| Bäckerei Krause | -12,00 € |
+
+## Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 100,00     | 50,00      | Alle      |
+* Die Abfrage der Umsätze antwortet mit dem Status "400"
+* Die Umsätze zeigen die Meldung "Der Betragsbereich ist ungültig: von liegt über bis."
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei | Betrag |
+|-------------|--------|
+
+## Betragsfilter, Kategorie und Textsuche wirken zusammen
+
+Tags: UC-003, PK-73, BR-0010, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Nord     |              |              | Alle         | 10,00      | 20,00      | Freizeit  |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Verwendungszweck | Betrag   |
+|---------------------|------------------|----------|
+| Zeitungsverlag Nord | Zeitungsabo      | -14,90 € |
+
+## Der CSV-Export enthält genau die Umsätze der gefilterten Liste
+
+Tags: UC-003, PK-73, BR-0075
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 10,00      | 60,00      | Sonstiges |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
+|-----------------|------------------|----------|--------------|
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
+* Die Kundin exportiert die Umsätze als CSV-Datei
+* Die CSV-Datei enthält die Zeilen
+| Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
+|-----------------|------------------|--------|--------------|
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 | 2095,30      |
+
+## Seite vor und Seite zurück blättern die Umsatzliste
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Kundin blättert in den Umsätzen "zurück"
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Betrag   |
+|---------------------|----------|
+| Fitnessstudio Vital | -29,90 € |
+| Zeitungsverlag Nord | -14,90 € |
+* Die Umsätze zeigen "2" Treffer
+
+## Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "maria.schulz" meldet sich mit der PIN "11223" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Umsätze zeigen "25" Treffer
+* Die Umsätze zeigen auf der Seite "1" "20" Umsätze
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Umsätze zeigen auf der Seite "2" "5" Umsätze
+* Die Umsätze zeigen die Seite "2"
+* Die Umsätze zeigen "25" Treffer
+
+## Der Filter Ein-/Ausgang ohne Knopf Weiter
+
+Tags: UC-003, PK-73, BR-0105, BR-0009
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          |              |              | Eingang      |
+* Die Umsätze zeigen den Knopf "Weiter" nicht
+
+## Ein Filterwechsel führt die Umsätze auf Seite 1 zurück
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Umsätze zeigen "2" Treffer
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+|          |              |              | Alle         |            |            | Lebensmittel |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Betrag   |
+|-----------------|----------|
+| Bäckerei Krause | -12,00 € |
+* Die Umsätze zeigen "1" Treffer
+* Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
+
+## Der Dienst weist die Kategorie Alle als Formatfehler ab
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft die Umsätze des Kontos "Girokonto" mit dem Parameter "kategorie" "Alle" ab und erhält den Status "400"
+
+## Der Betragsfilter zeigt einen Eingang, dessen Höhe im Betragsbereich liegt
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Eingang      | 500,00     | 3.000,00   | Alle      |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei           | Verwendungszweck |
+|-----------------------|------------------|
+| Lindner Logistik GmbH | Gehalt Januar    |
+
+## Der Betragsfilter schließt Betrag von und Betrag bis ein
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 950,00     | 950,00     | Alle      |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei           | Verwendungszweck |
+|-----------------------|------------------|
+| Hausverwaltung Berger | Miete Februar    |
+
+## Die beiden SEPA-Lastschriften stehen als jüngste Buchungen mit ihrem Saldo danach oben
+
+Tags: UC-003, PK-73, BR-0008, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Verwendungszweck | Betrag   | Saldo danach |
+|---------------------|------------------|----------|--------------|
+| Fitnessstudio Vital | Mitgliedsbeitrag | -29,90 € | 2.145,30 €   |
+| Zeitungsverlag Nord | Zeitungsabo      | -14,90 € | 2.175,20 €   |
