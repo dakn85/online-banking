@@ -38,11 +38,12 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Der Betragsfilter zeigt Ausgänge nach ihrer Höhe ohne Vorzeichen
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält genau die Umsätze der gefilterten Liste
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
+- `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang ohne Knopf Weiter
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
-- `acceptance/specs/umsaetze.spec`: Die Umsätze nennen die Gesamtzahl der Treffer
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 - `acceptance/specs/umsaetze.spec`: Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
 - `acceptance/specs/umsaetze.spec`: Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
+- `acceptance/specs/umsaetze.spec`: Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
 - `acceptance/specs/umsaetze.spec`: Seite vor und Seite zurück blättern die Umsatzliste
 
 ## Aufgaben für die Umsetzung
@@ -137,10 +138,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Wo sollen die 25 Umsätze für den Blätternachweis liegen?
   **Antwort:** Bei einer neuen Demo-Kundin mit eigenem Girokonto, damit bestehende Szenarien unverändert bleiben
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Wie sollen die 200 Lastumsätze je Lastkunde verteilt sein?
   **Antwort:** Über sechs Monate, alle sieben Kategorien, Beträge gestreut
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Wie antwortet der Dienst auf kategorie=Alle?
   **Antwort:** Mit 400 als Formatfehler, weil „Alle“ kein Wert des Feldes kategorie ist.
   _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, UC-003, BR-0104 · c930ded_
@@ -158,10 +159,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Welche Kategorie trägt die Gutschrift einer Lastschrift-Rückgabe?
   **Antwort:** Die Kategorie der zurückgegebenen Lastschrift.
-  _→ eingearbeitet in Umsatz_
+  _→ eingearbeitet in Umsatz · 41f9dfe_
 - Soll BR-0095 die Kategorie des Umsatzes einer Rückgabe selbst nennen, damit Regel und Datenmodell dasselbe sagen?
   **Antwort:** Ja, die Kategorie der zurückgegebenen Lastschrift in BR-0095 ergänzen.
-  _→ eingearbeitet in Umsatz_
+  _→ eingearbeitet in Umsatz · 41f9dfe_
 - An welcher Stelle der Navigation soll „Überweisung“ auf Debitkarte, Persönliche Daten und Umbuchung stehen?
   **Antwort:** Direkt nach „Finanzstatus“, wie auf den meisten Masken.
   _→ noch nicht in der Spezifikation_

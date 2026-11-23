@@ -296,24 +296,6 @@ Tags: UC-003, PK-54
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die CSV-Datei hat den Content-Type "text/csv" und das Zeilenende "CRLF"
 
-## Die Umsätze nennen die Gesamtzahl der Treffer
-
-Tags: UC-003, PK-73, BR-0105, NFR-001
-
-* Testdaten sind zurückgesetzt
-* "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
-* Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
-|----------|--------------|--------------|--------------|------------|------------|-----------|
-|          |              |              | Alle         |            |            | Freizeit  |
-* Die Umsätze zeigen die Zeilen
-| Gegenpartei         | Betrag   |
-|---------------------|----------|
-| Fitnessstudio Vital | -29,90 € |
-| Zeitungsverlag Nord | -14,90 € |
-* Die Umsätze zeigen "2" Treffer
-
 ## Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
 
 Tags: UC-003, PK-73, BR-0105
@@ -438,3 +420,29 @@ Tags: UC-003, PK-73, BR-0105
 | Fitnessstudio Vital | -29,90 € |
 | Zeitungsverlag Nord | -14,90 € |
 * Die Umsätze zeigen "2" Treffer
+
+## Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
+
+Tags: UC-003, PK-73, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "maria.schulz" meldet sich mit der PIN "11223" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Umsätze zeigen "25" Treffer
+* Die Umsätze zeigen auf der Seite "1" "20" Umsätze
+* Die Kundin blättert in den Umsätzen "vor"
+* Die Umsätze zeigen auf der Seite "2" "5" Umsätze
+* Die Umsätze zeigen "25" Treffer
+
+## Der Filter Ein-/Ausgang ohne Knopf Weiter
+
+Tags: UC-003, PK-73, BR-0105, BR-0009
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
+|----------|--------------|--------------|--------------|
+|          |              |              | Eingang      |
+* Die Umsätze zeigen den Knopf "Weiter" nicht
