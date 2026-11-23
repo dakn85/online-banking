@@ -29,3 +29,21 @@ tests:
         value: "Eigene Nutzer je virtuellem Nutzer: lasttest-001 bis lasttest-300 (Kennung aus der VU-Nummer), PIN aus dem Zugang LASTTEST_PIN. Im setup() einmal POST /api/test/lasttest/reset, das gibt jedem Lastkunden 200 Umsätze über sechs Monate."
         by: Mandanten Admin
         at: 2026-11-23T20:39:38.812Z
+    questions:
+      - id: frage-1
+        need: lastmodell
+        question: Soll dieser Lasttest auch Überweisungen senden, und in welchem Umfang?
+        why: NFR-003 verlangt p95 ≤ 500 ms auch für POST /api/ueberweisungen, aber das Skript sendet diese Anfrage gar nicht — es ist kein bloßer Namensfehler. Betrag, Empfänger und Häufigkeit stehen nicht im Steckbrief; ich möchte sie nicht raten. Die VU-Zahl und die Stages (300, 2/5/1 min) bleiben unverändert, nur der Mix je Durchgang ändert sich.
+        options:
+          - label: Jeder Durchgang
+            detail: Härteste Messung für NFR-003 (viele Messpunkte). 0,10 € ist das API-Minimum; bei ~40 Durchgängen je VU bleibt die Tagessumme weit unter dem Standardlimit von 5.000 €.
+            value: In jedem Durchgang nach der Umsatzsuche eine Überweisung über 0,10 € an DE89370400440532013000 mit Tag name ueberweisungen.
+            suggested: true
+          - label: Jeder zehnte Durchgang
+            detail: Weniger Buchungen, dafür deutlich weniger Messpunkte für p95 auf der Überweisung.
+            value: Wie der Export nur in jedem zehnten Durchgang eine Überweisung über 0,10 € an DE89370400440532013000 mit Tag name ueberweisungen.
+          - label: Eigener Lasttest
+            detail: Verschiebt den Zielwert POST /api/ueberweisungen in ein separates Profil; dieser Test misst NFR-003 dann nur für GET /api/konten.
+            value: Dieser Test bleibt bei der Umsatzsuche; die Überweisung wird in einem eigenen Lasttest für NFR-003 gemessen.
+        by: Testautor
+        at: 2026-11-23T21:20:36.684Z
