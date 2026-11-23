@@ -46,6 +46,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang ohne Knopf Weiter
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
+- `acceptance/specs/umsaetze.spec`: Die Umsätze zeigen die Buchungen mit Betrag und Saldo danach, neueste zuerst
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 - `acceptance/specs/umsaetze.spec`: Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
 - `acceptance/specs/umsaetze.spec`: Ein Filterwechsel führt die Umsätze auf Seite 1 zurück
@@ -188,10 +189,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, BR-0105, umsaetze · 92c380e_
 - Führt der Export-Endpunkt die drei Filter unter denselben Parameternamen wie die Liste?
   **Antwort:** Gleiche Namen wie die Liste: betragVon, betragBis, kategorie.
-  _→ eingearbeitet in UC-003, BR-0104_
+  _→ eingearbeitet in UC-003, BR-0104 · 039dd53_
 - Sollen die Szenarien der Umsatzliste Kategorie „Sonstiges“ und Betrag von 10,00 bis 60,00 setzen, wie es beim Export-Szenario schon entschieden ist?
   **Antwort:** Ja, Kategorie „Sonstiges“ und Betrag von 10,00 bis 60,00 setzen.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Soll das Blätter-Szenario mit "lena.hoffmann" laufen oder braucht es dafür eine eigene Demo-Kundin mit über 20 Umsätzen?
   **Antwort:** Eine neue Demo-Kundin mit über 20 Umsätzen wird in der Spezifikation eingeführt und das Szenario nutzt sie.
   _→ noch nicht in der Spezifikation_

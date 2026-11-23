@@ -2,7 +2,7 @@
 
 ## Die Umsätze zeigen die Buchungen mit Betrag und Saldo danach, neueste zuerst
 
-Tags: UC-003, PK-6, BR-0008, BR-0012
+Tags: UC-003, PK-73, BR-0008, BR-0012, BR-0104
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -14,14 +14,15 @@ Tags: UC-003, PK-6, BR-0008, BR-0012
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Alle         | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
 |-----------------|------------------|----------|--------------|
 | Möbel Nord GmbH | Rechnung 4712    | -12,00 € | 2.083,30 €   |
 | Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
+* Die Umsätze zeigen "2" Treffer
 
 ## Die Textsuche zeigt nur Umsätze mit dem Suchtext
 
@@ -65,7 +66,7 @@ Tags: UC-003, PK-6, BR-0010
 
 ## Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 
-Tags: UC-003, PK-73, BR-0009, NFR-001
+Tags: UC-003, PK-73, BR-0009, BR-0104, NFR-001
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -74,16 +75,16 @@ Tags: UC-003, PK-73, BR-0009, NFR-001
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Eingang      |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Eingang      | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei | Verwendungszweck | Betrag | Saldo danach |
 |-------------|------------------|--------|--------------|
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Ausgang      |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Ausgang      | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
 |-----------------|------------------|----------|--------------|
