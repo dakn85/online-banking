@@ -35,11 +35,14 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 ## Akzeptanztests
 
 - `acceptance/specs/umsaetze.spec`: Betragsfilter, Kategorie und Textsuche wirken zusammen
+- `acceptance/specs/umsaetze.spec`: Der Betragsfilter schließt Betrag von und Betrag bis ein
 - `acceptance/specs/umsaetze.spec`: Der Betragsfilter zeigt Ausgänge nach ihrer Höhe ohne Vorzeichen
+- `acceptance/specs/umsaetze.spec`: Der Betragsfilter zeigt einen Eingang, dessen Höhe im Betragsbereich liegt
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export berücksichtigt den Filter Ein-/Ausgang
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export einer leeren Auswahl liefert keine Datei und zeigt die Meldung
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält genau die Umsätze der gefilterten Liste
+- `acceptance/specs/umsaetze.spec`: Der Dienst weist die Kategorie Alle als Formatfehler ab
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang ohne Knopf Weiter
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
@@ -176,10 +179,22 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Gilt für den CSV-Export weiterhin die übernommene Annahme, dass Betrag von/bis und Kategorie nicht angewendet werden, oder die geänderte Fassung von Schritt 10, BR-0075 und Export-Endpunkt, die alle Filter anwenden?
   **Antwort:** Der Export wendet alle Filter an (Schritt 10, BR-0075, Endpunkt); die alte Annahme entfällt.
-  _→ eingearbeitet in UC-003, BR-0105, umsaetze_
+  _→ eingearbeitet in UC-003, BR-0105, umsaetze · 92c380e_
 - Woher nimmt die Maske den Wert der Kennzahl „Seite“, die sie neben der Gesamtzahl anzeigt?
   **Antwort:** Aus dem mitgeschickten Parameter seite: die Maske merkt sich die angefragte Seite und zeigt sie an; der Vertrag bleibt unverändert.
-  _→ eingearbeitet in UC-003, BR-0105, umsaetze_
+  _→ eingearbeitet in UC-003, BR-0105, umsaetze · 92c380e_
 - Welche Kategorie soll die Skizzenzeile Fitnessstudio Vital zeigen, damit Skizze und Demo-Daten übereinstimmen?
   **Antwort:** Freizeit, wie das Datenmodell es für diesen Demo-Umsatz festlegt; die Skizze wird angepasst.
-  _→ eingearbeitet in UC-003, BR-0105, umsaetze_
+  _→ eingearbeitet in UC-003, BR-0105, umsaetze · 92c380e_
+- Führt der Export-Endpunkt die drei Filter unter denselben Parameternamen wie die Liste?
+  **Antwort:** Gleiche Namen wie die Liste: betragVon, betragBis, kategorie.
+  _→ eingearbeitet in UC-003, BR-0104_
+- Sollen die Szenarien der Umsatzliste Kategorie „Sonstiges“ und Betrag von 10,00 bis 60,00 setzen, wie es beim Export-Szenario schon entschieden ist?
+  **Antwort:** Ja, Kategorie „Sonstiges“ und Betrag von 10,00 bis 60,00 setzen.
+  _→ noch nicht in der Spezifikation_
+- Soll das Blätter-Szenario mit "lena.hoffmann" laufen oder braucht es dafür eine eigene Demo-Kundin mit über 20 Umsätzen?
+  **Antwort:** Eine neue Demo-Kundin mit über 20 Umsätzen wird in der Spezifikation eingeführt und das Szenario nutzt sie.
+  _→ noch nicht in der Spezifikation_
+- Wo soll „Postfach (2)“ auf Masken ohne „Empfängervorlagen“ stehen?
+  **Antwort:** Am Ende der Navigation, wie vorgeschlagen.
+  _→ noch nicht in der Spezifikation_

@@ -471,3 +471,43 @@ Tags: UC-003, PK-73, BR-0105
 | Bäckerei Krause | -12,00 € |
 * Die Umsätze zeigen "1" Treffer
 * Die Umsätze zeigen den Hinweis "Für diese Auswahl gibt es keine Umsätze." nicht
+
+## Der Dienst weist die Kategorie Alle als Formatfehler ab
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft die Umsätze des Kontos "Girokonto" mit dem Parameter "kategorie" "Alle" ab und erhält den Status "400"
+
+## Der Betragsfilter zeigt einen Eingang, dessen Höhe im Betragsbereich liegt
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Eingang      | 500,00     | 3.000,00   | Alle      |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei           | Verwendungszweck |
+|-----------------------|------------------|
+| Lindner Logistik GmbH | Gehalt Januar    |
+
+## Der Betragsfilter schließt Betrag von und Betrag bis ein
+
+Tags: UC-003, PK-73, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 950,00     | 950,00     | Alle      |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei           | Verwendungszweck |
+|-----------------------|------------------|
+| Hausverwaltung Berger | Miete Februar    |
