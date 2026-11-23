@@ -58,43 +58,101 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010). Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags, betragVon und betragBis begrenzen die Betragshöhe ohne Vorzeichen, beide Grenzen eingeschlossen, kategorie wählt eine Kategorie der festen Liste; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010, BR-0104). Die Treffer liefert der Dienst seitenweise: seite ist die Nummer der Trefferseite ab 1, seitengroesse die Zahl der Treffer je Seite, die die Maske fest mit 20 mitschickt, und gesamt nennt die Gesamtzahl der Treffer über alle Seiten, in der Reihenfolge nach BR-0008 (BR-0105). Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung. Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010); liegt betragVon über betragBis, mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ (BR-0104). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
           in: path
           name: iban
           required: true
-          schema: { type: string }
-        - description: "Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)"
+          schema:
+            type: string
+            minLength: 22
+            maxLength: 22
+          x-attribute: Konto.iban
+        - description: Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)
           in: query
           name: suchtext
           required: false
-          schema: { type: string }
-        - description: "Nur Umsätze mit Buchungstag ab diesem Tag, einschließlich (BR-0010); liegt dieser Tag nach dem Bis-Datum, antwortet der Dienst mit 400"
+          schema:
+            type: string
+        - description: Nur Umsätze mit Buchungstag ab diesem Tag, einschließlich (BR-0010); liegt dieser Tag nach dem Bis-Datum, antwortet der Dienst mit 400
           in: query
           name: von
           required: false
-          schema: { format: date, type: string }
-        - description: "Nur Umsätze mit Buchungstag bis zu diesem Tag, einschließlich (BR-0010)"
+          schema:
+            format: date
+            type: string
+        - description: Nur Umsätze mit Buchungstag bis zu diesem Tag, einschließlich (BR-0010)
           in: query
           name: bis
           required: false
-          schema: { format: date, type: string }
+          schema:
+            format: date
+            type: string
         - description: Nur Umsätze mit positivem (eingang) oder negativem (ausgang) Betrag; alle schränkt nicht ein (BR-0009)
           in: query
           name: richtung
           required: false
-          schema: { default: alle, enum: [ alle, eingang, ausgang ], type: string }
+          schema:
+            default: alle
+            enum:
+              - alle
+              - eingang
+              - ausgang
+            type: string
+        - description: Nur Umsätze, deren Betragshöhe ohne Vorzeichen mindestens diesem Betrag in Euro entspricht, einschließlich (BR-0104); liegt dieser Betrag über dem Betrag bis, antwortet der Dienst mit 400
+          in: query
+          name: betragVon
+          required: false
+          schema:
+            type: number
+        - description: Nur Umsätze, deren Betragshöhe ohne Vorzeichen höchstens diesem Betrag in Euro entspricht, einschließlich (BR-0104)
+          in: query
+          name: betragBis
+          required: false
+          schema:
+            type: number
+        - description: Nur Umsätze der gewählten Kategorie aus der Werteliste von Umsatz.kategorie (BR-0104); fehlt der Parameter, schränkt er nicht ein, und die nicht einschränkende Auswahl „Alle“ der Maske schickt ihn nicht mit
+          in: query
+          name: kategorie
+          required: false
+          schema:
+            enum:
+              - Wohnen
+              - Lebensmittel
+              - Mobilität
+              - Freizeit
+              - Versicherungen
+              - Gesundheit
+              - Sonstiges
+            type: string
+        - description: Nummer der Trefferseite ab 1; eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung (BR-0105)
+          in: query
+          name: seite
+          required: false
+          schema:
+            default: 1
+            minimum: 1
+            type: integer
+        - description: Zahl der Treffer je Seite; die Maske schickt fest 20 mit (BR-0105)
+          in: query
+          name: seitengroesse
+          required: false
+          schema:
+            default: 20
+            minimum: 1
+            type: integer
       responses:
         "200":
           content: { application/json: { schema: { $ref: '#/components/schemas/Umsaetze' } } }
-          description: "Umsätze des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert"
+          description: "Trefferseite der Umsätze des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert, mit der Gesamtzahl der Treffer über alle Seiten"
         "400":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
-          description: "Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)"
+          description: "Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder Kategorie, ein Von-Datum nach dem Bis-Datum (BR-0010) oder ein Betrag von über Betrag bis (BR-0104)"
           x-rules:
             - Umsatz.buchungstag
+            - Umsatz.betrag
         "401":
           content: { application/json: { schema: { $ref: '#/components/schemas/Fehler' } } }
           description: Keine gültige Sitzung
@@ -103,7 +161,7 @@ paths:
           description: Die IBAN gehört zu keinem Konto der Kundin
           x-rules:
             - BR-0011
-      summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst"
+      summary: "Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl"
       tags: [ Finanzstatus ]
       x-use-cases: [ UC-003, UC-022 ]
   /api/empfaengervorlagen:
@@ -253,7 +311,7 @@ paths:
   /api/test/lasttest/reset:
     post:
       summary: Lastdaten zurücksetzen (nur Testbetrieb)
-      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, keine Umsätze), ihr Tageslimit auf das Standardlimit und ihre persönlichen Daten auf den Ausgangsstand; ihre ausgeführten und vorgemerkten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben im Ausgangsstand keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset leert es wieder, wenn eine Bestätigungsnachricht einer Änderung der persönlichen Daten angelegt wurde. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
+      description: "Nur im Testbetrieb (TEST_MODE=1) vorhanden, sonst antwortet der Dienst mit 404. Beendet die Sitzungen der Lastkunden lasttest-001 bis lasttest-300 und setzt ihre Girokonten auf den Ausgangsstand (Saldo 10.000 Euro, Dispositionsrahmen 1.000 Euro, je 200 Umsätze mit Buchungstagen in den sechs Monaten vor dem Tag des Resets, verteilt über alle sieben Kategorien der Werteliste von Umsatz.kategorie (BR-0104) und mit gestreuten Beträgen in beiden Richtungen (BR-0009)), ihr Tageslimit auf das Standardlimit und ihre persönlichen Daten auf den Ausgangsstand; ihre ausgeführten und vorgemerkten Aufträge, Empfängervorlagen und Daueraufträge sind vergessen, im Ausgangsstand haben die Lastkunden keine Daueraufträge. Lastkunden haben im Ausgangsstand keine Nachrichten: Ihr Postfach ist leer und die Zahl ungelesener Nachrichten ist 0; der Reset leert es wieder, wenn eine Bestätigungsnachricht einer Änderung der persönlichen Daten angelegt wurde. Demo-Kundinnen und ihre Nachrichten bleiben unberührt. Ohne Anmeldung aufrufbar."
       operationId: lastdatenZuruecksetzen
       tags: [ Testbetrieb ]
       x-testbetrieb: true
@@ -317,7 +375,7 @@ paths:
   /api/konten/{iban}/umsaetze/export:
     get:
       summary: Umsätze eines Kontos als CSV-Datei exportieren
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Abfrageparametern, derselben Auswahl, Reihenfolge und demselben Saldo danach wie GET /api/konten/{iban}/umsaetze (BR-0075, BR-0008, BR-0009, BR-0010). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); passt kein Umsatz zur Auswahl, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Werten für Suchtext, Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie wie GET /api/konten/{iban}/umsaetze, aber über alle Seiten der Liste und ohne Seitenparameter (BR-0075, BR-0008, BR-0009, BR-0010, BR-0104, BR-0105); die Datei enthält daher genau die Umsätze, die die Liste zu diesen Filtern über alle Seiten zeigt. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); liegt betragVon über betragBis, mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ (BR-0104); passt kein Umsatz zu den gesetzten Filtern, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
       operationId: umsaetzeExportieren
       tags:
         - Finanzstatus
@@ -330,6 +388,9 @@ paths:
           description: IBAN des Kontos der Kundin
           schema:
             type: string
+            minLength: 22
+            maxLength: 22
+          x-attribute: Konto.iban
         - name: suchtext
           in: query
           required: false
@@ -361,9 +422,35 @@ paths:
               - alle
               - eingang
               - ausgang
+        - name: betragVon
+          in: query
+          required: false
+          description: Nur Umsätze, deren Betragshöhe ohne Vorzeichen mindestens diesem Betrag in Euro entspricht, einschließlich (BR-0104); liegt dieser Betrag über dem Betrag bis, antwortet der Dienst mit 400
+          schema:
+            type: number
+        - name: betragBis
+          in: query
+          required: false
+          description: Nur Umsätze, deren Betragshöhe ohne Vorzeichen höchstens diesem Betrag in Euro entspricht, einschließlich (BR-0104)
+          schema:
+            type: number
+        - name: kategorie
+          in: query
+          required: false
+          description: Nur Umsätze der gewählten Kategorie aus der Werteliste von Umsatz.kategorie (BR-0104); fehlt der Parameter, schränkt er nicht ein, und die nicht einschränkende Auswahl „Alle“ der Maske schickt ihn nicht mit
+          schema:
+            type: string
+            enum:
+              - Wohnen
+              - Lebensmittel
+              - Mobilität
+              - Freizeit
+              - Versicherungen
+              - Gesundheit
+              - Sonstiges
       responses:
         "200":
-          description: CSV-Datei mit den Umsätzen des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert
+          description: CSV-Datei mit den Umsätzen des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert, über alle Seiten
           headers:
             Content-Disposition:
               description: attachment mit dem Dateinamen umsaetze-<IBAN ohne Leerzeichen>.csv
@@ -374,9 +461,10 @@ paths:
               schema:
                 type: string
         "400":
-          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)
+          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder Kategorie, ein Von-Datum nach dem Bis-Datum (BR-0010) oder ein Betrag von über Betrag bis (BR-0104)
           x-rules:
             - Umsatz.buchungstag
+            - Umsatz.betrag
           content:
             application/json:
               schema:
@@ -396,7 +484,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "422":
-          description: Zur Auswahl passt kein Umsatz (BR-0076)
+          description: Zu den gesetzten Filtern passt kein Umsatz (BR-0076)
           x-rules:
             - BR-0076
           content:
@@ -1444,8 +1532,14 @@ components:
           items:
             $ref: '#/components/schemas/Umsatz'
           type: array
+          description: Treffer dieser Seite, in der Reihenfolge nach BR-0008
+        gesamt:
+          description: Gesamtzahl der Treffer über alle Seiten (BR-0105)
+          minimum: 0
+          type: integer
       required:
         - umsaetze
+        - gesamt
       type: object
     Umsatz:
       properties:

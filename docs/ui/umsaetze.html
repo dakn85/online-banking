@@ -8,13 +8,18 @@
     {"name":"zeitraumVon","label":"Zeitraum von","kind":"datum"},
     {"name":"zeitraumBis","label":"Zeitraum bis","kind":"datum"},
     {"name":"richtung","label":"Ein-/Ausgang","kind":"auswahl"},
+    {"name":"betragVon","label":"Betrag von","kind":"betrag","attribute":"Umsatz.betrag"},
+    {"name":"betragBis","label":"Betrag bis","kind":"betrag","attribute":"Umsatz.betrag"},
+    {"name":"kategorieFilter","label":"Kategorie","kind":"auswahl","attribute":"Umsatz.kategorie"},
     {"name":"buchungstag","label":"Buchungstag","kind":"anzeige","attribute":"Umsatz.buchungstag"},
     {"name":"gegenpartei","label":"Gegenpartei","kind":"anzeige","attribute":"Umsatz.gegenpartei"},
     {"name":"verwendungszweck","label":"Verwendungszweck","kind":"anzeige","attribute":"Umsatz.verwendungszweck"},
     {"name":"kategorie","label":"Kategorie","kind":"anzeige","attribute":"Umsatz.kategorie"},
     {"name":"betrag","label":"Betrag","kind":"anzeige","attribute":"Umsatz.betrag"},
     {"name":"saldoDanach","label":"Saldo danach","kind":"anzeige","attribute":"Umsatz.saldoDanach"},
-    {"name":"rueckgabe","label":"Rückgabe","kind":"anzeige","attribute":"Umsatz.zurueckgegeben"}
+    {"name":"rueckgabe","label":"Rückgabe","kind":"anzeige","attribute":"Umsatz.zurueckgegeben"},
+    {"name":"gesamt","label":"Gesamtzahl der Treffer","kind":"anzeige"},
+    {"name":"seite","label":"Seite","kind":"anzeige"}
   ],
   "actions": [
     {"label":"Als CSV exportieren","useCase":"UC-003#9","operation":"GET /api/konten/{iban}/umsaetze/export","screen":"umsaetze"},
@@ -22,7 +27,9 @@
     {"label":"Kontoauszug","useCase":"UC-024#1","screen":"kontoauszug"},
     {"label":"Zurückgeben","useCase":"UC-022#1","screen":"umsaetze"},
     {"label":"Bestätigen","useCase":"UC-022#3","operation":"POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben","screen":"umsaetze"},
-    {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"}
+    {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"},
+    {"label":"Seite zurück","useCase":"UC-003#8","screen":"umsaetze"},
+    {"label":"Seite vor","useCase":"UC-003#8","screen":"umsaetze"}
   ]
 } -->
 <header data-wf="kopf">
@@ -46,8 +53,12 @@
   <label data-wf="feld"><span>Zeitraum von</span><input type="date" name="zeitraumVon"></label>
   <label data-wf="feld"><span>Zeitraum bis</span><input type="date" name="zeitraumBis"></label>
   <label data-wf="feld"><span>Ein-/Ausgang</span><select name="richtung"><option>Alle</option><option>Eingang</option><option>Ausgang</option></select></label>
+  <label data-wf="feld"><span>Betrag von</span><input type="number" step="0.01" name="betragVon" placeholder="100,00"></label>
+  <label data-wf="feld"><span>Betrag bis</span><input type="number" step="0.01" name="betragBis" placeholder="1.000,00"></label>
+  <label data-wf="feld"><span>Kategorie</span><select name="kategorie"><option>Alle</option><option>Wohnen</option><option>Lebensmittel</option><option>Mobilität</option><option>Freizeit</option><option>Versicherungen</option><option>Gesundheit</option><option>Sonstiges</option></select></label>
 </div>
 <p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
+<p data-wf="meldung" role="alert">Der Betragsbereich ist ungültig: von liegt über bis.</p>
 <p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
 <p data-wf="meldung" role="alert">Für diese Auswahl gibt es keine Umsätze zum Export.</p>
 <p data-wf="meldung" role="alert">Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.</p>
@@ -56,14 +67,20 @@
 <p data-wf="meldung" role="alert">Die Lastschrift wurde bereits zurückgegeben.</p>
 <p data-wf="meldung" role="alert">Die Rückgabefrist von 8 Wochen ist abgelaufen.</p>
 <p data-wf="meldung" role="status">Lastschrift zurückgegeben: 29,90 € gutgeschrieben, neuer Saldo 2.175,20 €.</p>
+<dl data-wf="kennzahl">
+  <div><dt>Gesamtzahl der Treffer</dt><dd>2</dd></div>
+  <div><dt>Seite</dt><dd>1</dd></div>
+</dl>
+<div data-wf="aktionen"><button>Seite zurück</button><button>Seite vor</button></div>
 <table data-wf="tabelle">
   <caption>Umsätze Girokonto</caption>
   <thead>
     <tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Kategorie</th><th>Betrag</th><th>Saldo danach</th><th>Rückgabe</th></tr>
   </thead>
   <tbody>
-    <tr><td>31.10.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>Sonstiges</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td></tr>
+    <tr><td>31.10.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>Freizeit</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td></tr>
     <tr><td>12.02.2026</td><td>Bäckerei Krause</td><td>Einkauf</td><td>Lebensmittel</td><td>-12,00 €</td><td>2.145,30 €</td><td></td></tr>
+    <tr><td>28.01.2026</td><td>Stadtwerke Rhein</td><td>Abschlag Strom</td><td>Wohnen</td><td>-89,00 €</td><td>2.157,30 €</td><td>Zurückgegeben</td></tr>
   </tbody>
 </table>
 <div data-wf="leer">

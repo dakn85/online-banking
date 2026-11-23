@@ -107,4 +107,4 @@ Die Ausgabenanalyse liefert der Dienst nur zu einer IBAN, die zu einem Konto der
 
 ## Notizen
 
-Die Kategorie trägt der Umsatz (Entität Umsatz): Die Demo-Umsätze bringen sie fest mit, der Umsatz einer neuen Überweisung erhält „Sonstiges“ (BR-0012). Kategorien ändern oder zuordnen kann die Kundin nicht. Muster für Aufbau, Monatsgrenzen und Meldungen sind UC-003, BR-0010 und BR-0011.
+Die Kategorie trägt der Umsatz (Entität Umsatz): Die Demo-Umsätze bringen sie fest mit, der Umsatz einer neuen Überweisung erhält „Sonstiges“ (BR-0012). Kategorien ändern oder zuordnen kann die Kundin nicht. Muster für Aufbau, Monatsgrenzen und Meldungen sind UC-003, BR-0010 und BR-0011; den Kategoriefilter der Umsatzliste beschreibt BR-0104.
