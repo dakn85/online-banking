@@ -112,10 +112,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, BR-0104, BR-0105 · a87fa7f_
 - Soll die Export-Schnittstelle die Betrags- und Kategoriewerte der Maske annehmen und verwerfen, oder gar nicht führen?
   **Antwort:** Weder noch: Der Export wendet wie die Liste alle Filter an, also auch Betrag von/bis und Kategorie, über alle Seiten ohne Seitenparameter. BR-0075 bleibt unverändert gültig.
-  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export_
+  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export · 6e241d5_
 - Reicht der Nachweis am Betragsfilter, oder soll das Szenario zusätzlich den Kategoriefilter setzen?
   **Antwort:** Das Szenario setzt Betrag von/bis und Kategorie und prüft, dass die Datei genau die Umsätze der Liste enthält.
-  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export_
+  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export · 6e241d5_
 - Passen die Namen seite, seitengroesse und gesamt für Seitenparameter und Trefferzahl?
   **Antwort:** Ja, seite, seitengroesse und gesamt
   _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, Schema Umsaetze, umsaetze, finanzstatus, UC-003, BR-0075, BR-0076, UC-019 · d8430cc_
@@ -128,3 +128,39 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - Darf der Kategoriefilter mehr Kategorien anbieten als die Ausgabenanalyse?
   **Antwort:** Nein, beide nutzen dieselben sieben Kategorien aus der Entität Umsatz.
   _→ eingearbeitet in Umsatz, UC-003, BR-0104 · 5c5598f_
+- Wie zeigt die Maske Umsätze, wenn die angefragte Seite hinter der letzten Trefferseite liegt und die Filter zugleich keinen einzigen Treffer ergeben (etwa nach einem Filterwechsel auf Seite 3)?
+  **Antwort:** Die Maske springt bei jedem Filterwechsel auf Seite 1 und fragt nur Seiten ab 1 an; eine leere Seite hinter der letzten entsteht nur durch Blättern und zeigt keine Zeile, die Gesamtzahl und keinen Hinweis.
+  _→ noch nicht in der Spezifikation_
+- Wo sollen die 25 Umsätze für den Blätternachweis liegen?
+  **Antwort:** Bei einer neuen Demo-Kundin mit eigenem Girokonto, damit bestehende Szenarien unverändert bleiben
+  _→ noch nicht in der Spezifikation_
+- Wie sollen die 200 Lastumsätze je Lastkunde verteilt sein?
+  **Antwort:** Über sechs Monate, alle sieben Kategorien, Beträge gestreut
+  _→ noch nicht in der Spezifikation_
+- Wie antwortet der Dienst auf kategorie=Alle?
+  **Antwort:** Mit 400 als Formatfehler, weil „Alle“ kein Wert des Feldes kategorie ist.
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, UC-003, BR-0104_
+- Sollen „Seite vor“ und „Seite zurück“ nur seitenweise blättern, ohne auf Seite 1 bzw. die letzte Trefferseite zu springen?
+  **Antwort:** Ja, ein Schritt je Knopf, ohne Sprung auf Seite 1 oder die letzte Seite.
+  _→ noch nicht in der Spezifikation_
+- Sollen die Demo-Daten die Kategorie Sonstiges für die Überweisungen behalten oder im Szenario eine andere Kategorie verwendet werden?
+  **Antwort:** Sonstiges bleibt, wie BR-0012 es vorgibt (Annahme des Vorschlags).
+  _→ noch nicht in der Spezifikation_
+- Soll das Szenario zum Filter Ein-/Ausgang beim Export weiter nur die Richtung prüfen oder zusätzlich Betrag und Kategorie setzen?
+  **Antwort:** Zusätzlich Betrag von 10,00 bis 60,00 und Kategorie Sonstiges setzen (Annahme des Vorschlags).
+  _→ noch nicht in der Spezifikation_
+- Woran soll die leere Auswahl des Exports künftig gezeigt werden?
+  **Antwort:** Am Zusammenspiel von Suchtext, Betrag und Kategorie (Annahme des Vorschlags).
+  _→ noch nicht in der Spezifikation_
+- Welche Kategorie trägt die Gutschrift einer Lastschrift-Rückgabe?
+  **Antwort:** Die Kategorie der zurückgegebenen Lastschrift.
+  _→ noch nicht in der Spezifikation_
+- Soll BR-0095 die Kategorie des Umsatzes einer Rückgabe selbst nennen, damit Regel und Datenmodell dasselbe sagen?
+  **Antwort:** Ja, die Kategorie der zurückgegebenen Lastschrift in BR-0095 ergänzen.
+  _→ noch nicht in der Spezifikation_
+- An welcher Stelle der Navigation soll „Überweisung“ auf Debitkarte, Persönliche Daten und Umbuchung stehen?
+  **Antwort:** Direkt nach „Finanzstatus“, wie auf den meisten Masken.
+  _→ noch nicht in der Spezifikation_
+- Sollen alle Masken den Navigationseintrag mit dem Beispielwert „Postfach (2)“ zeigen?
+  **Antwort:** Ja, „Postfach (2)“ wie auf den übrigen Masken und in der Skizze postfach.
+  _→ noch nicht in der Spezifikation_

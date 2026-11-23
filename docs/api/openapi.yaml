@@ -67,6 +67,9 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 22
+            maxLength: 22
+          x-attribute: Konto.iban
         - description: Nur Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, ohne Rücksicht auf Groß- und Kleinschreibung (BR-0010)
           in: query
           name: suchtext
@@ -110,14 +113,12 @@ paths:
           required: false
           schema:
             type: number
-        - description: Nur Umsätze der gewählten Kategorie; alle schränkt nicht ein (BR-0104)
+        - description: Nur Umsätze der gewählten Kategorie aus der Werteliste von Umsatz.kategorie (BR-0104); fehlt der Parameter, schränkt er nicht ein, und die nicht einschränkende Auswahl „Alle“ der Maske schickt ihn nicht mit
           in: query
           name: kategorie
           required: false
           schema:
-            default: alle
             enum:
-              - alle
               - Wohnen
               - Lebensmittel
               - Mobilität
@@ -387,6 +388,9 @@ paths:
           description: IBAN des Kontos der Kundin
           schema:
             type: string
+            minLength: 22
+            maxLength: 22
+          x-attribute: Konto.iban
         - name: suchtext
           in: query
           required: false
@@ -433,12 +437,10 @@ paths:
         - name: kategorie
           in: query
           required: false
-          description: Nur Umsätze der gewählten Kategorie; alle schränkt nicht ein (BR-0104)
+          description: Nur Umsätze der gewählten Kategorie aus der Werteliste von Umsatz.kategorie (BR-0104); fehlt der Parameter, schränkt er nicht ein, und die nicht einschränkende Auswahl „Alle“ der Maske schickt ihn nicht mit
           schema:
             type: string
-            default: alle
             enum:
-              - alle
               - Wohnen
               - Lebensmittel
               - Mobilität
