@@ -11,6 +11,8 @@ const basisUrl = process.env.BANKING_URL || 'http://localhost:18300';
 const text = (wert: unknown) => String(wert);
 // Beträge stehen mit geschütztem Leerzeichen vor „€“ und je nach Browser mit typografischem Minus.
 const sichtbar = (wert: string | null) => (wert ?? '').replace(/\u00a0/g, ' ').replace(/\u2212/g, '-').trim();
+// \u201e1.000,00\u201c \u2192 1000: Betrag aus einer Szenario-Zelle als Zahl in Euro, wie die Seite sie in die Abfrage schreibt.
+const euroZahl = (wert: string) => Number(wert.replace(/[\s\u20ac.]/g, '').replace(',', '.'));
 
 export default class StepImplementation {
   private static browser?: Browser;
@@ -38,6 +40,7 @@ export default class StepImplementation {
     StepImplementation.auszug = undefined;
     StepImplementation.umsatzstaende = [];
     StepImplementation.umsaetzeGefiltert = false;
+    StepImplementation.umsatzantworten.clear();
   }
 
   @AfterSuite()
@@ -50,7 +53,15 @@ export default class StepImplementation {
   /** Ein Browser und eine Seite für die ganze Suite. */
   protected async seite(): Promise<Page> {
     StepImplementation.browser ??= await chromium.launch();
-    StepImplementation.page ??= await (await StepImplementation.browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'de-DE' })).newPage();
+    if (!StepImplementation.page) {
+      const page = await (await StepImplementation.browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'de-DE' })).newPage();
+      // UC-003: Status je Abfrage der Umsatzliste, für „Die Abfrage der Umsätze antwortet mit dem Status …“.
+      page.on('response', r => {
+        const url = new URL(r.url());
+        if (/^\/api\/konten\/[^/]+\/umsaetze$/.test(url.pathname)) StepImplementation.umsatzantworten.set(url.search.replace(/^\?/, ''), r.status());
+      });
+      StepImplementation.page = page;
+    }
     return StepImplementation.page;
   }
 
@@ -311,14 +322,93 @@ export default class StepImplementation {
     await form.getByLabel('Zeitraum von').fill(zelle('Zeitraum von'));
     await form.getByLabel('Zeitraum bis').fill(zelle('Zeitraum bis'));
     await form.getByRole('radiogroup', { name: 'Ein-/Ausgang' }).getByRole('radio', { name: zelle('Ein-/Ausgang') || 'Alle', exact: true }).check();
-    // Dieselbe Abfrage, die die Seite baut: Reihenfolge suchtext, von, bis, richtung; Leeres fehlt.
+    // Ältere Tabellen ohne Betrag und Kategorie: die Felder bleiben leer bzw. „Alle“.
+    await form.getByLabel('Betrag von').fill(zelle('Betrag von'));
+    await form.getByLabel('Betrag bis').fill(zelle('Betrag bis'));
+    await form.getByLabel('Kategorie').selectOption({ label: zelle('Kategorie') || 'Alle' });
+    // Dieselbe Abfrage, die die Seite baut: Reihenfolge suchtext, von, bis, richtung, betragVon, betragBis, kategorie; Leeres und „Alle“ fehlen.
+    // Ein Filterwechsel führt auf Seite 1 (UC-003 A12), die Seitengröße ist fest 20 (BR-0105).
     const q = new URLSearchParams();
     if (zelle('Suchtext')) q.set('suchtext', zelle('Suchtext'));
     if (zelle('Zeitraum von')) q.set('von', zelle('Zeitraum von'));
     if (zelle('Zeitraum bis')) q.set('bis', zelle('Zeitraum bis'));
     const richtung = (zelle('Ein-/Ausgang') || 'Alle').toLowerCase();
     if (richtung !== 'alle') q.set('richtung', richtung);
+    if (zelle('Betrag von')) q.set('betragVon', String(euroZahl(zelle('Betrag von'))));
+    if (zelle('Betrag bis')) q.set('betragBis', String(euroZahl(zelle('Betrag bis'))));
+    if (zelle('Kategorie') && zelle('Kategorie') !== 'Alle') q.set('kategorie', zelle('Kategorie'));
+    q.set('seite', '1');
+    q.set('seitengroesse', '20');
     await this.umsaetzeGeladen(q.toString());
+  }
+
+  /** Die Abfrage, die die Umsätze gerade zeigen (data-abfrage). */
+  private async umsatzabfrage(page: Page): Promise<URLSearchParams> {
+    return new URLSearchParams((await page.locator('#umsaetze-ergebnis').getAttribute('data-abfrage')) ?? '');
+  }
+
+  /** Den Wert einer Kennzahl über der Liste (BR-0105). */
+  private async umsatzkennzahl(page: Page, name: string): Promise<string> {
+    const kennzahl = page.locator(`#umsaetze-ergebnis [data-kennzahl="${name}"]`);
+    assert.strictEqual(await kennzahl.count(), 1, `Die Kennzahl „${name}“ fehlt`);
+    return sichtbar(await kennzahl.innerText());
+  }
+
+  @Step('Die Umsätze zeigen <anzahl> Treffer')
+  public async umsaetzeTreffer(anzahl: string) {
+    const page = await this.umsaetzeGeladen();
+    assert.strictEqual(await this.umsatzkennzahl(page, 'Gesamtzahl der Treffer'), text(anzahl), 'Gesamtzahl der Treffer');
+  }
+
+  /** „vor“ oder „zurück“: wählt „Seite vor“ bzw. „Seite zurück“ und wartet auf die Umsätze der neuen Seite. */
+  @Step('Die Kundin blättert in den Umsätzen <richtung>')
+  public async umsaetzeBlaettern(richtung: string) {
+    const page = await this.umsaetzeGeladen();
+    const vor = text(richtung).trim() === 'vor';
+    assert.ok(vor || text(richtung).trim() === 'zurück', `Blättern „${richtung}“: erwartet „vor“ oder „zurück“`);
+    const q = await this.umsatzabfrage(page);
+    q.set('seite', String(Number(q.get('seite') ?? '1') + (vor ? 1 : -1)));
+    await page.locator('#umsaetze-ergebnis').getByRole('button', { name: vor ? 'Seite vor' : 'Seite zurück', exact: true }).click();
+    await this.umsaetzeGeladen(q.toString());
+  }
+
+  @Step('Die Umsätze zeigen die Seite <seite>')
+  public async umsaetzeSeite(seite: string) {
+    const page = await this.umsaetzeGeladen();
+    assert.strictEqual(await this.umsatzkennzahl(page, 'Seite'), text(seite), 'Kennzahl Seite');
+  }
+
+  @Step('Die Umsätze zeigen auf der Seite <seite> <anzahl> Umsätze')
+  public async umsaetzeAufSeite(seite: string, anzahl: string) {
+    const page = await this.umsaetzeGeladen();
+    assert.strictEqual((await this.umsatzabfrage(page)).get('seite'), text(seite), 'Angefragte Seite');
+    assert.strictEqual(await this.umsatzkennzahl(page, 'Seite'), text(seite), 'Kennzahl Seite');
+    assert.strictEqual(await page.locator('#umsaetze-ergebnis [data-zeile]').count(), Number(anzahl), `Umsätze auf Seite ${seite}`);
+  }
+
+  /** Der Status, mit dem der Dienst die Abfrage beantwortet hat, die die Umsätze gerade zeigen. */
+  @Step('Die Abfrage der Umsätze antwortet mit dem Status <status>')
+  public async umsatzabfrageStatus(status: string) {
+    const page = await this.umsaetzeGeladen();
+    const abfrage = (await this.umsatzabfrage(page)).toString();
+    const ist = StepImplementation.umsatzantworten.get(abfrage);
+    assert.strictEqual(ist, Number(status), `Status der Abfrage ${abfrage}`);
+  }
+
+  @Step('Die Umsätze zeigen den Knopf <knopf> nicht')
+  public async umsaetzeOhneKnopf(knopf: string) {
+    const page = await this.umsaetzeGeladen();
+    assert.strictEqual(await page.locator('main').getByRole('button', { name: text(knopf) }).count(), 0, `Der Knopf „${knopf}“ ist zu sehen`);
+  }
+
+  @Step('Die angemeldete Kundin ruft die Umsätze des Kontos <konto> mit dem Parameter <name> <wert> ab und erhält den Status <status>')
+  public async umsaetzeMitParameter(konto: string, name: string, wert: string, status: string) {
+    const page = await this.seite();
+    const konten = await (await page.context().request.get(`${basisUrl}/api/konten`)).json() as { konten: { kontoname: string; iban: string }[] };
+    const iban = konten.konten.find(k => k.kontoname === text(konto))?.iban;
+    assert.ok(iban, `Konto „${konto}“ fehlt`);
+    const antwort = await page.context().request.get(`${basisUrl}/api/konten/${encodeURIComponent(iban)}/umsaetze?${new URLSearchParams({ [text(name)]: text(wert) })}`);
+    assert.strictEqual(antwort.status(), Number(status), `GET Umsätze mit ${name}=${wert}`);
   }
 
   @Step('Die Umsätze zeigen die Zeilen <tabelle>')
@@ -822,6 +912,8 @@ export default class StepImplementation {
   private static umsatzstaende: string[][] = [];
   /** Hat das Szenario die Umsatzliste gefiltert? Dann prüft „Die Umsätze zeigen die Zeilen“ die ganze Liste. */
   private static umsaetzeGefiltert = false;
+  /** Status der Antworten auf GET /api/konten/{iban}/umsaetze im laufenden Szenario, je Abfrage (ohne „?“). */
+  private static umsatzantworten = new Map<string, number>();
 
   /** BR-0079: heute in Europe/Berlin plus n Tage, JJJJ-MM-TT. */
   private static inTagen(n: number): string {

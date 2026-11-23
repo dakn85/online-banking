@@ -1,18 +1,36 @@
-/* UC-003 Umsätze eines Kontos: Konto, Suche und Filter, darunter die Umsätze nach Buchungstag, neueste zuerst.
+/* UC-003 Umsätze eines Kontos: Konto, Suche und Filter, darunter die Umsätze nach Buchungstag, neueste zuerst,
+   seitenweise mit 20 Treffern und der Gesamtzahl (BR-0105).
    UC-022 Lastschrift zurückgeben an der Zeile, Rückfrage als Dialog. Maske: docs/ui/umsaetze.html */
 (function () {
   const { html, symbol } = Aventa;
   const WOCHENTAG = new Intl.DateTimeFormat('de-DE', { weekday: 'long', timeZone: 'UTC' });
 
-  /** Die Abfrage in fester Reihenfolge; ein leerer Filter fehlt (BR-0010). Das Ergebnis trägt sie als data-abfrage. */
-  function abfrage(form) {
+  /** BR-0105: feste Seitengröße der Maske. */
+  const SEITENGROESSE = 20;
+  const KATEGORIEN = ['Wohnen', 'Lebensmittel', 'Mobilität', 'Freizeit', 'Versicherungen', 'Gesundheit', 'Sonstiges'];
+
+  /** „1.000,00“ oder „950“ → Zahl in Euro; Leeres oder Unlesbares → null. */
+  function alsBetrag(text) {
+    const t = String(text).replace(/[\s€]/g, '');
+    if (!/^\d{1,3}(\.\d{3})*(,\d{1,2})?$|^\d+(,\d{1,2})?$/.test(t)) return null;
+    return Number(t.replace(/\./g, '').replace(',', '.'));
+  }
+
+  /** Die Filter in fester Reihenfolge; ein leerer Filter und die Kategorie „Alle“ fehlen (BR-0010, BR-0104). */
+  function filter(form) {
     const p = new URLSearchParams();
     const suchtext = form.suchtext.value.trim();
     if (suchtext) p.set('suchtext', suchtext);
     if (form.zeitraumVon.value) p.set('von', form.zeitraumVon.value);
     if (form.zeitraumBis.value) p.set('bis', form.zeitraumBis.value);
     if (form.richtung.value !== 'alle') p.set('richtung', form.richtung.value);
-    return p.toString();
+    for (const name of ['betragVon', 'betragBis']) {
+      const betrag = alsBetrag(form[name].value);
+      form[name].toggleAttribute('aria-invalid', form[name].value.trim() !== '' && betrag === null);
+      if (betrag !== null) p.set(name, String(betrag));
+    }
+    if (form.kategorie.value) p.set('kategorie', form.kategorie.value);
+    return p;
   }
 
   /** UC-022: „Zurückgeben“ an einer SEPA-Lastschrift, „Zurückgegeben“ nach der Rückgabe, sonst nichts. */
@@ -75,6 +93,9 @@
               <div class="segmente" role="radiogroup" aria-labelledby="richtung-titel">
                 ${[['alle', 'Alle'], ['eingang', 'Eingang'], ['ausgang', 'Ausgang']].map(([w, t]) => `<label><input type="radio" name="richtung" value="${w}"${w === 'alle' ? ' checked' : ''}>${t}</label>`).join('')}
               </div></div>
+            <label class="feld feld--betragfilter"><span>Betrag von</span><input name="betragVon" inputmode="decimal" autocomplete="off" placeholder="100,00"></label>
+            <label class="feld feld--betragfilter"><span>Betrag bis</span><input name="betragBis" inputmode="decimal" autocomplete="off" placeholder="1.000,00"></label>
+            <label class="feld feld--kategorie"><span>Kategorie</span><select name="kategorie"><option value="">Alle</option>${KATEGORIEN.map(k => `<option>${k}</option>`).join('')}</select></label>
           </form>` : ''}
           <section id="umsaetze-ergebnis" class="umsaetze" aria-label="Umsätze" aria-live="polite"></section>
         </div>
@@ -82,25 +103,50 @@
       const ergebnis = flaeche.querySelector('#umsaetze-ergebnis');
       const form = flaeche.querySelector('form.filterleiste');
 
+      /** BR-0105: Kennzahlen und Blättern über der Liste; „Seite vor“ fragt auch hinter der letzten Trefferseite an (A10). */
+      const blaettern = (seite, gesamt) => `<div class="trefferleiste">
+          <dl class="kennzahlen">
+            <div><dt>Gesamtzahl der Treffer</dt><dd class="zahl" data-kennzahl="Gesamtzahl der Treffer">${gesamt}</dd></div>
+            <div><dt>Seite</dt><dd class="zahl" data-kennzahl="Seite">${seite}</dd></div>
+          </dl>
+          <div class="blaettern">
+            <button type="button" class="knopf knopf--klein knopf--still" data-blaettern="-1"${seite <= 1 ? ' disabled' : ''}>${symbol('zurueck', 16)}Seite zurück</button>
+            <button type="button" class="knopf knopf--klein knopf--still" data-blaettern="1">Seite vor${symbol('weiter', 16)}</button>
+          </div>
+        </div>`;
+
+      /** Seite, die die Maske zuletzt angefragt hat; jeder Filterwechsel setzt sie auf 1 (A12). */
+      let seite = 1;
       let laufend = 0;
       async function laden(meldung) {
-        const q = form ? abfrage(form) : '';
+        const q = form ? filter(form) : new URLSearchParams();
+        q.set('seite', String(seite));
+        q.set('seitengroesse', String(SEITENGROESSE));
+        const abfrage = q.toString();
         const nummer = ++laufend;
         let inhalt;
         try {
-          const { umsaetze } = await Aventa.api(`/api/konten/${encodeURIComponent(gesucht || '-')}/umsaetze${q ? `?${q}` : ''}`);
-          inhalt = umsaetze.length ? `<div class="flaeche umsatzliste" data-felder="Buchungstag|Gegenpartei|Verwendungszweck|Kategorie|Betrag|Saldo danach|Rückgabe">${gruppen(umsaetze)}</div>`
-            : `<div class="flaeche leer">${symbol('leer')}<strong>Keine Umsätze</strong>Für diese Auswahl gibt es keine Umsätze.</div>`;
+          const { umsaetze, gesamt } = await Aventa.api(`/api/konten/${encodeURIComponent(gesucht || '-')}/umsaetze?${abfrage}`);
+          // A2 nur ohne jeden Treffer; eine leere Seite hinter der letzten zeigt keine Zeile und keinen Hinweis (A10).
+          inhalt = blaettern(seite, gesamt) + (umsaetze.length ? `<div class="flaeche umsatzliste" data-felder="Buchungstag|Gegenpartei|Verwendungszweck|Kategorie|Betrag|Saldo danach|Rückgabe">${gruppen(umsaetze)}</div>`
+            : gesamt ? '' : `<div class="flaeche leer">${symbol('leer')}<strong>Keine Umsätze</strong>Für diese Auswahl gibt es keine Umsätze.</div>`);
         } catch (fehler) {
           if (fehler.status !== 400 && fehler.status !== 404) throw fehler;
-          // A3 und A4: nur die Meldung, keine Liste und kein Hinweis nach A2.
+          // A3, A4 und A9: nur die Meldung, keine Liste und kein Hinweis nach A2.
           inhalt = `<p class="meldung" role="alert">${html(fehler.message)}</p>`;
         }
         if (nummer !== laufend) return;
         ergebnis.innerHTML = inhalt;
         if (meldung) ergebnis.insertAdjacentHTML('afterbegin', meldung);
-        ergebnis.dataset.abfrage = q;
+        ergebnis.dataset.abfrage = abfrage;
       }
+
+      ergebnis.addEventListener('click', ev => {
+        const knopf = ev.target.closest('button[data-blaettern]');
+        if (!knopf || knopf.disabled) return;
+        seite = Math.max(1, seite + Number(knopf.dataset.blaettern));
+        laden();
+      });
 
       /** UC-022 Schritte 1 bis 7: Rückfrage zeigen, bei „Bestätigen“ die Rückgabe auslösen, Umsätze neu laden und die Meldung zeigen. */
       const rueckfrage = flaeche.querySelector('#umsaetze-rueckfrage');
@@ -130,9 +176,9 @@
         rueckfrage.close();
       });
 
-      /** UC-003 Schritte 9 und 10: die Datei mit den Filtern der Liste holen und herunterladen; Fehler als Meldung über der Liste. */
+      /** UC-003 Schritte 9 und 10: die Datei mit den Filtern der Liste über alle Seiten holen, ohne Seitenparameter (BR-0075); Fehler als Meldung über der Liste. */
       async function exportieren() {
-        const q = form ? abfrage(form) : '';
+        const q = form ? filter(form).toString() : '';
         const fehlgeschlagen = 'Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.';
         let meldung = '';
         try {
@@ -161,8 +207,9 @@
       flaeche.querySelector('#umsaetze-export').addEventListener('click', exportieren);
       if (form) {
         let warten;
-        form.addEventListener('input', () => { clearTimeout(warten); warten = setTimeout(laden, 250); });
-        form.addEventListener('change', () => { clearTimeout(warten); laden(); });
+        // A12: jeder Filterwechsel zeigt die Treffer ab Seite 1.
+        form.addEventListener('input', () => { clearTimeout(warten); seite = 1; warten = setTimeout(laden, 250); });
+        form.addEventListener('change', () => { clearTimeout(warten); seite = 1; laden(); });
       }
       await laden();
     },
