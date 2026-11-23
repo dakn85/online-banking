@@ -19,9 +19,17 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 7 geändert, und 5 weitere |
+| Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl | Geändert | Zusammenfassung geändert, Beschreibung geändert, Parameter betragVon (query) neu, und 6 weitere |
+| Umsätze eines Kontos als CSV-Datei exportieren | Geändert | Beschreibung geändert, Antwort 200 geändert |
+| Umsaetze | Geändert | Eigenschaft umsaetze geändert, Eigenschaft gesamt neu |
+| Finanzstatus | Geändert | Skizze geändert |
+| Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 12 weitere |
+| BR-0075 Export mit den Umsätzen der Liste | Geändert | Text geändert |
+| BR-0076 Export nur mit Umsätzen | Geändert | Text geändert |
 | BR-0104 Betragsfilter und Kategoriefilter der Umsatzliste | Neu | Neu in UC-003 |
 | BR-0105 Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl | Neu | Neu in UC-003 |
+| UC-019 Ausgabenanalyse des Girokontos anzeigen | Geändert | Notizen geändert |
 
 ## Akzeptanztests
 
@@ -36,16 +44,48 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 
 ## Aufgaben für die Umsetzung
 
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Zusammenfassung geändert
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Beschreibung geändert
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter betragVon (query) neu
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter betragBis (query) neu
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter kategorie (query) neu
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter seite (query) neu
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter seitengroesse (query) neu
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Antwort 200 geändert
+- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Antwort 400 geändert
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Beschreibung geändert
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 200 geändert
+- [ ] Umsaetze: Eigenschaft umsaetze geändert
+- [ ] Umsaetze: Eigenschaft gesamt neu
+- [ ] Finanzstatus: Skizze geändert
+- [ ] Umsätze: Feld Betrag von neu
+- [ ] Umsätze: Feld Betrag bis neu
+- [ ] Umsätze: Feld Kategorie neu
+- [ ] Umsätze: Feld Gesamtzahl der Treffer neu
+- [ ] Umsätze: Feld Seite neu
+- [ ] Umsätze: Aktion Seite zurück neu
+- [ ] Umsätze: Aktion Seite vor neu
+- [ ] Umsätze: Skizze geändert
 - [ ] UC-003: Ziel geändert
 - [ ] UC-003: Schritt 4 geändert
+- [ ] UC-003: Schritt 6 geändert
 - [ ] UC-003: Schritt 7 geändert
 - [ ] UC-003: Schritt 8 geändert
+- [ ] UC-003: Schritt 10 geändert
+- [ ] UC-003: A2 geändert
 - [ ] UC-003: A9 neu: Betragsbereich ungültig
 - [ ] UC-003: A10 neu: Seite hinter der letzten Trefferseite
+- [ ] UC-003: Sequenzdiagramm geändert
+- [ ] UC-003: Erfolg 2 geändert
+- [ ] UC-003: BR-0075 geändert
+- [ ] UC-003: BR-0076 geändert
 - [ ] UC-003: BR-0104 neu: Betragsfilter und Kategoriefilter der Umsatzliste
 - [ ] UC-003: BR-0105 neu: Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl
+- [ ] BR-0075: Text geändert
+- [ ] BR-0076: Text geändert
 - [ ] BR-0104: Neu in UC-003
 - [ ] BR-0105: Neu in UC-003
+- [ ] UC-019: Notizen geändert
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-73 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-73 grün
 
@@ -53,10 +93,28 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 
 - Wogegen prüft der Filter Betrag von/bis den Umsatz: gegen die Höhe des Betrags ohne Vorzeichen oder gegen den Betrag mit Vorzeichen?
   **Antwort:** Gegen die Höhe ohne Vorzeichen: -950,00 € liegt zwischen 100 und 1.000; Ein-/Ausgang bleibt der eigene Filter.
-  _→ eingearbeitet in UC-003, BR-0104, BR-0105_
+  _→ eingearbeitet in UC-003, BR-0104, BR-0105 · a87fa7f_
 - Wie viele Umsätze zeigt eine Seite der Umsatzliste?
   **Antwort:** 20 Umsätze je Seite, fest von der Maske mitgeschickt.
-  _→ eingearbeitet in UC-003, BR-0104, BR-0105_
+  _→ eingearbeitet in UC-003, BR-0104, BR-0105 · a87fa7f_
 - Was antwortet der Dienst, wenn die angefragte Seite hinter der letzten Trefferseite liegt?
   **Antwort:** Eine leere Trefferseite mit der Gesamtzahl und ohne Meldung.
-  _→ eingearbeitet in UC-003, BR-0104, BR-0105_
+  _→ eingearbeitet in UC-003, BR-0104, BR-0105 · a87fa7f_
+- Soll die Export-Schnittstelle die Betrags- und Kategoriewerte der Maske annehmen und verwerfen, oder gar nicht führen?
+  **Antwort:** Weder noch: Der Export wendet wie die Liste alle Filter an, also auch Betrag von/bis und Kategorie, über alle Seiten ohne Seitenparameter. BR-0075 bleibt unverändert gültig.
+  _→ noch nicht in der Spezifikation_
+- Reicht der Nachweis am Betragsfilter, oder soll das Szenario zusätzlich den Kategoriefilter setzen?
+  **Antwort:** Das Szenario setzt Betrag von/bis und Kategorie und prüft, dass die Datei genau die Umsätze der Liste enthält.
+  _→ noch nicht in der Spezifikation_
+- Passen die Namen seite, seitengroesse und gesamt für Seitenparameter und Trefferzahl?
+  **Antwort:** Ja, seite, seitengroesse und gesamt
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, Schema Umsaetze, umsaetze, finanzstatus, UC-003, BR-0075, BR-0076, UC-019_
+- Soll der Zustand „Zurückgegeben“ auch im Finanzstatus als eigene Spalte erscheinen?
+  **Antwort:** Nein, die Umsatzliste zeigt ihn, im Finanzstatus genügt der Hinweis
+  _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, Schema Umsaetze, umsaetze, finanzstatus, UC-003, BR-0075, BR-0076, UC-019_
+- Gehört „Alle“ zur Werteliste der Kategorie oder nur zur Maske?
+  **Antwort:** Nur zur Maske: das Feld kategorie kennt „Alle“ nicht.
+  _→ noch nicht in der Spezifikation_
+- Darf der Kategoriefilter mehr Kategorien anbieten als die Ausgabenanalyse?
+  **Antwort:** Nein, beide nutzen dieselben sieben Kategorien aus der Entität Umsatz.
+  _→ noch nicht in der Spezifikation_
