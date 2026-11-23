@@ -55,67 +55,30 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
 - `acceptance/specs/umsaetze.spec`: Seite vor und Seite zurück blättern die Umsatzliste
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Zusammenfassung geändert
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Beschreibung geändert
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter betragVon (query) neu
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter betragBis (query) neu
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter kategorie (query) neu
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter seite (query) neu
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter seitengroesse (query) neu
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Antwort 200 geändert
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Antwort 400 geändert
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Beschreibung geändert
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Parameter betragVon (query) neu
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Parameter betragBis (query) neu
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Parameter kategorie (query) neu
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 200 geändert
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 400 geändert
-- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 422 geändert
-- [ ] Umsaetze: Eigenschaft umsaetze geändert
-- [ ] Umsaetze: Eigenschaft gesamt neu
-- [ ] Umsatz: Beschreibung geändert
-- [ ] Umsatz: Attribut kategorie geändert
-- [ ] Finanzstatus: Skizze geändert
-- [ ] Umsätze: Feld Betrag von neu
-- [ ] Umsätze: Feld Betrag bis neu
-- [ ] Umsätze: Feld Kategorie neu
-- [ ] Umsätze: Feld Gesamtzahl der Treffer neu
-- [ ] Umsätze: Feld Seite neu
-- [ ] Umsätze: Aktion Seite zurück neu
-- [ ] Umsätze: Aktion Seite vor neu
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Ziel geändert
-- [ ] UC-003: Notizen geändert
-- [ ] UC-003: Schritt 4 geändert
-- [ ] UC-003: Schritt 6 geändert
-- [ ] UC-003: Schritt 7 geändert
-- [ ] UC-003: Schritt 8 geändert
-- [ ] UC-003: Schritt 10 geändert
-- [ ] UC-003: A2 geändert
-- [ ] UC-003: A5 geändert
-- [ ] UC-003: A6 geändert
-- [ ] UC-003: A7 geändert
-- [ ] UC-003: A8 geändert
-- [ ] UC-003: A9 neu: Betragsbereich ungültig
-- [ ] UC-003: A10 neu: Seite hinter der letzten Trefferseite
-- [ ] UC-003: A11 neu: Betragsbereich ungültig beim Export
-- [ ] UC-003: A12 neu: Filterwechsel
-- [ ] UC-003: A13 neu: Filterwert ungültig
-- [ ] UC-003: Sequenzdiagramm geändert
-- [ ] UC-003: Erfolg 2 geändert
-- [ ] UC-003: BR-0075 geändert
-- [ ] UC-003: BR-0076 geändert
-- [ ] UC-003: BR-0104 neu: Betragsfilter und Kategoriefilter der Umsatzliste
-- [ ] UC-003: BR-0105 neu: Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl
-- [ ] BR-0075: Text geändert
-- [ ] BR-0076: Text geändert
-- [ ] BR-0104: Neu in UC-003
-- [ ] BR-0105: Neu in UC-003
-- [ ] UC-019: Notizen geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-73 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-73 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-23_
+
+## Bausteine
+- Online-Banking-Dienst: `src/umsaetze.ts` (Filter, Seiten, Demo-Umsätze), `src/main.ts` (Routen Umsätze und Export), `src/kunden.ts`/`src/konten.ts` (Demo-Kundin maria.schulz)
+- Oberfläche: `public/seiten/umsaetze.js`, `public/styles.css`
+- Akzeptanztests: `acceptance/tests/StepImplementation.ts` (fehlende Schritte)
+
+## Schritte
+1. **BR-0104 Filter im Dienst:** `filterAus` liest `betragVon`, `betragBis` (Zahl ≥ 0, sonst 400) und `kategorie` (Werteliste von Umsatz.kategorie, „Alle“ und Unbekanntes 400, UC-003 A13). Liegt betragVon über betragBis: 400 „Der Betragsbereich ist ungültig: von liegt über bis.“ (A9, A11). `umsaetzeVon` vergleicht die Betragshöhe ohne Vorzeichen in Cent, beide Grenzen eingeschlossen, und die Kategorie; alle gesetzten Filter wirken zusammen.
+2. **BR-0105 Seiten:** `GET /api/konten/{iban}/umsaetze` liest `seite` (≥ 1, Vorgabe 1) und `seitengroesse` (≥ 1, Vorgabe 20), sonst 400; liefert `{umsaetze, gesamt}` mit dem Ausschnitt in der Reihenfolge nach BR-0008. Eine Seite hinter der letzten liefert `umsaetze: []` mit `gesamt`.
+3. **BR-0075/BR-0076 Export:** gleiche Filter, keine Seitenparameter, alle Treffer; 404 vor 400 vor 422 wie bisher.
+4. **UC-003 Maske:** Filterleiste um Betrag von, Betrag bis (Texteingabe mit Dezimalkomma, Umwandlung in Zahl) und Kategorie (Auswahl „Alle“ plus Werteliste) ergänzen; die Maske schickt `seitengroesse=20` und `seite` mit. Kennzahlen „Gesamtzahl der Treffer“ und „Seite“, Knöpfe „Seite zurück“/„Seite vor“. Jeder Filterwechsel setzt auf Seite 1 (A12). 400 zeigt nur die Meldung statt der Liste (A9), eine leere Seite hinter der letzten zeigt keine Zeile, die Gesamtzahl und keinen Hinweis (A10); Hinweis nach A2 nur bei `gesamt = 0`.
+5. **Demo-Kundin maria.schulz (PIN 11223):** Girokonto mit 25 Demo-Umsätzen, Saldo danach rückwärts aus dem Kontosaldo (C-001, BR-0008); setzt der Demo-Reset zurück.
+6. **Schritte:** Filterschritt um Betrag von/bis und Kategorie erweitert; neu: Treffer, Blättern, Seite, Zeilenzahl je Seite, Status der Abfrage, Knopf nicht vorhanden, direkter API-Aufruf mit Parameter.
+7. **Unit-Tests** in `test/umsaetze.test.ts` für BR-0104 und BR-0105.
+
+## Rahmenänderung
+Keine neue Bibliothek. Daten der neuen Demo-Kundin (IBAN, Saldo, Kundennummer, Umsätze) legt die Spezifikation nicht fest; ich wähle sie und melde sie als Rückmeldung.
+
+## Offene Fragen
+
+- [ ] Das Szenario „Der CSV-Export enthält genau die Umsätze der gefilterten Liste“ (acceptance/specs/umsaetze.spec:384–405) kann so nicht grün werden. Es setzt die Testdaten zurück und führt keine Überweisung aus, filtert dann ohne Suchtext mit Betrag 10,00 bis 60,00 und Kategorie „Sonstiges“ und erwartet zwei Zeilen: „Bäckerei Krause | Einkauf | -12,00 € | 2.190,10 €“ und „Möbel Nord GmbH | Rechnung 4711 | -50,00 € | 2.095,30 €“. Dabei gibt es drei Widersprüche: (1) Bäckerei Krause trägt laut entity_model.md (Umsatz.kategorie) die Kategorie Lebensmittel, nicht Sonstiges. (2) Möbel Nord GmbH entsteht nur aus einer Überweisung, und das Szenario führt keine aus. (3) Eine Überweisung von heute stünde nach BR-0008 über der Bäckerei (Buchungstag 12.02.2026), nicht darunter. Nach dem Ausgangsstand liefert der Filter 10–60 / Sonstiges auf Lenas Girokonto keinen Treffer: Die Liste zeigt den Hinweis nach A2, und der Export antwortet mit 422.
 
 ## Entscheidungen
 
