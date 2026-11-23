@@ -374,7 +374,7 @@ paths:
   /api/konten/{iban}/umsaetze/export:
     get:
       summary: Umsätze eines Kontos als CSV-Datei exportieren
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Werten für Suchtext, Zeitraum und Ein-/Ausgang wie GET /api/konten/{iban}/umsaetze, aber über alle Seiten der Liste und ohne die Filter Betrag von/bis und Kategorie sowie ohne Seitengröße (BR-0075, BR-0008, BR-0009, BR-0010, BR-0104, BR-0105); die Datei enthält daher auch Umsätze, die die Liste gerade nicht zeigt. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); passt kein Umsatz zur Auswahl, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN als CSV-Datei, mit denselben Werten für Suchtext, Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie wie GET /api/konten/{iban}/umsaetze, aber über alle Seiten der Liste und ohne Seitenparameter (BR-0075, BR-0008, BR-0009, BR-0010, BR-0104, BR-0105); die Datei enthält daher genau die Umsätze, die die Liste zu diesen Filtern über alle Seiten zeigt. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011); liegt von nach bis, mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ (BR-0010); liegt betragVon über betragBis, mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ (BR-0104); passt kein Umsatz zu den gesetzten Filtern, mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ (BR-0076). Format der Datei: Content-Type text/csv in UTF-8 mit BOM, Semikolon als Trennzeichen, Zeilenende CRLF, erste Zeile die Kopfzeile Buchungstag;Gegenpartei;Verwendungszweck;Betrag;Saldo danach, danach je Umsatz eine Zeile. Der Buchungstag steht als TT.MM.JJJJ, Betrag und Saldo danach in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, ein Ausgang negativ (Beispiel -50,00). Ein Text mit Semikolon, Anführungszeichen oder Zeilenumbruch steht in Anführungszeichen, ein Anführungszeichen darin doppelt. Der Dateiname im Kopf Content-Disposition lautet umsaetze-<IBAN ohne Leerzeichen>.csv. Der Dienst speichert die Datei nicht."
       operationId: umsaetzeExportieren
       tags:
         - Finanzstatus
@@ -418,6 +418,34 @@ paths:
               - alle
               - eingang
               - ausgang
+        - name: betragVon
+          in: query
+          required: false
+          description: Nur Umsätze, deren Betragshöhe ohne Vorzeichen mindestens diesem Betrag in Euro entspricht, einschließlich (BR-0104); liegt dieser Betrag über dem Betrag bis, antwortet der Dienst mit 400
+          schema:
+            type: number
+        - name: betragBis
+          in: query
+          required: false
+          description: Nur Umsätze, deren Betragshöhe ohne Vorzeichen höchstens diesem Betrag in Euro entspricht, einschließlich (BR-0104)
+          schema:
+            type: number
+        - name: kategorie
+          in: query
+          required: false
+          description: Nur Umsätze der gewählten Kategorie; alle schränkt nicht ein (BR-0104)
+          schema:
+            type: string
+            default: alle
+            enum:
+              - alle
+              - Wohnen
+              - Lebensmittel
+              - Mobilität
+              - Freizeit
+              - Versicherungen
+              - Gesundheit
+              - Sonstiges
       responses:
         "200":
           description: CSV-Datei mit den Umsätzen des Kontos, neueste zuerst, nach den Abfrageparametern gefiltert, über alle Seiten
@@ -431,9 +459,10 @@ paths:
               schema:
                 type: string
         "400":
-          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder ein Von-Datum nach dem Bis-Datum (BR-0010)
+          description: Abfrageparameter ungültig, etwa ein Datum nicht im Format JJJJ-MM-TT, eine unbekannte Richtung oder Kategorie, ein Von-Datum nach dem Bis-Datum (BR-0010) oder ein Betrag von über Betrag bis (BR-0104)
           x-rules:
             - Umsatz.buchungstag
+            - Umsatz.betrag
           content:
             application/json:
               schema:
@@ -453,7 +482,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fehler'
         "422":
-          description: Zur Auswahl passt kein Umsatz (BR-0076)
+          description: Zu den gesetzten Filtern passt kein Umsatz (BR-0076)
           x-rules:
             - BR-0076
           content:

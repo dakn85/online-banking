@@ -20,12 +20,12 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl | Geändert | Zusammenfassung geändert, Beschreibung geändert, Parameter betragVon (query) neu, und 6 weitere |
-| Umsätze eines Kontos als CSV-Datei exportieren | Geändert | Beschreibung geändert, Antwort 200 geändert |
+| Umsätze eines Kontos als CSV-Datei exportieren | Geändert | Beschreibung geändert, Parameter betragVon (query) neu, Parameter betragBis (query) neu, und 4 weitere |
 | Umsaetze | Geändert | Eigenschaft umsaetze geändert, Eigenschaft gesamt neu |
 | Umsatz | Geändert | Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 12 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 4 geändert, Schritt 6 geändert, und 15 weitere |
 | BR-0075 Export mit den Umsätzen der Liste | Geändert | Text geändert |
 | BR-0076 Export nur mit Umsätzen | Geändert | Text geändert |
 | BR-0104 Betragsfilter und Kategoriefilter der Umsatzliste | Neu | Neu in UC-003 |
@@ -36,7 +36,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 
 - `acceptance/specs/umsaetze.spec`: Betragsfilter, Kategorie und Textsuche wirken zusammen
 - `acceptance/specs/umsaetze.spec`: Der Betragsfilter zeigt Ausgänge nach ihrer Höhe ohne Vorzeichen
-- `acceptance/specs/umsaetze.spec`: Der CSV-Export bleibt bei Suchtext, Zeitraum und Ein-/Ausgang
+- `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält genau die Umsätze der gefilterten Liste
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
 - `acceptance/specs/umsaetze.spec`: Die Umsätze nennen die Gesamtzahl der Treffer
@@ -55,7 +55,12 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Antwort 200 geändert
 - [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Antwort 400 geändert
 - [ ] Umsätze eines Kontos als CSV-Datei exportieren: Beschreibung geändert
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Parameter betragVon (query) neu
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Parameter betragBis (query) neu
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Parameter kategorie (query) neu
 - [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 200 geändert
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 400 geändert
+- [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 422 geändert
 - [ ] Umsaetze: Eigenschaft umsaetze geändert
 - [ ] Umsaetze: Eigenschaft gesamt neu
 - [ ] Umsatz: Attribut kategorie geändert
@@ -75,8 +80,11 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] UC-003: Schritt 8 geändert
 - [ ] UC-003: Schritt 10 geändert
 - [ ] UC-003: A2 geändert
+- [ ] UC-003: A5 geändert
+- [ ] UC-003: A8 geändert
 - [ ] UC-003: A9 neu: Betragsbereich ungültig
 - [ ] UC-003: A10 neu: Seite hinter der letzten Trefferseite
+- [ ] UC-003: A11 neu: Betragsbereich ungültig beim Export
 - [ ] UC-003: Sequenzdiagramm geändert
 - [ ] UC-003: Erfolg 2 geändert
 - [ ] UC-003: BR-0075 geändert
@@ -104,10 +112,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, BR-0104, BR-0105 · a87fa7f_
 - Soll die Export-Schnittstelle die Betrags- und Kategoriewerte der Maske annehmen und verwerfen, oder gar nicht führen?
   **Antwort:** Weder noch: Der Export wendet wie die Liste alle Filter an, also auch Betrag von/bis und Kategorie, über alle Seiten ohne Seitenparameter. BR-0075 bleibt unverändert gültig.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export_
 - Reicht der Nachweis am Betragsfilter, oder soll das Szenario zusätzlich den Kategoriefilter setzen?
   **Antwort:** Das Szenario setzt Betrag von/bis und Kategorie und prüft, dass die Datei genau die Umsätze der Liste enthält.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-003, BR-0075, BR-0076, GET /api/konten/{iban}/umsaetze/export_
 - Passen die Namen seite, seitengroesse und gesamt für Seitenparameter und Trefferzahl?
   **Antwort:** Ja, seite, seitengroesse und gesamt
   _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, Schema Umsaetze, umsaetze, finanzstatus, UC-003, BR-0075, BR-0076, UC-019 · d8430cc_
@@ -116,7 +124,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, Schema Umsaetze, umsaetze, finanzstatus, UC-003, BR-0075, BR-0076, UC-019 · d8430cc_
 - Gehört „Alle“ zur Werteliste der Kategorie oder nur zur Maske?
   **Antwort:** Nur zur Maske: das Feld kategorie kennt „Alle“ nicht.
-  _→ eingearbeitet in Umsatz, UC-003, BR-0104_
+  _→ eingearbeitet in Umsatz, UC-003, BR-0104 · 5c5598f_
 - Darf der Kategoriefilter mehr Kategorien anbieten als die Ausgabenanalyse?
   **Antwort:** Nein, beide nutzen dieselben sieben Kategorien aus der Entität Umsatz.
-  _→ eingearbeitet in Umsatz, UC-003, BR-0104_
+  _→ eingearbeitet in Umsatz, UC-003, BR-0104 · 5c5598f_

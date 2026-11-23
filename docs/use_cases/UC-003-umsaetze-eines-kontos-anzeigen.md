@@ -26,7 +26,7 @@
 7. Das System zeigt nur die Umsätze, deren Gegenpartei oder Verwendungszweck den Suchtext enthält, deren Buchungstag im Zeitraum liegt, deren Betrag zur gewählten Richtung passt, deren Betragshöhe zwischen Betrag von und Betrag bis liegt und deren Kategorie der gewählten entspricht (BR-0009, BR-0010, BR-0104).
 8. Die Kundin blättert vor und zurück; das System zeigt die Treffer seitenweise mit 20 Umsätzen je Seite, nennt die Gesamtzahl der Treffer und behält die Reihenfolge nach BR-0008 über alle Seiten bei (BR-0105).
 9. Die Kundin wählt „Als CSV exportieren“.
-10. Das System liefert die Umsätze, die zu den eingestellten Werten für Suchtext, Zeitraum und Ein-/Ausgang passen, über alle Seiten und ohne die Filter Betrag von/bis und Kategorie (BR-0104), mit derselben Reihenfolge und demselben Saldo danach als CSV-Datei, die der Browser herunterlädt; es speichert die Datei nicht (BR-0075).
+10. Das System liefert die Umsätze, die zu den eingestellten Werten für Suchtext, Zeitraum, Ein-/Ausgang, Betrag von und Betrag bis sowie Kategorie passen, über alle Seiten und ohne Seitenparameter, mit derselben Reihenfolge und demselben Saldo danach als CSV-Datei, die der Browser herunterlädt; es speichert die Datei nicht (BR-0075, BR-0104).
 11. Die Kundin wählt „Kontoauszug“; das System öffnet die Maske Kontoauszug für das Konto mit der IBAN der angezeigten Umsätze, weiter mit UC-024.
 
 ## Alternativabläufe
@@ -63,7 +63,7 @@
 
 ### A5: Keine Umsätze zum Export
 
-**Auslöser:** Zu Suchtext, Zeitraum und Richtung passt kein Umsatz, oder das Konto hat keine Umsätze (BR-0076). (Schritt 10).  
+**Auslöser:** Zu Suchtext, Zeitraum, Richtung, Betrag von/bis und Kategorie passt kein Umsatz, oder das Konto hat keine Umsätze (BR-0076). (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Für diese Auswahl gibt es keine Umsätze zum Export.“.
@@ -84,7 +84,7 @@
 
 ### A8: Export fehlgeschlagen
 
-**Auslöser:** Der Dienst antwortet mit einem anderen Fehler als in A1 und A5 bis A7 oder ist nicht erreichbar. (Schritt 10).  
+**Auslöser:** Der Dienst antwortet mit einem anderen Fehler als in A1, A5 bis A7 und A11 oder ist nicht erreichbar. (Schritt 10).  
 **Ablauf:**
 
 1. Das System liefert keine Datei und zeigt die Meldung „Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.“.
@@ -104,6 +104,13 @@
 
 1. Das System zeigt keine Zeile und die Gesamtzahl der Treffer.
 2. Eine Meldung zeigt das System nicht.
+
+### A11: Betragsbereich ungültig beim Export
+
+**Auslöser:** Betrag von liegt über Betrag bis (BR-0104). (Schritt 10).  
+**Ablauf:**
+
+1. Das System liefert keine Datei und zeigt die Meldung „Der Betragsbereich ist ungültig: von liegt über bis.“.
 
 ## Sequenzdiagramm
 
@@ -160,11 +167,11 @@ Umsätze liefert der Dienst und eine Rückgabe (UC-022) bucht er nur zu einer IB
 
 ### BR-0075: Export mit den Umsätzen der Liste
 
-Der Export enthält genau die Umsätze, die die Umsatzliste zu denselben Werten für Suchtext, Zeitraum und Ein-/Ausgang zeigt (BR-0009, BR-0010), über alle Seiten der Liste hinweg; die Filter Betrag von/bis und Kategorie (BR-0104) und die Seitengröße (BR-0105) wendet er nicht an, sodass die Datei auch Umsätze enthalten kann, die die Liste gerade nicht zeigt, je Umsatz eine Zeile, in der Reihenfolge der Liste und mit demselben Saldo danach (BR-0008). Der Dienst erzeugt die Datei bei jedem Aufruf neu und speichert sie nicht.
+Der Export enthält genau die Umsätze, die die Umsatzliste zu denselben Werten für Suchtext, Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie zeigt (BR-0009, BR-0010, BR-0104), über alle Seiten der Liste hinweg; Seitenparameter führt er nicht und die Seitengröße (BR-0105) wendet er nicht an, je Umsatz eine Zeile, in der Reihenfolge der Liste und mit demselben Saldo danach (BR-0008). Der Dienst erzeugt die Datei bei jedem Aufruf neu und speichert sie nicht.
 
 ### BR-0076: Export nur mit Umsätzen
 
-Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu Suchtext, Zeitraum und Richtung passt; Betrag von/bis und Kategorie wertet er dabei nicht aus (BR-0075); sonst antwortet der Dienst mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ und liefert keine Datei. Vorher gelten in dieser Reihenfolge BR-0011 (404) und die Prüfung des Zeitraums nach BR-0010 (400); bei fremder IBAN und ungültigem Zeitraum antwortet der Dienst daher mit 404.
+Der Export liefert nur dann eine Datei, wenn mindestens ein Umsatz zu den gesetzten Filtern passt, also zu Suchtext, Zeitraum und Richtung (BR-0009, BR-0010) sowie Betrag von/bis und Kategorie (BR-0104); sonst antwortet der Dienst mit 422 und dem Feld fehler „Für diese Auswahl gibt es keine Umsätze zum Export.“ und liefert keine Datei. Vorher gelten in dieser Reihenfolge BR-0011 (404) und die Prüfung von Zeitraum und Betragsbereich nach BR-0010 und BR-0104 (400); bei fremder IBAN und ungültigem Zeitraum antwortet der Dienst daher mit 404.
 
 ### BR-0104: Betragsfilter und Kategoriefilter der Umsatzliste
 

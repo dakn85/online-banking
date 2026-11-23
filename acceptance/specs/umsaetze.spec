@@ -296,24 +296,6 @@ Tags: UC-003, PK-54
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die CSV-Datei hat den Content-Type "text/csv" und das Zeilenende "CRLF"
 
-## Der CSV-Export bleibt bei Suchtext, Zeitraum und Ein-/Ausgang
-
-Tags: UC-003, PK-73, BR-0075
-
-* Testdaten sind zurückgesetzt
-* "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
-* Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
-|----------|--------------|--------------|--------------|------------|------------|--------------|
-|          |              |              | Alle         | 10,00      | 20,00      | Lebensmittel |
-* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
-* Die CSV-Datei enthält die Zeilen
-| Gegenpartei         | Betrag | Saldo danach |
-|---------------------|--------|--------------|
-| Zeitungsverlag Nord | -14,90 | 2175,20      |
-| Bäckerei Krause     | -12,00 | 2190,10      |
-
 ## Die Umsätze nennen die Gesamtzahl der Treffer
 
 Tags: UC-003, PK-73, BR-0105, NFR-001
@@ -416,3 +398,24 @@ Tags: UC-003, PK-73, BR-0010
 | Gegenpartei         | Verwendungszweck | Betrag   |
 |---------------------|------------------|----------|
 | Zeitungsverlag Nord | Zeitungsabo      | -14,90 € |
+
+## Der CSV-Export enthält genau die Umsätze der gefilterten Liste
+
+Tags: UC-003, PK-73, BR-0075
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+|          |              |              | Alle         | 10,00      | 20,00      | Lebensmittel |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Betrag   |
+|-----------------|----------|
+| Bäckerei Krause | -12,00 € |
+* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
+* Die CSV-Datei enthält die Zeilen
+| Gegenpartei     | Betrag | Saldo danach |
+|-----------------|--------|--------------|
+| Bäckerei Krause | -12,00 | 2190,10      |
