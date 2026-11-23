@@ -36,6 +36,9 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 
 - `acceptance/specs/umsaetze.spec`: Betragsfilter, Kategorie und Textsuche wirken zusammen
 - `acceptance/specs/umsaetze.spec`: Der Betragsfilter zeigt Ausgänge nach ihrer Höhe ohne Vorzeichen
+- `acceptance/specs/umsaetze.spec`: Der CSV-Export berücksichtigt den Filter Ein-/Ausgang
+- `acceptance/specs/umsaetze.spec`: Der CSV-Export einer leeren Auswahl liefert keine Datei und zeigt die Meldung
+- `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
 - `acceptance/specs/umsaetze.spec`: Der CSV-Export enthält genau die Umsätze der gefilterten Liste
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang ohne Knopf Weiter
@@ -138,10 +141,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Wo sollen die 25 Umsätze für den Blätternachweis liegen?
   **Antwort:** Bei einer neuen Demo-Kundin mit eigenem Girokonto, damit bestehende Szenarien unverändert bleiben
-  _→ eingearbeitet_
+  _→ eingearbeitet · 54d459c_
 - Wie sollen die 200 Lastumsätze je Lastkunde verteilt sein?
   **Antwort:** Über sechs Monate, alle sieben Kategorien, Beträge gestreut
-  _→ eingearbeitet_
+  _→ eingearbeitet · 54d459c_
 - Wie antwortet der Dienst auf kategorie=Alle?
   **Antwort:** Mit 400 als Formatfehler, weil „Alle“ kein Wert des Feldes kategorie ist.
   _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, UC-003, BR-0104 · c930ded_
@@ -150,13 +153,13 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in UC-003, umsaetze · c026169_
 - Sollen die Demo-Daten die Kategorie Sonstiges für die Überweisungen behalten oder im Szenario eine andere Kategorie verwendet werden?
   **Antwort:** Sonstiges bleibt, wie BR-0012 es vorgibt (Annahme des Vorschlags).
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Soll das Szenario zum Filter Ein-/Ausgang beim Export weiter nur die Richtung prüfen oder zusätzlich Betrag und Kategorie setzen?
   **Antwort:** Zusätzlich Betrag von 10,00 bis 60,00 und Kategorie Sonstiges setzen (Annahme des Vorschlags).
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Woran soll die leere Auswahl des Exports künftig gezeigt werden?
   **Antwort:** Am Zusammenspiel von Suchtext, Betrag und Kategorie (Annahme des Vorschlags).
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Welche Kategorie trägt die Gutschrift einer Lastschrift-Rückgabe?
   **Antwort:** Die Kategorie der zurückgegebenen Lastschrift.
   _→ eingearbeitet in Umsatz · 41f9dfe_

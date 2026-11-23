@@ -157,7 +157,7 @@ Tags: UC-003, PK-54
 
 ## Der CSV-Export enthält die gefilterten Umsätze, neueste zuerst, mit Saldo danach
 
-Tags: UC-003, PK-54, BR-0075
+Tags: UC-003, PK-73, BR-0075
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -169,9 +169,9 @@ Tags: UC-003, PK-54, BR-0075
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Alle         | 10,00      | 60,00      | Sonstiges |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
 * Die CSV-Datei enthält die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
@@ -218,15 +218,15 @@ Tags: UC-003, PK-54
 
 ## Der CSV-Export einer leeren Auswahl liefert keine Datei und zeigt die Meldung
 
-Tags: UC-003, PK-54, BR-0076
+Tags: UC-003, PK-73, BR-0076
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Alle         |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
+|----------|--------------|--------------|--------------|------------|------------|--------------|
+| Möbel    |              |              | Alle         | 10,00      | 60,00      | Lebensmittel |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "422"
 * Die Umsätze zeigen die Meldung "Für diese Auswahl gibt es keine Umsätze zum Export."
 
@@ -272,7 +272,7 @@ Tags: UC-003, PK-54
 
 ## Der CSV-Export berücksichtigt den Filter Ein-/Ausgang
 
-Tags: UC-003, PK-54, BR-0075, BR-0009
+Tags: UC-003, PK-73, BR-0075, BR-0009
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -281,9 +281,9 @@ Tags: UC-003, PK-54, BR-0075, BR-0009
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
-|----------|--------------|--------------|--------------|
-| Möbel    |              |              | Eingang      |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Möbel    |              |              | Eingang      | 10,00      | 60,00      | Sonstiges |
 * Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "422"
 
 ## Die CSV-Datei hat den Content-Type text/csv und Zeilenende CRLF
