@@ -1,7 +1,7 @@
 /* UC-003 Umsätze eines Kontos: Demo-Umsätze (C-001), Reihenfolge und Saldo danach (BR-0008), Filter (BR-0009, BR-0010, BR-0104), Seiten (BR-0105). */
 import { randomUUID } from 'node:crypto';
 import { ibansJeKennung, kontoMitIban } from './konten';
-import { Auswahl, istDemokunde } from './kunden';
+import { Auswahl, istDemokunde, istLastkunde, LAST_PRAEFIX } from './kunden';
 
 export interface Umsatz {
   /** Kennung des Umsatzes, vom Dienst vergeben (1..36 Zeichen). */
@@ -105,7 +105,44 @@ const MARIA_GIRO: Demo[] = ([
 ] as const).map(([tag, gegenpartei, verwendungszweck, betrag, kategorie]) => ({
   buchungstag: tag, gebuchtAm: `${tag}T10:00:00.000Z`, gegenpartei, verwendungszweck, betrag, kategorie,
 }));
-/** Lena und Jonas haben dieselben Demo-Umsätze auf ihren eigenen Konten; Lastkunden haben keine. */
+/** Je Lastkonto so viele Ausgangsumsätze (architecture.md, Lastkunden; POST /api/test/lasttest/reset). */
+export const LAST_UMSAETZE = 200;
+/** Buchungstage der Lastumsätze: 1 bis LAST_TAGE Tage vor dem Tag des Resets, sicher innerhalb von sechs Monaten. */
+const LAST_TAGE = 180;
+/** Höhen der Ausgänge in Euro, von wenigen Euro bis in den vierstelligen Bereich, damit auch ein enger Betragsfilter Treffer hat. */
+const LAST_AUSGAENGE = [2.5, 4.99, 8.4, 12, 19.9, 27.5, 39, 54.8, 75, 110, 189, 320, 640, 1250];
+const LAST_GEGENPARTEI: Record<Kategorie, string> = {
+  Wohnen: 'Hausverwaltung Lastweg', Lebensmittel: 'Supermarkt Lastmarkt', Mobilität: 'Verkehrsbetrieb Lastlinie', Freizeit: 'Freizeitpark Lastland',
+  Versicherungen: 'Lastversicherung AG', Gesundheit: 'Apotheke Lastplatz', Sonstiges: 'Lastdienst GmbH',
+};
+
+/**
+ * Ausgangsumsätze des Lastkunden mit dieser Nummer, neueste zuerst: Buchungstage gleichmäßig über die Tage vor dem Reset,
+ * alle sieben Kategorien reihum (BR-0104), jeder zehnte ein Eingang, sonst Ausgänge mit gestreuten Beträgen (BR-0009).
+ * Fest je Nummer, damit Lastläufe wiederholbar sind; Eingänge und Ausgänge halten sich ungefähr die Waage.
+ */
+export function lastumsaetze(nr: number): Demo[] {
+  const liste: Demo[] = [];
+  for (let k = 0; k < LAST_UMSAETZE; k++) {
+    const position = k * LAST_TAGE / LAST_UMSAETZE; // 0 bis unter LAST_TAGE, mit k wachsend
+    const tag = vorTagen(1 + Math.floor(position));
+    // Innerhalb eines Tages bucht der ältere früher, damit die Reihenfolge nach BR-0008 der Erzeugung folgt.
+    const minuten = 1430 - Math.round((position % 1) * 1400);
+    const zeit = `${String(Math.floor(minuten / 60)).padStart(2, '0')}:${String(minuten % 60).padStart(2, '0')}`;
+    const kategorie = KATEGORIEN[(k + nr) % KATEGORIEN.length];
+    const streuung = (nr * 7919 + k * 104729) % 1000;
+    const eingang = k % 10 === 3;
+    const betrag = eingang ? 1200 + streuung : -LAST_AUSGAENGE[(k * 5 + nr) % LAST_AUSGAENGE.length];
+    liste.push({
+      buchungstag: tag, gebuchtAm: `${tag}T${zeit}:00.000Z`, kategorie, betrag,
+      gegenpartei: eingang ? 'Lastarbeitgeber GmbH' : LAST_GEGENPARTEI[kategorie],
+      verwendungszweck: eingang ? `Gutschrift ${LAST_UMSAETZE - k}` : `Lastumsatz ${LAST_UMSAETZE - k}`,
+    });
+  }
+  return liste;
+}
+
+/** Lena und Jonas haben dieselben Demo-Umsätze auf ihren eigenen Konten; Lastkunden haben je LAST_UMSAETZE Lastumsätze. */
 const DEMO: Record<string, { kennung: string; umsaetze: () => Demo[] }> = {
   DE02500105175407324911: { kennung: 'lena.hoffmann', umsaetze: () => [...lastschriften(), ...GIRO_ALT] },
   DE44500105175407325028: { kennung: 'lena.hoffmann', umsaetze: () => KARTE },
@@ -137,18 +174,26 @@ const umsaetze = new Map<string, Umsatz[]>();
 /** Alle Umsätze je IBAN ohne die Grenze der Lastkunden: Grundlage der Ausgabenanalyse (BR-0083). */
 const alleUmsaetze = new Map<string, Umsatz[]>();
 
-/** Setzt die Umsätze der Konten der ausgewählten Kennungen zurück: Demo-Umsätze, sonst keine. Ohne Auswahl die Demo-Kundinnen. */
+/** Ausgangsumsätze eines Kontos, neueste zuerst: Demo-Umsätze, beim Girokonto eines Lastkunden die Lastumsätze, sonst keine. */
+function ausgangsumsaetze(kennung: string, iban: string): Demo[] {
+  if (DEMO[iban]?.kennung === kennung) return DEMO[iban].umsaetze();
+  if (istLastkunde(kennung)) return lastumsaetze(Number(kennung.slice(LAST_PRAEFIX.length)));
+  return [];
+}
+
+/** Setzt die Umsätze der Konten der ausgewählten Kennungen auf den Ausgangsstand zurück. Ohne Auswahl die Demo-Kundinnen. */
 export function zuruecksetzen(auswahl: Auswahl = istDemokunde): void {
   for (const [kennung, ibans] of ibansJeKennung()) {
     if (!auswahl(kennung)) continue;
     for (const iban of ibans) {
-      const demo = DEMO[iban]?.kennung === kennung ? DEMO[iban].umsaetze() : [];
       let saldo = kontoMitIban(kennung, iban)?.saldo ?? 0;
       const mitSaldo: Umsatz[] = [];
-      for (const u of demo) {
+      for (const u of ausgangsumsaetze(kennung, iban)) {
         mitSaldo.push({ ...u, umsatzId: randomUUID(), sepaLastschrift: u.sepaLastschrift ?? false, zurueckgegeben: false, waehrung: 'EUR', saldoDanach: runden(saldo) });
         saldo -= u.betrag;
       }
+      // Gespeichert in der Reihenfolge der Buchung (älteste zuerst): Die Grenze der Lastkunden verdrängt so den ältesten Umsatz (buchen).
+      mitSaldo.reverse();
       umsaetze.set(iban, mitSaldo);
       alleUmsaetze.set(iban, [...mitSaldo]);
     }

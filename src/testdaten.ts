@@ -63,7 +63,7 @@ function zuruecksetzenFuer(auswahl: Auswahl): void {
   kundendatenZuruecksetzen(auswahl);
 }
 
-/** Legt im Testbetrieb die Lastkunden mit einem Girokonto ohne Umsätze an. */
+/** Legt im Testbetrieb die Lastkunden mit einem Girokonto und dessen Ausgangsumsätzen an (umsaetze.ts, lastumsaetze). */
 export function lastkundenAnlegen(pin: string = LASTTEST_PIN_STANDARD): Kunde[] {
   const kunden: Kunde[] = [];
   for (let nr = 1; nr <= LASTKUNDEN_ANZAHL; nr++) {

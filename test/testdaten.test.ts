@@ -5,7 +5,7 @@ import { finanzstatus, ibansJeKennung, kontoMitIban } from '../src/konten';
 import { kundeMitKennung } from '../src/kunden';
 import { anlegen, anzahl } from '../src/sitzung';
 import { Ablehnung, ausfuehren, ibanGueltig } from '../src/ueberweisung';
-import { umsaetzeVon } from '../src/umsaetze';
+import { KATEGORIEN, LAST_UMSAETZE, umsaetzeVon } from '../src/umsaetze';
 import * as vorlagen from '../src/empfaengervorlagen';
 import {
   demoZuruecksetzen, LAST_SPEICHERGRENZE, lastdatenZuruecksetzen, lastIban, lastKennung, LASTKUNDEN_ANZAHL, lastkundenAnlegen, LASTTEST_PIN_STANDARD,
@@ -62,7 +62,7 @@ test('Eine Überweisung bucht nur bei der Kundin; dieselbe Auftrags-Kennung eine
   assert.equal(ausfuehren(LENA, auftrag('a-1', LENA_GIRO)).neu, false, 'Lenas Wiederholung bucht weiter nicht');
 });
 
-test('Lastkunden: 300 Kennungen mit der Test-PIN, je ein Girokonto mit gültiger, eindeutiger IBAN, 10.000 € und Rahmen, ohne Umsätze', () => {
+test('Lastkunden: 300 Kennungen mit der Test-PIN, je ein Girokonto mit gültiger, eindeutiger IBAN, 10.000 € und Rahmen, 200 Ausgangsumsätze', () => {
   const kunden = lastkundenAnlegen();
   assert.equal(kunden.length, LASTKUNDEN_ANZAHL);
   assert.deepEqual([kunden[0].kennung, kunden[299].kennung], ['lasttest-001', 'lasttest-300']);
@@ -77,13 +77,41 @@ test('Lastkunden: 300 Kennungen mit der Test-PIN, je ein Girokonto mit gültiger
     assert.ok(ibanGueltig(giro.iban), `${giro.iban} hat eine gültige Prüfziffer`);
     assert.match(giro.iban, /^DE\d{20}$/);
     assert.deepEqual([giro.art, giro.saldo, giro.dispositionsrahmen, giro.verfuegbarerBetrag, gesamtvermoegen], ['Girokonto', 10000, 1000, 11000, 10000]);
-    assert.deepEqual(umsaetzeVon(lastKennung(nr), giro.iban), []);
+    const liste = umsaetzeVon(lastKennung(nr), giro.iban)!;
+    assert.equal(liste.length, LAST_UMSAETZE);
+    assert.equal(liste[0].saldoDanach, 10000, 'der jüngste trägt den Kontosaldo');
     ibans.add(giro.iban);
   }
   assert.equal(ibans.size, LASTKUNDEN_ANZAHL, 'jede IBAN nur einmal');
   for (const demo of [LENA, JONAS]) for (const k of finanzstatus(demo.kennung).konten) assert.ok(!ibans.has(k.iban));
   assert.equal(lastkundenAnlegen('24680')[0].pin, '24680', 'PIN aus LASTTEST_PIN');
   lastkundenAnlegen();
+});
+
+test('BR-0104/BR-0009: Lastumsätze liegen in den sechs Monaten vor dem Reset, decken alle sieben Kategorien und streuen in beiden Richtungen', () => {
+  lastdatenZuruecksetzen();
+  const heute = new Date().toISOString().slice(0, 10);
+  const grenze = new Date(`${heute}T00:00:00Z`);
+  grenze.setUTCMonth(grenze.getUTCMonth() - 6);
+  const sechsMonate = grenze.toISOString().slice(0, 10);
+  for (const nr of [1, 150, 300]) {
+    const liste = umsaetzeVon(lastKennung(nr), lastIban(nr))!;
+    assert.equal(liste.length, LAST_UMSAETZE);
+    assert.ok(liste.every(u => u.buchungstag < heute && u.buchungstag >= sechsMonate), 'Buchungstage vor dem Reset, höchstens sechs Monate');
+    assert.deepEqual(new Set(liste.map(u => u.kategorie)), new Set(KATEGORIEN), 'alle sieben Kategorien');
+    const eingaenge = liste.filter(u => u.betrag > 0);
+    const ausgaenge = liste.filter(u => u.betrag < 0);
+    assert.ok(eingaenge.length > 0 && ausgaenge.length > 0, 'beide Richtungen');
+    const hoehen = liste.map(u => Math.abs(u.betrag));
+    assert.ok(Math.min(...hoehen) < 5 && Math.max(...hoehen) >= 1000, 'von wenigen Euro bis vierstellig');
+    for (let i = 1; i < liste.length; i++) {
+      assert.equal(liste[i].saldoDanach, Math.round((liste[i - 1].saldoDanach - liste[i - 1].betrag) * 100) / 100, 'Saldo danach rückwärts (BR-0008)');
+    }
+    for (const kategorie of KATEGORIEN) {
+      assert.ok(umsaetzeVon(lastKennung(nr), lastIban(nr), { kategorie, betragVon: 1, betragBis: 60 })!.length > 0, `enger Betragsfilter mit ${kategorie} hat Treffer`);
+    }
+  }
+  assert.notDeepEqual(umsaetzeVon(lastKennung(1), lastIban(1))!.map(u => u.betrag), umsaetzeVon(lastKennung(2), lastIban(2))!.map(u => u.betrag), 'je Lastkunde eigene Folge');
 });
 
 test('Lastkunde: 2.000 Überweisungen zu 0,10 € gehen durch; Umsätze und Auftrags-Kennungen bleiben bei der Speichergrenze', () => {
@@ -115,7 +143,8 @@ test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen steh
   assert.equal(vorlagen.liste(LENA.kennung).length, 0);
   assert.equal(vorlagen.liste(JONAS.kennung).length, 50);
   assert.equal(finanzstatus(last.kennung).konten[0].saldo, 9999.9, 'Lastkonto unberührt');
-  assert.equal(umsaetzeVon(last.kennung, lastIban(1))!.length, 1);
+  assert.equal(umsaetzeVon(last.kennung, lastIban(1))!.length, LAST_SPEICHERGRENZE, 'der neue Umsatz verdrängt den ältesten');
+  assert.equal(umsaetzeVon(last.kennung, lastIban(1), { suchtext: 'Rechnung 4711' })!.length, 1, 'der gebuchte Umsatz bleibt');
   assert.equal(vorlagen.liste(last.kennung).length, 1);
   assert.equal(ausfuehren(last, auftrag('d-1', lastIban(1), 0.1)).neu, false, 'Auftrags-Kennungen der Lastkunden bleiben');
 
@@ -125,7 +154,8 @@ test('Demo-Reset lässt Lastkunden stehen, Last-Reset lässt Demo-Kundinnen steh
   assert.equal(anzahl(k => k.startsWith('lasttest-')), 0, 'Last-Sitzungen beendet');
   assert.equal(anzahl(k => k === LENA.kennung), 1, 'Demo-Sitzung bleibt');
   assert.equal(finanzstatus(last.kennung).konten[0].saldo, 10000);
-  assert.deepEqual(umsaetzeVon(last.kennung, lastIban(1)), []);
+  assert.equal(umsaetzeVon(last.kennung, lastIban(1))!.length, LAST_UMSAETZE);
+  assert.equal(umsaetzeVon(last.kennung, lastIban(1), { suchtext: 'Rechnung 4711' })!.length, 0, 'gebuchter Umsatz vergessen');
   assert.equal(vorlagen.liste(last.kennung).length, 0);
   assert.equal(ausfuehren(last, auftrag('d-1', lastIban(1), 0.1)).neu, true, 'Auftrags-Kennungen der Lastkunden vergessen');
   assert.equal(finanzstatus(LENA.kennung).konten[0].saldo, 2095.3, 'Demo-Konto unberührt');
