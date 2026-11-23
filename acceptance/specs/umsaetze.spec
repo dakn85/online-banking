@@ -387,6 +387,9 @@ Tags: UC-003, PK-73, BR-0075
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Überweisung vom Girokonto
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
@@ -395,13 +398,11 @@ Tags: UC-003, PK-73, BR-0075
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
 |-----------------|------------------|----------|--------------|
-| Bäckerei Krause | Einkauf          | -12,00 € | 2.190,10 €   |
 | Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
 * Die Kundin exportiert die Umsätze als CSV-Datei
 * Die CSV-Datei enthält die Zeilen
 | Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
 |-----------------|------------------|--------|--------------|
-| Bäckerei Krause | Einkauf          | -12,00 | 2190,10      |
 | Möbel Nord GmbH | Rechnung 4711    | -50,00 | 2095,30      |
 
 ## Seite vor und Seite zurück blättern die Umsatzliste

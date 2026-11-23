@@ -76,10 +76,6 @@ _Platform Admin (Agent „coding laptop“), 2026-11-23_
 ## Rahmenänderung
 Keine neue Bibliothek. Daten der neuen Demo-Kundin (IBAN, Saldo, Kundennummer, Umsätze) legt die Spezifikation nicht fest; ich wähle sie und melde sie als Rückmeldung.
 
-## Offene Fragen
-
-- [ ] Das Szenario „Der CSV-Export enthält genau die Umsätze der gefilterten Liste“ (acceptance/specs/umsaetze.spec:384–405) kann so nicht grün werden. Es setzt die Testdaten zurück und führt keine Überweisung aus, filtert dann ohne Suchtext mit Betrag 10,00 bis 60,00 und Kategorie „Sonstiges“ und erwartet zwei Zeilen: „Bäckerei Krause | Einkauf | -12,00 € | 2.190,10 €“ und „Möbel Nord GmbH | Rechnung 4711 | -50,00 € | 2.095,30 €“. Dabei gibt es drei Widersprüche: (1) Bäckerei Krause trägt laut entity_model.md (Umsatz.kategorie) die Kategorie Lebensmittel, nicht Sonstiges. (2) Möbel Nord GmbH entsteht nur aus einer Überweisung, und das Szenario führt keine aus. (3) Eine Überweisung von heute stünde nach BR-0008 über der Bäckerei (Buchungstag 12.02.2026), nicht darunter. Nach dem Ausgangsstand liefert der Filter 10–60 / Sonstiges auf Lenas Girokonto keinen Treffer: Die Liste zeigt den Hinweis nach A2, und der Export antwortet mit 422.
-
 ## Entscheidungen
 
 - Wogegen prüft der Filter Betrag von/bis den Umsatz: gegen die Höhe des Betrags ohne Vorzeichen oder gegen den Betrag mit Vorzeichen?
@@ -162,7 +158,7 @@ Keine neue Bibliothek. Daten der neuen Demo-Kundin (IBAN, Saldo, Kundennummer, U
   _→ eingearbeitet · 702cb90_
 - Soll das Blätter-Szenario mit "lena.hoffmann" laufen oder braucht es dafür eine eigene Demo-Kundin mit über 20 Umsätzen?
   **Antwort:** Eine neue Demo-Kundin mit über 20 Umsätzen wird in der Spezifikation eingeführt und das Szenario nutzt sie.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet_
 - Wo soll „Postfach (2)“ auf Masken ohne „Empfängervorlagen“ stehen?
   **Antwort:** Am Ende der Navigation, wie vorgeschlagen.
   _→ noch nicht in der Spezifikation_
@@ -172,3 +168,6 @@ Keine neue Bibliothek. Daten der neuen Demo-Kundin (IBAN, Saldo, Kundennummer, U
 - Sind die Salden danach der älteren Demo-Umsätze gegenüber der Fassung ohne die beiden Lastschriften bereits um 44,80 erhöht, oder sollen sie noch einmal um 44,80 steigen?
   **Antwort:** Bereits erhöht: 2.190,10, 2.202,10, 2.288,10 und -351,90 gelten.
   _→ eingearbeitet in Umsatz · ad2f763_
+- Das Szenario „Der CSV-Export enthält genau die Umsätze der gefilterten Liste“ (acceptance/specs/umsaetze.spec:384–405) kann so nicht grün werden. Es setzt die Testdaten zurück und führt keine Überweisung aus, filtert dann ohne Suchtext mit Betrag 10,00 bis 60,00 und Kategorie „Sonstiges“ und erwartet zwei Zeilen: „Bäckerei Krause | Einkauf | -12,00 € | 2.190,10 €“ und „Möbel Nord GmbH | Rechnung 4711 | -50,00 € | 2.095,30 €“. Dabei gibt es drei Widersprüche: (1) Bäckerei Krause trägt laut entity_model.md (Umsatz.kategorie) die Kategorie Lebensmittel, nicht Sonstiges. (2) Möbel Nord GmbH entsteht nur aus einer Überweisung, und das Szenario führt keine aus. (3) Eine Überweisung von heute stünde nach BR-0008 über der Bäckerei (Buchungstag 12.02.2026), nicht darunter. Nach dem Ausgangsstand liefert der Filter 10–60 / Sonstiges auf Lenas Girokonto keinen Treffer: Die Liste zeigt den Hinweis nach A2, und der Export antwortet mit 422.
+  **Antwort:** Das Szenario bekommt vorn die Überweisung an Möbel Nord GmbH über 50,00 €, der Filter bleibt 10,00–60,00 / Sonstiges, und erwartet ist in Liste und CSV nur die Zeile Möbel Nord GmbH (-50,00 €, 2.095,30 €).
+  _→ eingearbeitet_
