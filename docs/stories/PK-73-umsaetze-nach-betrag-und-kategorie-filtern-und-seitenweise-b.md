@@ -22,7 +22,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl | Geändert | Zusammenfassung geändert, Beschreibung geändert, Parameter betragVon (query) neu, und 6 weitere |
 | Umsätze eines Kontos als CSV-Datei exportieren | Geändert | Beschreibung geändert, Parameter betragVon (query) neu, Parameter betragBis (query) neu, und 4 weitere |
 | Umsaetze | Geändert | Eigenschaft umsaetze geändert, Eigenschaft gesamt neu |
-| Umsatz | Geändert | Attribut kategorie geändert |
+| Umsatz | Geändert | Beschreibung geändert, Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
 | UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Notizen geändert, Schritt 4 geändert, und 20 weitere |
@@ -46,6 +46,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang ohne Knopf Weiter
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
+- `acceptance/specs/umsaetze.spec`: Die beiden SEPA-Lastschriften stehen als jüngste Buchungen mit ihrem Saldo danach oben
 - `acceptance/specs/umsaetze.spec`: Die Umsätze zeigen die Buchungen mit Betrag und Saldo danach, neueste zuerst
 - `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 - `acceptance/specs/umsaetze.spec`: Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
@@ -74,6 +75,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - [ ] Umsätze eines Kontos als CSV-Datei exportieren: Antwort 422 geändert
 - [ ] Umsaetze: Eigenschaft umsaetze geändert
 - [ ] Umsaetze: Eigenschaft gesamt neu
+- [ ] Umsatz: Beschreibung geändert
 - [ ] Umsatz: Attribut kategorie geändert
 - [ ] Finanzstatus: Skizze geändert
 - [ ] Umsätze: Feld Betrag von neu
@@ -203,7 +205,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ noch nicht in der Spezifikation_
 - Soll die Maske bei einem Formatfehler des Dienstes eine eigene Meldung zeigen, obwohl ihre Auswahlfelder nur zulässige Werte anbieten?
   **Antwort:** Keine eigene Meldung; der Fall entsteht nur bei einem direkten Aufruf des Dienstes.
-  _→ eingearbeitet in UC-003, BR-0104_
+  _→ eingearbeitet in UC-003, BR-0104 · de0b368_
 - Sind die Salden danach der älteren Demo-Umsätze gegenüber der Fassung ohne die beiden Lastschriften bereits um 44,80 erhöht, oder sollen sie noch einmal um 44,80 steigen?
   **Antwort:** Bereits erhöht: 2.190,10, 2.202,10, 2.288,10 und -351,90 gelten.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in Umsatz_

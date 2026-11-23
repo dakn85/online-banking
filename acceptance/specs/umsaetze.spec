@@ -7,10 +7,10 @@ Tags: UC-003, PK-73, BR-0008, BR-0012, BR-0104
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
-* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Überweisung vom Girokonto
-* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "12,00 €", Verwendungszweck "Rechnung 4712" und prüft die Zusammenfassung
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "12,00 €", Verwendungszweck "Rechnung 4712" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
@@ -137,7 +137,7 @@ Tags: UC-003, PK-73, BR-0008
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          |              |              | Alle         |
+|          | 2026-01-01   | 2026-02-28   | Alle         |
 * Die Umsätze zeigen die Zeilen
 | Buchungstag | Gegenpartei            | Betrag     |
 |-------------|------------------------|------------|
@@ -389,18 +389,20 @@ Tags: UC-003, PK-73, BR-0075
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
-| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie    |
-|----------|--------------|--------------|--------------|------------|------------|--------------|
-|          |              |              | Alle         | 10,00      | 20,00      | Lebensmittel |
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         | 10,00      | 60,00      | Sonstiges |
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei     | Betrag   |
-|-----------------|----------|
-| Bäckerei Krause | -12,00 € |
-* Die Kundin exportiert die Umsätze und der Dienst antwortet mit dem Status "200"
+| Gegenpartei     | Verwendungszweck | Betrag   | Saldo danach |
+|-----------------|------------------|----------|--------------|
+| Bäckerei Krause | Einkauf          | -12,00 € | 2.190,10 €   |
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 € | 2.095,30 €   |
+* Die Kundin exportiert die Umsätze als CSV-Datei
 * Die CSV-Datei enthält die Zeilen
-| Gegenpartei     | Betrag | Saldo danach |
-|-----------------|--------|--------------|
-| Bäckerei Krause | -12,00 | 2190,10      |
+| Gegenpartei     | Verwendungszweck | Betrag | Saldo danach |
+|-----------------|------------------|--------|--------------|
+| Bäckerei Krause | Einkauf          | -12,00 | 2190,10      |
+| Möbel Nord GmbH | Rechnung 4711    | -50,00 | 2095,30      |
 
 ## Seite vor und Seite zurück blättern die Umsatzliste
 
@@ -512,3 +514,20 @@ Tags: UC-003, PK-73, BR-0104
 | Gegenpartei           | Verwendungszweck |
 |-----------------------|------------------|
 | Hausverwaltung Berger | Miete Februar    |
+
+## Die beiden SEPA-Lastschriften stehen als jüngste Buchungen mit ihrem Saldo danach oben
+
+Tags: UC-003, PK-73, BR-0008, BR-0104
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+|          |              |              | Alle         |            |            | Freizeit  |
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei         | Verwendungszweck | Betrag   | Saldo danach |
+|---------------------|------------------|----------|--------------|
+| Fitnessstudio Vital | Mitgliedsbeitrag | -29,90 € | 2.145,30 €   |
+| Zeitungsverlag Nord | Zeitungsabo      | -14,90 € | 2.175,20 €   |
