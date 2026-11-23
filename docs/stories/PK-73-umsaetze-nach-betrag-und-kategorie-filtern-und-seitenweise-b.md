@@ -40,6 +40,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 - `acceptance/specs/umsaetze.spec`: Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 - `acceptance/specs/umsaetze.spec`: Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
 - `acceptance/specs/umsaetze.spec`: Die Umsätze nennen die Gesamtzahl der Treffer
+- `acceptance/specs/umsaetze.spec`: Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 - `acceptance/specs/umsaetze.spec`: Ein Betrag von über Betrag bis zeigt die Meldung zum ungültigen Betragsbereich
 - `acceptance/specs/umsaetze.spec`: Eine Seite hinter der letzten Trefferseite zeigt keine Zeile, aber die Gesamtzahl
 - `acceptance/specs/umsaetze.spec`: Seite vor und Seite zurück blättern die Umsatzliste
@@ -145,7 +146,7 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
   _→ eingearbeitet in GET /api/konten/{iban}/umsaetze, GET /api/konten/{iban}/umsaetze/export, UC-003, BR-0104 · c930ded_
 - Sollen „Seite vor“ und „Seite zurück“ nur seitenweise blättern, ohne auf Seite 1 bzw. die letzte Trefferseite zu springen?
   **Antwort:** Ja, ein Schritt je Knopf, ohne Sprung auf Seite 1 oder die letzte Seite.
-  _→ eingearbeitet in UC-003, umsaetze_
+  _→ eingearbeitet in UC-003, umsaetze · c026169_
 - Sollen die Demo-Daten die Kategorie Sonstiges für die Überweisungen behalten oder im Szenario eine andere Kategorie verwendet werden?
   **Antwort:** Sonstiges bleibt, wie BR-0012 es vorgibt (Annahme des Vorschlags).
   _→ noch nicht in der Spezifikation_

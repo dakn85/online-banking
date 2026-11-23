@@ -65,12 +65,12 @@ Tags: UC-003, PK-6, BR-0010
 
 ## Der Filter Ein-/Ausgang blendet die Gegenrichtung aus
 
-Tags: UC-003, PK-6, BR-0009, NFR-001
+Tags: UC-003, PK-73, BR-0009, NFR-001
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Überweisung vom Girokonto
-* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und prüft die Zusammenfassung
+* Die Kundin erfasst Empfänger "Möbel Nord GmbH", IBAN "DE89 3704 0044 0532 0130 00", Betrag "50,00 €", Verwendungszweck "Rechnung 4711" und wählt „Weiter“
 * Die Kundin bestätigt die Überweisung "1" Mal und sieht die Meldung "Überweisung ausgeführt."
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin filtert die Umsätze mit den Einträgen
@@ -128,7 +128,7 @@ Tags: UC-003, PK-6
 
 ## Die Umsatzliste zeigt den Buchungstag als TT.MM.JJJJ
 
-Tags: UC-003, PK-59
+Tags: UC-003, PK-73, BR-0008
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -136,14 +136,14 @@ Tags: UC-003, PK-59
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang |
 |----------|--------------|--------------|--------------|
-|          |              | 2026-02-12   | Alle         |
+|          |              |              | Alle         |
 * Die Umsätze zeigen die Zeilen
-| Buchungstag | Gegenpartei            |
-|-------------|------------------------|
-| 12.02.2026  | Bäckerei Krause        |
-| 10.02.2026  | Energieversorgung Nord |
-| 01.02.2026  | Lindner Logistik GmbH  |
-| 28.01.2026  | Hausverwaltung Berger  |
+| Buchungstag | Gegenpartei            | Betrag     |
+|-------------|------------------------|------------|
+| 12.02.2026  | Bäckerei Krause        | -12,00 €   |
+| 10.02.2026  | Energieversorgung Nord | -86,00 €   |
+| 01.02.2026  | Lindner Logistik GmbH  | 2.640,00 € |
+| 28.01.2026  | Hausverwaltung Berger  | -950,00 €  |
 
 ## Die CSV-Datei ist UTF-8 mit BOM, durch Semikolon getrennt und nach dem Konto benannt
 
@@ -342,12 +342,11 @@ Tags: UC-003, PK-73, BR-0104
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
 |----------|--------------|--------------|--------------|------------|------------|-----------|
-|          |              |              | Alle         | 10,00      | 20,00      | Alle      |
+|          |              |              | Alle         | 100,00     | 1.000,00   | Alle      |
 * Die Umsätze zeigen die Zeilen
-| Gegenpartei         | Betrag   |
-|---------------------|----------|
-| Zeitungsverlag Nord | -14,90 € |
-| Bäckerei Krause     | -12,00 € |
+| Gegenpartei           | Betrag    |
+|-----------------------|-----------|
+| Hausverwaltung Berger | -950,00 € |
 
 ## Der Kategoriefilter zeigt nur Umsätze der gewählten Kategorie
 
@@ -385,7 +384,7 @@ Tags: UC-003, PK-73, BR-0104
 
 ## Betragsfilter, Kategorie und Textsuche wirken zusammen
 
-Tags: UC-003, PK-73, BR-0010
+Tags: UC-003, PK-73, BR-0010, BR-0104
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
@@ -393,7 +392,7 @@ Tags: UC-003, PK-73, BR-0010
 * Die Kundin filtert die Umsätze mit den Einträgen
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
 |----------|--------------|--------------|--------------|------------|------------|-----------|
-| Zeitung  |              |              | Alle         | 10,00      | 20,00      | Freizeit  |
+| Nord     |              |              | Alle         | 10,00      | 20,00      | Freizeit  |
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei         | Verwendungszweck | Betrag   |
 |---------------------|------------------|----------|
