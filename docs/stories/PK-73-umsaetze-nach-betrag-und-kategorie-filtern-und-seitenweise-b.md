@@ -20,8 +20,10 @@ Filter merken oder als Vorlage speichern: Nicht in der Idee genannt; wäre eine 
 | Element | Änderung | Zusammenfassung |
 |---|---|---|
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl | Geändert | Zusammenfassung geändert, Beschreibung geändert, Parameter betragVon (query) neu, und 6 weitere |
+| Lastdaten zurücksetzen (nur Testbetrieb) | Geändert | Beschreibung geändert |
 | Umsätze eines Kontos als CSV-Datei exportieren | Geändert | Beschreibung geändert, Parameter betragVon (query) neu, Parameter betragBis (query) neu, und 4 weitere |
 | Umsaetze | Geändert | Eigenschaft umsaetze geändert, Eigenschaft gesamt neu |
+| Architektur | Geändert | Querschnittliche Konzepte geändert |
 | Umsatz | Geändert | Beschreibung geändert, Attribut kategorie geändert |
 | Finanzstatus | Geändert | Skizze geändert |
 | Umsätze | Geändert | Feld Betrag von neu, Feld Betrag bis neu, Feld Kategorie neu, und 5 weitere |
@@ -158,7 +160,7 @@ Keine neue Bibliothek. Daten der neuen Demo-Kundin (IBAN, Saldo, Kundennummer, U
   _→ eingearbeitet · 702cb90_
 - Soll das Blätter-Szenario mit "lena.hoffmann" laufen oder braucht es dafür eine eigene Demo-Kundin mit über 20 Umsätzen?
   **Antwort:** Eine neue Demo-Kundin mit über 20 Umsätzen wird in der Spezifikation eingeführt und das Szenario nutzt sie.
-  _→ eingearbeitet_
+  _→ eingearbeitet · 3f5df75_
 - Wo soll „Postfach (2)“ auf Masken ohne „Empfängervorlagen“ stehen?
   **Antwort:** Am Ende der Navigation, wie vorgeschlagen.
   _→ noch nicht in der Spezifikation_
@@ -170,4 +172,10 @@ Keine neue Bibliothek. Daten der neuen Demo-Kundin (IBAN, Saldo, Kundennummer, U
   _→ eingearbeitet in Umsatz · ad2f763_
 - Das Szenario „Der CSV-Export enthält genau die Umsätze der gefilterten Liste“ (acceptance/specs/umsaetze.spec:384–405) kann so nicht grün werden. Es setzt die Testdaten zurück und führt keine Überweisung aus, filtert dann ohne Suchtext mit Betrag 10,00 bis 60,00 und Kategorie „Sonstiges“ und erwartet zwei Zeilen: „Bäckerei Krause | Einkauf | -12,00 € | 2.190,10 €“ und „Möbel Nord GmbH | Rechnung 4711 | -50,00 € | 2.095,30 €“. Dabei gibt es drei Widersprüche: (1) Bäckerei Krause trägt laut entity_model.md (Umsatz.kategorie) die Kategorie Lebensmittel, nicht Sonstiges. (2) Möbel Nord GmbH entsteht nur aus einer Überweisung, und das Szenario führt keine aus. (3) Eine Überweisung von heute stünde nach BR-0008 über der Bäckerei (Buchungstag 12.02.2026), nicht darunter. Nach dem Ausgangsstand liefert der Filter 10–60 / Sonstiges auf Lenas Girokonto keinen Treffer: Die Liste zeigt den Hinweis nach A2, und der Export antwortet mit 422.
   **Antwort:** Das Szenario bekommt vorn die Überweisung an Möbel Nord GmbH über 50,00 €, der Filter bleibt 10,00–60,00 / Sonstiges, und erwartet ist in Liste und CSV nur die Zeile Möbel Nord GmbH (-50,00 €, 2.095,30 €).
-  _→ eingearbeitet_
+  _→ eingearbeitet · 3f5df75_
+- Soll die Grenze von 200 Umsätzen je Lastkonto bleiben, obwohl die Lastkunden im Ausgangsstand schon 200 Umsätze haben?
+  **Antwort:** Die Grenze bleibt 200: Ein neuer Umsatz verdrängt den ältesten, der Bestand bleibt bei 200.
+  _→ eingearbeitet in architektur, POST /api/test/lasttest/reset_
+- Sollen die gestreuten Beträge der Lastumsätze ausdrücklich auch kleine Beträge enthalten, damit ein enger Betragsfilter Treffer behält?
+  **Antwort:** Ja, die Beträge reichen von wenigen Euro bis in den vierstelligen Bereich, kleine Beträge inbegriffen.
+  _→ eingearbeitet in architektur, POST /api/test/lasttest/reset_
