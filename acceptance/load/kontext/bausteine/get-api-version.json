@@ -1,0 +1,27 @@
+{
+  "kind": "probe",
+  "triedAt": "2026-11-23T20:44:28.727Z",
+  "environment": "default",
+  "sentBy": "Testautor",
+  "request": {
+    "method": "GET",
+    "url": "http://online-banking.online-banking:8080/api/version",
+    "headers": {}
+  },
+  "response": {
+    "status": 200,
+    "statusText": "OK",
+    "ms": 73,
+    "headers": {
+      "connection": "keep-alive",
+      "content-length": "54",
+      "content-type": "application/json; charset=utf-8",
+      "date": "Mon, 23 Nov 2026 20:44:28 GMT",
+      "etag": "W/\"36-zfHUsUqMcbRROO8CoHV/oS/iJ0g\"",
+      "keep-alive": "timeout=5",
+      "x-powered-by": "Express"
+    },
+    "contentType": "application/json; charset=utf-8",
+    "body": "{\"version\":\"e1abc8913e19d46722ddb358cc1526aab1877fb8\"}"
+  }
+}
