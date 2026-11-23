@@ -7,13 +7,15 @@ measures:
   - nfr: NFR-003
     request: GET /api/konten
   # Eigene Zielwerte des Profils für die Leseanfragen der Umsatzsuche, gleiche Grenze wie NFR-003.
+  # Der Name muss dem Tag name der Anfrage im Skript entsprechen
+  # (load/umsatzsuche-unter-last.js: NAME_UMSAETZE, NAME_EXPORT).
   - request: GET /api/konten/{iban}/umsaetze
     names:
-      - umsaetze
+      - GET /api/konten/{iban}/umsaetze
     metric: p95
     limit: 500 ms
   - request: GET /api/konten/{iban}/umsaetze/export
     names:
-      - export
+      - GET /api/konten/{iban}/umsaetze/export
     metric: p95
     limit: 500 ms

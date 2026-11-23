@@ -44,6 +44,12 @@ const auswahlen = [
 const SEITENGROESSE = 20;
 const MAX_KUNDEN = 300;
 
+// Die Namen der beiden Umsatzanfragen entsprechen genau den Anfragen, die das Profil
+// (load/umsatzsuche-unter-last.load.yaml) als Zielwert nennt; sonst findet der Zielwert
+// im Lauf keine Messung. Sie stehen als Literal im Tag name, weil die Plattform nur
+// literale Namen als benannte Anfrage liest. Fuer die k6-Schwellen dient der zusaetzliche
+// Tag "op", weil ein Name mit {iban} nicht verlaesslich als Schwellen-Selektor taugt.
+
 export const options = {
   scenarios: {
     umsatzsuche: {
@@ -63,12 +69,12 @@ export const options = {
   thresholds: {
     // NFR-003: p95 hoechstens 500 ms je Aufrufart.
     'http_req_duration{name:konten}': ['p(95)<500'],
-    'http_req_duration{name:umsaetze}': ['p(95)<500'],
-    'http_req_duration{name:export}': ['p(95)<500'],
+    'http_req_duration{op:umsaetze}': ['p(95)<500'],
+    'http_req_duration{op:export}': ['p(95)<500'],
     // Ein schneller Fehler darf ein Zeitlimit nicht bestehen: Erfolgsrate je Aufrufart.
     'checks{name:konten}': ['rate>0.99'],
-    'checks{name:umsaetze}': ['rate>0.99'],
-    'checks{name:export}': ['rate>0.99'],
+    'checks{op:umsaetze}': ['rate>0.99'],
+    'checks{op:export}': ['rate>0.99'],
     // Eine Anmeldung, die nicht haelt, bricht den Lauf ab.
     'checks{name:anmeldung}': [{ threshold: 'rate>0.99', abortOnFail: true, delayAbortEval: '30s' }],
     // NFR-003: hoechstens 0,5 % Serverfehler (5xx).
@@ -144,8 +150,8 @@ export default function (data) {
   for (let seite = 1; seite <= 3; seite++) {
     const url = `${basis}/api/konten/${encodeURIComponent(iban)}/umsaetze` +
       `?${filter}&seite=${seite}&seitengroesse=${SEITENGROESSE}`;
-    const res = http.get(url, { tags: { name: 'umsaetze' } });
-    check(res, { erfolgreich: (r) => r.status < 500 }, { name: 'umsaetze' });
+    const res = http.get(url, { tags: { name: 'GET /api/konten/{iban}/umsaetze', op: 'umsaetze' } });
+    check(res, { erfolgreich: (r) => r.status < 500 }, { name: 'GET /api/konten/{iban}/umsaetze', op: 'umsaetze' });
     serverfehler.add(res.status >= 500);
     sleep(denkzeit());
   }
@@ -154,8 +160,8 @@ export default function (data) {
   durchgang += 1;
   if (durchgang % 10 === 0) {
     const url = `${basis}/api/konten/${encodeURIComponent(iban)}/umsaetze/export?${filter}`;
-    const res = http.get(url, { tags: { name: 'export' } });
-    check(res, { erfolgreich: (r) => r.status < 500 }, { name: 'export' });
+    const res = http.get(url, { tags: { name: 'GET /api/konten/{iban}/umsaetze/export', op: 'export' } });
+    check(res, { erfolgreich: (r) => r.status < 500 }, { name: 'GET /api/konten/{iban}/umsaetze/export', op: 'export' });
     serverfehler.add(res.status >= 500);
     sleep(denkzeit());
   }
