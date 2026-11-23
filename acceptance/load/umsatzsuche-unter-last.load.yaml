@@ -1,0 +1,4 @@
+name: Umsatzsuche unter Last
+script: load/umsatzsuche-unter-last.js
+measures:
+  - nfr: NFR-003
