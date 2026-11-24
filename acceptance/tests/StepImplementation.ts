@@ -411,6 +411,22 @@ export default class StepImplementation {
     assert.strictEqual(antwort.status(), Number(status), `GET Umsätze mit ${name}=${wert}`);
   }
 
+  @Step('Die angemeldete Kundin ruft die Umsätze des Kontos <konto> mit dem Parameter <name> <wert> ab und erhält höchstens <anzahl> Umsätze')
+  public async umsaetzeMitParameterHoechstens(konto: string, name: string, wert: string, anzahl: string) {
+    const page = await this.seite();
+    const konten = await (await page.context().request.get(`${basisUrl}/api/konten`)).json() as { konten: { kontoname: string; iban: string }[] };
+    const iban = konten.konten.find(k => k.kontoname === text(konto))?.iban;
+    assert.ok(iban, `Konto „${konto}“ fehlt`);
+    const antwort = await page.context().request.get(`${basisUrl}/api/konten/${encodeURIComponent(iban)}/umsaetze?${new URLSearchParams({ [text(name)]: text(wert) })}`);
+    assert.strictEqual(antwort.status(), 200, `GET Umsätze mit ${name}=${wert}`);
+    const { umsaetze, gesamt } = await antwort.json() as { umsaetze: unknown[]; gesamt: number };
+    const grenze = Number(text(anzahl));
+    assert.ok(umsaetze.length <= grenze, `${umsaetze.length} Umsätze auf der Seite, erwartet höchstens ${grenze}`);
+    // BR-0105, UC-003 A14: Nur ein Konto mit mehr Treffern als der Grenze zeigt, dass die Grenze greift.
+    assert.ok(gesamt > grenze, `Das Konto hat nur ${gesamt} Umsätze; die Obergrenze ${grenze} ist so nicht prüfbar`);
+    assert.strictEqual(umsaetze.length, grenze, `Bei ${gesamt} Treffern liefert die Seite ${umsaetze.length} statt ${grenze} Umsätze`);
+  }
+
   @Step('Die Umsätze zeigen die Zeilen <tabelle>')
   public async umsaetzeZeigen(tabelle: Table) {
     const page = await this.umsaetzeGeladen();

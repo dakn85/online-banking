@@ -427,7 +427,7 @@ Tags: UC-003, PK-73, BR-0105
 
 ## Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
 
-Tags: UC-003, PK-73, BR-0105
+Tags: UC-003, PK-73, BR-0105, NFR-001
 
 * Testdaten sind zurückgesetzt
 * "maria.schulz" meldet sich mit der PIN "11223" an
@@ -532,3 +532,17 @@ Tags: UC-003, PK-73, BR-0008, BR-0104
 |---------------------|------------------|----------|--------------|
 | Fitnessstudio Vital | Mitgliedsbeitrag | -29,90 € | 2.145,30 €   |
 | Zeitungsverlag Nord | Zeitungsabo      | -14,90 € | 2.175,20 €   |
+
+## Eine angefragte Seitengröße über der Obergrenze liefert höchstens 100 Umsätze je Seite
+
+Tags: UC-003, PK-76, BR-0105
+
+* Testdaten sind zurückgesetzt
+* "lasttest-001" meldet sich mit der Vorgabe-PIN der Lastkunden an
+* Die angemeldete Kundin ruft die Umsätze des Kontos "Girokonto" mit dem Parameter "seitengroesse" "1000" ab und erhält höchstens "100" Umsätze
+
+## Die Umsätze eines Kontos sind ohne Anmeldung nicht erreichbar
+
+Tags: UC-003, PK-76, NFR-001
+
+* Die Umsatzseite ist ohne Anmeldung nicht erreichbar
