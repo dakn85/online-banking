@@ -128,6 +128,14 @@
 1. Der Dienst antwortet mit 400 und dem Feld fehler und liefert keine Umsätze, beim Export keine Datei.
 2. Das System zeigt keinen Hinweis nach A2 und beim Export keinen nach A5.
 
+### A14: Seitengröße über der Obergrenze
+
+**Auslöser:** Ein Aufruf fragt eine Seitengröße über der Obergrenze nach BR-0105 an. (Schritt 8).  
+**Ablauf:**
+
+1. Der Dienst begrenzt die angefragte Seitengröße auf die Obergrenze und liefert höchstens diese Zahl an Umsätzen auf der Seite, mit der Gesamtzahl über alle Seiten, dem Saldo danach je Umsatz und ohne Meldung.
+2. Die Reihenfolge bleibt die nach BR-0008, und einen Hinweis nach A2 zeigt das System nur, wenn es keinen Treffer gibt.
+
 ## Sequenzdiagramm
 
 ```mermaid
@@ -195,7 +203,7 @@ Der Betragsfilter zeigt die Umsätze, deren Betragshöhe ohne Vorzeichen zwische
 
 ### BR-0105: Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl
 
-Die Umsatzliste zeigt 20 Umsätze je Seite; die Maske schickt diese Seitengröße fest mit. Die Treffer stehen über alle Seiten hinweg in der Reihenfolge nach BR-0008, Seite 1 enthält die ersten 20 Treffer. Die Maske fragt nur Seiten ab 1 an, springt bei jedem Filterwechsel auf Seite 1 (A12) und zeigt als Kennzahl „Seite“ die Seitenzahl, die sie zuletzt angefragt hat, also den Wert des Parameters seite; einen eigenen Wert für die angezeigte Seite liefert der Dienst nicht, der Vertrag bleibt unverändert. Die Maske nennt die Gesamtzahl der Treffer über alle Seiten; sie zählt dieselben Umsätze wie die Liste, auch wenn der Testbetrieb je Konto nur die jüngsten 200 Umsätze hält. Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung; den Hinweis nach A2 zeigt die Seite nur, wenn es keinen Treffer gibt.
+Die Umsatzliste zeigt 20 Umsätze je Seite; die Maske schickt diese Seitengröße fest mit. Die Treffer stehen über alle Seiten hinweg in der Reihenfolge nach BR-0008, Seite 1 enthält die ersten 20 Treffer. Die Maske fragt nur Seiten ab 1 an, springt bei jedem Filterwechsel auf Seite 1 (A12) und zeigt als Kennzahl „Seite“ die Seitenzahl, die sie zuletzt angefragt hat, also den Wert des Parameters seite; einen eigenen Wert für die angezeigte Seite liefert der Dienst nicht, der Vertrag bleibt unverändert. Die Maske nennt die Gesamtzahl der Treffer über alle Seiten; sie zählt dieselben Umsätze wie die Liste, auch wenn der Testbetrieb je Konto nur die jüngsten 200 Umsätze hält. Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung; den Hinweis nach A2 zeigt die Seite nur, wenn es keinen Treffer gibt. Die Seitengröße ist nach oben begrenzt: Der Dienst liefert höchstens 100 Umsätze je Seite, auch wenn ein Aufruf eine größere Seitengröße anfragt; er begrenzt die angefragte Seitengröße auf 100 und antwortet ohne Fehler und ohne Meldung (A14). Für die Maske ändert das nichts, sie bleibt bei ihren 20 Umsätzen je Seite; die Reihenfolge nach BR-0008 und die Gesamtzahl über alle Seiten bleiben unberührt.
 
 ## Notizen
 
