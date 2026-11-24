@@ -43,6 +43,8 @@ export interface Filter {
 /** BR-0105: Nummer der Trefferseite ab 1 und Treffer je Seite. */
 export interface Seite { seite: number; seitengroesse: number }
 export const SEITENGROESSE = 20;
+/** BR-0105, UC-003 A14: Obergrenze der Seitengröße; eine größere angefragte Seitengröße begrenzt der Dienst darauf, ohne Fehler. */
+export const SEITENGROESSE_MAX = 100;
 
 export const ZEITRAUM_FEHLER = 'Der Zeitraum ist ungültig: von liegt nach bis.';
 export const BETRAGSBEREICH_FEHLER = 'Der Betragsbereich ist ungültig: von liegt über bis.';
@@ -267,7 +269,7 @@ export function filterAus(abfrage: Record<string, unknown>): Filter {
   };
 }
 
-/** BR-0105: Seite ab 1 und Seitengröße ab 1 aus der Abfrage, Vorgaben 1 und 20; sonst Abfragefehler (400). */
+/** BR-0105: Seite ab 1 und Seitengröße ab 1 aus der Abfrage, Vorgaben 1 und 20, Seitengröße höchstens 100 (A14); sonst Abfragefehler (400). */
 export function seiteAus(abfrage: Record<string, unknown>): Seite {
   const zahl = (name: string, vorgabe: number) => {
     const w = abfragewert(abfrage, name);
@@ -275,7 +277,7 @@ export function seiteAus(abfrage: Record<string, unknown>): Seite {
     if (!GANZZAHL.test(w)) throw new Abfragefehler(`Der Parameter ${name} ist ungültig: erwartet eine ganze Zahl ab 1.`);
     return Number(w);
   };
-  return { seite: zahl('seite', 1), seitengroesse: zahl('seitengroesse', SEITENGROESSE) };
+  return { seite: zahl('seite', 1), seitengroesse: Math.min(zahl('seitengroesse', SEITENGROESSE), SEITENGROESSE_MAX) };
 }
 
 /** BR-0105: die Treffer der angefragten Seite in der Reihenfolge nach BR-0008 und die Gesamtzahl; hinter der letzten Seite keine Treffer. */
