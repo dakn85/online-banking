@@ -1,0 +1,28 @@
+{
+  "kind": "probe",
+  "triedAt": "2026-11-24T13:49:08.417Z",
+  "environment": "default",
+  "sentBy": "Testautor",
+  "request": {
+    "method": "GET",
+    "url": "http://online-banking.online-banking:8080/api/konten",
+    "headers": {},
+    "template": "${BANKING_URL}/api/konten"
+  },
+  "response": {
+    "status": 401,
+    "statusText": "Unauthorized",
+    "ms": 81,
+    "headers": {
+      "connection": "keep-alive",
+      "content-length": "38",
+      "content-type": "application/json; charset=utf-8",
+      "date": "Tue, 24 Nov 2026 13:49:08 GMT",
+      "etag": "W/\"26-2ZNByd6v9LwKz6WfFbGzN4e5UTU\"",
+      "keep-alive": "timeout=5",
+      "x-powered-by": "Express"
+    },
+    "contentType": "application/json; charset=utf-8",
+    "body": "{\"fehler\":\"Bitte melden Sie sich an.\"}"
+  }
+}
