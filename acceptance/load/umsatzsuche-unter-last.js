@@ -122,6 +122,9 @@ export default function () {
   }
 }
 
+// 5xx zählt als Serverfehler; eine fachliche Ablehnung mit 4xx gilt als erfolgreich (NFR-004).
+http.setResponseCallback(http.expectedStatuses({ min: 200, max: 499 }));
+
 export const options = {
   // Die Sitzung (Cookie aventa_sitzung) soll über die Durchgänge eines Nutzers erhalten bleiben.
   noCookiesReset: true,

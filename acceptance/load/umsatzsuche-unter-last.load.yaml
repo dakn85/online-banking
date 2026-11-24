@@ -6,4 +6,6 @@ tool: k6
 script: load/umsatzsuche-unter-last.js
 measures:
   - nfr: NFR-003
+    request: GET /api/konten
   - nfr: NFR-004
+    request: GET /api/konten
