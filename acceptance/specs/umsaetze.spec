@@ -538,7 +538,7 @@ Tags: UC-003, PK-73, BR-0008, BR-0104
 Tags: UC-003, PK-76, BR-0105
 
 * Testdaten sind zurückgesetzt
-* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* "lasttest-001" meldet sich mit der Vorgabe-PIN der Lastkunden an
 * Die angemeldete Kundin ruft die Umsätze des Kontos "Girokonto" mit dem Parameter "seitengroesse" "1000" ab und erhält höchstens "100" Umsätze
 
 ## Die Umsätze eines Kontos sind ohne Anmeldung nicht erreichbar

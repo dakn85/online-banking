@@ -19,7 +19,7 @@ Warnung oder Hinweis an den Nutzer bei Erreichen der Obergrenze: Die Idee nennt 
 |---|---|---|
 | Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl | Geändert | Beschreibung geändert, Parameter seitengroesse (query) geändert |
 | Umsätze | Geändert | Skizze geändert |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | A14 neu: Seitengröße über der Obergrenze, BR-0105 geändert |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Notizen geändert, A14 neu: Seitengröße über der Obergrenze, BR-0105 geändert |
 | BR-0105 Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl | Geändert | Text geändert |
 
 ## Akzeptanztests
@@ -33,6 +33,7 @@ Warnung oder Hinweis an den Nutzer bei Erreichen der Obergrenze: Die Idee nennt 
 - [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Beschreibung geändert
 - [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter seitengroesse (query) geändert
 - [ ] Umsätze: Skizze geändert
+- [ ] UC-003: Notizen geändert
 - [ ] UC-003: A14 neu: Seitengröße über der Obergrenze
 - [ ] UC-003: BR-0105 geändert
 - [ ] BR-0105: Text geändert
@@ -43,4 +44,7 @@ Warnung oder Hinweis an den Nutzer bei Erreichen der Obergrenze: Die Idee nennt 
 
 - Wie hoch ist die feste Obergrenze der Seitengröße im Abruf der Umsatzliste?
   **Antwort:** 100 Umsätze je Seite; größerer Kopfraum für andere Aufrufer, die Maske bleibt bei 20
-  _→ eingearbeitet in UC-003, BR-0105, GET /api/konten/{iban}/umsaetze, umsaetze_
+  _→ eingearbeitet in UC-003, BR-0105, GET /api/konten/{iban}/umsaetze, umsaetze · 5186ffa_
+- Wie soll der Befund „Der neue Test zur Obergrenze erreicht die Begrenzung nie: kein Konto hat mehr als 100 Umsätze“ gelöst werden?
+  **Antwort:** Die Demo-Konten der anderen Szenarien bleiben unverändert; die zusätzlichen Umsätze nur für dieses Szenario.
+  _→ eingearbeitet in UC-003_
