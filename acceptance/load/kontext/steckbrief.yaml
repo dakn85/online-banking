@@ -8,3 +8,14 @@ tests:
       from: frei
       by: Mandanten Admin
       at: 2026-11-24T13:27:45.176Z
+    answers:
+      - questionId: ablauf.anfragen
+        question: Welche Anfragen soll der Test schicken?
+        value: "Je Durchgang: GET /api/konten (IBAN des Girokontos), dann GET /api/konten/{iban}/umsaetze mit betragVon/betragBis und kategorie aus wechselnden Werten, Seite 1 und danach seite=2 und seite=3 derselben Auswahl; jeder zehnte Durchgang zusätzlich GET /api/konten/{iban}/umsaetze/export mit denselben Filtern."
+        by: Mandanten Admin
+        at: 2026-11-24T13:44:28.353Z
+      - questionId: anfragen.anmeldung
+        question: Wie meldet sich der Test an?
+        value: Anmeldung über POST /api/anmeldung; jeder virtuelle Nutzer meldet sich einmal an und bleibt angemeldet.
+        by: Mandanten Admin
+        at: 2026-11-24T13:44:31.361Z
