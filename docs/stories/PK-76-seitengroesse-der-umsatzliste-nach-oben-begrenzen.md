@@ -28,17 +28,18 @@ Warnung oder Hinweis an den Nutzer bei Erreichen der Obergrenze: Die Idee nennt 
 - `acceptance/specs/umsaetze.spec`: Eine angefragte Seitengröße über der Obergrenze liefert höchstens 100 Umsätze je Seite
 - `acceptance/specs/umsaetze.spec`: Mehr als 20 Treffer blättern auf Seite 1 mit 20 Umsätzen und Seite 2 mit dem Rest, beide mit der Gesamtzahl
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Beschreibung geändert
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Parameter seitengroesse (query) geändert
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Notizen geändert
-- [ ] UC-003: A14 neu: Seitengröße über der Obergrenze
-- [ ] UC-003: BR-0105 geändert
-- [ ] BR-0105: Text geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-76 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-76 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-24_
+
+**Bausteine:** Online-Banking-Dienst, Modul Umsätze (`src/umsaetze.ts`, Auswertung der Abfrage für GET /api/konten/{iban}/umsaetze); Akzeptanztest-Steps (`acceptance/tests/StepImplementation.ts`). Oberfläche (`public/`) bleibt unverändert, die Maske schickt weiter 20.
+
+**Schritte:**
+1. `src/umsaetze.ts`: neue Konstante `SEITENGROESSE_MAX = 100`; `seiteAus` begrenzt eine gültige angefragte Seitengröße mit `Math.min` auf 100, ohne Fehler und ohne Meldung (BR-0105, UC-003 A14). Ungültige Werte (0, negativ, keine ganze Zahl) bleiben 400 wie bisher. `trefferseite` bleibt unverändert, Reihenfolge nach BR-0008 und `gesamt` über alle Treffer bleiben unberührt.
+2. Unit-Test in `test/umsaetze.test.ts` (BR-0105, UC-003 A14): seitengroesse 1000 und 101 ergeben 100, 100 bleibt 100. An den 200 Umsätzen eines Lastkunden liefert Seite 1 genau 100 Umsätze und Seite 2 die nächsten 100, `gesamt` ist 200.
+3. Fehlender Step „Die angemeldete Kundin ruft die Umsätze des Kontos <konto> mit dem Parameter <name> <wert> ab und erhält höchstens <anzahl> Umsätze“: ruft die API mit der Sitzung der Seite auf und prüft Status 200, höchstens `<anzahl>` Umsätze und `gesamt` über der Anzahl. So ist belegt, dass die Grenze greift.
+
+**Rahmenänderung:** keine (keine neue Bibliothek, kein neues Muster).
 
 ## Entscheidungen
 
