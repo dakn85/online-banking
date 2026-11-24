@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { zuruecksetzen as kontenZuruecksetzen } from '../src/konten';
 import { ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from '../src/ueberweisung';
-import { Abfragefehler, BETRAGSBEREICH_FEHLER, Filter, ZEITRAUM_FEHLER, csvAus, filterAus, seiteAus, trefferseite, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
+import { Abfragefehler, BETRAGSBEREICH_FEHLER, Filter, ZEITRAUM_FEHLER, csvAus, filterAus, SEITENGROESSE_MAX, seiteAus, trefferseite, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
 
 const LENA = 'lena.hoffmann';
 const GIRO = 'DE02500105175407324911';
@@ -114,6 +114,19 @@ test('BR-0105: Seite und Seitengröße ab 1, sonst 400', () => {
     assert.throws(() => seiteAus(abfrage), Abfragefehler);
   }
   assert.deepEqual(seiteAus({ seite: '3', seitengroesse: '5' }), { seite: 3, seitengroesse: 5 });
+});
+
+test('BR-0105: UC-003 A14 Seitengröße über 100 begrenzt der Dienst auf 100, ohne Fehler; Reihenfolge und Gesamtzahl bleiben', () => {
+  assert.equal(SEITENGROESSE_MAX, 100);
+  for (const angefragt of ['101', '1000', '999999']) assert.deepEqual(seiteAus({ seitengroesse: angefragt }), { seite: 1, seitengroesse: 100 });
+  assert.deepEqual(seiteAus({ seite: '2', seitengroesse: '100' }), { seite: 2, seitengroesse: 100 });
+  const treffer = Array.from({ length: 250 }, (_, i) => i);
+  const eins = trefferseite(treffer, seiteAus({ seitengroesse: '1000' }));
+  const zwei = trefferseite(treffer, seiteAus({ seite: '2', seitengroesse: '1000' }));
+  const drei = trefferseite(treffer, seiteAus({ seite: '3', seitengroesse: '1000' }));
+  assert.deepEqual([eins.umsaetze.length, zwei.umsaetze.length, drei.umsaetze.length], [100, 100, 50]);
+  assert.deepEqual([eins.gesamt, zwei.gesamt, drei.gesamt], [250, 250, 250]);
+  assert.deepEqual([...eins.umsaetze, ...zwei.umsaetze, ...drei.umsaetze], treffer);
 });
 
 test('BR-0011: fremde IBAN liefert nichts, Leerzeichen in der IBAN zählen nicht', () => {
