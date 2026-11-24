@@ -8,6 +8,11 @@ tests:
       from: frei
       by: Mandanten Admin
       at: 2026-11-24T13:27:45.176Z
+    needs:
+      lastmodell:
+        value: "300 gleichzeitige Kundinnen: 2 Minuten Anstieg auf 300, 5 Minuten halten, 1 Minute Abbau. Zwischen zwei Anfragen 1 bis 3 Sekunden Denkzeit. Jeder Durchgang ist der Ablauf oben; der Export kommt in jedem zehnten Durchgang."
+        by: Mandanten Admin
+        at: 2026-11-24T13:45:05.481Z
     answers:
       - questionId: ablauf.anfragen
         question: Welche Anfragen soll der Test schicken?
@@ -19,3 +24,8 @@ tests:
         value: Anmeldung über POST /api/anmeldung; jeder virtuelle Nutzer meldet sich einmal an und bleibt angemeldet.
         by: Mandanten Admin
         at: 2026-11-24T13:44:31.361Z
+      - questionId: randbedingungen.testdaten
+        question: Mit welchen Testnutzern meldet sich der Test an?
+        value: "Eigene Nutzer je virtuellem Nutzer: lasttest-001 bis lasttest-300 (VU-Nummer dreistellig), alle mit derselben PIN aus dem Zugang LASTTEST_PIN (Umgebungsvariable, nie im Skript). setup() ruft einmal POST /api/test/lasttest/reset, damit jeder Lastkunde seinen Umsatzbestand hat."
+        by: Mandanten Admin
+        at: 2026-11-24T13:45:17.082Z
