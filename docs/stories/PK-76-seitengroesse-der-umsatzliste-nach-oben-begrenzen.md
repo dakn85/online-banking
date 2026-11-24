@@ -47,4 +47,4 @@ Warnung oder Hinweis an den Nutzer bei Erreichen der Obergrenze: Die Idee nennt 
   _→ eingearbeitet in UC-003, BR-0105, GET /api/konten/{iban}/umsaetze, umsaetze · 5186ffa_
 - Wie soll der Befund „Der neue Test zur Obergrenze erreicht die Begrenzung nie: kein Konto hat mehr als 100 Umsätze“ gelöst werden?
   **Antwort:** Die Demo-Konten der anderen Szenarien bleiben unverändert; die zusätzlichen Umsätze nur für dieses Szenario.
-  _→ eingearbeitet in UC-003_
+  _→ eingearbeitet in UC-003 · 8a81f12_
