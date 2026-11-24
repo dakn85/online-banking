@@ -1,0 +1,9 @@
+# Lastprofil „Umsatzsuche unter Last“ (PK-77).
+# Modell und Randbedingungen stehen im Steckbrief: load/kontext/steckbrief.yaml.
+# Kein load-Block: Umfang und Verlauf stehen im k6-Skript (load/umsatzsuche-unter-last.js).
+title: Umsatzsuche unter Last
+tool: k6
+script: load/umsatzsuche-unter-last.js
+measures:
+  - nfr: NFR-003
+  - nfr: NFR-004
