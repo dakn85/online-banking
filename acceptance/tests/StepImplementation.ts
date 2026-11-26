@@ -174,6 +174,61 @@ export default class StepImplementation {
     assert.strictEqual(sichtbar(await page.locator('#gesamtvermoegen').textContent()), sichtbar(text(betrag)));
   }
 
+  /* ---------------------------------------------------------------- UC-001 eigener Kontoname */
+
+  /** UC-001 Schritt 9 und A3: „Name vergeben“ an der Kontokarte öffnet das Blatt „Eigenen Namen vergeben“; nach „Speichern“ lädt der
+      Finanzstatus neu. Der Step wartet, bis die Karte den gespeicherten Namen zeigt, damit der nächste Step die neue Seite liest. */
+  @Step('Die Kundin vergibt im Finanzstatus dem Konto <konto> den eigenen Namen <name>')
+  public async eigenenNamenVergeben(konto: string, name: string) {
+    const page = await this.kontentabelle();
+    const karte = page.locator(`.kontenliste [data-zeile][data-konto="${text(konto)}"]`);
+    await karte.getByRole('button', { name: 'Name vergeben', exact: true }).click();
+    const blatt = page.getByRole('dialog', { name: 'Eigenen Namen vergeben' });
+    await blatt.getByLabel('Eigener Name', { exact: true }).fill(text(name ?? ''));
+    const antwort = page.waitForResponse(r => r.request().method() === 'PUT' && /^\/api\/konten\/[^/]+\/name$/.test(new URL(r.url()).pathname));
+    await blatt.getByRole('button', { name: 'Speichern', exact: true }).click();
+    const ergebnis = await antwort;
+    assert.strictEqual(ergebnis.status(), 200, `PUT ${new URL(ergebnis.url()).pathname}: ${await ergebnis.text()}`);
+    await blatt.waitFor({ state: 'detached' });
+    const genau = new RegExp(`^\\s*${text(name).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`);
+    await page.locator(`.kontenliste [data-zeile][data-konto="${text(konto)}"] [data-feld="Eigener Name"]`, { hasText: genau }).waitFor();
+  }
+
+  /** „PUT /api/konten/{iban}/name“ mit der Sitzung der angemeldeten Kundin; die IBAN geht ohne Leerzeichen in den Pfad, wie die Oberfläche sie sendet.
+      Eine Ablehnung trägt die Meldung im Feld fehler. Die Antwort 200 ist laut OpenAPI das Konto ohne Meldungsfeld: Der Step prüft dann,
+      dass Antwort und Finanzstatus den gespeicherten Namen tragen; „Eigener Name gespeichert.“ zeigt die Oberfläche (UC-001 A3 Schritt 5). */
+  @Step('Die angemeldete Kundin setzt über <operation> für die IBAN <iban> den eigenen Namen <name> und erhält den Status <status> mit der Meldung <meldung>')
+  public async eigenenNamenSetzen(operation: string, iban: string, name: string, status: string, meldung: string) {
+    const page = await this.seite();
+    const [methode, vorlage] = text(operation).trim().split(/\s+/);
+    const pfad = vorlage.replace('{iban}', encodeURIComponent(text(iban).replace(/\s+/g, '')));
+    const antwort = await page.request.fetch(`${basisUrl}${pfad}`, { method: methode, data: { eigenerName: text(name ?? '') } });
+    const rumpf = await antwort.text();
+    assert.strictEqual(antwort.status(), Number(status), `${methode} ${pfad}: ${rumpf}`);
+    const daten = JSON.parse(rumpf) as { fehler?: string; iban?: string; eigenerName?: string | null };
+    if (antwort.status() >= 400) {
+      assert.strictEqual(daten.fehler, text(meldung), `${methode} ${pfad}: Feld fehler`);
+      return;
+    }
+    assert.strictEqual(daten.eigenerName, text(name).trim(), `${methode} ${pfad}: eigenerName in der Antwort`);
+    const { konten } = await (await page.request.get(`${basisUrl}/api/konten`)).json() as { konten: { iban: string; eigenerName: string | null }[] };
+    assert.strictEqual(konten.find(k => k.iban === daten.iban)?.eigenerName, text(name).trim(), 'GET /api/konten: eigenerName nach dem Speichern');
+  }
+
+  /** UC-001 Schritt 5: eigenerName ist je Konto immer vorhanden; „null“ steht für den JSON-Wert null. */
+  @Step('Die Antwort auf den Aufruf <operation> liefert für das Konto <konto> den eigenen Namen <wert>')
+  public async kontenAntwortEigenerName(operation: string, konto: string, wert: string) {
+    const page = await this.seite();
+    const [methode, pfad] = text(operation).trim().split(/\s+/);
+    const antwort = await page.request.fetch(`${basisUrl}${pfad}`, { method: methode });
+    assert.strictEqual(antwort.status(), 200, `${methode} ${pfad}: ${await antwort.text()}`);
+    const { konten } = await antwort.json() as { konten: Record<string, unknown>[] };
+    const treffer = konten.filter(k => k.kontoname === text(konto));
+    assert.strictEqual(treffer.length, 1, `${methode} ${pfad} liefert nicht genau ein Konto „${konto}“`);
+    assert.ok('eigenerName' in treffer[0], `${methode} ${pfad}: Feld eigenerName fehlt beim Konto „${konto}“`);
+    assert.strictEqual(treffer[0].eigenerName, text(wert) === 'null' ? null : text(wert), `${methode} ${pfad}: eigenerName von „${konto}“`);
+  }
+
   @Step('Der Finanzstatus ist ohne Anmeldung nicht erreichbar')
   public async ohneAnmeldung() {
     const page = await this.seite();
