@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { zuruecksetzen as kontenZuruecksetzen } from '../src/konten';
 import { ausfuehren, zuruecksetzen as auftraegeZuruecksetzen } from '../src/ueberweisung';
-import { Abfragefehler, ZEITRAUM_FEHLER, csvAus, filterAus, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
+import { Abfragefehler, BETRAGSBEREICH_FEHLER, Filter, ZEITRAUM_FEHLER, csvAus, filterAus, SEITENGROESSE_MAX, seiteAus, trefferseite, umsaetzeVon, zuruecksetzen } from '../src/umsaetze';
 
 const LENA = 'lena.hoffmann';
 const GIRO = 'DE02500105175407324911';
+const MARIA = 'DE16500105175407325047';
 const KARTE = 'DE44500105175407325028';
 
 function ausgangsstand() {
@@ -59,7 +60,73 @@ test('BR-0010: Von nach Bis ist 400 mit Meldung; Format und Richtung werden gepr
   assert.throws(() => filterAus({ von: '2026-03-31', bis: '2026-03-01' }), (e: unknown) => e instanceof Abfragefehler && e.message === ZEITRAUM_FEHLER);
   assert.throws(() => filterAus({ von: '31.03.2026' }), Abfragefehler);
   assert.throws(() => filterAus({ richtung: 'seitwaerts' }), Abfragefehler);
-  assert.deepEqual(filterAus({ von: '', bis: '', suchtext: '  ' }), { suchtext: undefined, von: undefined, bis: undefined, richtung: 'alle' });
+  assert.deepEqual(filterAus({ von: '', bis: '', suchtext: '  ' }), {
+    suchtext: undefined, von: undefined, bis: undefined, richtung: 'alle', betragVon: undefined, betragBis: undefined, kategorie: undefined,
+  });
+});
+
+test('BR-0104: Betragshöhe ohne Vorzeichen, beide Grenzen eingeschlossen, offene Grenze schränkt nicht ein', () => {
+  ausgangsstand();
+  const namen = (f: Filter) => umsaetzeVon(LENA, GIRO, f)!.map(u => u.gegenpartei);
+  assert.deepEqual(namen({ betragVon: 100, betragBis: 1000 }), ['Hausverwaltung Berger']);
+  assert.deepEqual(namen({ betragVon: 950, betragBis: 950 }), ['Hausverwaltung Berger']);
+  assert.deepEqual(namen({ betragVon: 500, betragBis: 3000, richtung: 'eingang' }), ['Lindner Logistik GmbH']);
+  assert.deepEqual(namen({ betragVon: 1000 }), ['Lindner Logistik GmbH']);
+  assert.deepEqual(namen({ betragBis: 12 }), ['Bäckerei Krause']);
+});
+
+test('BR-0104: Kategoriefilter und Zusammenwirken mit Textsuche und Betrag', () => {
+  ausgangsstand();
+  const namen = (f: Filter) => umsaetzeVon(LENA, GIRO, f)!.map(u => u.gegenpartei);
+  assert.deepEqual(namen({ kategorie: 'Lebensmittel' }), ['Bäckerei Krause']);
+  assert.deepEqual(namen({ kategorie: 'Freizeit' }), ['Fitnessstudio Vital', 'Zeitungsverlag Nord']);
+  assert.deepEqual(namen({ suchtext: 'Nord', betragVon: 10, betragBis: 20, kategorie: 'Freizeit' }), ['Zeitungsverlag Nord']);
+  assert.deepEqual(namen({ betragVon: 10, betragBis: 60, kategorie: 'Sonstiges' }), []);
+});
+
+test('BR-0104: Betrag von über Betrag bis ist 400 mit Meldung; Kategorie Alle und Unbekanntes sind 400', () => {
+  assert.throws(() => filterAus({ betragVon: '100', betragBis: '50' }), (e: unknown) => e instanceof Abfragefehler && e.message === BETRAGSBEREICH_FEHLER);
+  assert.throws(() => filterAus({ kategorie: 'Alle' }), Abfragefehler);
+  assert.throws(() => filterAus({ kategorie: 'Urlaub' }), Abfragefehler);
+  assert.throws(() => filterAus({ betragVon: '-5' }), Abfragefehler);
+  assert.throws(() => filterAus({ betragBis: '1.000,00' }), Abfragefehler);
+  const f = filterAus({ betragVon: '10', betragBis: '60.5', kategorie: 'Sonstiges' });
+  assert.deepEqual([f.betragVon, f.betragBis, f.kategorie], [10, 60.5, 'Sonstiges']);
+  assert.doesNotThrow(() => filterAus({ betragVon: '950', betragBis: '950' }));
+});
+
+test('BR-0105: 20 Treffer je Seite in der Reihenfolge nach BR-0008, Gesamtzahl über alle Seiten, hinter der letzten Seite leer', () => {
+  ausgangsstand();
+  const alle = umsaetzeVon('maria.schulz', MARIA)!;
+  assert.equal(alle.length, 25);
+  const eins = trefferseite(alle, seiteAus({}));
+  const zwei = trefferseite(alle, seiteAus({ seite: '2', seitengroesse: '20' }));
+  assert.deepEqual([eins.umsaetze.length, eins.gesamt, zwei.umsaetze.length, zwei.gesamt], [20, 25, 5, 25]);
+  assert.deepEqual([...eins.umsaetze, ...zwei.umsaetze].map(u => u.umsatzId), alle.map(u => u.umsatzId));
+  assert.deepEqual(trefferseite(alle, seiteAus({ seite: '3' })), { umsaetze: [], gesamt: 25 });
+  // Saldo danach rückwärts aus dem Kontosaldo (C-001, BR-0008)
+  assert.equal(alle[0].saldoDanach, 1850);
+  for (let i = 1; i < alle.length; i++) assert.equal(Math.round((alle[i - 1].saldoDanach - alle[i - 1].betrag) * 100) / 100, alle[i].saldoDanach);
+});
+
+test('BR-0105: Seite und Seitengröße ab 1, sonst 400', () => {
+  for (const abfrage of [{ seite: '0' }, { seite: '-1' }, { seite: 'zwei' }, { seitengroesse: '0' }, { seite: '1.5' }]) {
+    assert.throws(() => seiteAus(abfrage), Abfragefehler);
+  }
+  assert.deepEqual(seiteAus({ seite: '3', seitengroesse: '5' }), { seite: 3, seitengroesse: 5 });
+});
+
+test('BR-0105: UC-003 A14 Seitengröße über 100 begrenzt der Dienst auf 100, ohne Fehler; Reihenfolge und Gesamtzahl bleiben', () => {
+  assert.equal(SEITENGROESSE_MAX, 100);
+  for (const angefragt of ['101', '1000', '999999']) assert.deepEqual(seiteAus({ seitengroesse: angefragt }), { seite: 1, seitengroesse: 100 });
+  assert.deepEqual(seiteAus({ seite: '2', seitengroesse: '100' }), { seite: 2, seitengroesse: 100 });
+  const treffer = Array.from({ length: 250 }, (_, i) => i);
+  const eins = trefferseite(treffer, seiteAus({ seitengroesse: '1000' }));
+  const zwei = trefferseite(treffer, seiteAus({ seite: '2', seitengroesse: '1000' }));
+  const drei = trefferseite(treffer, seiteAus({ seite: '3', seitengroesse: '1000' }));
+  assert.deepEqual([eins.umsaetze.length, zwei.umsaetze.length, drei.umsaetze.length], [100, 100, 50]);
+  assert.deepEqual([eins.gesamt, zwei.gesamt, drei.gesamt], [250, 250, 250]);
+  assert.deepEqual([...eins.umsaetze, ...zwei.umsaetze, ...drei.umsaetze], treffer);
 });
 
 test('BR-0011: fremde IBAN liefert nichts, Leerzeichen in der IBAN zählen nicht', () => {

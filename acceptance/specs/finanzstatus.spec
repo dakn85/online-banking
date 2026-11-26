@@ -31,7 +31,7 @@ Tags: UC-001, PK-1
 
 ## Ohne Anmeldung ist der Finanzstatus nicht erreichbar
 
-Tags: UC-001, PK-1
+Tags: UC-001, PK-1, NFR-001
 
 * Testdaten sind zurückgesetzt
 * Der Finanzstatus ist ohne Anmeldung nicht erreichbar

@@ -45,7 +45,7 @@ Tags: UC-015, PK-46
 
 ## Das Tageslimit ist ohne Anmeldung nicht erreichbar
 
-Tags: UC-015, PK-46
+Tags: UC-015, PK-46, NFR-001
 
 * Testdaten sind zurückgesetzt
 * Das Tageslimit ist ohne Anmeldung nicht erreichbar

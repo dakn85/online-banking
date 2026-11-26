@@ -14,6 +14,8 @@ export interface Kunde {
 export const KUNDEN: readonly Kunde[] = [
   { kennung: 'lena.hoffmann', pin: '24680', vorname: 'Lena', nachname: 'Hoffmann', kundennummer: 'K-104 233' },
   { kennung: 'jonas.weber', pin: '13579', vorname: 'Jonas', nachname: 'Weber', kundennummer: 'K-104 871' },
+  // UC-003 Notizen: Demo-Kundin mit 25 Umsätzen für das Blättern (BR-0105).
+  { kennung: 'maria.schulz', pin: '11223', vorname: 'Maria', nachname: 'Schulz', kundennummer: 'K-105 316' },
 ];
 
 /** Kennungen der Lastkunden beginnen so. Ihre Daten setzt nur der Last-Reset zurück, alle anderen nur der Demo-Reset. */

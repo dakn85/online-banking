@@ -17,6 +17,7 @@ erDiagram
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
     Kontoauszug }o--|| Konto : "gehört zu"
+    Umsatznotiz |o--|| Umsatz : "gehört zu"
     Sparziel }o--|| Konto : "spart auf Tagesgeldkonto"
     Sparziel ||--|| Dauerauftrag : "richtet ein"
     Sparziel }o--|| Kunde : "gehört zu"
@@ -87,7 +88,7 @@ Ein einmaliger Überweisungsauftrag von einem Girokonto, wie ihn die Überweisun
 
 **Bereich:** Finanzstatus  
 
-Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); das Tagesgeldkonto hat im Ausgangsstand keine. Weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist, und aus einer ausgeführten Umbuchung (BR-0090), die auf beiden Konten je einen Umsatz mit der Gegenpartei Kontoname des anderen Kontos und dem Verwendungszweck Umbuchung erzeugt, und aus der Rückgabe einer Lastschrift (BR-0095). Das Girokonto trägt im Ausgangsstand zwei SEPA-Lastschriften mit gebuchtAm 08:00:00 UTC und Buchungstag relativ zum Tag des Resets: Fitnessstudio Vital, Mitgliedsbeitrag, -29.90, Buchungstag der letzte Tag des Vormonats des Resettags (damit nie im Monat des Resets, höchstens 31 Tage davor und somit in der Rückgabefrist von 8 Wochen, BR-0093), Saldo danach 2145.30, und Zeitungsverlag Nord, Zeitungsabo, -14.90, 70 Tage davor, Saldo danach 2175.20; die Lastschrift Fitnessstudio Vital ist damit der jüngste Umsatz, der Kontosaldo bleibt 2145.30, die Salden danach der älteren Demo-Umsätze des Girokontos liegen um 44.80 über den bisherigen.
+Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Betrag und Saldo danach zeigen. Im Ausgangsstand trägt jedes Demo-Konto einige Demo-Umsätze mit festen Buchungstagen und festen Uhrzeiten, der jüngste mit dem Kontosaldo als Saldo danach (C-001); das Tagesgeldkonto hat im Ausgangsstand keine. Weitere Umsätze entstehen aus einer ausgeführten Überweisung (BR-0012), deren gebuchtAm der Ausführungszeitpunkt ist, und aus einer ausgeführten Umbuchung (BR-0090), die auf beiden Konten je einen Umsatz mit der Gegenpartei Kontoname des anderen Kontos und dem Verwendungszweck Umbuchung erzeugt, und aus der Rückgabe einer Lastschrift (BR-0095). Das Girokonto trägt im Ausgangsstand zwei SEPA-Lastschriften mit gebuchtAm 08:00:00 UTC und Buchungstag relativ zum Tag des Resets: Fitnessstudio Vital, Mitgliedsbeitrag, -29.90, Buchungstag der letzte Tag des Vormonats des Resettags (damit nie im Monat des Resets, höchstens 31 Tage davor und somit in der Rückgabefrist von 8 Wochen, BR-0093), Saldo danach 2145.30, und Zeitungsverlag Nord, Zeitungsabo, -14.90, 70 Tage davor, Saldo danach 2175.20; die Lastschrift Fitnessstudio Vital ist damit der jüngste Umsatz, der Kontosaldo bleibt 2145.30, die Salden danach der älteren Demo-Umsätze des Girokontos lauten Bäckerei Krause 2190.10, Energieversorgung Nord 2202.10, Lindner Logistik GmbH 2288.10 und Hausverwaltung Berger -351.90.
 
 | Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
 |---|---|---|---|---|
@@ -98,7 +99,7 @@ Eine Buchung auf einem Konto der Kundin, wie sie die Umsätze mit Buchungstag, G
 | waehrung | Währung des Betrags | String |  | Pflicht; Werte EUR; Standard EUR |
 | saldoDanach | Saldo des Kontos nach dieser Buchung in Euro. Anzeige in der Umsatzliste mit Dezimalkomma, Tausenderpunkt und Währungszeichen, Beispiel 2.095,30 €. In der CSV-Datei in Euro mit Dezimalkomma, ohne Tausenderpunkt und ohne Währungszeichen, Beispiel 2095,30 | Decimal |  | Pflicht; Beispiel 2095.30; Anzeige im Kontoauszug in Euro mit Tausenderpunkt und Komma, Beispiel 2.095,30 € |
 | gebuchtAm | Zeitpunkt der Buchung in UTC; entscheidet bei gleichem Buchungstag über die Reihenfolge, der jüngere steht oben (BR-0008) | DateTime |  | Pflicht; Beispiel 2026-02-14T10:15:00Z |
-| kategorie | Kategorie des Umsatzes aus der festen Liste. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012), die Gutschrift einer Lastschrift-Rückgabe die Kategorie der zurückgegebenen Lastschrift (BR-0095). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Fitnessstudio Vital (SEPA-Lastschrift, -29,90 Euro) Freizeit, Zeitungsverlag Nord (SEPA-Lastschrift, -14,90 Euro) Freizeit, Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
+| kategorie | Kategorie des Umsatzes aus der festen Werteliste, die die Validierungsspalte nennt; dieselbe Werteliste nutzen die Ausgabenanalyse (UC-019, BR-0083) und der Kategoriefilter der Umsatzliste (BR-0104). „Alle“ ist keine Kategorie, sondern die nicht einschränkende Auswahl der Maske Umsätze. Der Umsatz einer ausgeführten Überweisung trägt Sonstiges (BR-0012), die Gutschrift einer Lastschrift-Rückgabe die Kategorie der zurückgegebenen Lastschrift (BR-0095). Die Demo-Umsätze tragen ihre Kategorie fest: Girokonto Fitnessstudio Vital (SEPA-Lastschrift, -29,90 Euro) Freizeit, Zeitungsverlag Nord (SEPA-Lastschrift, -14,90 Euro) Freizeit, Bäckerei Krause (-12,00 Euro) Lebensmittel, Energieversorgung Nord (-86,00 Euro) Wohnen, Lindner Logistik GmbH (Gehalt, +2.640,00 Euro) Sonstiges, Hausverwaltung Berger (Buchungstag 28.01.2026, -950,00 Euro) Wohnen. Kreditkarte: Buchhandlung Seitenweise Freizeit, Reisebüro Fernweh Mobilität, Aventa Bank (Ausgleich, Eingang) Sonstiges | String |  | Pflicht; Werte Wohnen, Lebensmittel, Mobilität, Freizeit, Versicherungen, Gesundheit, Sonstiges; Beispiel Wohnen |
 | umsatzId | Kennung des Umsatzes, vom Dienst vergeben; die Zeilenaktion „Zurückgeben“ der Umsätze führt sie mit | String | 1..36 | Pflicht; Eindeutig; Länge 1..36; Beispiel U-0007 |
 | sepaLastschrift | Kennzeichen: der Umsatz ist eine SEPA-Lastschrift; nur das Girokonto trägt solche | Boolean |  | Pflicht; Standard false; Beispiel true |
 | zurueckgegeben | Rückgabestatus der SEPA-Lastschrift (BR-0094). Die Spalte Rückgabe der Umsätze zeigt bei sepaLastschrift true und zurueckgegeben false „Zurückgeben“, bei zurueckgegeben true „Zurückgegeben“, sonst keinen Text | Boolean |  | Pflicht; Standard false; Beispiel false |
@@ -227,6 +228,18 @@ Der Kontoauszug eines Kontos der Kundin für einen Kalendermonat mit Anfangssald
 | waehrung | Währung der Salden | String |  | Pflicht; Werte EUR; Standard EUR |
 
 **Einschränkungen:** Der Auszug gehört zu einem Konto der angemeldeten Kundin (BR-0011).
+
+### Umsatznotiz
+
+**Bereich:** Finanzstatus  
+
+Die eigene Notiz der Kundin zu einem Umsatz der Umsatzliste. Zu jedem Umsatz gibt es höchstens eine Notiz; nach einem Reset trägt kein Umsatz eine Notiz (ADR-002). Die Notiz ändert weder Buchungstag noch Betrag noch Saldo danach des Umsatzes und geht nicht in Filter, Trefferzahl oder CSV-Export der Umsatzliste ein (BR-0075, BR-0104, BR-0105).
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| text | Eigene Notiz der Kundin zu dem Umsatz | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rückfrage an den Vermieter |
+
+**Einschränkungen:** Zu einem Umsatz gibt es höchstens eine Notiz: Die Beziehung der Notiz zum Umsatz ist |o--|| wie bei der Debitkarte. Eine leere Notiz gibt es nicht: Der Dienst entfernt führende und folgende Leerzeichen und lehnt einen danach leeren Text mit 400 ab; entfernt wird eine Notiz nur über „Notiz löschen“ (UC-003, BR-0107).
 
 ### Sparziel
 

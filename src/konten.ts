@@ -25,6 +25,10 @@ const DEMO: Record<string, Konto[]> = {
     { kontoname: 'Kreditkarte', art: 'Kreditkarte', iban: 'DE39500105175407325021', saldo: -387.45, waehrung: 'EUR' },
     { kontoname: 'Tagesgeldkonto', art: 'Tagesgeldkonto', iban: 'DE38500105175407325039', saldo: 0, waehrung: 'EUR' },
   ],
+  // UC-003 Notizen: Maria Schulz hat nur ein Girokonto, mit 25 Demo-Umsätzen (umsaetze.ts).
+  'maria.schulz': [
+    { kontoname: 'Girokonto', art: 'Girokonto', iban: 'DE16500105175407325047', saldo: 1850, waehrung: 'EUR', dispositionsrahmen: 1000 },
+  ],
 };
 
 /** Ausgangsstand je Kennung: die Demo-Kundinnen fest, Lastkunden kommen über `ausgangsstandSetzen` dazu. */
