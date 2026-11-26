@@ -109,7 +109,7 @@ Nur das Girokonto hat einen Dispositionsrahmen. Sein verfügbarer Betrag ist der
 
 ### BR-0108: Eigener Kontoname nur für Konten der angemeldeten Kundin
 
-Der Dienst setzt und ändert einen eigenen Kontonamen nur an einem Konto der angemeldeten Kundin: Er sucht das Konto über die IBAN im Aufruf unter der Kennung der Sitzung. Gehört die IBAN zu keinem Konto der Kundin, ändert er nichts und antwortet mit Status 404 und „Das Konto wurde nicht gefunden.“. Zwei Konten derselben Kundin dürfen denselben eigenen Namen tragen; unterschieden werden sie über Art und IBAN. Der eigene Name ersetzt den Kontonamen nicht: Kontoname, Art, IBAN und Saldo des Kontos bleiben unverändert, und es gibt keine TAN-Bestätigung und keine Nachricht im Postfach.
+Der Dienst setzt und ändert einen eigenen Kontonamen nur an einem Konto der angemeldeten Kundin: Er sucht das Konto über die IBAN im Aufruf unter der Kennung der Sitzung. Gehört die IBAN zu keinem Konto der Kundin, ändert er nichts und antwortet mit Status 404 und „Das Konto wurde nicht gefunden.“. Zwei Konten derselben Kundin dürfen denselben eigenen Namen tragen. Der eigene Name ersetzt den Kontonamen nicht: Kontoname, Art, IBAN und Saldo des Kontos bleiben unverändert, und es gibt keine TAN-Bestätigung und keine Nachricht im Postfach.
 
 ## Notizen
 

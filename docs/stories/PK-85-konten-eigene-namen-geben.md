@@ -95,3 +95,6 @@ Als Privatkundin möchte ich meinen Konten eigene Namen geben können, etwa dem 
 - Wie verhält sich PUT /api/konten/{iban}/name, wenn die IBAN im Pfad keine 22 Zeichen hat oder der Rumpf kein gültiges JSON ist?
   **Antwort:** Formatfehler nach Datenmodell: 400 mit der Meldung zum Feld, nichts gespeichert (wie bei leerem oder zu langem Namen).
   _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name · ca59002_
+- Soll eigenerName ohne vergebenen Namen als null geliefert werden, als leere Zeichenkette oder das Feld ganz entfallen?
+  **Antwort:** Als null; das Feld ist immer vorhanden (Marktstandard für ein Pflichtfeld ohne Wert).
+  _→ noch nicht in der Spezifikation_
