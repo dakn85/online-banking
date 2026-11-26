@@ -1,6 +1,6 @@
 # PK-78: Notiz zu einem Umsatz merken
 
-**Art:** Testpflege · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Erweiterung · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
