@@ -1489,7 +1489,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
-          description: Eigener Name leer oder länger als 60 Zeichen, IBAN nicht 22 Zeichen lang oder Rumpf kein gültiges JSON
+          description: Eigener Name leer oder länger als 60 Zeichen, IBAN nicht 22 Zeichen lang oder Rumpf kein gültiges JSON; Meldung „Bitte geben Sie den eigenen Namen an.“ bei leerem Namen oder Rumpf ohne gültiges JSON, „Der eigene Name darf höchstens 60 Zeichen lang sein.“ bei mehr als 60 Zeichen, „Die IBAN muss 22 Zeichen lang sein.“ bei einer IBAN mit anderer Länge
           x-rules:
             - Konto.eigenerName
             - Konto.iban

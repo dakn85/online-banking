@@ -62,7 +62,7 @@
 **Auslöser:** Der eigene Name ist leer, besteht nur aus Leerzeichen oder ist länger als 60 Zeichen (Konto.eigenerName), die IBAN im Aufruf hat nicht 22 Zeichen (Konto.iban) oder der Rumpf ist kein gültiges JSON. (Schritt 9).  
 **Ablauf:**
 
-1. Der Dienst antwortet mit Status 400; das System speichert nichts, lässt den bisherigen eigenen Namen unverändert und zeigt die Meldung zum Feld im Blatt „Eigenen Namen vergeben“: „Bitte geben Sie den eigenen Namen an.“, wenn der Name nach dem Entfernen der Leerzeichen leer ist, „Der eigene Name darf höchstens 60 Zeichen lang sein.“, wenn er länger als 60 Zeichen ist, „Die IBAN muss 22 Zeichen lang sein.“ bei einer IBAN mit anderer Länge und „Die Anfrage ist ungültig.“ bei einem Rumpf ohne gültiges JSON.
+1. Der Dienst antwortet mit Status 400; das System speichert nichts, lässt den bisherigen eigenen Namen unverändert und zeigt die Meldung zum Feld im Blatt „Eigenen Namen vergeben“: „Bitte geben Sie den eigenen Namen an.“, wenn der Name nach dem Entfernen der Leerzeichen leer ist, „Der eigene Name darf höchstens 60 Zeichen lang sein.“, wenn er länger als 60 Zeichen ist, „Die IBAN muss 22 Zeichen lang sein.“ bei einer IBAN mit anderer Länge und „Bitte geben Sie den eigenen Namen an.“ bei einem Rumpf ohne gültiges JSON.
 2. Die Kundin korrigiert die Eingabe; der Ablauf geht bei A3 Schritt 2 weiter, oder sie wählt „Abbrechen“.
 
 ### A5: Konto nicht gefunden

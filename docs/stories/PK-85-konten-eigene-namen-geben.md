@@ -91,7 +91,7 @@ Als Privatkundin möchte ich meinen Konten eigene Namen geben können, etwa dem 
   _→ eingearbeitet durch „UC-001: Eigenen Namen je Konto vergeben und im Finanzstatus zeigen“ in Konto, UC-001, BR-NEU1, GET /api/konten, PUT /api/konten/{iban}/name, Schema Konto, Schema KontonameEingabe, finanzstatus, NFR-001, NFR-003, NFR-004, vision_
 - Was passiert, wenn die Kundin im Blatt „Eigenen Namen vergeben“ den bisherigen eigenen Namen unverändert speichert oder nur Leerzeichen eingibt?
   **Antwort:** Unverändert speichern ist erlaubt und antwortet 200 mit „Eigener Name gespeichert.“; nur Leerzeichen ergibt nach dem Entfernen einen leeren Namen und damit 400 „Bitte geben Sie den eigenen Namen an.“.
-  _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name_
+  _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name · ca59002_
 - Wie verhält sich PUT /api/konten/{iban}/name, wenn die IBAN im Pfad keine 22 Zeichen hat oder der Rumpf kein gültiges JSON ist?
   **Antwort:** Formatfehler nach Datenmodell: 400 mit der Meldung zum Feld, nichts gespeichert (wie bei leerem oder zu langem Namen).
-  _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name_
+  _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name · ca59002_
