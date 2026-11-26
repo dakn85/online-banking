@@ -60,7 +60,7 @@ paths:
       x-use-cases: [ UC-002 ]
   "/api/konten/{iban}/umsaetze":
     get:
-      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags, betragVon und betragBis begrenzen die Betragshöhe ohne Vorzeichen, beide Grenzen eingeschlossen, kategorie wählt eine Kategorie der festen Liste; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010, BR-0104). Die Treffer liefert der Dienst seitenweise: seite ist die Nummer der Trefferseite ab 1, seitengroesse die Zahl der Treffer je Seite, die die Maske fest mit 20 mitschickt, und gesamt nennt die Gesamtzahl der Treffer über alle Seiten, in der Reihenfolge nach BR-0008 (BR-0105). Die Seitengröße ist nach oben begrenzt: Fragt ein Aufruf eine Seitengröße über der Obergrenze nach BR-0105 an, begrenzt der Dienst sie auf diese Obergrenze und antwortet ohne Fehler; Reihenfolge und Gesamtzahl bleiben davon unberührt. Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung. Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010); liegt betragVon über betragBis, mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ (BR-0104). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
+      description: "Liefert die Umsätze des Kontos mit dieser IBAN, den neuesten zuerst (BR-0008): sortiert nach Buchungstag absteigend, bei gleichem Buchungstag nach gebuchtAm absteigend. Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, mit 404 (BR-0011). Beträge in Euro, Ausgänge als negative Zahl. Jeder Umsatz trägt seine Kategorie aus der festen Liste. Jeder Umsatz trägt seine umsatzId sowie sepaLastschrift und zurueckgegeben; daran bietet die Seite die Rückgabe einer SEPA-Lastschrift an (UC-022). Jeder Umsatz trägt außerdem die eigene Notiz der Kundin zu diesem Umsatz im Feld notiz, wenn er eine hat (Umsatznotiz, BR-0106); fehlt sie, fehlt das Feld. Suche und Filter wertet der Dienst aus: suchtext trifft Gegenpartei oder Verwendungszweck ohne Rücksicht auf Groß- und Kleinschreibung, von und bis begrenzen den Buchungstag, beide Grenzen eingeschlossen, richtung wählt Ein- oder Ausgang nach dem Vorzeichen des Betrags, betragVon und betragBis begrenzen die Betragshöhe ohne Vorzeichen, beide Grenzen eingeschlossen, kategorie wählt eine Kategorie der festen Liste; ein fehlender Parameter schränkt nicht ein (BR-0009, BR-0010, BR-0104). Die Treffer liefert der Dienst seitenweise: seite ist die Nummer der Trefferseite ab 1, seitengroesse die Zahl der Treffer je Seite, die die Maske fest mit 20 mitschickt, und gesamt nennt die Gesamtzahl der Treffer über alle Seiten, in der Reihenfolge nach BR-0008 (BR-0105). Die Seitengröße ist nach oben begrenzt: Fragt ein Aufruf eine Seitengröße über der Obergrenze nach BR-0105 an, begrenzt der Dienst sie auf diese Obergrenze und antwortet ohne Fehler; Reihenfolge und Gesamtzahl bleiben davon unberührt. Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung. Liegt von nach dem bis, antwortet der Dienst mit 400 und dem Feld fehler „Der Zeitraum ist ungültig: von liegt nach bis.“ und liefert keine Umsätze (BR-0010); liegt betragVon über betragBis, mit 400 und dem Feld fehler „Der Betragsbereich ist ungültig: von liegt über bis.“ (BR-0104). Lastkunden im Testbetrieb: Der Dienst hält je Konto nur die jüngsten 200 Umsätze."
       operationId: umsaetzeLesen
       parameters:
         - description: IBAN des Kontos der Kundin
@@ -1352,6 +1352,114 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
+  /api/konten/{iban}/umsaetze/{umsatzId}/notiz:
+    put:
+      summary: Eigene Notiz zu einem Umsatz speichern oder überschreiben
+      description: "Speichert den Text als eigene Notiz der angemeldeten Kundin zu dem Umsatz mit dieser umsatzId und überschreibt eine vorhandene Notiz. Der Dienst entfernt führende und folgende Leerzeichen und prüft den Text nach dem Datenmodell (Umsatznotiz.text): ist der Text danach leer oder länger als 140 Zeichen, antwortet er mit 400 und dem Feld fehler und speichert nichts. Die Notiz ändert weder Buchungstag noch Betrag noch Saldo danach des Umsatzes (BR-0008) noch die Filter, die Seiten und den Export der Umsatzliste (BR-0075, BR-0104, BR-0105). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, und eine umsatzId, die zu keinem Umsatz dieses Kontos gehört, mit 404 (BR-0106)."
+      operationId: umsatznotizSpeichern
+      tags:
+        - Finanzstatus
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Kontos der Kundin
+          schema:
+            type: string
+            minLength: 22
+            maxLength: 22
+          x-attribute: Konto.iban
+        - name: umsatzId
+          in: path
+          required: true
+          description: Kennung des Umsatzes, zu dem die Notiz gehört
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+          x-attribute: Umsatz.umsatzId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notiz'
+      responses:
+        "200":
+          description: Notiz gespeichert; der Dienst liefert den gespeicherten Text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notiz'
+        "400":
+          description: Der Notiztext ist nach dem Entfernen der Randleerzeichen leer oder länger als 140 Zeichen (Umsatznotiz.text)
+          x-rules:
+            - Umsatznotiz.text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin oder die umsatzId zu keinem Umsatz dieses Kontos
+          x-rules:
+            - BR-0106
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+      x-use-cases:
+        - UC-003
+    delete:
+      summary: Eigene Notiz zu einem Umsatz löschen
+      description: Löscht die eigene Notiz der angemeldeten Kundin zu dem Umsatz mit dieser umsatzId. Die Maske fragt vorher nach und löscht erst nach „Bestätigen“ (BR-0107). Ohne gültige Sitzung antwortet der Dienst mit 401; eine IBAN, die zu keinem Konto der angemeldeten Kundin gehört, eine umsatzId, die zu keinem Umsatz dieses Kontos gehört, und ein Umsatz ohne Notiz mit 404 (BR-0106, BR-0107).
+      operationId: umsatznotizLoeschen
+      tags:
+        - Finanzstatus
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: IBAN des Kontos der Kundin
+          schema:
+            type: string
+            minLength: 22
+            maxLength: 22
+          x-attribute: Konto.iban
+        - name: umsatzId
+          in: path
+          required: true
+          description: Kennung des Umsatzes, dessen Notiz gelöscht wird
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 36
+          x-attribute: Umsatz.umsatzId
+      responses:
+        "204":
+          description: Notiz gelöscht; der Dienst liefert keinen Inhalt
+        "401":
+          description: Keine gültige Sitzung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+        "404":
+          description: Die IBAN gehört zu keinem Konto der Kundin, die umsatzId zu keinem Umsatz dieses Kontos oder der Umsatz trägt keine Notiz
+          x-rules:
+            - BR-0106
+            - BR-0107
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+      x-use-cases:
+        - UC-003
 components:
   schemas:
     Anmeldedaten:
@@ -1616,6 +1724,12 @@ components:
             - Gesundheit
             - Sonstiges
           type: string
+        notiz:
+          type: string
+          minLength: 1
+          maxLength: 140
+          description: Eigene Notiz der Kundin zu diesem Umsatz (Umsatznotiz, BR-0106); fehlt sie, fehlt das Feld
+          x-attribute: Umsatznotiz.text
       required:
         - umsatzId
         - buchungstag
@@ -2209,3 +2323,14 @@ components:
           description: umsatzId der zurückgegebenen Lastschrift
         gutschrift:
           $ref: '#/components/schemas/Umsatz'
+    Notiz:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 140
+          description: Eigene Notiz der Kundin zu dem Umsatz
+          x-attribute: Umsatznotiz.text
+      required:
+        - text

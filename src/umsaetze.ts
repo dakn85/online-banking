@@ -21,6 +21,8 @@ export interface Umsatz {
   sepaLastschrift: boolean;
   /** UC-022: die Lastschrift wurde zurückgegeben (BR-0094). */
   zurueckgegeben: boolean;
+  /** UC-003, BR-0106: eigene Notiz der Kundin (Umsatznotiz.text, 1..140 Zeichen); fehlt, solange der Umsatz keine trägt (umsatznotiz.ts). */
+  notiz?: string;
 }
 
 export const KATEGORIEN = ['Wohnen', 'Lebensmittel', 'Mobilität', 'Freizeit', 'Versicherungen', 'Gesundheit', 'Sonstiges'] as const;
@@ -217,7 +219,7 @@ export function buchen(iban: string, umsatz: Omit<Umsatz, 'waehrung' | 'umsatzId
   return { ...neu };
 }
 
-/** UC-022: der gespeicherte Umsatz dieses Kontos mit dieser Kennung (veränderbar), sonst nichts. */
+/** UC-022, UC-003 Notiz: der gespeicherte Umsatz dieses Kontos mit dieser Kennung (veränderbar), sonst nichts. */
 export function umsatzMitId(iban: string, umsatzId: string): Umsatz | undefined {
   return umsaetze.get(iban)?.find(u => u.umsatzId === umsatzId);
 }
