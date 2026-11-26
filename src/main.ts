@@ -6,6 +6,7 @@ import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoe
 import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, seiteAus, trefferseite, umsaetzeVon } from './umsaetze';
 import { Monatsfehler, auszugAus, monatPruefen as auszugMonatPruefen, pdfAus } from './kontoauszug';
 import { Rueckgabefehler, zurueckgeben } from './lastschrift';
+import { Notizfehler, loeschen as notizLoeschen, speichern as notizSpeichern } from './umsatznotiz';
 import { Umbuchungsfehler, ausfuehren as umbuchen } from './umbuchung';
 import * as vorlagen from './empfaengervorlagen';
 import * as dauerauftraege from './dauerauftraege';
@@ -155,6 +156,19 @@ app.post('/api/konten/:iban/umsaetze/:umsatzId/rueckgaben', nurAngemeldet('api')
     if (!(fehler instanceof Rueckgabefehler)) throw fehler;
     res.status(fehler.status).json({ fehler: fehler.message });
   }
+});
+
+// UC-003 Schritte 15 und 16: eigene Notiz zu einem Umsatz speichern, überschreiben und löschen (BR-0106, BR-0107);
+// Prüfreihenfolge 401, 404 Konto, 404 Umsatz, dann 400 Text (PUT) beziehungsweise 404 Notiz (DELETE)
+const notizfehler = (res: express.Response, fehler: unknown) => {
+  if (!(fehler instanceof Notizfehler)) throw fehler;
+  res.status(fehler.status).json({ fehler: fehler.message });
+};
+app.put('/api/konten/:iban/umsaetze/:umsatzId/notiz', nurAngemeldet('api'), (req, res) => {
+  try { res.json(notizSpeichern(res.locals.kunde.kennung, req.params.iban, req.params.umsatzId, req.body?.text)); } catch (fehler) { notizfehler(res, fehler); }
+});
+app.delete('/api/konten/:iban/umsaetze/:umsatzId/notiz', nurAngemeldet('api'), (req, res) => {
+  try { notizLoeschen(res.locals.kunde.kennung, req.params.iban, req.params.umsatzId); res.status(204).end(); } catch (fehler) { notizfehler(res, fehler); }
 });
 
 // UC-019: Ausgabenanalyse des Girokontos; Prüfreihenfolge Monat 400, Konto 404, Kreditkarte 422 (BR-0083, BR-0084)

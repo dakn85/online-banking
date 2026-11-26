@@ -544,6 +544,83 @@ export default class StepImplementation {
     await page.waitForURL(/\/anmelden$/);
   }
 
+  /* ---------------------------------------------------------------- UC-003 Notiz zu einem Umsatz */
+
+  /** UC-003 Schritte 12 und 13: die eine Notiz-Aktion der Zeile („Notiz erfassen“ oder „Notiz ändern“) öffnet das Blatt
+      „Notiz zum Umsatz“, das die Gegenpartei des gewählten Umsatzes nennt. */
+  private async notizblatt(page: Page, gegenpartei: string): Promise<Locator> {
+    const zeile = this.zeileMit(page, '#umsaetze-ergebnis', 'Gegenpartei', gegenpartei);
+    const aktion = zeile.getByRole('button', { name: /^Notiz (erfassen|ändern)$/ });
+    await aktion.first().waitFor();
+    assert.strictEqual(await aktion.count(), 1, `Die Zeile „${gegenpartei}“ zeigt nicht genau eine Notiz-Aktion`);
+    await aktion.click();
+    const blatt = page.locator('#umsaetze-ergebnis').getByRole('dialog', { name: 'Notiz zum Umsatz' });
+    await blatt.getByText(gegenpartei).first().waitFor();
+    return blatt;
+  }
+
+  /** UC-003 Schritt 15: trägt den Text ins Feld Notiz ein, wählt „Speichern“ und liefert den Status des Dienstes.
+      Bei 400 bleibt das Blatt mit der Meldung am Feld offen (A15); sonst schließt es, sobald die Umsätze neu geladen sind. */
+  private async notizSpeichern(gegenpartei: string, notiz: string): Promise<number> {
+    const page = await this.umsaetzeGeladen();
+    const blatt = await this.notizblatt(page, gegenpartei);
+    await blatt.getByLabel('Notiz', { exact: true }).fill(notiz);
+    const antwort = page.waitForResponse(r => r.request().method() === 'PUT' && /\/umsaetze\/[^/]+\/notiz$/.test(new URL(r.url()).pathname));
+    await blatt.getByRole('button', { name: 'Speichern', exact: true }).click();
+    const status = (await antwort).status();
+    if (status === 400) await blatt.getByRole('alert').filter({ hasText: /\S/ }).waitFor();
+    else await blatt.waitFor({ state: 'hidden' });
+    return status;
+  }
+
+  @Step('Die Kundin erfasst bei dem Umsatz von <gegenpartei> die Notiz <notiz> und wählt „Speichern“')
+  public async notizErfassen(gegenpartei: string, notiz: string) {
+    await this.notizSpeichern(text(gegenpartei), text(notiz ?? ''));
+  }
+
+  @Step('Die Kundin speichert bei dem Umsatz von <gegenpartei> einen Notiztext mit <laenge> Zeichen und erhält den Status <status>')
+  public async notizMitLaenge(gegenpartei: string, laenge: string, status: string) {
+    const ist = await this.notizSpeichern(text(gegenpartei), 'n'.repeat(Number(laenge)));
+    assert.strictEqual(ist, Number(status), `PUT Notiz mit ${laenge} Zeichen`);
+  }
+
+  /** UC-003 Schritt 16: „Notiz löschen“ steht im Blatt „Notiz zum Umsatz“ des Umsatzes. */
+  @Step('Die Kundin wählt bei dem Umsatz von <gegenpartei> die Aktion <aktion>')
+  public async notizAktion(gegenpartei: string, aktion: string) {
+    const page = await this.umsaetzeGeladen();
+    const blatt = await this.notizblatt(page, text(gegenpartei));
+    await blatt.getByRole('button', { name: text(aktion), exact: true }).click();
+  }
+
+  /** „Bestätigen“ oder „Abbrechen“; die Rückfrage schließt nach „Bestätigen“ erst, wenn die Umsätze neu geladen sind. */
+  @Step('Die Kundin wählt in der Rückfrage der Notiz <antwort>')
+  public async notizRueckfrage(antwort: string) {
+    const page = await this.umsaetzeGeladen();
+    const rueckfrage = page.locator('#umsaetze-rueckfrage');
+    await rueckfrage.getByRole('button', { name: text(antwort), exact: true }).click();
+    await rueckfrage.waitFor({ state: 'hidden' });
+  }
+
+  /** „PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz“ mit den Angaben der Tabelle: Platzhalter des Pfads kommen aus den Angaben,
+      {iban} ohne Angabe ist das Girokonto der angemeldeten Kundin; die übrigen Angaben sind der Rumpf. */
+  @Step('Die angemeldete Kundin ruft <operation> mit den Angaben auf und erhält den Status <status> und die Meldung <meldung> <tabelle>')
+  public async angemeldetAufrufenMitMeldung(operation: string, status: string, meldung: string, tabelle: Table) {
+    const page = await this.seite();
+    const angaben: Record<string, string> = {};
+    for (const zeile of tabelle.getTableRows()) angaben[text(zeile.getCell('feld')).trim()] = text(zeile.getCell('wert')).trim();
+    const [methode, vorlage] = text(operation).trim().split(/\s+/);
+    const platzhalter = [...vorlage.matchAll(/\{(\w+)\}/g)].map(m => m[1]);
+    const pfadwerte: Record<string, string> = { ...angaben };
+    if (platzhalter.includes('iban')) pfadwerte.iban = (angaben.iban ?? await this.girokontoIban(page)).replace(/\s+/g, '');
+    for (const name of platzhalter) assert.ok(pfadwerte[name], `Die Angabe „${name}“ für ${vorlage} fehlt`);
+    const pfad = vorlage.replace(/\{(\w+)\}/g, (_, name: string) => encodeURIComponent(pfadwerte[name]));
+    const rumpf = Object.fromEntries(Object.entries(angaben).filter(([name]) => !platzhalter.includes(name)));
+    // page.request teilt die Cookies der Seite, also die Sitzung der angemeldeten Kundin.
+    const antwort = await page.request.fetch(`${basisUrl}${pfad}`, { method: methode, ...(Object.keys(rumpf).length ? { data: rumpf } : {}) });
+    assert.strictEqual(antwort.status(), Number(status), `${methode} ${pfad}: ${await antwort.text()}`);
+    assert.strictEqual(((await antwort.json()) as { fehler: string }).fehler, text(meldung), `${methode} ${pfad}: Feld fehler`);
+  }
+
   /* ---------------------------------------------------------------- UC-003 CSV-Export */
 
   /** Die letzte Export-Antwort: Status, Kopfzeilen und Rohbytes der Datei. */
@@ -1178,6 +1255,20 @@ export default class StepImplementation {
 
   private debitkarteAdresse(iban: string): string {
     return `${basisUrl}/api/konten/${encodeURIComponent(text(iban).replace(/\s+/g, ''))}/debitkarte`;
+  }
+
+  /** NFR-001: Abruf und Setzen der Debitkarte antworten ohne Sitzung mit 401, die Seite leitet auf die Anmeldung um. */
+  @Step('Die Debitkarte ist ohne Anmeldung nicht erreichbar')
+  public async debitkarteOhneAnmeldung() {
+    const page = await this.seite();
+    await page.context().clearCookies();
+    const adresse = this.debitkarteAdresse('DE02500105175407324911');
+    for (const [methode, body] of [['GET', undefined], ['PUT', '{}']] as [string, string | undefined][]) {
+      const antwort = await fetch(adresse, { method: methode, headers: { 'Content-Type': 'application/json' }, body });
+      assert.strictEqual(antwort.status, 401, `${methode} /api/konten/{iban}/debitkarte ohne Sitzung`);
+    }
+    await page.goto(`${basisUrl}/debitkarte`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/anmelden$/);
   }
 
   @Step('Der Abruf der Debitkarte zur IBAN <iban> antwortet mit dem Status <status>')

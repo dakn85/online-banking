@@ -30,6 +30,14 @@ const inTagen = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10)
       await seite.waitForLoadState('networkidle');
       await seite.screenshot({ path: join(ziel, `${geraet}-${pfad.split('?')[0]}.png`), fullPage: true });
     }
+    // UC-003: eine Notiz in der Zeile und das Blatt „Notiz zum Umsatz“.
+    await seite.goto(`${basis}/umsaetze?iban=DE02500105175407324911`);
+    await seite.getByRole('button', { name: 'Notiz erfassen' }).first().click();
+    await seite.getByLabel('Notiz', { exact: true }).fill('Beitrag prüfen');
+    await seite.getByRole('button', { name: 'Speichern' }).click();
+    await seite.getByRole('button', { name: 'Notiz ändern' }).click();
+    await seite.locator('#blatt-notiz').evaluate(blatt => Promise.all(blatt.getAnimations().map(a => a.finished)));
+    await seite.screenshot({ path: join(ziel, `${geraet}-notiz.png`) });
     await seite.goto(`${basis}/dauerauftraege`);
     await seite.locator('#neuer-dauerauftrag').click();
     await seite.screenshot({ path: join(ziel, `${geraet}-blatt.png`) });
