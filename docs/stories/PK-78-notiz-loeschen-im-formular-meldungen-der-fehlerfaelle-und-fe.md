@@ -1,4 +1,4 @@
-# PK-78: Notiz zu einem Umsatz merken
+# PK-78: Notiz löschen im Formular, Meldungen der Fehlerfälle und Feldlänge am Datenmodell
 
 **Art:** Erweiterung · **Priorität:** Mittel · **Systeme:** Online-Banking
 
@@ -25,8 +25,9 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 | Umsatz | Geändert | Eigenschaft notiz neu |
 | Notiz | Neu | Schema neu |
 | Umsatznotiz | Neu | Entität neu |
+| Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
 | Umsätze | Geändert | Feld Notiz neu, Aktion Bestätigen geändert, Aktion Abbrechen geändert, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 5 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 14 weitere |
 | BR-0106 Notiz zu Umsätzen der angemeldeten Kundin | Neu | Neu in UC-003 |
 | BR-0107 Löschen nur einer vorhandenen Notiz | Neu | Neu in UC-003 |
 
@@ -40,6 +41,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - `acceptance/specs/umsaetze.spec`: Die Notiz wird nach der Bestätigung gelöscht
 - `acceptance/specs/umsaetze.spec`: Ein leerer Notiztext wird abgelehnt
 - `acceptance/specs/umsaetze.spec`: Ein neuer Notiztext überschreibt die vorhandene Notiz
+- `acceptance/specs/umsaetze.spec`: Ein Notiztext außerhalb der Feldlänge wird abgelehnt
 - `acceptance/specs/umsaetze.spec`: Ein Notiztext über 140 Zeichen wird abgelehnt
 - `acceptance/specs/umsaetze.spec`: Eine Notiz zu einem Umsatz wird gespeichert und in der Liste angezeigt
 
@@ -51,6 +53,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] Umsatz: Eigenschaft notiz neu
 - [ ] Notiz: Schema neu
 - [ ] Umsatznotiz: Entität neu
+- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
 - [ ] Umsätze: Feld Notiz neu
 - [ ] Umsätze: Aktion Bestätigen geändert
 - [ ] Umsätze: Aktion Abbrechen geändert
@@ -64,6 +67,15 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] UC-003: Schritt 13 neu
 - [ ] UC-003: Schritt 14 neu
 - [ ] UC-003: Schritt 15 neu
+- [ ] UC-003: Schritt 16 neu
+- [ ] UC-003: A15 neu: Notiztext außerhalb der Feldlänge
+- [ ] UC-003: A16 neu: Konto nicht gefunden beim Speichern der Notiz
+- [ ] UC-003: A17 neu: Umsatz nicht gefunden beim Speichern der Notiz
+- [ ] UC-003: A18 neu: Notiz nicht gefunden beim Löschen
+- [ ] UC-003: A19 neu: Notiztext außerhalb der Feldlänge
+- [ ] UC-003: A20 neu: Konto nicht gefunden beim Speichern der Notiz
+- [ ] UC-003: A21 neu: Umsatz nicht gefunden beim Speichern der Notiz
+- [ ] UC-003: A22 neu: Notiz nicht gefunden beim Löschen
 - [ ] UC-003: Erfolg 4 neu
 - [ ] UC-003: BR-0106 neu: Notiz zu Umsätzen der angemeldeten Kundin
 - [ ] UC-003: BR-0107 neu: Löschen nur einer vorhandenen Notiz
@@ -88,7 +100,16 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
   _→ eingearbeitet in UC-003, BR-0106, BR-0107, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz · e11fbce_
 - Wie meldet der Dienst beim Speichern und Löschen einer Notiz die drei 404-Fälle, und was zeigt die Maske je Fall?
   **Antwort:** Je Fall eigener Text im Feld fehler: fremde IBAN „Das Konto wurde nicht gefunden.“, fremde umsatzId „Der Umsatz wurde nicht gefunden.“, Umsatz ohne Notiz beim Löschen „Die Notiz wurde nicht gefunden.“; die Maske zeigt genau diesen Text.
-  _→ eingearbeitet in UC-003_
+  _→ eingearbeitet in UC-003 · 3f6eb86_
 - Wie öffnet die Kundin das Notizformular je Umsatz, und welche Aktion steht in der Zeile?
   **Antwort:** Je Zeile eine Aktion: „Notiz erfassen“ ohne Notiz, „Notiz ändern“ mit Notiz; beide öffnen das Formular für genau diesen Umsatz, „Speichern“ schickt PUT mit dessen umsatzId.
-  _→ eingearbeitet in UC-003_
+  _→ eingearbeitet in UC-003 · 3f6eb86_
+- Wo soll die Kundin „Notiz löschen“ wählen?
+  **Antwort:** Im Formular Notiz zum Umsatz, das den Umsatz festhält
+  _→ eingearbeitet in UC-003, NFR-001_
+- Welchen Text zeigt die Maske bei einem Notiztext außerhalb von 1 bis 140 Zeichen?
+  **Antwort:** Es gelten die zwei Texte, die die Akzeptanztests der Story schon erwarten: „Die Notiz muss mindestens 1 Zeichen enthalten.“ bei leerem Text und „Die Notiz darf höchstens 140 Zeichen lang sein.“ bei zu langem Text. Beide stehen als Meldung im Ablauf von UC-003.
+  _→ noch nicht in der Spezifikation_
+- Zeigt das Szenario die nicht einschränkende Auswahl „Alle“ an genau einer Zeile einer anderen Kategorie, oder soll es dafür die Gesamtzahl der Treffer vergleichen?
+  **Antwort:** Genau eine Zeile einer anderen Kategorie, über Betrag bis „12,00“ eingegrenzt, wie vorgeschlagen.
+  _→ noch nicht in der Spezifikation_

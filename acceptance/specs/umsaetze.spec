@@ -696,3 +696,12 @@ Tags: UC-003, PK-78, NFR-001
 Tags: UC-003, PK-78, NFR-001
 
 * Der Aufruf "DELETE" "/api/konten/DE02500105175407324911/umsaetze/U-0007/notiz" ohne Anmeldung antwortet mit dem Status "401"
+
+## Ein Notiztext außerhalb der Feldlänge wird abgelehnt
+
+Tags: UC-003, PK-78, BR-0106
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin speichert bei dem Umsatz von "Bäckerei Krause" einen Notiztext mit "141" Zeichen und erhält den Status "400"
