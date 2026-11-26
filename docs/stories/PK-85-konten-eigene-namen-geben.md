@@ -44,43 +44,27 @@ Als Privatkundin möchte ich meinen Konten eigene Namen geben können, etwa dem 
 - `acceptance/specs/finanzstatus.spec`: Ohne vergebenen eigenen Namen liefert der Dienst für das Konto eigenerName als null
 - `acceptance/specs/finanzstatus.spec`: Zwei Konten dürfen denselben eigenen Namen tragen
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Konten der angemeldeten Kundin mit Salden und Gesamtvermögen: Beschreibung geändert
-- [ ] Eigenen Namen eines Kontos der angemeldeten Kundin setzen: Endpunkt neu
-- [ ] Konto: Eigenschaft eigenerName neu
-- [ ] KontonameEingabe: Schema neu
-- [ ] Konto: Attribut eigenerName neu
-- [ ] Zugriffsschutz des Finanzstatus: Anforderung geändert
-- [ ] Zugriffsschutz des Finanzstatus: Maß geändert
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Antwortzeit von Finanzstatus und Überweisung: Anforderung geändert
-- [ ] Antwortzeit von Finanzstatus und Überweisung: Maß geändert
-- [ ] Antwortzeit von Finanzstatus und Überweisung: Gilt für geändert
-- [ ] Verfügbarkeit von Finanzstatus und Überweisung: Anforderung geändert
-- [ ] Verfügbarkeit von Finanzstatus und Überweisung: Maß geändert
-- [ ] Verfügbarkeit von Finanzstatus und Überweisung: Gilt für geändert
-- [ ] Finanzstatus: Feld Eigener Name neu
-- [ ] Finanzstatus: Aktion Umsätze geändert
-- [ ] Finanzstatus: Aktion Umbuchen geändert
-- [ ] Finanzstatus: Aktion Name vergeben neu
-- [ ] Finanzstatus: Aktion Speichern neu
-- [ ] Finanzstatus: Aktion Abbrechen neu
-- [ ] Finanzstatus: Skizze geändert
-- [ ] UC-001: Ziele geändert
-- [ ] UC-001: Notizen geändert
-- [ ] UC-001: Schritt 5 geändert
-- [ ] UC-001: Schritt 9 neu
-- [ ] UC-001: A1 geändert
-- [ ] UC-001: A3 neu: Konto benennen
-- [ ] UC-001: A4 neu: Eingabe ungültig
-- [ ] UC-001: A5 neu: Konto nicht gefunden
-- [ ] UC-001: BR-0108 neu: Eigener Kontoname nur für Konten der angemeldeten Kundin
-- [ ] BR-0108: Neu in UC-001
-- [ ] Vision: Z-17 neu
-- [ ] Vision: Abgrenzung geändert
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-85 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-85 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-26_
+
+## Bausteine
+
+- **Konten und Finanzstatus** (`src/konten.ts`): Attribut `eigenerName` am Konto im Speicher (ADR-002); der Reset legt die Konten aus dem Ausgangsstand neu an, danach trägt keines einen eigenen Namen. Neue Funktion `eigenenNamenSetzen` prüft und speichert, kennt kein HTTP.
+- **Seitenauslieferung** (`src/main.ts`): Route `PUT /api/konten/{iban}/name` hinter dem Zugriffsschutz (NFR-001); Rumpf ohne gültiges JSON wird an dieser Route mit 400 beantwortet, ohne Sitzung bleibt es 401.
+- **Oberfläche** (`public/seiten/finanzstatus.js`): Feld „Eigener Name“ an der Kontokarte, Knopf „Name vergeben“ je Konto, Seitenblatt „Eigenen Namen vergeben“ mit `Aventa.blatt`.
+- **Akzeptanztests** (`acceptance/tests/StepImplementation.ts`): fehlende Steps.
+
+## Schritte
+
+1. UC-001 Schritt 5, Schema Konto: `GET /api/konten` liefert je Konto `eigenerName`, ohne vergebenen Namen `null`.
+2. UC-001 A3/A4/A5, BR-0108, Konto.eigenerName, Konto.iban: `PUT /api/konten/{iban}/name` mit `{eigenerName}`. Prüfreihenfolge: 401 (Sitzung), 400 IBAN nach Entfernen der Leerzeichen nicht 22 Zeichen („Die IBAN muss 22 Zeichen lang sein.“), 404 Konto nicht unter der Kennung der Sitzung (BR-0108), 400 Name nach Trim leer, kein Text oder Rumpf ohne gültiges JSON („Bitte geben Sie den eigenen Namen an.“), 400 länger als 60 Zeichen. 200 mit dem Konto wie im Finanzstatus, auch bei unverändertem Namen. Gleicher Name an zwei Konten ist erlaubt; Kontoname, Art, IBAN, Saldo bleiben unverändert, keine TAN, keine Postfachnachricht.
+3. UC-001 Schritt 9, A3 bis A5 in der Oberfläche: „Name vergeben“ an jeder Kontokarte öffnet das Blatt mit dem bisherigen Namen; Vorabprüfung im Browser (ADR-004), Ablehnung 400 am Feld im Blatt, 404 als Meldung über der Seite; nach dem Speichern neu laden mit „Eigener Name gespeichert.“. Die Karte zeigt den eigenen Namen in `data-feld="Eigener Name"`, die Liste nennt die Spalte in `data-felder`.
+4. Unit-Tests für BR-0108 und die Feldregeln in `test/konten.test.ts`; fehlende Gauge-Steps für Blatt, PUT-Aufruf und `GET /api/konten`.
+
+## Rahmenänderung
+
+Keine neue Bibliothek, kein neues Muster.
 
 ## Entscheidungen
 
