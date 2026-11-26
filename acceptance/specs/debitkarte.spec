@@ -152,3 +152,11 @@ Tags: UC-018, PK-55, BR-0081
 * Die Kundin öffnet die Debitkarte des Girokontos
 * Die Debitkarte zeigt die Kartennummer "**** 4821" und den Status "vorübergehend gesperrt"
 * Die Debitkarte zeigt keinen Sperrgrund
+
+## Die Debitkarte ist ohne Anmeldung nicht erreichbar
+
+Tags: UC-018, PK-78, NFR-001
+
+* Testdaten sind zurückgesetzt
+* Die Debitkarte ist ohne Anmeldung nicht erreichbar
+* Die Anmeldeseite ist zu sehen
