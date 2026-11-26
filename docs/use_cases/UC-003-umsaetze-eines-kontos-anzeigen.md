@@ -146,7 +146,7 @@
 **Auslöser:** Der Notiztext verletzt eine Feldbedingung von Umsatznotiz.text im Datenmodell, ist also nach dem Entfernen der Randleerzeichen leer oder länger, als die Feldbedingung erlaubt; der Dienst antwortet mit 400 und dem Feld fehler (Schritt 15).  
 **Ablauf:**
 
-1. Das System zeigt am Feld Notiz die Meldung „Die Notiz muss mindestens 1 Zeichen enthalten.“ bei leerem Text oder „Die Notiz darf höchstens 200 Zeichen lang sein.“ bei zu langem Text und keine Erfolgsmeldung; die gespeicherte Notiz bleibt unverändert.
+1. Das System zeigt am Feld Notiz die Meldung „Die Notiz muss mindestens 1 Zeichen enthalten.“ bei leerem Text oder „Die Notiz darf höchstens 140 Zeichen lang sein.“ bei zu langem Text und keine Erfolgsmeldung; die gespeicherte Notiz bleibt unverändert.
 2. Die Kundin berichtigt den Text; danach geht es mit Schritt 15 weiter, oder sie bricht ab.
 
 ### A16: Konto nicht gefunden beim Speichern der Notiz
