@@ -1,4 +1,4 @@
-# PK-78: Notiz löschen im Formular, Meldungen der Fehlerfälle und Feldlänge am Datenmodell
+# PK-78: Notiz zu einem Umsatz merken
 
 **Art:** Testpflege · **Priorität:** Mittel · **Systeme:** Online-Banking
 
