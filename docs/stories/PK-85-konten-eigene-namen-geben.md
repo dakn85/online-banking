@@ -41,6 +41,7 @@ Als Privatkundin möchte ich meinen Konten eigene Namen geben können, etwa dem 
 - `acceptance/specs/finanzstatus.spec`: Ein zu langer eigener Name wird mit 400 abgelehnt
 - `acceptance/specs/finanzstatus.spec`: Eine IBAN mit falscher Länge wird mit 400 abgelehnt
 - `acceptance/specs/finanzstatus.spec`: Ohne vergebenen eigenen Namen bleibt die Spalte leer
+- `acceptance/specs/finanzstatus.spec`: Ohne vergebenen eigenen Namen liefert der Dienst für das Konto eigenerName als null
 - `acceptance/specs/finanzstatus.spec`: Zwei Konten dürfen denselben eigenen Namen tragen
 
 ## Aufgaben für die Umsetzung
@@ -97,4 +98,4 @@ Als Privatkundin möchte ich meinen Konten eigene Namen geben können, etwa dem 
   _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name · ca59002_
 - Soll eigenerName ohne vergebenen Namen als null geliefert werden, als leere Zeichenkette oder das Feld ganz entfallen?
   **Antwort:** Als null; das Feld ist immer vorhanden (Marktstandard für ein Pflichtfeld ohne Wert).
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in GET /api/konten, Schema Konto, UC-001_

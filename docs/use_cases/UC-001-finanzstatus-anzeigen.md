@@ -20,7 +20,7 @@
 2. Das System liest die Konten der angemeldeten Kundin (Demo-Daten, C-001).
 3. Das System berechnet das Gesamtvermögen als Summe der Salden aller Konten.
 4. Das System zeigt über der Tabelle das Gesamtvermögen in Euro.
-5. Das System zeigt die Konten in einer Tabelle mit Kontoname, eigenem Namen, IBAN und Saldo in Euro; die Spalte „Eigener Name“ bleibt leer, solange die Kundin keinen vergeben hat.
+5. Das System zeigt die Konten in einer Tabelle mit Kontoname, eigenem Namen, IBAN und Saldo in Euro; die Spalte „Eigener Name“ bleibt leer, solange die Kundin keinen vergeben hat, denn der Dienst liefert für ein solches Konto das Feld eigenerName als null.
 6. Das System zeigt in der Zeile des Girokontos Dispositionsrahmen und verfügbaren Betrag (Saldo plus Rahmen).
 7. Das System zeigt in der Zeile des Girokontos den Knopf „Überweisen“; er öffnet die Überweisung mit dem Girokonto als Auftraggeberkonto (UC-002).
 8. Das System zeigt in jeder Zeile den Knopf „Umsätze“; er öffnet die Umsätze des Kontos (UC-003).

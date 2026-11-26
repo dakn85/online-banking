@@ -122,3 +122,11 @@ Tags: UC-001, PK-85
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249 47" den eigenen Namen " " und erhält den Status "400" mit der Meldung "Bitte geben Sie den eigenen Namen an."
+
+## Ohne vergebenen eigenen Namen liefert der Dienst für das Konto eigenerName als null
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Antwort auf den Aufruf "GET /api/konten" liefert für das Konto "Tagesgeldkonto" den eigenen Namen "null"
