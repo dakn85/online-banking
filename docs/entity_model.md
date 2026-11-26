@@ -59,6 +59,7 @@ Ein Konto der Kundin, wie es der Finanzstatus in einer Zeile zeigt. Eine Kreditk
 | waehrung | Währung des Saldos | String |  | Pflicht; Werte EUR; Standard EUR |
 | dispositionsrahmen | Eingeräumter Dispositionsrahmen in Euro; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 1000.00; nur bei Art Girokonto |
 | verfuegbarerBetrag | Verfügbarer Betrag in Euro: Saldo plus Dispositionsrahmen; nur beim Girokonto belegt | Decimal |  | Pflicht bei Art Girokonto; Beispiel 3145.30; nur bei Art Girokonto |
+| eigenerName | Eigener Name, den die Kundin dem Konto gibt, etwa „Urlaubskasse“ für das Tagesgeldkonto; das Attribut fehlt, solange sie keinen eigenen Namen vergeben hat. Er ersetzt den Kontonamen nicht, das Konto bleibt über Kontoname und IBAN erreichbar. | String | 1..60 | Länge 1..60; Beispiel Urlaubskasse; führende und folgende Leerzeichen werden vor Prüfung, Speicherung und Vergleich entfernt |
 
 **Einschränkungen:** Ein Tagesgeldkonto trägt keinen Dispositionsrahmen und keinen verfügbaren Betrag; es wird nie unter 0 Euro geführt (BR-0089).
 **Einschränkungen:** Ein Konto der Art Girokonto kann eine Debitkarte haben (Entität Debitkarte); eine Kreditkarte hat keine.

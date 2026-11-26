@@ -1,4 +1,4 @@
-/* UC-001 Finanzstatus: Gesamtvermögen, alle Konten als Karten, darunter die letzten Umsätze des Girokontos und die Aufträge.
+/* UC-001 Finanzstatus: Gesamtvermögen, alle Konten als Karten mit eigenem Namen (A3), darunter die letzten Umsätze des Girokontos und die Aufträge.
    Maske: docs/ui/finanzstatus.html (Inhalt und Namen; Anordnung nach .claude/skills/oberflaeche/SKILL.md). */
 (function () {
   const { html, symbol, iban } = Aventa;
@@ -25,7 +25,9 @@
       <div class="konto__kopf">
         <span class="konto__symbol konto__symbol--${html(k.art.toLowerCase())}">${symbol(ARTSYMBOL[k.art] || 'giro')}</span>
         <div class="konto__name"><strong id="konto-${html(k.iban)}" data-feld="Kontoname">${html(k.kontoname)}</strong>
-          ${k.art !== k.kontoname ? `<span data-feld="Art">${html(k.art)}</span>` : ''}</div>
+          ${k.art !== k.kontoname ? `<span data-feld="Art">${html(k.art)}</span>` : ''}
+          ${k.eigenerName ? `<span class="konto__eigener"><span class="unsichtbar">Eigener Name: </span><span data-feld="Eigener Name">${html(k.eigenerName)}</span></span>` : ''}</div>
+        <button type="button" class="symbolknopf konto__benennen" data-name-vergeben="${html(k.iban)}" aria-label="Name vergeben" title="Name vergeben">${symbol('stift')}</button>
       </div>
       <p class="konto__iban iban" data-feld="IBAN">${iban(k.iban)}</p>
       <div>
@@ -67,10 +69,16 @@
         : parameter && parameter.get('vorgemerkt') === '1' ? 'Überweisung vorgemerkt.'
         : parameter && parameter.get('umgebucht') === '1' ? 'Umbuchung ausgeführt.' : '';
       if (ausgefuehrt) history.replaceState(null, '', '/finanzstatus');
+      await darstellen(flaeche, status, { erfolg: ausgefuehrt });
+    },
+  });
+
+  /** Baut die Seite aus dem Finanzstatus; meldung: Erfolg oder Ablehnung über der Seite. */
+  async function darstellen(flaeche, status, meldung) {
       const stand = new Date().toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
       const giro = status.konten.find(k => k.art === 'Girokonto');
       flaeche.innerHTML = `<div class="seite finanzstatus">
-        ${ausgefuehrt ? `<p class="meldung meldung--erfolg" role="status">${ausgefuehrt}</p>` : ''}
+        ${Aventa.meldungen(meldung)}
         <section class="vermoegen" aria-label="Gesamtvermögen">
           ${Marke.guilloche(900, 300).replace('class="guilloche"', 'class="guilloche vermoegen__muster"')}
           <div>
@@ -84,7 +92,7 @@
         </section>
         <section class="abschnitt" aria-labelledby="konten-titel">
           <div class="abschnitt__kopf"><h2 id="konten-titel">Ihre Konten</h2></div>
-          <div class="kontenliste" data-felder="Kontoname|Art|IBAN|Saldo|Dispositionsrahmen|Verfügbarer Betrag">${status.konten.map(karte).join('')}</div>
+          <div class="kontenliste" data-felder="Kontoname|Eigener Name|Art|IBAN|Saldo|Dispositionsrahmen|Verfügbarer Betrag">${status.konten.map(karte).join('')}</div>
         </section>
         <div class="abschnitt uebersicht">
           <section class="flaeche" aria-labelledby="letzte-titel">
@@ -97,6 +105,10 @@
           </section>
         </div>
       </div>`;
+
+      // UC-001 Schritt 9: „Name vergeben“ an jeder Kontokarte.
+      flaeche.querySelectorAll('[data-name-vergeben]').forEach(knopf => knopf.addEventListener('click', () =>
+        nameVergeben(flaeche, status.konten.find(k => k.iban === knopf.dataset.nameVergeben))));
 
       // Vorschau und Zähler laden nach; was ausbleibt, lässt die Karten stehen.
       const liste = flaeche.querySelector('#letzte-umsaetze');
@@ -117,6 +129,61 @@
         ['/postfach', 'postfach', 'Nachrichten', post ? (post.anzahlUngelesen ? `${post.anzahlUngelesen} ungelesen` : 'Alles gelesen') : ''],
         ['/empfaengervorlagen', 'vorlage', 'Vorlagen', 'Empfänger für Überweisungen'],
       ].map(([href, s, titel, unter]) => `<li><a href="${href}"><span class="zeile__symbol zeile__symbol--tanne">${symbol(s, 18)}</span><span>${titel}<small>${html(unter)}</small></span></a></li>`).join('');
-    },
-  });
+  }
+
+  /** Lädt den Finanzstatus neu und zeigt die Meldung über der Seite. */
+  async function neuLaden(flaeche, meldung) {
+    await darstellen(flaeche, await Aventa.api('/api/konten'), meldung);
+  }
+
+  const NAME_LEER = 'Bitte geben Sie den eigenen Namen an.';
+  const NAME_LAENGE = 'Der eigene Name darf höchstens 60 Zeichen lang sein.';
+
+  /** UC-001 A3 bis A5: Blatt „Eigenen Namen vergeben“ für genau dieses Konto, gefüllt mit dem bisherigen eigenen Namen. */
+  function nameVergeben(flaeche, k) {
+    flaeche.querySelector('#blatt-eigener-name')?.remove();
+    flaeche.insertAdjacentHTML('beforeend', Aventa.blatt({
+      id: 'blatt-eigener-name', titel: 'Eigenen Namen vergeben', unter: `${k.kontoname}, ${iban(k.iban).replace(/ /g, '\u00a0')}`,
+      inhalt: `<p class="hinweis">Der eigene Name erscheint im Finanzstatus neben dem Kontonamen; der Kontoname bleibt unverändert.</p>
+        <div class="feld"><label for="eigener-name">Eigener Name</label>
+          <input id="eigener-name" name="eigenerName" required maxlength="60" autocomplete="off" placeholder="Urlaubskasse" value="${html(k.eigenerName || '')}"></div>`,
+      aktion: 'Speichern',
+    }));
+    const blatt = flaeche.querySelector('#blatt-eigener-name');
+    const form = blatt.querySelector('form');
+    const hinweis = blatt.querySelector('.meldung--fehler');
+    const feld = form.eigenerName;
+    const zu = () => { if (blatt.open) blatt.close(); blatt.remove(); };
+    Aventa.oeffnen(blatt, { beiZu: () => blatt.remove() });
+    const ablehnen = meldung => {
+      hinweis.textContent = meldung;
+      hinweis.hidden = false;
+      feld.setAttribute('aria-invalid', 'true');
+      feld.focus();
+    };
+
+    // A3 Schritte 2 bis 5: Vorabprüfung im Browser (ADR-004), maßgeblich ist der Dienst. A4 am Feld, die Eingabe bleibt stehen; A5 über der Seite.
+    form.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const speichern = form.querySelector('[type="submit"]');
+      if (speichern.disabled) return;
+      hinweis.hidden = true;
+      feld.removeAttribute('aria-invalid');
+      const name = feld.value.trim();
+      if (!name) return ablehnen(NAME_LEER);
+      if ([...name].length > 60) return ablehnen(NAME_LAENGE);
+      speichern.disabled = true;
+      try {
+        await Aventa.api(`/api/konten/${encodeURIComponent(k.iban)}/name`, { method: 'PUT', body: JSON.stringify({ eigenerName: name }) });
+        zu();
+        await neuLaden(flaeche, { erfolg: 'Eigener Name gespeichert.' });
+      } catch (fehler) {
+        if (fehler.status === 400) ablehnen(fehler.message);
+        else if (fehler.status === 404) { zu(); await neuLaden(flaeche, { fehler: fehler.message }); }
+        else throw fehler;
+      } finally {
+        speichern.disabled = false;
+      }
+    });
+  }
 })();
