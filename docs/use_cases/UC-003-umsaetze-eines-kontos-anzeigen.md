@@ -31,7 +31,7 @@
 12. Das System zeigt je Umsatz in der Zeile die gespeicherte Notiz im Feld Notiz und genau eine Aktion: „Notiz erfassen“, wenn der Umsatz keine Notiz trägt, sonst „Notiz ändern“ (BR-0106).
 13. Die Kundin wählt in der Zeile eines Umsatzes „Notiz erfassen“ oder „Notiz ändern“; das System öffnet das Formular Notiz zum Umsatz für genau diesen Umsatz und hält den gewählten Umsatz dort mit Gegenpartei und umsatzId fest.
 14. Das System zeigt im Formular den bisherigen Text als Inhalt, wenn der Umsatz eine Notiz trägt, und die Aktion „Notiz löschen“ nur dann, wenn er eine Notiz trägt (BR-0106, BR-0107).
-15. Die Kundin gibt den Notiztext ein und wählt „Speichern“; das System schickt den Text mit der im Formular festgehaltenen umsatzId an PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, zeigt die Meldung „Notiz gespeichert.“ und danach den gespeicherten Text in dieser Zeile (BR-0106). Der Notiztext folgt der Feldbedingung von Umsatznotiz.text im Datenmodell; einen Text außerhalb davon lehnt der Dienst als Formatfehler mit 400 ab und die Seite zeigt keine Erfolgsmeldung.
+15. Die Kundin gibt den Notiztext ein und wählt „Speichern“; das System schickt den Text mit der im Formular festgehaltenen umsatzId an PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, zeigt die Meldung „Notiz gespeichert.“ und danach den gespeicherten Text in dieser Zeile (BR-0106). Der Notiztext folgt der Feldbedingung von Umsatznotiz.text im Datenmodell (A15).
 16. Die Kundin wählt im Formular „Notiz löschen“; das System zeigt die Rückfrage „Notiz zu <Gegenpartei> löschen? Die Notiz lässt sich nicht wiederherstellen.“ mit „Bestätigen“ und „Abbrechen“, wobei die Gegenpartei die des im Formular festgehaltenen Umsatzes ist. Nach „Bestätigen“ schickt es DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz mit dessen umsatzId, zeigt die Meldung „Notiz gelöscht.“ und die Zeile ohne Notiz; bei „Abbrechen“ bleibt die Notiz unverändert (BR-0107).
 
 ## Alternativabläufe
@@ -141,12 +141,12 @@
 1. Der Dienst begrenzt die angefragte Seitengröße auf die Obergrenze und liefert höchstens diese Zahl an Umsätzen auf der Seite, mit der Gesamtzahl über alle Seiten, dem Saldo danach je Umsatz und ohne Meldung.
 2. Die Reihenfolge bleibt die nach BR-0008, und einen Hinweis nach A2 zeigt das System nur, wenn es keinen Treffer gibt.
 
-### A15: Notiztext außerhalb der Feldlänge
+### A15: Notiztext außerhalb der Feldbedingung
 
-**Auslöser:** Der Notiztext ist leer oder länger, als die Feldbedingung von Umsatznotiz.text im Datenmodell erlaubt; der Dienst antwortet mit 400 und dem Feld fehler (Schritt 15).  
+**Auslöser:** Der Notiztext verletzt eine Feldbedingung von Umsatznotiz.text im Datenmodell, ist also nach dem Entfernen der Randleerzeichen leer oder länger, als die Feldbedingung erlaubt; der Dienst antwortet mit 400 und dem Feld fehler (Schritt 15).  
 **Ablauf:**
 
-1. Das System zeigt den Hinweis des Feldes am Formular Notiz zum Umsatz und keine Erfolgsmeldung; die gespeicherte Notiz bleibt unverändert.
+1. Das System zeigt am Feld Notiz die Meldung „Die Notiz muss mindestens 1 Zeichen enthalten.“ bei leerem Text oder „Die Notiz darf höchstens 140 Zeichen lang sein.“ bei zu langem Text und keine Erfolgsmeldung; die gespeicherte Notiz bleibt unverändert.
 2. Die Kundin berichtigt den Text; danach geht es mit Schritt 15 weiter, oder sie bricht ab.
 
 ### A16: Konto nicht gefunden beim Speichern der Notiz
@@ -169,43 +169,6 @@
 **Ablauf:**
 
 1. Das System zeigt im Feld fehler „Die Notiz wurde nicht gefunden.“ und die Zeile ohne Notiz.
-
-### A19: Notiztext außerhalb der Feldlänge
-
-**Auslöser:** Der Notiztext ist leer oder länger, als die Feldbedingung von Umsatznotiz.text im Datenmodell erlaubt; der Dienst antwortet mit 400 und dem Feld fehler (Schritt 15).  
-**Ablauf:**
-
-1. Das System zeigt den Hinweis des Feldes am Formular Notiz zum Umsatz und keine Erfolgsmeldung; die gespeicherte Notiz bleibt unverändert.
-2. Die Kundin berichtigt den Text; danach geht es mit Schritt 15 weiter, oder sie bricht ab.
-
-### A20: Konto nicht gefunden beim Speichern der Notiz
-
-**Auslöser:** Die IBAN gehört zu keinem Konto der angemeldeten Kundin; der Dienst antwortet mit 404 (BR-0106). (Schritt 15).  
-**Ablauf:**
-
-1. Das System zeigt im Feld fehler „Das Konto wurde nicht gefunden.“ und keine Erfolgsmeldung; die Notiz bleibt unverändert.
-
-### A21: Umsatz nicht gefunden beim Speichern der Notiz
-
-**Auslöser:** Die umsatzId gehört zu keinem Umsatz dieses Kontos; der Dienst antwortet mit 404 (BR-0106). (Schritt 15).  
-**Ablauf:**
-
-1. Das System zeigt im Feld fehler „Der Umsatz wurde nicht gefunden.“ und keine Erfolgsmeldung; die Notiz bleibt unverändert.
-
-### A22: Notiz nicht gefunden beim Löschen
-
-**Auslöser:** Der Umsatz trägt keine Notiz; der Dienst antwortet mit 404 (BR-0107). (Schritt 16).  
-**Ablauf:**
-
-1. Das System zeigt im Feld fehler „Die Notiz wurde nicht gefunden.“ und die Zeile ohne Notiz.
-
-### A23: Notiztext ungültig
-
-**Auslöser:** Der Notiztext verletzt eine Feldbedingung von Umsatznotiz.text, ist also nach dem Entfernen der Randleerzeichen leer oder länger als die Höchstlänge; der Dienst antwortet mit 400 und dem Feld fehler. (Schritt 14).  
-**Ablauf:**
-
-1. Das System zeigt zum Feld Notiz die Meldung „Die Notiz muss mindestens 1 Zeichen enthalten.“ oder „Die Notiz darf höchstens 140 Zeichen lang sein.“ und speichert nichts.
-2. Die Zeile behält die bisherige Notiz oder bleibt ohne Notiz; die Meldung „Notiz gespeichert.“ zeigt das System nicht.
 
 ## Sequenzdiagramm
 

@@ -27,12 +27,19 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 | Umsatznotiz | Neu | Entität neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
 | Umsätze | Geändert | Feld Notiz neu, Aktion Bestätigen geändert, Aktion Abbrechen geändert, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 15 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 10 weitere |
 | BR-0106 Notiz zu Umsätzen der angemeldeten Kundin | Neu | Neu in UC-003 |
 | BR-0107 Löschen nur einer vorhandenen Notiz | Neu | Neu in UC-003 |
 
 ## Akzeptanztests
 
+- `acceptance/specs/ausgabenanalyse.spec`: Ohne Anmeldung ist die Ausgabenanalyse nicht erreichbar
+- `acceptance/specs/dauerauftraege.spec`: Die Daueraufträge sind ohne Anmeldung nicht erreichbar
+- `acceptance/specs/debitkarte.spec`: Die Debitkarte ist ohne Anmeldung nicht erreichbar
+- `acceptance/specs/finanzstatus.spec`: Ohne Anmeldung ist der Finanzstatus nicht erreichbar
+- `acceptance/specs/kontoauszug.spec`: Ohne Anmeldung ist die Kontoauszugsseite nicht erreichbar
+- `acceptance/specs/tageslimit.spec`: Das Tageslimit ist ohne Anmeldung nicht erreichbar
+- `acceptance/specs/umbuchung.spec`: Ohne Anmeldung ist die Umbuchung nicht erreichbar
 - `acceptance/specs/umsaetze.spec`: Das Abbrechen der Rückfrage behält die Notiz
 - `acceptance/specs/umsaetze.spec`: Das Löschen einer nicht vorhandenen Notiz wird mit 404 abgewiesen
 - `acceptance/specs/umsaetze.spec`: Das Löschen einer Notiz ohne Anmeldung wird mit 401 beantwortet
@@ -45,6 +52,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - `acceptance/specs/umsaetze.spec`: Ein Notiztext außerhalb der Feldlänge wird abgelehnt
 - `acceptance/specs/umsaetze.spec`: Ein Notiztext über 140 Zeichen wird abgelehnt
 - `acceptance/specs/umsaetze.spec`: Eine Notiz zu einem Umsatz wird gespeichert und in der Liste angezeigt
+- `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung sind die vorgemerkten Überweisungen nicht erreichbar
 
 ## Aufgaben für die Umsetzung
 
@@ -69,15 +77,10 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] UC-003: Schritt 14 neu
 - [ ] UC-003: Schritt 15 neu
 - [ ] UC-003: Schritt 16 neu
-- [ ] UC-003: A15 neu: Notiztext außerhalb der Feldlänge
+- [ ] UC-003: A15 neu: Notiztext außerhalb der Feldbedingung
 - [ ] UC-003: A16 neu: Konto nicht gefunden beim Speichern der Notiz
 - [ ] UC-003: A17 neu: Umsatz nicht gefunden beim Speichern der Notiz
 - [ ] UC-003: A18 neu: Notiz nicht gefunden beim Löschen
-- [ ] UC-003: A19 neu: Notiztext außerhalb der Feldlänge
-- [ ] UC-003: A20 neu: Konto nicht gefunden beim Speichern der Notiz
-- [ ] UC-003: A21 neu: Umsatz nicht gefunden beim Speichern der Notiz
-- [ ] UC-003: A22 neu: Notiz nicht gefunden beim Löschen
-- [ ] UC-003: A23 neu: Notiztext ungültig
 - [ ] UC-003: Erfolg 4 neu
 - [ ] UC-003: BR-0106 neu: Notiz zu Umsätzen der angemeldeten Kundin
 - [ ] UC-003: BR-0107 neu: Löschen nur einer vorhandenen Notiz
@@ -85,6 +88,14 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] BR-0107: Neu in UC-003
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-78 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-78 grün
+
+## Offene Fragen
+
+- [ ] Soll die Kontenprüfung der Ausgabenanalyse in BR-0084 stehen (wie bisher im Ablauf von UC-019) oder soll BR-0011 ausdrücklich auch für die Ausgabenanalyse gelten?
+- [ ] Soll der Hinweis des Feldes Notiz bei einem zu langen Text als Meldung im Bereich der Umsätze erscheinen?
+- [ ] Zeigt das Szenario die nicht einschränkende Auswahl „Alle“ an genau einer Zeile einer anderen Kategorie, über Betrag bis „12,00“ eingegrenzt?
+- [ ] Soll der Dienst einen ausdrücklich mitgeschickten Wert „Alle“ als Formatfehler mit 400 abweisen und dabei keinen eigenen Text liefern?
+- [ ] Welches Szenario soll die genau einmalige Ausführung für die Maske Umbuchung belegen?
 
 ## Entscheidungen
 

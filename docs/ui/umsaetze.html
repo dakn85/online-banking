@@ -29,10 +29,10 @@
     {"label":"Kontoauszug","useCase":"UC-024#1","screen":"kontoauszug"},
     {"label":"Notiz erfassen","useCase":"UC-003#13","screen":"umsaetze"},
     {"label":"Notiz ändern","useCase":"UC-003#13","screen":"umsaetze"},
-    {"label":"Speichern","useCase":"UC-003#14","operation":"PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz","screen":"umsaetze"},
-    {"label":"Notiz löschen","useCase":"UC-003#15","screen":"umsaetze"},
-    {"label":"Bestätigen","useCase":"UC-003#15","operation":"DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz","screen":"umsaetze"},
-    {"label":"Abbrechen","useCase":"UC-003#15","screen":"umsaetze"},
+    {"label":"Speichern","useCase":"UC-003#15","operation":"PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz","screen":"umsaetze"},
+    {"label":"Notiz löschen","useCase":"UC-003#16","screen":"umsaetze"},
+    {"label":"Bestätigen","useCase":"UC-003#16","operation":"DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz","screen":"umsaetze"},
+    {"label":"Abbrechen","useCase":"UC-003#16","screen":"umsaetze"},
     {"label":"Zurückgeben","useCase":"UC-022#1","screen":"umsaetze"},
     {"label":"Bestätigen","useCase":"UC-022#3","operation":"POST /api/konten/{iban}/umsaetze/{umsatzId}/rueckgaben","screen":"umsaetze"},
     {"label":"Abbrechen","useCase":"UC-022#3","screen":"umsaetze"},
@@ -73,12 +73,12 @@
 <caption>Umsätze Girokonto</caption>
 <thead><tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Kategorie</th><th>Betrag</th><th>Saldo danach</th><th>Rückgabe</th><th>Notiz</th></tr></thead>
 <tbody>
-<tr><td>31.10.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>Freizeit</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td><td>Beitrag prüfen</td><td data-wf="aktionen"><button>Notiz ändern</button><button>Notiz löschen</button></td></tr>
+<tr><td>31.10.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>Freizeit</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td><td>Beitrag prüfen</td><td data-wf="aktionen"><button>Notiz ändern</button></td></tr>
 <tr><td>12.02.2026</td><td>Bäckerei Krause</td><td>Einkauf</td><td>Lebensmittel</td><td>-12,00 €</td><td>2.145,30 €</td><td></td><td></td><td data-wf="aktionen"><button>Notiz erfassen</button></td></tr>
 <tr><td>28.01.2026</td><td>Stadtwerke Rhein</td><td>Abschlag Strom</td><td>Wohnen</td><td>-89,00 €</td><td>2.157,30 €</td><td>Zurückgegeben</td><td></td><td data-wf="aktionen"><button>Notiz erfassen</button></td></tr>
 </tbody>
 </table>
 <div data-wf="leer"><p>Für diese Auswahl gibt es keine Umsätze.</p></div>
-<section data-wf="gruppe" data-merkmal="Notiz"><h2>Notiz zum Umsatz</h2><form data-wf="formular"><label data-wf="feld"><span>Notiz</span><input name="notiz" placeholder="Eigene Notiz, höchstens 140 Zeichen"></label><div data-wf="aktionen"><button data-wf="primaer">Speichern</button><button>Abbrechen</button></div></form></section>
+<section data-wf="gruppe" data-merkmal="Notiz"><h2>Notiz zum Umsatz</h2><form data-wf="formular"><label data-wf="feld"><span>Notiz</span><input name="notiz" placeholder="Eigene Notiz, höchstens 140 Zeichen"></label><div data-wf="aktionen"><button data-wf="primaer">Speichern</button><button>Notiz löschen</button></div></form></section>
 <section data-wf="gruppe" data-merkmal="Notiz löschen"><h2>Notiz löschen</h2><p data-wf="meldung" role="status">Notiz zu Fitnessstudio Vital löschen? Die Notiz lässt sich nicht wiederherstellen.</p><div data-wf="aktionen"><button data-wf="primaer">Bestätigen</button><button>Abbrechen</button></div></section>
 <section data-wf="gruppe" data-merkmal="Rückgabe"><h2>Lastschrift zurückgeben</h2><p data-wf="meldung" role="status">Lastschrift über 29,90 € von Fitnessstudio Vital zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.</p><form data-wf="formular"><div data-wf="aktionen"><button data-wf="primaer">Bestätigen</button><button>Abbrechen</button></div></form></section>
