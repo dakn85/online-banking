@@ -4,21 +4,26 @@
   "fields": [
     {"name":"gesamtvermoegen","label":"Gesamtvermögen","kind":"anzeige"},
     {"name":"kontoname","label":"Kontoname","kind":"anzeige","attribute":"Konto.kontoname"},
+    {"name":"eigenerName","label":"Eigener Name","kind":"anzeige","attribute":"Konto.eigenerName"},
     {"name":"art","label":"Art","kind":"anzeige","attribute":"Konto.art"},
     {"name":"iban","label":"IBAN","kind":"anzeige","attribute":"Konto.iban"},
     {"name":"saldo","label":"Saldo","kind":"anzeige","attribute":"Konto.saldo"},
     {"name":"dispositionsrahmen","label":"Dispositionsrahmen","kind":"anzeige","attribute":"Konto.dispositionsrahmen"},
-    {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"}
+    {"name":"verfuegbarerBetrag","label":"Verfügbarer Betrag","kind":"anzeige","attribute":"Konto.verfuegbarerBetrag"},
+    {"name":"eigenerNameEingabe","label":"Eigener Name","kind":"text","attribute":"Konto.eigenerName","rules":{"required":true,"maxLength":60}}
   ],
   "actions": [
     {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"},
-    {"label":"Umsätze","useCase":"UC-003#1","screen":"umsaetze"},
+    {"label":"Umsätze","useCase":"UC-001#8","screen":"umsaetze"},
     {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"},
     {"label":"Daueraufträge","useCase":"UC-016#1","screen":"dauerauftraege"},
     {"label":"Ausgabenanalyse","useCase":"UC-019#1","operation":"GET /api/konten/{iban}/ausgabenanalyse","screen":"ausgabenanalyse"},
     {"label":"Debitkarte","useCase":"UC-018#1","screen":"debitkarte"},
-    {"label":"Umbuchen","useCase":"UC-001#10","screen":"umbuchung"},
-    {"label":"Persönliche Daten","useCase":"UC-023#1","screen":"persoenliche-daten"}
+    {"label":"Umbuchen","useCase":"UC-001#11","screen":"umbuchung"},
+    {"label":"Persönliche Daten","useCase":"UC-023#1","screen":"persoenliche-daten"},
+    {"label":"Name vergeben","useCase":"UC-001#9"},
+    {"label":"Speichern","useCase":"UC-001","operation":"PUT /api/konten/{iban}/name"},
+    {"label":"Abbrechen","useCase":"UC-001"}
   ]
 } -->
 <header data-wf="kopf">
@@ -39,11 +44,17 @@
 <table data-wf="tabelle">
   <caption>Ihre Konten</caption>
   <thead>
-    <tr><th>Kontoname</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
+    <tr><th>Kontoname</th><th>Eigener Name</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
   </thead>
   <tbody>
-    <tr><td>Girokonto</td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 11</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button>Umsätze</button> <button>Ausgabenanalyse</button> <button data-wf="primaer">Überweisen</button> <button>Debitkarte</button></td></tr>
-    <tr><td>Kreditkarte</td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3250 28</td><td>-387,45 €</td><td></td><td></td><td><button>Umsätze</button></td></tr>
-    <tr><td>Tagesgeldkonto</td><td>Tagesgeldkonto</td><td>DE97 5001 0517 5407 3249 47</td><td>0,00 €</td><td></td><td></td><td><button>Umsätze</button></td></tr>
+    <tr><td>Girokonto</td><td></td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 11</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button>Umsätze</button> <button>Ausgabenanalyse</button> <button data-wf="primaer">Überweisen</button> <button>Debitkarte</button> <button>Name vergeben</button></td></tr>
+    <tr><td>Kreditkarte</td><td></td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3250 28</td><td>-387,45 €</td><td></td><td></td><td><button>Umsätze</button> <button>Name vergeben</button></td></tr>
+    <tr><td>Tagesgeldkonto</td><td></td><td>Tagesgeldkonto</td><td>DE97 5001 0517 5407 3249 47</td><td>0,00 €</td><td></td><td></td><td><button>Umsätze</button> <button>Name vergeben</button></td></tr>
   </tbody>
 </table>
+<aside data-wf="blatt">
+  <h2>Eigenen Namen vergeben</h2>
+  <p>Der eigene Name erscheint im Finanzstatus neben dem Kontonamen; der Kontoname bleibt unverändert.</p>
+  <label data-wf="feld"><span>Eigener Name</span><input required placeholder="Urlaubskasse"></label>
+  <div data-wf="aktionen"><button>Abbrechen</button><button data-wf="primaer">Speichern</button></div>
+</aside>
