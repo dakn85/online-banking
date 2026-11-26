@@ -5,7 +5,7 @@ info:
 paths:
   /api/konten:
     get:
-      description: "Liefert die Konten der angemeldeten Kundin für den Finanzstatus. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um. Beträge in Euro, negative Salden (Kreditkarte mit offenem Betrag) als negative Zahl. Dispositionsrahmen und verfügbarer Betrag nur beim Girokonto."
+      description: "Liefert die Konten der angemeldeten Kundin für den Finanzstatus. Je Konto der eigene Name der Kundin; eigenerName ist immer vorhanden und null, solange sie keinen vergeben hat. Ohne gültige Sitzung antwortet der Dienst mit 401; die Seite selbst leitet auf die Anmeldeseite um. Beträge in Euro, negative Salden (Kreditkarte mit offenem Betrag) als negative Zahl. Dispositionsrahmen und verfügbarer Betrag nur beim Girokonto."
       operationId: kontenLesen
       responses:
         "200":
@@ -1458,6 +1458,60 @@ paths:
                 $ref: '#/components/schemas/Fehler'
       x-use-cases:
         - UC-003
+  /api/konten/{iban}/name:
+    put:
+      description: Setzt oder ändert den eigenen Namen eines Kontos der angemeldeten Kundin. Ohne gültige Sitzung antwortet der Dienst mit 401. Der eigene Name ersetzt den Kontonamen nicht; Kontoname, Art, IBAN und Saldo bleiben unverändert. Den bisherigen eigenen Namen unverändert zu speichern ist erlaubt und antwortet mit 200.
+      operationId: kontonamenSetzen
+      parameters:
+        - description: IBAN des Kontos der angemeldeten Kundin
+          in: path
+          name: iban
+          required: true
+          schema:
+            maxLength: 22
+            minLength: 22
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KontonameEingabe'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Konto'
+          description: Gespeicherter eigener Name am Konto, auch wenn er unverändert war
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          description: Eigener Name leer oder länger als 60 Zeichen, IBAN nicht 22 Zeichen lang oder Rumpf kein gültiges JSON; Meldung „Bitte geben Sie den eigenen Namen an.“ bei leerem Namen oder Rumpf ohne gültiges JSON, „Der eigene Name darf höchstens 60 Zeichen lang sein.“ bei mehr als 60 Zeichen, „Die IBAN muss 22 Zeichen lang sein.“ bei einer IBAN mit anderer Länge
+          x-rules:
+            - Konto.eigenerName
+            - Konto.iban
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          description: Keine gültige Sitzung
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fehler'
+          description: Kein Konto der angemeldeten Kundin zu dieser IBAN
+          x-rules:
+            - BR-0108
+      summary: Eigenen Namen eines Kontos der angemeldeten Kundin setzen
+      tags:
+        - Finanzstatus
+      x-use-cases:
+        - UC-001
   /api/version:
     get:
       summary: Im Code vorhanden (src/main.ts:287)
@@ -1538,12 +1592,20 @@ components:
         verfuegbarerBetrag:
           type: number
           description: Verfügbarer Betrag in Euro (Saldo plus Dispositionsrahmen); nur beim Girokonto vorhanden
+        eigenerName:
+          description: Eigener Name, den die Kundin dem Konto gegeben hat; null, solange sie keinen vergeben hat
+          type:
+            - string
+            - "null"
+          maxLength: 60
+          minLength: 1
       required:
         - kontoname
         - iban
         - art
         - saldo
         - waehrung
+        - eigenerName
       type: object
       x-entity: Konto
     Kontenuebersicht:
@@ -2311,3 +2373,13 @@ components:
           x-attribute: Umsatznotiz.text
       required:
         - text
+    KontonameEingabe:
+      properties:
+        eigenerName:
+          description: Eigener Name des Kontos; führende und folgende Leerzeichen entfernt der Dienst vor der Prüfung
+          maxLength: 60
+          minLength: 1
+          type: string
+      required:
+        - eigenerName
+      type: object
