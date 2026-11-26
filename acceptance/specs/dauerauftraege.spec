@@ -151,7 +151,7 @@ Tags: UC-016, PK-52
 
 ## Die Daueraufträge sind ohne Anmeldung nicht erreichbar
 
-Tags: UC-016, PK-52, BR-0078
+Tags: UC-016, PK-52, BR-0078, NFR-001
 
 * Testdaten sind zurückgesetzt
 * Die Daueraufträge sind ohne Anmeldung nicht erreichbar
