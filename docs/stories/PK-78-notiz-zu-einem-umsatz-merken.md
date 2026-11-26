@@ -89,13 +89,6 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-78 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-78 grün
 
-## Offene Fragen
-
-- [ ] Soll die Kontenprüfung der Ausgabenanalyse in BR-0084 stehen (wie bisher im Ablauf von UC-019) oder soll BR-0011 ausdrücklich auch für die Ausgabenanalyse gelten?
-- [ ] Zeigt das Szenario die nicht einschränkende Auswahl „Alle“ an genau einer Zeile einer anderen Kategorie, über Betrag bis „12,00“ eingegrenzt?
-- [ ] Soll der Dienst einen ausdrücklich mitgeschickten Wert „Alle“ als Formatfehler mit 400 abweisen und dabei keinen eigenen Text liefern?
-- [ ] Welches Szenario soll die genau einmalige Ausführung für die Maske Umbuchung belegen?
-
 ## Entscheidungen
 
 - Wie lang darf der Notiztext zu einem Umsatz höchstens sein?
@@ -121,10 +114,16 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
   _→ eingearbeitet in UC-003, NFR-001 · a8cffa3_
 - Welchen Text zeigt die Maske bei einem Notiztext außerhalb von 1 bis 140 Zeichen?
   **Antwort:** Es gelten die zwei Texte, die die Akzeptanztests der Story schon erwarten: „Die Notiz muss mindestens 1 Zeichen enthalten.“ bei leerem Text und „Die Notiz darf höchstens 140 Zeichen lang sein.“ bei zu langem Text. Beide stehen als Meldung im Ablauf von UC-003.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet durch „UC-003: Doppelte Notiz-Alternativen zusammenführen, Meldungen führen, Maskenverweise und Sitzungspflicht belegen“ in UC-003, umsaetze_
 - Zeigt das Szenario die nicht einschränkende Auswahl „Alle“ an genau einer Zeile einer anderen Kategorie, oder soll es dafür die Gesamtzahl der Treffer vergleichen?
   **Antwort:** Genau eine Zeile einer anderen Kategorie, über Betrag bis „12,00“ eingegrenzt, wie vorgeschlagen.
-  _→ noch nicht in der Spezifikation_
+  _→ ohne Änderung: Betrifft das Szenario zum Kategoriefilter; der Vorschlag dazu ist abgelehnt, die Notiz-Story ändert daran nichts._
 - Soll der Hinweis des Feldes Notiz bei einem zu langen Text als Meldung im Bereich der Umsätze erscheinen?
   **Antwort:** Ja, als Meldung im Bereich der Umsätze, wie es die bestehenden Notiz-Meldungen tun.
-  _→ eingearbeitet_
+  _→ eingearbeitet · e7adbcd_
+- Soll der Dienst einen ausdrücklich mitgeschickten Wert „Alle“ als Formatfehler mit 400 abweisen und dabei keinen eigenen Text liefern?
+  **Antwort:** Ja, 400 nach der Werteliste, ohne eigenen Text.
+  _→ ohne Änderung: Der Vertrag weist Werte außerhalb der Werteliste schon mit 400 ab; die Antwort bestätigt den Bestand._
+- Wie soll der Befund „UC-003: 1 Fall hat kein Szenario“ gelöst werden?
+  **Antwort:** Das Szenario „Das Löschen einer nicht vorhandenen Notiz wird mit 404 abgewiesen“ prüft zusätzlich die Meldung „Die Notiz wurde nicht gefunden.“, so wie die beiden anderen 404-Szenarien ihre Meldung prüfen.
+  _→ noch nicht in der Spezifikation_

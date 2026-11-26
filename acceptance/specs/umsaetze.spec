@@ -668,7 +668,7 @@ Tags: UC-003, PK-78, BR-0107
 
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die angemeldete Kundin ruft "DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404"
+* Die angemeldete Kundin ruft "DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404" und die Meldung "Die Notiz wurde nicht gefunden."
 | feld     | wert   |
 |----------|--------|
 | umsatzId | U-0007 |
