@@ -16,6 +16,7 @@
     postfach: 'M3.5 5.5h13v9h-13zM3.5 6l6.5 5 6.5-5',
     plus: 'M10 4v12M4 10h12',
     stift: 'M12.5 4.5l3 3L7 16H4v-3zM11 6l3 3',
+    notiz: 'M4.5 3.5h11v8.5L11 16.5H4.5zM11 16.5V12h4.5M7.5 7.5h5M7.5 10.5h2',
     muell: 'M4 6h12M8 6V4.5h4V6M6 6l.7 9.5h6.6L14 6',
     schliessen: 'M5 5l10 10M15 5L5 15',
     zurueck: 'M12 4.5 6.5 10l5.5 5.5',
