@@ -30,7 +30,7 @@ Tags: UC-019, PK-56, BR-0012
 
 ## Ohne Anmeldung ist die Ausgabenanalyse nicht erreichbar
 
-Tags: UC-019, PK-56
+Tags: UC-019, PK-56, NFR-001
 
 * Testdaten sind zurückgesetzt
 * Die Ausgabenanalyse ist ohne Anmeldung nicht erreichbar

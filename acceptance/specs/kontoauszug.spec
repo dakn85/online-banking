@@ -94,7 +94,7 @@ Tags: UC-024, PK-62
 
 ## Ohne Anmeldung ist die Kontoauszugsseite nicht erreichbar
 
-Tags: UC-024, PK-62
+Tags: UC-024, PK-62, NFR-001
 
 * Testdaten sind zurückgesetzt
 * Die Kontoauszugsseite ist ohne Anmeldung nicht erreichbar
