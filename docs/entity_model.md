@@ -19,7 +19,7 @@ erDiagram
     Kontoauszug }o--|| Konto : "gehört zu"
     Umsatznotiz |o--|| Umsatz : "gehört zu"
     Sparziel }o--|| Konto : "spart auf Tagesgeldkonto"
-    Sparziel ||--|| Dauerauftrag : "richtet ein"
+    Sparziel ||--o| Dauerauftrag : "richtet ein"
     Sparziel }o--|| Kunde : "gehört zu"
 ```
 
