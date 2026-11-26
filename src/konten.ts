@@ -11,7 +11,12 @@ export interface Konto {
   waehrung: 'EUR';
   /** BR-0002: nur beim Girokonto, dort Pflicht. */
   dispositionsrahmen?: number;
+  /** UC-001 A3: eigener Name der Kundin, 1..60 Zeichen ohne Randleerzeichen; fehlt, solange sie keinen vergeben hat. Nicht im Ausgangsstand. */
+  eigenerName?: string;
 }
+
+/** Konto, wie es der Finanzstatus liefert: eigenerName immer vorhanden, ohne vergebenen Namen null. */
+export type Kontoansicht = Omit<Konto, 'eigenerName'> & { eigenerName: string | null; verfuegbarerBetrag?: number };
 
 /** Demo-Bestand je Kennung, Girokonto zuerst, dann Kreditkarte und Tagesgeldkonto (0,00 Euro, ohne Umsätze). Jonas hat eine eigene Kopie von Lenas Bestand mit eigenen IBANs. */
 const DEMO: Record<string, Konto[]> = {
@@ -63,17 +68,50 @@ export class Datenfehler extends Error {}
 
 const runden = (betrag: number) => Math.round(betrag * 100) / 100;
 
+/** Ein Konto für den Finanzstatus: verfügbarer Betrag beim Girokonto (BR-0002), eigener Name oder null (UC-001 Schritt 5). */
+function ansicht(k: Konto): Kontoansicht {
+  const basis = { ...k, eigenerName: k.eigenerName ?? null };
+  if (k.art !== 'Girokonto') return basis;
+  if (k.dispositionsrahmen === undefined) throw new Datenfehler('Finanzstatus: Girokonto ohne Dispositionsrahmen');
+  return { ...basis, verfuegbarerBetrag: runden(k.saldo + k.dispositionsrahmen) };
+}
+
 /** UC-001: Konten der Kundin mit verfügbarem Betrag (BR-0002) und Gesamtvermögen (BR-0001). */
-export function finanzstatus(kennung: string): { gesamtvermoegen: number; konten: (Konto & { verfuegbarerBetrag?: number })[] } {
+export function finanzstatus(kennung: string): { gesamtvermoegen: number; konten: Kontoansicht[] } {
   const bestand = eigene(kennung);
   return {
     gesamtvermoegen: runden(bestand.reduce((summe, k) => summe + k.saldo, 0)),
-    konten: bestand.map(k => {
-      if (k.art !== 'Girokonto') return { ...k };
-      if (k.dispositionsrahmen === undefined) throw new Datenfehler('Finanzstatus: Girokonto ohne Dispositionsrahmen');
-      return { ...k, verfuegbarerBetrag: runden(k.saldo + k.dispositionsrahmen) };
-    }),
+    konten: bestand.map(ansicht),
   };
+}
+
+export const NAME_LEER = 'Bitte geben Sie den eigenen Namen an.';
+export const NAME_LAENGE = 'Der eigene Name darf höchstens 60 Zeichen lang sein.';
+export const IBAN_LAENGE = 'Die IBAN muss 22 Zeichen lang sein.';
+export const KONTO_FEHLT = 'Das Konto wurde nicht gefunden.';
+/** Konto.eigenerName: Länge 1..60 nach dem Entfernen der Randleerzeichen. */
+export const NAME_MAX = 60;
+
+/** Abgelehnter eigener Name mit dem Status, den der Vertrag dafür nennt. */
+export class Namensfehler extends Error {
+  constructor(readonly status: 400 | 404, meldung: string) { super(meldung); }
+}
+
+/**
+ * UC-001 A3 bis A5, BR-0108: setzt oder ändert den eigenen Namen eines Kontos der Kundin; unverändert speichern ist erlaubt.
+ * Prüfreihenfolge IBAN-Länge (400), Konto unter der Kennung (404), Name leer oder länger als 60 Zeichen (400).
+ * Kontoname, Art, IBAN und Saldo bleiben unverändert; zwei Konten dürfen denselben eigenen Namen tragen.
+ */
+export function eigenenNamenSetzen(kennung: string, iban: string, eigenerName: unknown): Kontoansicht {
+  const gesucht = iban.replace(/\s+/g, '').toUpperCase();
+  if (gesucht.length !== 22) throw new Namensfehler(400, IBAN_LAENGE);
+  const konto = eigene(kennung).find(k => k.iban === gesucht);
+  if (!konto) throw new Namensfehler(404, KONTO_FEHLT);
+  const name = typeof eigenerName === 'string' ? eigenerName.trim() : '';
+  if (!name) throw new Namensfehler(400, NAME_LEER);
+  if ([...name].length > NAME_MAX) throw new Namensfehler(400, NAME_LAENGE);
+  konto.eigenerName = name;
+  return ansicht(konto);
 }
 
 /** BR-0007: das Girokonto der Kundin mit dieser IBAN, sonst nichts. */

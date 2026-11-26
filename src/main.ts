@@ -1,6 +1,6 @@
 import express from 'express';
 import { join } from 'node:path';
-import { Datenfehler, finanzstatus, kontoMitIban } from './konten';
+import { Datenfehler, NAME_LEER, Namensfehler, eigenenNamenSetzen, finanzstatus, kontoMitIban } from './konten';
 import { kundeMitKennung } from './kunden';
 import { Ablehnung, ausfuehren, vormerken, vorgemerkteAuftraege, vorgemerktenLoeschen } from './ueberweisung';
 import { Abfragefehler, EXPORT_LEER, ausgabenanalyse, csvAus, filterAus, monatPruefen, seiteAus, trefferseite, umsaetzeVon } from './umsaetze';
@@ -53,6 +53,16 @@ app.get('/api/konten', nurAngemeldet('api'), (_req, res) => {
     if (!(fehler instanceof Datenfehler)) throw fehler;
     console.error(fehler.message);
     res.status(500).json({ fehler: 'Der Finanzstatus ist derzeit nicht möglich.' });
+  }
+});
+
+// UC-001 A3 bis A5: eigenen Namen eines Kontos der Kundin setzen (BR-0108); Prüfreihenfolge 401, 400 IBAN, 404 Konto, 400 Name
+app.put('/api/konten/:iban/name', nurAngemeldet('api'), (req, res) => {
+  try {
+    res.json(eigenenNamenSetzen(res.locals.kunde.kennung, req.params.iban, req.body?.eigenerName));
+  } catch (fehler) {
+    if (!(fehler instanceof Namensfehler)) throw fehler;
+    res.status(fehler.status).json({ fehler: fehler.message });
   }
 });
 
@@ -297,6 +307,14 @@ app.put('/api/kunde', nurAngemeldet('api'), (req, res) => {
     if (!(fehler instanceof kundendaten.Kundendatenfehler)) throw fehler;
     res.status(fehler.status).json({ fehler: fehler.message });
   }
+});
+
+// UC-001 A4: ein Rumpf ohne gültiges JSON beim eigenen Kontonamen ist ein leerer Name (400); ohne Sitzung bleibt es 401 (NFR-001).
+app.use((fehler: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const parsefehler = (fehler as { type?: string } | null)?.type === 'entity.parse.failed';
+  if (!parsefehler || req.method !== 'PUT' || !/^\/api\/konten\/[^/]+\/name$/.test(req.path)) return next(fehler);
+  if (!angemeldeterKunde(req)) return res.status(401).json({ fehler: 'Bitte melden Sie sich an.' });
+  res.status(400).json({ fehler: NAME_LEER });
 });
 
 app.get('/api/version', (_req, res) => res.json({ version: process.env.VERSION ?? 'lokal' }));
