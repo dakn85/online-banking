@@ -36,3 +36,64 @@ Tags: UC-001, PK-1, NFR-001
 * Testdaten sind zurückgesetzt
 * Der Finanzstatus ist ohne Anmeldung nicht erreichbar
 * Die Anmeldeseite ist zu sehen
+
+## Die Kundin vergibt dem Tagesgeldkonto den eigenen Namen Urlaubskasse
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin vergibt im Finanzstatus dem Konto "Tagesgeldkonto" den eigenen Namen "Urlaubskasse"
+* Der Finanzstatus zeigt die Meldung "Eigener Name gespeichert."
+* Die Zeile "Tagesgeldkonto" zeigt "Eigener Name" "Urlaubskasse"
+
+## Ohne vergebenen eigenen Namen bleibt die Spalte leer
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Zeile "Tagesgeldkonto" zeigt "Eigener Name" ""
+* Die Zeile "Tagesgeldkonto" zeigt "Kontoname" "Tagesgeldkonto"
+
+## Zwei Konten dürfen denselben eigenen Namen tragen
+
+Tags: UC-001, PK-85, BR-0108
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin vergibt im Finanzstatus dem Konto "Girokonto" den eigenen Namen "Urlaubskasse"
+* Die Kundin vergibt im Finanzstatus dem Konto "Tagesgeldkonto" den eigenen Namen "Urlaubskasse"
+* Die Zeile "Girokonto" zeigt "Eigener Name" "Urlaubskasse"
+* Die Zeile "Tagesgeldkonto" zeigt "Eigener Name" "Urlaubskasse"
+
+## Ein zu langer eigener Name wird mit 400 abgelehnt
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249 47" den eigenen Namen "Urlaubskasse für den Sommerurlaub 2027 in Italien am See am Boot" und erhält den Status "400" mit der Meldung "Der eigene Name darf höchstens 60 Zeichen lang sein."
+
+## Ein leerer eigener Name wird mit 400 abgelehnt
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249 47" den eigenen Namen "" und erhält den Status "400" mit der Meldung "Bitte geben Sie den eigenen Namen an."
+
+## Ein Konto einer fremden IBAN lässt sich nicht benennen
+
+Tags: UC-001, PK-85, BR-0108
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE02500105175407324999" den eigenen Namen "Urlaubskasse" und erhält den Status "404" mit der Meldung "Das Konto wurde nicht gefunden."
+
+## Das Vergeben eines eigenen Kontonamens ohne Anmeldung wird mit 401 beantwortet
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* Der Aufruf "PUT" "/api/konten/DE02500105175407324911/name" ohne Anmeldung antwortet mit dem Status "401"
