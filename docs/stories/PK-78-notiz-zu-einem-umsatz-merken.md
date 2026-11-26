@@ -93,10 +93,10 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 
 - Wie lang darf der Notiztext zu einem Umsatz höchstens sein?
   **Antwort:** Höchstens 140 Zeichen, wie der Verwendungszweck des Umsatzes.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet durch „UC-003: Eigene Notiz je Umsatz merken, ändern und löschen“ in UC-003, BR-NEU1, BR-NEU2, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz · e11fbce_
 - Was passiert, wenn die Kundin einen leeren Notiztext speichert?
   **Antwort:** Der Dienst lehnt ab und meldet, dass mindestens 1 Zeichen nötig ist; entfernt wird eine Notiz nur über das Löschen.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet durch „UC-003: Eigene Notiz je Umsatz merken, ändern und löschen“ in UC-003, BR-NEU1, BR-NEU2, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz · e11fbce_
 - Soll die Kundin das Löschen einer Notiz vorher bestätigen?
   **Antwort:** Ja, eine Rückfrage mit „Bestätigen“ und „Abbrechen“ wie bei der Rückgabe einer Lastschrift, erst danach ist die Notiz weg.
   _→ eingearbeitet in UC-003, BR-0106, BR-0107, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz · e11fbce_
@@ -126,4 +126,4 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
   _→ ohne Änderung: Der Vertrag weist Werte außerhalb der Werteliste schon mit 400 ab; die Antwort bestätigt den Bestand._
 - Wie soll der Befund „UC-003: 1 Fall hat kein Szenario“ gelöst werden?
   **Antwort:** Das Szenario „Das Löschen einer nicht vorhandenen Notiz wird mit 404 abgewiesen“ prüft zusätzlich die Meldung „Die Notiz wurde nicht gefunden.“, so wie die beiden anderen 404-Szenarien ihre Meldung prüfen.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet durch „UC-003 A18: Szenario prüft die Meldung „Die Notiz wurde nicht gefunden.““_
