@@ -54,40 +54,34 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - `acceptance/specs/umsaetze.spec`: Eine Notiz zu einem Umsatz wird gespeichert und in der Liste angezeigt
 - `acceptance/specs/vorgemerkte-ueberweisungen.spec`: Ohne Anmeldung sind die vorgemerkten Überweisungen nicht erreichbar
 
-## Aufgaben für die Umsetzung
+## Technischer Entwurf
 
-- [ ] Umsätze eines Kontos mit Saldo danach, neueste zuerst, seitenweise mit Gesamtzahl: Beschreibung geändert
-- [ ] Eigene Notiz zu einem Umsatz speichern oder überschreiben: Endpunkt neu
-- [ ] Eigene Notiz zu einem Umsatz löschen: Endpunkt neu
-- [ ] Umsatz: Eigenschaft notiz neu
-- [ ] Notiz: Schema neu
-- [ ] Umsatznotiz: Entität neu
-- [ ] Zugriffsschutz des Finanzstatus: Gilt für geändert
-- [ ] Umsätze: Feld Notiz neu
-- [ ] Umsätze: Aktion Bestätigen geändert
-- [ ] Umsätze: Aktion Abbrechen geändert
-- [ ] Umsätze: Aktion Notiz erfassen neu
-- [ ] Umsätze: Aktion Notiz ändern neu
-- [ ] Umsätze: Aktion Speichern neu
-- [ ] Umsätze: Aktion Notiz löschen neu
-- [ ] Umsätze: Skizze geändert
-- [ ] UC-003: Ziel geändert
-- [ ] UC-003: Schritt 12 neu
-- [ ] UC-003: Schritt 13 neu
-- [ ] UC-003: Schritt 14 neu
-- [ ] UC-003: Schritt 15 neu
-- [ ] UC-003: Schritt 16 neu
-- [ ] UC-003: A15 neu: Notiztext außerhalb der Feldbedingung
-- [ ] UC-003: A16 neu: Konto nicht gefunden beim Speichern der Notiz
-- [ ] UC-003: A17 neu: Umsatz nicht gefunden beim Speichern der Notiz
-- [ ] UC-003: A18 neu: Notiz nicht gefunden beim Löschen
-- [ ] UC-003: Erfolg 4 neu
-- [ ] UC-003: BR-0106 neu: Notiz zu Umsätzen der angemeldeten Kundin
-- [ ] UC-003: BR-0107 neu: Löschen nur einer vorhandenen Notiz
-- [ ] BR-0106: Neu in UC-003
-- [ ] BR-0107: Neu in UC-003
-- [ ] Fehlende Steps der Akzeptanztests mit Tag PK-78 implementieren
-- [ ] Alle Akzeptanztests mit Tag PK-78 grün
+_Platform Admin (Agent „coding laptop“), 2026-11-26_
+
+## Bausteine
+
+- **Online-Banking-Dienst, Component „Konten und Finanzstatus“** (`src/`): neues Modul `src/umsatznotiz.ts` (kennt kein HTTP), Erweiterung von `src/umsaetze.ts` (Feld `notiz` am Umsatz), zwei Routen in `src/main.ts` (Seitenauslieferung).
+- **Oberfläche im Browser** (`public/seiten/umsaetze.js`, `public/styles.css`, `public/app.js` für ein Symbol): Notiz in der Zeile, Zeilenaktion, Seitenblatt „Notiz zum Umsatz“, Rückfrage.
+- **Tests**: `test/umsatznotiz.test.ts` (node:test), fehlende Steps in `acceptance/tests/StepImplementation.ts`.
+
+## Schritte
+
+1. **Umsatznotiz im Speicher (Umsatznotiz, ADR-002):** Die Notiz hängt als optionales Feld am gespeicherten Umsatz. Damit trägt nach einem Reset kein Umsatz eine Notiz, und bei Lastkunden fällt sie mit dem verdrängten Umsatz weg. Reihenfolge, Saldo danach, Filter, Trefferzahl und CSV-Export lesen das Feld nicht (BR-0008, BR-0075, BR-0104, BR-0105).
+2. **GET /api/konten/{iban}/umsaetze (UC-003 Schritt 12, BR-0106):** Jeder Umsatz liefert `notiz`, wenn er eine hat; sonst fehlt das Feld.
+3. **PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz (UC-003 Schritt 15, A15 bis A17, BR-0106):** Sitzung (401, NFR-001), Konto der Kundin (404 „Das Konto wurde nicht gefunden.“), Umsatz des Kontos (404 „Der Umsatz wurde nicht gefunden.“), Text nach dem Entfernen der Randleerzeichen 1..140 Zeichen (400 mit „Die Notiz muss mindestens 1 Zeichen enthalten.“ oder „Die Notiz darf höchstens 140 Zeichen lang sein.“); dann speichern oder überschreiben, Antwort 200 mit `{ text }`.
+4. **DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz (UC-003 Schritt 16, A18, BR-0107):** 401, 404 Konto, 404 Umsatz, 404 „Die Notiz wurde nicht gefunden.“ bei einem Umsatz ohne Notiz; sonst löschen, Antwort 204.
+5. **Maske Umsätze (UC-003 Schritte 12 bis 16):** In der Zeile die Notiz (Feld „Notiz“) und genau eine Aktion „Notiz erfassen“ oder „Notiz ändern“. Die Aktion öffnet das Seitenblatt „Notiz zum Umsatz“ für diesen Umsatz (Gegenpartei sichtbar, umsatzId festgehalten), mit dem bisherigen Text, „Speichern“ und, nur bei vorhandener Notiz, „Notiz löschen“. „Notiz löschen“ zeigt die Rückfrage „Notiz zu <Gegenpartei> löschen? Die Notiz lässt sich nicht wiederherstellen.“ mit „Bestätigen“ und „Abbrechen“ (BR-0107). Meldungen „Notiz gespeichert.“ und „Notiz gelöscht.“ sowie die 404-Texte stehen über der Liste; die Meldung nach A15 steht am Feld Notiz im Blatt, die Eingabe bleibt stehen.
+6. **Prüfung des Notiztexts (A15):** Die Oberfläche schickt den Text unverändert, der Dienst prüft und liefert den Meldungstext; die Seite zeigt ihn unverändert (wie bei den Daueraufträgen). Eine zweite Prüfung im Browser gibt es nicht, weil das Szenario „Ein Notiztext außerhalb der Feldlänge wird abgelehnt“ die Antwort 400 des Dienstes an der Maske erwartet.
+7. **Unit-Tests** für BR-0106 und BR-0107 am Modul, **Steps** für die 16 fehlenden Schritte, darunter „Die Debitkarte ist ohne Anmeldung nicht erreichbar“ (NFR-001).
+
+## Rahmenänderung
+
+Keine neue Bibliothek, kein neues Muster. Abweichung von ADR-004 nur in Schritt 6 (Prüfung allein im Dienst); dazu folgt eine Rückmeldung.
+
+## Offen
+
+- Prüfreihenfolge 404 vor 400 beim PUT ist nicht festgelegt; umgesetzt wie oben (Rückmeldung folgt).
+- Zwei Szenarien passen nicht zum Bestand (umsatzId `U-0007` existiert im Dienst nicht; „Ein Notiztext außerhalb der Feldlänge wird abgelehnt“ prüft ohne Filterschritt die erste Zeile). Dazu folgen Rückfragen.
 
 ## Entscheidungen
 
