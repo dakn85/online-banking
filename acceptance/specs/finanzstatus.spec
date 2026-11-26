@@ -97,3 +97,28 @@ Tags: UC-001, PK-85
 
 * Testdaten sind zurückgesetzt
 * Der Aufruf "PUT" "/api/konten/DE02500105175407324911/name" ohne Anmeldung antwortet mit dem Status "401"
+
+## Ein unverändert gespeicherter eigener Name wird mit 200 bestätigt
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249 47" den eigenen Namen "Urlaubskasse" und erhält den Status "200" mit der Meldung "Eigener Name gespeichert."
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249 47" den eigenen Namen "Urlaubskasse" und erhält den Status "200" mit der Meldung "Eigener Name gespeichert."
+
+## Eine IBAN mit falscher Länge wird mit 400 abgelehnt
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249" den eigenen Namen "Urlaubskasse" und erhält den Status "400" mit der Meldung "Die IBAN muss 22 Zeichen lang sein."
+
+## Ein eigener Name aus nur Leerzeichen wird mit 400 abgelehnt
+
+Tags: UC-001, PK-85
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin setzt über "PUT /api/konten/{iban}/name" für die IBAN "DE97 5001 0517 5407 3249 47" den eigenen Namen " " und erhält den Status "400" mit der Meldung "Bitte geben Sie den eigenen Namen an."

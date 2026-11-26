@@ -1460,7 +1460,7 @@ paths:
         - UC-003
   /api/konten/{iban}/name:
     put:
-      description: Setzt oder ändert den eigenen Namen eines Kontos der angemeldeten Kundin. Ohne gültige Sitzung antwortet der Dienst mit 401. Der eigene Name ersetzt den Kontonamen nicht; Kontoname, Art, IBAN und Saldo bleiben unverändert.
+      description: Setzt oder ändert den eigenen Namen eines Kontos der angemeldeten Kundin. Ohne gültige Sitzung antwortet der Dienst mit 401. Der eigene Name ersetzt den Kontonamen nicht; Kontoname, Art, IBAN und Saldo bleiben unverändert. Den bisherigen eigenen Namen unverändert zu speichern ist erlaubt und antwortet mit 200.
       operationId: kontonamenSetzen
       parameters:
         - description: IBAN des Kontos der angemeldeten Kundin
@@ -1483,15 +1483,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Konto'
-          description: Gespeicherter eigener Name am Konto
+          description: Gespeicherter eigener Name am Konto, auch wenn er unverändert war
         "400":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fehler'
-          description: Eigener Name leer oder länger als 60 Zeichen
+          description: Eigener Name leer oder länger als 60 Zeichen, IBAN nicht 22 Zeichen lang oder Rumpf kein gültiges JSON
           x-rules:
             - Konto.eigenerName
+            - Konto.iban
         "401":
           content:
             application/json:
