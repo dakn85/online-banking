@@ -92,7 +92,6 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 ## Offene Fragen
 
 - [ ] Soll die Kontenprüfung der Ausgabenanalyse in BR-0084 stehen (wie bisher im Ablauf von UC-019) oder soll BR-0011 ausdrücklich auch für die Ausgabenanalyse gelten?
-- [ ] Soll der Hinweis des Feldes Notiz bei einem zu langen Text als Meldung im Bereich der Umsätze erscheinen?
 - [ ] Zeigt das Szenario die nicht einschränkende Auswahl „Alle“ an genau einer Zeile einer anderen Kategorie, über Betrag bis „12,00“ eingegrenzt?
 - [ ] Soll der Dienst einen ausdrücklich mitgeschickten Wert „Alle“ als Formatfehler mit 400 abweisen und dabei keinen eigenen Text liefern?
 - [ ] Welches Szenario soll die genau einmalige Ausführung für die Maske Umbuchung belegen?
@@ -126,3 +125,6 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - Zeigt das Szenario die nicht einschränkende Auswahl „Alle“ an genau einer Zeile einer anderen Kategorie, oder soll es dafür die Gesamtzahl der Treffer vergleichen?
   **Antwort:** Genau eine Zeile einer anderen Kategorie, über Betrag bis „12,00“ eingegrenzt, wie vorgeschlagen.
   _→ noch nicht in der Spezifikation_
+- Soll der Hinweis des Feldes Notiz bei einem zu langen Text als Meldung im Bereich der Umsätze erscheinen?
+  **Antwort:** Ja, als Meldung im Bereich der Umsätze, wie es die bestehenden Notiz-Meldungen tun.
+  _→ eingearbeitet_

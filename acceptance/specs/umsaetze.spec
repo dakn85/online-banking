@@ -693,6 +693,11 @@ Tags: UC-003, PK-78, BR-0106
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin speichert bei dem Umsatz von "Bäckerei Krause" einen Notiztext mit "141" Zeichen und erhält den Status "400"
+* Die Umsätze zeigen die Meldung "Die Notiz darf höchstens 140 Zeichen lang sein."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz |
+|-----------------|-------|
+| Bäckerei Krause |       |
 
 ## Das Speichern einer Notiz zu einem Umsatz eines fremden Kontos meldet "Das Konto wurde nicht gefunden."
 
