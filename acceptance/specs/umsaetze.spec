@@ -637,7 +637,7 @@ Tags: UC-003, PK-78
 | Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
 |----------|--------------|--------------|--------------|------------|------------|-----------|
 | Bäckerei |              |              | Alle         |            |            | Alle      |
-* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Rückfrage an die Hausverwaltung wegen der Nebenkostenabrechnung 2025, Nachzahlung und Aufteilung der Heizkosten sowie der Positionen für Wasser und Müllabfuhr im Detail" und wählt „Speichern“
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Rückfrage an die Hausverwaltung wegen der Nebenkostenabrechnung 2025: Nachzahlung, Aufteilung der Heizkosten sowie der Positionen für Wasser, Müllabfuhr und die Gartenpflege im Detail prüfen lassen" und wählt „Speichern“
 * Die Umsätze zeigen die Meldung "Die Notiz darf höchstens 140 Zeichen lang sein."
 * Die Umsätze zeigen die Zeilen
 | Gegenpartei     | Notiz |
@@ -661,18 +661,6 @@ Tags: UC-003, PK-78
 | Gegenpartei     | Notiz |
 |-----------------|-------|
 | Bäckerei Krause |       |
-
-## Die Notiz eines fremden Umsatzes wird mit 404 abgewiesen
-
-Tags: UC-003, PK-78, BR-0106
-
-* Testdaten sind zurückgesetzt
-* "lena.hoffmann" meldet sich mit der PIN "24680" an
-* Die angemeldete Kundin ruft "PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404"
-| feld     | wert             |
-|----------|------------------|
-| umsatzId | U-9999           |
-| text     | Rückfrage Termin |
 
 ## Das Löschen einer nicht vorhandenen Notiz wird mit 404 abgewiesen
 
@@ -705,3 +693,28 @@ Tags: UC-003, PK-78, BR-0106
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet die Umsätze des Kontos "Girokonto"
 * Die Kundin speichert bei dem Umsatz von "Bäckerei Krause" einen Notiztext mit "141" Zeichen und erhält den Status "400"
+
+## Das Speichern einer Notiz zu einem Umsatz eines fremden Kontos meldet "Das Konto wurde nicht gefunden."
+
+Tags: UC-003, PK-78, BR-0106
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404" und die Meldung "Das Konto wurde nicht gefunden."
+| feld     | wert                        |
+|----------|-----------------------------|
+| iban     | DE00 1234 5678 9012 3456 78 |
+| umsatzId | U-0007                      |
+| text     | Rückfrage Termin            |
+
+## Das Speichern einer Notiz zu einem fremden Umsatz meldet "Der Umsatz wurde nicht gefunden."
+
+Tags: UC-003, PK-78, BR-0106
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404" und die Meldung "Der Umsatz wurde nicht gefunden."
+| feld     | wert             |
+|----------|------------------|
+| umsatzId | U-9999           |
+| text     | Rückfrage Termin |

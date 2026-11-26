@@ -1,6 +1,6 @@
 # PK-78: Notiz löschen im Formular, Meldungen der Fehlerfälle und Feldlänge am Datenmodell
 
-**Art:** Erweiterung · **Priorität:** Mittel · **Systeme:** Online-Banking
+**Art:** Testpflege · **Priorität:** Mittel · **Systeme:** Online-Banking
 
 ## Story
 
@@ -27,7 +27,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 | Umsatznotiz | Neu | Entität neu |
 | Zugriffsschutz des Finanzstatus | Geändert | Gilt für geändert |
 | Umsätze | Geändert | Feld Notiz neu, Aktion Bestätigen geändert, Aktion Abbrechen geändert, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 14 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 15 weitere |
 | BR-0106 Notiz zu Umsätzen der angemeldeten Kundin | Neu | Neu in UC-003 |
 | BR-0107 Löschen nur einer vorhandenen Notiz | Neu | Neu in UC-003 |
 
@@ -37,7 +37,8 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - `acceptance/specs/umsaetze.spec`: Das Löschen einer nicht vorhandenen Notiz wird mit 404 abgewiesen
 - `acceptance/specs/umsaetze.spec`: Das Löschen einer Notiz ohne Anmeldung wird mit 401 beantwortet
 - `acceptance/specs/umsaetze.spec`: Das Speichern einer Notiz ohne Anmeldung wird mit 401 beantwortet
-- `acceptance/specs/umsaetze.spec`: Die Notiz eines fremden Umsatzes wird mit 404 abgewiesen
+- `acceptance/specs/umsaetze.spec`: Das Speichern einer Notiz zu einem fremden Umsatz meldet "Der Umsatz wurde nicht gefunden."
+- `acceptance/specs/umsaetze.spec`: Das Speichern einer Notiz zu einem Umsatz eines fremden Kontos meldet "Das Konto wurde nicht gefunden."
 - `acceptance/specs/umsaetze.spec`: Die Notiz wird nach der Bestätigung gelöscht
 - `acceptance/specs/umsaetze.spec`: Ein leerer Notiztext wird abgelehnt
 - `acceptance/specs/umsaetze.spec`: Ein neuer Notiztext überschreibt die vorhandene Notiz
@@ -76,6 +77,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] UC-003: A20 neu: Konto nicht gefunden beim Speichern der Notiz
 - [ ] UC-003: A21 neu: Umsatz nicht gefunden beim Speichern der Notiz
 - [ ] UC-003: A22 neu: Notiz nicht gefunden beim Löschen
+- [ ] UC-003: A23 neu: Notiztext ungültig
 - [ ] UC-003: Erfolg 4 neu
 - [ ] UC-003: BR-0106 neu: Notiz zu Umsätzen der angemeldeten Kundin
 - [ ] UC-003: BR-0107 neu: Löschen nur einer vorhandenen Notiz
@@ -106,7 +108,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
   _→ eingearbeitet in UC-003 · 3f6eb86_
 - Wo soll die Kundin „Notiz löschen“ wählen?
   **Antwort:** Im Formular Notiz zum Umsatz, das den Umsatz festhält
-  _→ eingearbeitet in UC-003, NFR-001_
+  _→ eingearbeitet in UC-003, NFR-001 · a8cffa3_
 - Welchen Text zeigt die Maske bei einem Notiztext außerhalb von 1 bis 140 Zeichen?
   **Antwort:** Es gelten die zwei Texte, die die Akzeptanztests der Story schon erwarten: „Die Notiz muss mindestens 1 Zeichen enthalten.“ bei leerem Text und „Die Notiz darf höchstens 140 Zeichen lang sein.“ bei zu langem Text. Beide stehen als Meldung im Ablauf von UC-003.
   _→ noch nicht in der Spezifikation_

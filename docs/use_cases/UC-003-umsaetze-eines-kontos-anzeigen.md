@@ -199,6 +199,14 @@
 
 1. Das System zeigt im Feld fehler „Die Notiz wurde nicht gefunden.“ und die Zeile ohne Notiz.
 
+### A23: Notiztext ungültig
+
+**Auslöser:** Der Notiztext verletzt eine Feldbedingung von Umsatznotiz.text, ist also nach dem Entfernen der Randleerzeichen leer oder länger als die Höchstlänge; der Dienst antwortet mit 400 und dem Feld fehler. (Schritt 14).  
+**Ablauf:**
+
+1. Das System zeigt zum Feld Notiz die Meldung „Die Notiz muss mindestens 1 Zeichen enthalten.“ oder „Die Notiz darf höchstens 140 Zeichen lang sein.“ und speichert nichts.
+2. Die Zeile behält die bisherige Notiz oder bleibt ohne Notiz; die Meldung „Notiz gespeichert.“ zeigt das System nicht.
+
 ## Sequenzdiagramm
 
 ```mermaid
