@@ -26,7 +26,7 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 | Notiz | Neu | Schema neu |
 | Umsatznotiz | Neu | Entität neu |
 | Umsätze | Geändert | Feld Notiz neu, Aktion Bestätigen geändert, Aktion Abbrechen geändert, und 5 weitere |
-| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Erfolg 4 neu, BR-0106 neu: Notiz zu Umsätzen der angemeldeten Kundin, und 1 weitere |
+| UC-003 Umsätze eines Kontos anzeigen | Geändert | Ziel geändert, Schritt 12 neu, Schritt 13 neu, und 5 weitere |
 | BR-0106 Notiz zu Umsätzen der angemeldeten Kundin | Neu | Neu in UC-003 |
 | BR-0107 Löschen nur einer vorhandenen Notiz | Neu | Neu in UC-003 |
 
@@ -60,6 +60,10 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
 - [ ] Umsätze: Aktion Notiz löschen neu
 - [ ] Umsätze: Skizze geändert
 - [ ] UC-003: Ziel geändert
+- [ ] UC-003: Schritt 12 neu
+- [ ] UC-003: Schritt 13 neu
+- [ ] UC-003: Schritt 14 neu
+- [ ] UC-003: Schritt 15 neu
 - [ ] UC-003: Erfolg 4 neu
 - [ ] UC-003: BR-0106 neu: Notiz zu Umsätzen der angemeldeten Kundin
 - [ ] UC-003: BR-0107 neu: Löschen nur einer vorhandenen Notiz
@@ -78,7 +82,13 @@ Administration oder Reporting über Notizen: Kein administrativer oder berichten
   _→ noch nicht in der Spezifikation_
 - Soll die Kundin das Löschen einer Notiz vorher bestätigen?
   **Antwort:** Ja, eine Rückfrage mit „Bestätigen“ und „Abbrechen“ wie bei der Rückgabe einer Lastschrift, erst danach ist die Notiz weg.
-  _→ eingearbeitet in UC-003, BR-0106, BR-0107, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz_
+  _→ eingearbeitet in UC-003, BR-0106, BR-0107, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz · e11fbce_
 - Wie antwortet der Dienst, wenn die Kundin die Notiz eines Umsatzes löscht, der gar keine Notiz hat?
   **Antwort:** Mit 404 und der Meldung „Die Notiz wurde nicht gefunden.“
-  _→ eingearbeitet in UC-003, BR-0106, BR-0107, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz_
+  _→ eingearbeitet in UC-003, BR-0106, BR-0107, umsaetze, Umsatznotiz, GET /api/konten/{iban}/umsaetze, PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz, Schema Umsatz, Schema Notiz · e11fbce_
+- Wie meldet der Dienst beim Speichern und Löschen einer Notiz die drei 404-Fälle, und was zeigt die Maske je Fall?
+  **Antwort:** Je Fall eigener Text im Feld fehler: fremde IBAN „Das Konto wurde nicht gefunden.“, fremde umsatzId „Der Umsatz wurde nicht gefunden.“, Umsatz ohne Notiz beim Löschen „Die Notiz wurde nicht gefunden.“; die Maske zeigt genau diesen Text.
+  _→ eingearbeitet in UC-003_
+- Wie öffnet die Kundin das Notizformular je Umsatz, und welche Aktion steht in der Zeile?
+  **Antwort:** Je Zeile eine Aktion: „Notiz erfassen“ ohne Notiz, „Notiz ändern“ mit Notiz; beide öffnen das Formular für genau diesen Umsatz, „Speichern“ schickt PUT mit dessen umsatzId.
+  _→ eingearbeitet in UC-003_

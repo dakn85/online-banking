@@ -28,6 +28,10 @@
 9. Die Kundin wählt „Als CSV exportieren“.
 10. Das System liefert die Umsätze, die zu den eingestellten Werten für Suchtext, Zeitraum, Ein-/Ausgang, Betrag von und Betrag bis sowie Kategorie passen, über alle Seiten und ohne Seitenparameter, mit derselben Reihenfolge und demselben Saldo danach als CSV-Datei, die der Browser herunterlädt; es speichert die Datei nicht (BR-0075, BR-0104).
 11. Die Kundin wählt „Kontoauszug“; das System öffnet die Maske Kontoauszug für das Konto mit der IBAN der angezeigten Umsätze, weiter mit UC-024.
+12. Das System zeigt je Umsatz in der Zeile die gespeicherte Notiz im Feld Notiz und eine Aktion: „Notiz erfassen“, wenn der Umsatz keine Notiz trägt, sonst „Notiz ändern“ (BR-0106).
+13. Die Kundin wählt in der Zeile eines Umsatzes „Notiz erfassen“ oder „Notiz ändern“; das System öffnet das Formular Notiz zum Umsatz für genau diesen Umsatz, mit dem bisherigen Text als Inhalt, wenn eine Notiz vorhanden ist.
+14. Die Kundin gibt den Notiztext ein und wählt „Speichern“; das System schickt den Text mit der umsatzId dieses Umsatzes an PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz, zeigt die Meldung „Notiz gespeichert.“ und danach den gespeicherten Text in dieser Zeile (BR-0106).
+15. Die Kundin wählt in der Zeile des Umsatzes „Notiz löschen“; das System zeigt die Rückfrage „Notiz zu <Gegenpartei> löschen? Die Notiz lässt sich nicht wiederherstellen.“ mit „Bestätigen“ und „Abbrechen“. Nach „Bestätigen“ schickt es DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz mit der umsatzId dieses Umsatzes, zeigt die Meldung „Notiz gelöscht.“ und die Zeile ohne Notiz; bei „Abbrechen“ bleibt die Notiz unverändert (BR-0107).
 
 ## Alternativabläufe
 
