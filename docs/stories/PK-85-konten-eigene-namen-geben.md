@@ -98,4 +98,4 @@ Als Privatkundin möchte ich meinen Konten eigene Namen geben können, etwa dem 
   _→ eingearbeitet in UC-001, PUT /api/konten/{iban}/name · ca59002_
 - Soll eigenerName ohne vergebenen Namen als null geliefert werden, als leere Zeichenkette oder das Feld ganz entfallen?
   **Antwort:** Als null; das Feld ist immer vorhanden (Marktstandard für ein Pflichtfeld ohne Wert).
-  _→ eingearbeitet in GET /api/konten, Schema Konto, UC-001_
+  _→ eingearbeitet in GET /api/konten, Schema Konto, UC-001 · d7293c1_
