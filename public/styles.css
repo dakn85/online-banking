@@ -248,6 +248,9 @@ svg.symbol { width: 20px; height: 20px; flex: none; fill: none; stroke: currentC
 .tag__kopf { display: flex; justify-content: space-between; padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--tinte-2); background: var(--flaeche-2); border-bottom: 1px solid var(--linie); }
 .tag + .tag .tag__kopf { border-top: 1px solid var(--linie); }
 .tag .liste { padding: 4px 6px; }
+/* UC-003: eigene Notiz der Kundin unter dem Umsatz; sie darf umbrechen. */
+.zeile__notiz { display: flex; align-items: flex-start; gap: 6px; margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--tinte-2); overflow-wrap: anywhere; }
+.zeile__notiz .symbol { flex: none; width: 14px; height: 14px; margin-top: 2px; color: var(--messing); }
 
 /* ------------------------------------------------------------------ Blatt (Anlegen, Ändern) und Rückfrage */
 dialog { padding: 0; border: 0; color: var(--tinte); background: var(--flaeche); }
@@ -520,6 +523,15 @@ dialog::backdrop { background: rgba(10, 30, 26, .38); backdrop-filter: blur(2px)
   .zeile { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; padding: 12px 10px; }
   .zeile__aktionen { grid-column: 2 / -1; justify-content: flex-start; margin-left: -10px; }
   .zeile__symbol { width: 38px; height: 38px; }
+  /* Umsätze: Die Notiz-Aktion spannt sich über die ganze Zeile (wie .zeile__oeffnen) und kostet keine eigene Zeile;
+     ihr Symbol steht unten rechts, „Zurückgeben“ liegt darüber. */
+  .umsatzliste .zeile__aktionen { position: static; }
+  .umsatzliste .zeile__aktionen:not(:has([data-feld])) { display: contents; }
+  .umsatzliste .symbolknopf[data-notiz] {
+    position: absolute; inset: 0; z-index: 0; width: auto; height: auto; border-radius: 12px;
+    place-items: end; padding: 0 10px 8px; background: transparent; color: var(--tinte-3);
+  }
+  .umsatzliste .symbolknopf[data-notiz]:focus-visible { box-shadow: var(--fokus); }
   .filterleiste .feld--datum { flex: 1 1 120px; min-width: 0; }
   .filterleiste .feld--datum input { min-width: 0; width: 100%; }
   .filterleiste .feld--betragfilter { flex: 1 1 120px; min-width: 0; }

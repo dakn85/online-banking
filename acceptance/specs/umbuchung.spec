@@ -141,7 +141,7 @@ Tags: UC-021, PK-58, BR-0088
 
 ## Ohne Anmeldung ist die Umbuchung nicht erreichbar
 
-Tags: UC-021, PK-58
+Tags: UC-021, PK-58, NFR-001
 
 * Testdaten sind zurückgesetzt
 * Die Umbuchung ist ohne Anmeldung nicht erreichbar, die Schnittstelle antwortet mit dem Status "401"
