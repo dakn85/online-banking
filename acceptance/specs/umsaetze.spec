@@ -546,3 +546,153 @@ Tags: UC-003, PK-76, BR-0105
 Tags: UC-003, PK-76, NFR-001
 
 * Die Umsatzseite ist ohne Anmeldung nicht erreichbar
+
+## Eine Notiz zu einem Umsatz wird gespeichert und in der Liste angezeigt
+
+Tags: UC-003, PK-78, BR-0106
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Bäckerei |              |              | Alle         |            |            | Alle      |
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Frühstück mit dem Team" und wählt „Speichern“
+* Die Umsätze zeigen die Meldung "Notiz gespeichert."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz                  |
+|-----------------|------------------------|
+| Bäckerei Krause | Frühstück mit dem Team |
+
+## Ein neuer Notiztext überschreibt die vorhandene Notiz
+
+Tags: UC-003, PK-78, BR-0106
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Bäckerei |              |              | Alle         |            |            | Alle      |
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Erste Notiz" und wählt „Speichern“
+* Die Umsätze zeigen die Meldung "Notiz gespeichert."
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Zweite Notiz" und wählt „Speichern“
+* Die Umsätze zeigen die Meldung "Notiz gespeichert."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz        |
+|-----------------|--------------|
+| Bäckerei Krause | Zweite Notiz |
+
+## Die Notiz wird nach der Bestätigung gelöscht
+
+Tags: UC-003, PK-78, BR-0107
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Bäckerei |              |              | Alle         |            |            | Alle      |
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Frühstück mit dem Team" und wählt „Speichern“
+* Die Kundin wählt bei dem Umsatz von "Bäckerei Krause" die Aktion "Notiz löschen"
+* Die Umsätze zeigen die Rückfrage "Notiz zu Bäckerei Krause löschen? Die Notiz lässt sich nicht wiederherstellen."
+* Die Kundin wählt in der Rückfrage der Notiz "Bestätigen"
+* Die Umsätze zeigen die Meldung "Notiz gelöscht."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz |
+|-----------------|-------|
+| Bäckerei Krause |       |
+
+## Das Abbrechen der Rückfrage behält die Notiz
+
+Tags: UC-003, PK-78, BR-0107
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Bäckerei |              |              | Alle         |            |            | Alle      |
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Frühstück mit dem Team" und wählt „Speichern“
+* Die Kundin wählt bei dem Umsatz von "Bäckerei Krause" die Aktion "Notiz löschen"
+* Die Umsätze zeigen die Rückfrage "Notiz zu Bäckerei Krause löschen? Die Notiz lässt sich nicht wiederherstellen."
+* Die Kundin wählt in der Rückfrage der Notiz "Abbrechen"
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz                  |
+|-----------------|------------------------|
+| Bäckerei Krause | Frühstück mit dem Team |
+
+## Ein Notiztext über 140 Zeichen wird abgelehnt
+
+Tags: UC-003, PK-78
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Bäckerei |              |              | Alle         |            |            | Alle      |
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "Rückfrage an die Hausverwaltung wegen der Nebenkostenabrechnung 2025, Nachzahlung und Aufteilung der Heizkosten sowie der Positionen für Wasser und Müllabfuhr im Detail" und wählt „Speichern“
+* Die Umsätze zeigen die Meldung "Die Notiz darf höchstens 140 Zeichen lang sein."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz |
+|-----------------|-------|
+| Bäckerei Krause |       |
+
+## Ein leerer Notiztext wird abgelehnt
+
+Tags: UC-003, PK-78
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet die Umsätze des Kontos "Girokonto"
+* Die Kundin filtert die Umsätze mit den Einträgen
+| Suchtext | Zeitraum von | Zeitraum bis | Ein-/Ausgang | Betrag von | Betrag bis | Kategorie |
+|----------|--------------|--------------|--------------|------------|------------|-----------|
+| Bäckerei |              |              | Alle         |            |            | Alle      |
+* Die Kundin erfasst bei dem Umsatz von "Bäckerei Krause" die Notiz "" und wählt „Speichern“
+* Die Umsätze zeigen die Meldung "Die Notiz muss mindestens 1 Zeichen enthalten."
+* Die Umsätze zeigen die Zeilen
+| Gegenpartei     | Notiz |
+|-----------------|-------|
+| Bäckerei Krause |       |
+
+## Die Notiz eines fremden Umsatzes wird mit 404 abgewiesen
+
+Tags: UC-003, PK-78, BR-0106
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "PUT /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404"
+| feld     | wert             |
+|----------|------------------|
+| umsatzId | U-9999           |
+| text     | Rückfrage Termin |
+
+## Das Löschen einer nicht vorhandenen Notiz wird mit 404 abgewiesen
+
+Tags: UC-003, PK-78, BR-0107
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die angemeldete Kundin ruft "DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz" mit den Angaben auf und erhält den Status "404"
+| feld     | wert   |
+|----------|--------|
+| umsatzId | U-0007 |
+
+## Das Speichern einer Notiz ohne Anmeldung wird mit 401 beantwortet
+
+Tags: UC-003, PK-78, NFR-001
+
+* Der Aufruf "PUT" "/api/konten/DE02500105175407324911/umsaetze/U-0007/notiz" ohne Anmeldung antwortet mit dem Status "401"
+
+## Das Löschen einer Notiz ohne Anmeldung wird mit 401 beantwortet
+
+Tags: UC-003, PK-78, NFR-001
+
+* Der Aufruf "DELETE" "/api/konten/DE02500105175407324911/umsaetze/U-0007/notiz" ohne Anmeldung antwortet mit dem Status "401"

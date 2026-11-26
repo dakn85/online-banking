@@ -6,7 +6,7 @@
 **Name:** Umsätze eines Kontos anzeigen  
 **Bereich:** Finanzstatus  
 **Primärakteur:** Privatkundin  
-**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie ein; sie blättert die Treffer seitenweise mit 20 Umsätzen je Seite und sieht die Gesamtzahl der Treffer, und sie lädt die Umsätze als CSV-Datei herunter.  
+**Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie ein; sie blättert die Treffer seitenweise mit 20 Umsätzen je Seite und sieht die Gesamtzahl der Treffer, und sie lädt die Umsätze als CSV-Datei herunter. Zu einem Umsatz erfasst sie eine eigene Notiz, sieht sie in der Zeile, überschreibt sie und löscht sie nach einer Rückfrage wieder.  
 **Ziele:** Z-6  
 **Anforderungen:** NFR-001, C-001
 
@@ -166,6 +166,7 @@ sequenceDiagram
 - Die Umsätze des gewählten Kontos sind mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach sichtbar, den neuesten zuerst.
 - Suchtext, Zeitraum, Richtung, Betrag von/bis und Kategorie sind auf die angezeigten Umsätze angewendet.
 - Nach einem Export liegt die CSV-Datei mit den Umsätzen der eingestellten Filter beim Browser der Kundin; im System ist nichts gespeichert.
+- Die Notiz, die die Kundin erfasst oder überschrieben hat, ist am Umsatz gespeichert und in der Zeile sichtbar; eine gelöschte Notiz ist entfernt.
 
 ### Fehlschlag
 
@@ -204,6 +205,14 @@ Der Betragsfilter zeigt die Umsätze, deren Betragshöhe ohne Vorzeichen zwische
 ### BR-0105: Seitenweise Ausgabe der Umsatzliste mit Gesamtzahl
 
 Die Umsatzliste zeigt 20 Umsätze je Seite; die Maske schickt diese Seitengröße fest mit. Die Treffer stehen über alle Seiten hinweg in der Reihenfolge nach BR-0008, Seite 1 enthält die ersten 20 Treffer. Die Maske fragt nur Seiten ab 1 an, springt bei jedem Filterwechsel auf Seite 1 (A12) und zeigt als Kennzahl „Seite“ die Seitenzahl, die sie zuletzt angefragt hat, also den Wert des Parameters seite; einen eigenen Wert für die angezeigte Seite liefert der Dienst nicht, der Vertrag bleibt unverändert. Die Maske nennt die Gesamtzahl der Treffer über alle Seiten; sie zählt dieselben Umsätze wie die Liste, auch wenn der Testbetrieb je Konto nur die jüngsten 200 Umsätze hält. Eine Seite hinter der letzten Trefferseite liefert eine leere Trefferseite mit der Gesamtzahl und ohne Meldung; den Hinweis nach A2 zeigt die Seite nur, wenn es keinen Treffer gibt. Die Seitengröße ist nach oben begrenzt: Der Dienst liefert höchstens 100 Umsätze je Seite, auch wenn ein Aufruf eine größere Seitengröße anfragt; er begrenzt die angefragte Seitengröße auf 100 und antwortet ohne Fehler und ohne Meldung (A14). Für die Maske ändert das nichts, sie bleibt bei ihren 20 Umsätzen je Seite; die Reihenfolge nach BR-0008 und die Gesamtzahl über alle Seiten bleiben unberührt.
+
+### BR-0106: Notiz zu Umsätzen der angemeldeten Kundin
+
+Die Notiz zu einem Umsatz speichert, liefert, überschreibt und löscht der Dienst nur zu einer IBAN eines Kontos der angemeldeten Kundin und nur zu einer umsatzId, die zu einem Umsatz dieses Kontos gehört; eine Notiz anderer Kundinnen sieht sie nicht. Gehört die IBAN zu keinem Konto der angemeldeten Kundin, antwortet der Dienst mit 404 und „Das Konto wurde nicht gefunden.“; gehört die umsatzId zu keinem Umsatz dieses Kontos, mit 404 und „Der Umsatz wurde nicht gefunden.“. Die Umsätze zeigen die gespeicherte Notiz je Umsatz im Feld notiz (Umsatznotiz.text); eine Notiz ändert weder die Reihenfolge der Umsätze noch den Saldo danach (BR-0008) noch Filter, Trefferzahl oder Export (BR-0075, BR-0104, BR-0105). Der Dienst liest und ändert nur die Notiz der angemeldeten Kundin aus der Sitzung, eine Kennung im Aufruf gibt es nicht.
+
+### BR-0107: Löschen nur einer vorhandenen Notiz
+
+„Notiz löschen“ entfernt die Notiz erst nach der Bestätigung in der Rückfrage; wählt die Kundin „Abbrechen“, bleibt die Notiz unverändert. Trägt der Umsatz keine Notiz, antwortet der Dienst mit 404 und dem Feld fehler „Die Notiz wurde nicht gefunden.“ und löscht nichts; die Umsätze zeigen diese Meldung und lassen die Zeile ohne Notiz.
 
 ## Notizen
 

@@ -17,6 +17,7 @@ erDiagram
     Ausgabenanalyse ||--o{ Kategorieausgabe : "gliedert sich in"
     Debitkarte |o--|| Konto : "gehört zum Girokonto"
     Kontoauszug }o--|| Konto : "gehört zu"
+    Umsatznotiz |o--|| Umsatz : "gehört zu"
 ```
 
 ## Entitäten
@@ -224,3 +225,15 @@ Der Kontoauszug eines Kontos der Kundin für einen Kalendermonat mit Anfangssald
 | waehrung | Währung der Salden | String |  | Pflicht; Werte EUR; Standard EUR |
 
 **Einschränkungen:** Der Auszug gehört zu einem Konto der angemeldeten Kundin (BR-0011).
+
+### Umsatznotiz
+
+**Bereich:** Finanzstatus  
+
+Die eigene Notiz der Kundin zu einem Umsatz der Umsatzliste. Zu jedem Umsatz gibt es höchstens eine Notiz; nach einem Reset trägt kein Umsatz eine Notiz (ADR-002). Die Notiz ändert weder Buchungstag noch Betrag noch Saldo danach des Umsatzes und geht nicht in Filter, Trefferzahl oder CSV-Export der Umsatzliste ein (BR-0075, BR-0104, BR-0105).
+
+| Attribut | Beschreibung | Datentyp | Länge/Präzision | Validierungsregeln |
+|---|---|---|---|---|
+| text | Eigene Notiz der Kundin zu dem Umsatz | String | 1..140 | Pflicht; Länge 1..140; Beispiel Rückfrage an den Vermieter |
+
+**Einschränkungen:** Zu einem Umsatz gibt es höchstens eine Notiz: Die Beziehung der Notiz zum Umsatz ist |o--|| wie bei der Debitkarte. Eine leere Notiz gibt es nicht: Der Dienst entfernt führende und folgende Leerzeichen und lehnt einen danach leeren Text mit 400 ab; entfernt wird eine Notiz nur über „Notiz löschen“ (UC-003, BR-0107).
