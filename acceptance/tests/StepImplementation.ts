@@ -621,6 +621,21 @@ export default class StepImplementation {
     assert.strictEqual(((await antwort.json()) as { fehler: string }).fehler, text(meldung), `${methode} ${pfad}: Feld fehler`);
   }
 
+  /** UC-003 A18, BR-0107: „DELETE /api/konten/{iban}/umsaetze/{umsatzId}/notiz“ für einen Umsatz des Girokontos.
+      Der Dienst vergibt die umsatzId je Reset neu, deshalb schlägt der Step sie über die Gegenpartei in den Umsätzen nach. */
+  @Step('Der Dienst weist das Löschen der Notiz des Umsatzes von <gegenpartei> mit Status <status> und der Meldung <meldung> ab')
+  public async dienstWeistNotizLoeschenAb(gegenpartei: string, status: string, meldung: string) {
+    const page = await this.seite();
+    const iban = await this.girokontoIban(page);
+    const liste = await (await page.request.get(`${basisUrl}/api/konten/${iban}/umsaetze?suchtext=${encodeURIComponent(text(gegenpartei))}`)).json() as { umsaetze: { umsatzId: string; gegenpartei: string }[] };
+    const treffer = liste.umsaetze.filter(u => u.gegenpartei === text(gegenpartei));
+    assert.strictEqual(treffer.length, 1, `Das Girokonto zeigt nicht genau einen Umsatz von „${text(gegenpartei)}“`);
+    const pfad = `/api/konten/${iban}/umsaetze/${encodeURIComponent(treffer[0].umsatzId)}/notiz`;
+    const antwort = await page.request.delete(`${basisUrl}${pfad}`);
+    assert.strictEqual(antwort.status(), Number(status), `DELETE ${pfad}: ${await antwort.text()}`);
+    assert.strictEqual(((await antwort.json()) as { fehler: string }).fehler, text(meldung), `DELETE ${pfad}: Feld fehler`);
+  }
+
   /* ---------------------------------------------------------------- UC-003 CSV-Export */
 
   /** Die letzte Export-Antwort: Status, Kopfzeilen und Rohbytes der Datei. */
