@@ -20,3 +20,18 @@ tests:
         value: Anmeldung über POST /api/anmeldung; jeder virtuelle Nutzer meldet sich einmal an und bleibt angemeldet.
         by: Mandanten Admin
         at: 2026-11-27T22:58:11.961Z
+      - questionId: randbedingungen.aufraeumen
+        question: Dürfen Lastläufe Daten auf default liegen lassen?
+        value: Der Test liest nur. Im Setup einmal POST /api/test/lasttest/reset, das setzt die Lastkunden mit je 200 Umsätzen neu auf.
+        by: Mandanten Admin
+        at: 2026-11-27T22:58:36.124Z
+      - questionId: randbedingungen.testdaten
+        question: Mit welchen Testnutzern meldet sich der Test an?
+        value: "Eigene Nutzer je virtuellem Nutzer: lasttest-001 bis lasttest-200 (Kennung aus der Nummer des virtuellen Nutzers), PIN aus dem Zugang LASTTEST_PIN."
+        by: Mandanten Admin
+        at: 2026-11-27T22:58:45.650Z
+    needs:
+      lastmodell:
+        value: "200 gleichzeitige Kundinnen, jede virtuelle Nutzerin ist genau ein Lastkunde. Anstieg in 30 Sekunden auf 200, 2 Minuten halten. Zwischen zwei Anfragen 1 bis 2 Sekunden Denkzeit. Ziel: 95 % der Anfragen in höchstens 500 ms, höchstens 0,5 % Fehler."
+        by: Mandanten Admin
+        at: 2026-11-27T22:58:58.144Z
