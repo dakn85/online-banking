@@ -24,7 +24,7 @@ Auswertung der Entgelte (z. B. Entgeltübersicht oder Ausgabenanalyse): Nicht ge
 | Ueberweisung | Geändert | Eigenschaft ausfuehrungsart neu, Eigenschaft entgelt neu |
 | Ueberweisungsauftrag | Geändert | Eigenschaft betrag geändert, Eigenschaft ausfuehrungsart neu, Eigenschaft ausfuehrungstag neu |
 | Architektur | Geändert | Bausteinsicht geändert |
-| Überweisung | Geändert | Beschreibung geändert, Attribut ausfuehrungsart neu, Attribut entgelt neu, Feld Betrag in Euro geändert, Feld Ausführungsart neu, Feld Entgelt neu, und 1 weitere |
+| Überweisung | Geändert | Beschreibung geändert, Attribut ausfuehrungsart neu, Attribut entgelt neu, Feld Auftraggeberkonto geändert, Feld Verfügbarer Betrag geändert, Feld Vorlage neu, und 5 weitere |
 | Finanzstatus | Geändert | Skizze geändert |
 | Überweisung bestätigen | Geändert | Feld Ausführungsart neu, Feld Entgelt neu, Feld Gesamtbetrag neu, und 1 weitere |
 | UC-002 Überweisung vom Girokonto | Geändert | A2 geändert, A3 geändert, A13 neu: Echtzeitüberweisung mit Entgeltanzeige vor dem Absenden, und 7 weitere |
@@ -65,10 +65,14 @@ Auswertung der Entgelte (z. B. Entgeltübersicht oder Ausgabenanalyse): Nicht ge
 - [ ] Überweisung bestätigen: Feld Entgelt neu
 - [ ] Überweisung bestätigen: Feld Gesamtbetrag neu
 - [ ] Überweisung bestätigen: Skizze geändert
+- [ ] Überweisung: Feld Auftraggeberkonto geändert
+- [ ] Überweisung: Feld Verfügbarer Betrag geändert
+- [ ] Überweisung: Feld Vorlage neu
+- [ ] Überweisung: Feld Empfänger neu
+- [ ] Überweisung: Feld IBAN des Empfängers neu
 - [ ] Überweisung: Feld Betrag in Euro geändert
-- [ ] Überweisung: Feld Ausführungsart neu
-- [ ] Überweisung: Feld Entgelt neu
-- [ ] Überweisung: Feld Gesamtbetrag der Belastung neu
+- [ ] Überweisung: Feld Verwendungszweck neu
+- [ ] Überweisung: Skizze geändert
 - [ ] UC-002: A2 geändert
 - [ ] UC-002: A3 geändert
 - [ ] UC-002: A13 neu: Echtzeitüberweisung mit Entgeltanzeige vor dem Absenden
@@ -88,14 +92,25 @@ Auswertung der Entgelte (z. B. Entgeltübersicht oder Ausgabenanalyse): Nicht ge
 - [ ] Fehlende Steps der Akzeptanztests mit Tag PK-71 implementieren
 - [ ] Alle Akzeptanztests mit Tag PK-71 grün
 
+## Offene Fragen
+
+- [ ] Wie behandelt POST /api/ueberweisungen einen Auftrag mit Ausführungsart normal (oder ohne Angabe) und einem ausfuehrungstag?
+- [ ] Wie verhält sich POST /api/terminueberweisungen, wenn ein Auftrag die Ausführungsart echtzeit mitsendet?
+- [ ] Die Maske Überweisung nennt als Obergrenze des Betrags bei Echtzeit „verfügbarer Betrag abzüglich Überweisung“. Das ist unklar: Die Überweisung ist der Auftrag selbst, abzuziehen wäre das Entgelt (Überweisung.entgelt, 0,50 €). Use Case und Dienst prüfen Betrag plus Entgelt gegen den verfügbaren Betrag. Wie begrenzt die Maske den Betrag bei Echtzeit? (Aussage „Die Maske Überweisung begrenzt den Betrag bei Echtzeit auf den verfügbaren Betra“)
+- [ ] Welche Kategorie trägt der Umsatz über das Entgelt einer Echtzeitüberweisung?
+- [ ] Was antwortet POST /api/ueberweisungen, wenn die Ausführungsart normal (oder ohne Angabe) zusammen mit einem Ausführungstag gesendet wird? (POST /api/ueberweisungen, ausfuehrungstag)
+- [ ] Liefert ein Formatfehler bei echtzeit mit Ausführungstag (z. B. ungültige IBAN) 400 oder 422?
+- [ ] Was geschieht, wenn an POST /api/terminueberweisungen die Ausführungsart echtzeit gesendet wird? (Aussage „POST /api/terminueberweisungen nimmt die Ausführungsart echtzeit nicht an. Das S“)
+- [ ] Zeigt die Zusammenfassung die Zeile Ausführungsart auch bei normaler Überweisung, und mit welchem Wert?
+
 ## Entscheidungen
 
 - Wie hoch ist das Entgelt einer Echtzeitüberweisung und wie wird es bestimmt?
   **Antwort:** Fester Betrag je Echtzeitüberweisung, unabhängig vom Überweisungsbetrag: 0,50 €
-  _→ eingearbeitet in Überweisung, UC-002, BR-0004, BR-0006, BR-0012, BR-0099, BR-0100, POST /api/ueberweisungen, Schema Ueberweisung, Schema Ueberweisungsauftrag, ueberweisung, ueberweisung-bestaetigen, finanzstatus, vision, architektur_
+  _→ eingearbeitet in Überweisung, UC-002, BR-0004, BR-0006, BR-0012, BR-0099, BR-0100, POST /api/ueberweisungen, Schema Ueberweisung, Schema Ueberweisungsauftrag, ueberweisung, ueberweisung-bestaetigen, finanzstatus, vision, architektur · 87e1491_
 - Wie erscheint das Entgelt in den Umsätzen des Girokontos?
   **Antwort:** Zwei Umsätze: einer über den Überweisungsbetrag mit dem Empfänger, ein eigener über das Entgelt
-  _→ eingearbeitet in Überweisung, UC-002, BR-0004, BR-0006, BR-0012, BR-0099, BR-0100, POST /api/ueberweisungen, Schema Ueberweisung, Schema Ueberweisungsauftrag, ueberweisung, ueberweisung-bestaetigen, finanzstatus, vision, architektur_
+  _→ eingearbeitet in Überweisung, UC-002, BR-0004, BR-0006, BR-0012, BR-0099, BR-0100, POST /api/ueberweisungen, Schema Ueberweisung, Schema Ueberweisungsauftrag, ueberweisung, ueberweisung-bestaetigen, finanzstatus, vision, architektur · 87e1491_
 - Was geschieht, wenn die Kundin „Echtzeit“ wählt und zugleich einen Ausführungstag einträgt?
   **Antwort:** Die Maske sperrt den Ausführungstag, solange „Echtzeit“ gewählt ist; der Dienst lehnt die Kombination mit 422 und einer Meldung ab
-  _→ eingearbeitet in Überweisung, UC-002, BR-0004, BR-0006, BR-0012, BR-0099, BR-0100, POST /api/ueberweisungen, Schema Ueberweisung, Schema Ueberweisungsauftrag, ueberweisung, ueberweisung-bestaetigen, finanzstatus, vision, architektur_
+  _→ eingearbeitet in Überweisung, UC-002, BR-0004, BR-0006, BR-0012, BR-0099, BR-0100, POST /api/ueberweisungen, Schema Ueberweisung, Schema Ueberweisungsauftrag, ueberweisung, ueberweisung-bestaetigen, finanzstatus, vision, architektur · 87e1491_
