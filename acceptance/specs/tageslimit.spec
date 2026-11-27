@@ -55,7 +55,7 @@ Tags: UC-015, BR-0070, PK-88
 * Testdaten sind zurückgesetzt
 * "lena.hoffmann" meldet sich mit der PIN "24680" an
 * Die Kundin öffnet das Tageslimit
-* Die Kundin setzt das Tageslimit auf "<eingabe>"
+* Die Kundin setzt das Tageslimit auf <eingabe>
 * Das Tageslimit zeigt die Meldung "Das Tageslimit muss zwischen 0,00 EUR und 5.000,00 EUR liegen."
 * Das Tageslimit zeigt das aktuelle Limit "5.000,00 €" und das Standardlimit "5.000,00 €"
 
