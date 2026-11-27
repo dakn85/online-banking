@@ -14,6 +14,7 @@
   ],
   "actions": [
     {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"},
+    {"label":"Überweisen","useCase":"UC-001#7","screen":"ueberweisung"},
     {"label":"Umsätze","useCase":"UC-001#8","screen":"umsaetze"},
     {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"},
     {"label":"Daueraufträge","useCase":"UC-016#1","screen":"dauerauftraege"},
@@ -26,33 +27,48 @@
     {"label":"Abbrechen","useCase":"UC-001"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-stil="ueberzeile" data-erscheinen="einblenden">
   <h1>Finanzstatus</h1>
-  <p>Ihre Konten und Ihr Gesamtvermögen auf einen Blick; je Umsatz zeigt die Umsatzliste „Zurückgeben“ oder „Zurückgegeben“.</p>
-  <div data-wf="aktionen"><button>Umbuchen</button> <button>Tageslimit</button><button>Daueraufträge</button> <button>Persönliche Daten</button></div>
+  <p>Guten Morgen, Lena</p>
 </header>
-<p data-wf="meldung" role="status">Umbuchung ausgeführt.</p>
-<p data-wf="meldung" role="status">Echtzeitüberweisung ausgeführt: 50,00 € überwiesen, Entgelt 0,50 €.</p>
-<nav data-wf="navigation">
-  <a href="#" aria-current="page">Finanzstatus</a>
-  <a href="#">Überweisung</a>
-  <a href="#">Empfängervorlagen</a>
-  <a href="#">Postfach (2)</a>
-</nav>
-<dl data-wf="kennzahl">
-  <div><dt>Gesamtvermögen</dt><dd>1.757,85 €</dd></div>
-</dl>
-<table data-wf="tabelle">
-  <caption>Ihre Konten</caption>
-  <thead>
-    <tr><th>Kontoname</th><th>Eigener Name</th><th>Art</th><th>IBAN</th><th>Saldo</th><th>Dispositionsrahmen</th><th>Verfügbarer Betrag</th><th>Aktion</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Girokonto</td><td></td><td>Girokonto</td><td>DE02 5001 0517 5407 3249 11</td><td>2.145,30 €</td><td>1.000,00 €</td><td>3.145,30 €</td><td><button>Umsätze</button> <button>Ausgabenanalyse</button> <button data-wf="primaer">Überweisen</button> <button>Debitkarte</button> <button>Name vergeben</button></td></tr>
-    <tr><td>Kreditkarte</td><td></td><td>Kreditkarte</td><td>DE44 5001 0517 5407 3250 28</td><td>-387,45 €</td><td></td><td></td><td><button>Umsätze</button> <button>Name vergeben</button></td></tr>
-    <tr><td>Tagesgeldkonto</td><td></td><td>Tagesgeldkonto</td><td>DE97 5001 0517 5407 3249 47</td><td>0,00 €</td><td></td><td></td><td><button>Umsätze</button> <button>Name vergeben</button></td></tr>
-  </tbody>
-</table>
+<div data-wf="hauptwert" data-verlauf="tief" data-muster="kreise" data-erscheinen="aufsteigen">
+  <p>Gesamtvermögen</p>
+  <strong>1.757,85 €</strong>
+  <small>3 Konten, Stand 27.11.2026, 10:50 Uhr</small>
+  <div data-wf="aktionen"><button data-wf="primaer" data-symbol="tausch">Überweisen</button><button data-symbol="sortieren">Umbuchen</button><button data-symbol="wiederholen">Daueraufträge</button><button data-symbol="schild">Tageslimit</button><button data-symbol="person">Persönliche Daten</button></div>
+</div>
+<section data-wf="gruppe" data-erscheinen="aufsteigen">
+  <h2>Ihre Konten</h2>
+  <ul data-wf="liste" data-art="kacheln" data-stil="ruhig" data-hover="anheben" data-zeichen="karte">
+    <li><strong title="Kontoname">Girokonto</strong><span title="IBAN">DE02 5001 0517 5407 3249 11</span><small title="Eigener Name"></small><small title="Art">Girokonto</small><small title="Verfügbarer Betrag">3.145,30 €</small><small title="Dispositionsrahmen">1.000,00 €</small><b title="Saldo">2.145,30 €</b><button data-wf="primaer">Überweisen</button><button>Umsätze</button><button data-symbol="stift">Name vergeben</button></li>
+    <li><strong title="Kontoname">Kreditkarte</strong><span title="IBAN">DE44 5001 0517 5407 3250 28</span><small title="Eigener Name"></small><small title="Art">Kreditkarte</small><small title="Verfügbarer Betrag"></small><small title="Dispositionsrahmen"></small><b title="Saldo">-387,45 €</b><button data-wf="primaer">Überweisen</button><button>Umsätze</button><button data-symbol="stift">Name vergeben</button></li>
+    <li><strong title="Kontoname">Tagesgeldkonto</strong><span title="IBAN">DE97 5001 0517 5407 3249 47</span><small title="Eigener Name">Urlaubskasse</small><small title="Art">Tagesgeldkonto</small><small title="Verfügbarer Betrag"></small><small title="Dispositionsrahmen"></small><b title="Saldo">0,00 €</b><button data-wf="primaer">Überweisen</button><button>Umsätze</button><button data-symbol="stift">Name vergeben</button></li>
+  </ul>
+</section>
+<div data-wf="spalten" data-teilung="2-1">
+  <section data-wf="flaeche" data-erscheinen="aufsteigen">
+    <h3>Letzte Umsätze</h3>
+    <ul data-wf="liste" data-zeichen="initialen">
+      <li><strong title="Gegenpartei">Fitnessstudio Vital</strong><span title="Verwendungszweck">Mitgliedsbeitrag</span><b title="Betrag">-29,90 €</b><em title="Buchungstag">31.10.2026</em></li>
+      <li><strong title="Gegenpartei">Zeitungsverlag Nord</strong><span title="Verwendungszweck">Zeitungsabo</span><b title="Betrag">-14,90 €</b><em title="Buchungstag">16.09.2026</em></li>
+      <li><strong title="Gegenpartei">Lindner Logistik GmbH</strong><span title="Verwendungszweck">Gehalt Januar</span><b title="Betrag">2.640,00 €</b><em title="Buchungstag">01.02.2026</em></li>
+    </ul>
+  </section>
+  <section data-wf="flaeche" data-erscheinen="aufsteigen">
+    <h3>Aufträge und Service</h3>
+    <ul data-wf="liste" data-zeichen="uhr">
+      <li><strong title="Eintrag">Ihre Daueraufträge</strong><span title="Stand">Keine Daueraufträge</span></li>
+      <li><strong title="Eintrag">Vorgemerkt</strong><span title="Stand">1 Terminüberweisung</span></li>
+      <li><strong title="Eintrag">Nachrichten</strong><span title="Stand">2 ungelesen</span></li>
+    </ul>
+    <div data-wf="aktionen"><button data-symbol="karte">Debitkarte</button><button data-symbol="ring">Ausgabenanalyse</button></div>
+  </section>
+</div>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="status">Umbuchung ausgeführt.</p>
+  <p data-wf="meldung" role="status">Echtzeitüberweisung ausgeführt: 50,00 € überwiesen, Entgelt 0,50 €.</p>
+</details>
 <aside data-wf="blatt">
   <h2>Eigenen Namen vergeben</h2>
   <p>Der eigene Name erscheint im Finanzstatus neben dem Kontonamen; der Kontoname bleibt unverändert.</p>

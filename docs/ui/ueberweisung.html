@@ -19,35 +19,37 @@
     {"label":"Tageslimit","useCase":"UC-015#1","screen":"tageslimit"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Überweisung</h1>
   <p>Einmalige Überweisung von Ihrem Girokonto.</p>
 </header>
-<nav data-wf="navigation">
-  <a>Finanzstatus</a>
-  <a aria-current="page">Überweisung</a>
-  <a>Postfach (2)</a>
-</nav>
-<p data-wf="meldung" role="alert">Der Betrag übersteigt den verfügbaren Betrag des Girokontos.</p>
-<p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
-<p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
-<p data-wf="meldung" role="alert">Mit dieser Überweisung würde Ihr Tageslimit überschritten.</p>
-<p data-wf="meldung" role="alert">Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.</p>
-<form data-wf="formular">
-  <h2>Empfänger und Betrag</h2>
-  <label data-wf="feld"><span>Auftraggeberkonto</span><input name="auftraggeberkonto" placeholder="Girokonto · DE02 5001 0517 5407 3249 11"></label>
-  <label data-wf="feld"><span>Verfügbarer Betrag</span><input name="verfuegbarerBetrag" placeholder="3.145,30"></label>
-  <label data-wf="feld"><span>Vorlage</span><select name="vorlage"><option>Keine Vorlage</option><option>Möbel Nord GmbH</option><option>Stadtwerke Nord</option></select></label>
-  <label data-wf="feld"><span>Empfänger</span><input name="empfaenger" required placeholder="Möbel Nord GmbH"></label>
-  <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" required placeholder="DE02 5001 0517 5407 3249 11"></label>
-  <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" required placeholder="50,00"></label>
-  <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" required placeholder="Rechnung 4711"></textarea></label>
-  <label data-wf="feld"><span>Ausführungstag</span><input type="date" name="ausfuehrungstag"></label>
-  <div data-wf="aktionen">
-    <button data-wf="primaer">Weiter</button>
-    <button>Abbrechen</button>
-    <button>Vorlagen verwalten</button>
-    <button>Vorgemerkte Überweisungen</button>
-    <button>Tageslimit</button>
-  </div>
-</form>
+<ol data-wf="schritte"><li aria-current="step">Auftrag</li><li>Bestätigen</li></ol>
+<div data-wf="spalten" data-teilung="2-1">
+  <form data-wf="formular" data-erscheinen="aufsteigen">
+    <h2>Empfänger und Betrag</h2>
+    <label data-wf="feld"><span>Auftraggeberkonto</span><input name="auftraggeberkonto" placeholder="Girokonto · DE02 5001 0517 5407 3249 11"></label>
+    <label data-wf="feld"><span>Vorlage</span><select name="vorlage"><option>Keine Vorlage</option><option>Möbel Nord GmbH</option><option>Stadtwerke Nord</option></select></label>
+    <label data-wf="feld"><span>Empfänger</span><input name="empfaenger" placeholder="Möbel Nord GmbH" required></label>
+    <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE02 5001 0517 5407 3249 11" required></label>
+    <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="50,00" required></label>
+    <label data-wf="feld"><span>Ausführungstag</span><input type="date" name="ausfuehrungstag"></label>
+    <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Rechnung 4711" required></textarea></label>
+    <div data-wf="aktionen"><button>Abbrechen</button><button data-wf="primaer">Weiter</button></div>
+  </form>
+  <section data-wf="flaeche" data-erscheinen="aufsteigen">
+    <h3>Von Ihrem Girokonto</h3>
+    <dl data-wf="werte">
+      <div><dt>Saldo</dt><dd>2.145,30 €</dd></div>
+      <div><dt>Verfügbarer Betrag</dt><dd>3.145,30 €</dd></div>
+    </dl>
+    <div data-wf="aktionen"><button data-symbol="uhr">Vorgemerkte Überweisungen</button><button data-symbol="schild">Tageslimit</button><button data-symbol="gruppe">Vorlagen verwalten</button></div>
+  </section>
+</div>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="alert">Der Betrag übersteigt den verfügbaren Betrag des Girokontos.</p>
+  <p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
+  <p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
+  <p data-wf="meldung" role="alert">Mit dieser Überweisung würde Ihr Tageslimit überschritten.</p>
+  <p data-wf="meldung" role="alert">Der Ausführungstag muss zwischen morgen und 365 Tagen ab heute liegen.</p>
+</details>

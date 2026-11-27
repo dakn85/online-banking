@@ -40,45 +40,70 @@
     {"label":"Seite vor","useCase":"UC-003#8","screen":"umsaetze"}
   ]
 } -->
-<header data-wf="kopf"><h1>Umsätze</h1><p>Die Buchungen Ihres Kontos, die neuesten zuerst, seitenweise mit 20 Umsätzen je Seite. Der Knopf Ausgabenanalyse steht nur bei den Umsätzen des Girokontos, nicht bei der Kreditkarte.</p><div data-wf="aktionen"><button>Als CSV exportieren</button><button>Ausgabenanalyse</button><button>Kontoauszug</button></div></header>
-<nav data-wf="navigation"><a href="#">Finanzstatus</a><a href="#" aria-current="page">Umsätze</a><a href="#">Überweisung</a><a href="#">Empfängervorlagen</a><a href="#">Postfach (2)</a></nav>
-<dl data-wf="kennzahl"><div><dt>Konto</dt><dd>Girokonto</dd></div><div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 11</dd></div></dl>
+<header data-wf="kopf" data-erscheinen="einblenden">
+  <h1>Umsätze</h1>
+  <p>Die Buchungen Ihres Kontos, die neuesten zuerst, seitenweise mit 20 Umsätzen je Seite. Der Knopf Ausgabenanalyse steht nur bei den Umsätzen des Girokontos, nicht bei der Kreditkarte.</p>
+  <div data-wf="aktionen"><button data-symbol="ring">Ausgabenanalyse</button><button data-symbol="dokument">Kontoauszug</button><button data-symbol="herunterladen">Als CSV exportieren</button></div>
+</header>
+<dl data-wf="kennzahl" data-stil="ruhig" data-groesse="klein">
+  <div><dt>Konto</dt><dd>Girokonto</dd></div>
+  <div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 11</dd></div>
+</dl>
 <div data-wf="filter">
-<label data-wf="feld"><span>Suche</span><input name="suchtext" placeholder="Gegenpartei oder Verwendungszweck"></label>
-<label data-wf="feld"><span>Zeitraum von</span><input type="date" name="zeitraumVon"></label>
-<label data-wf="feld"><span>Zeitraum bis</span><input type="date" name="zeitraumBis"></label>
-<label data-wf="feld"><span>Ein-/Ausgang</span><select name="richtung"><option>Alle</option><option>Eingang</option><option>Ausgang</option></select></label>
-<label data-wf="feld"><span>Betrag von</span><input type="number" step="0.01" name="betragVon" placeholder="100,00"></label>
-<label data-wf="feld"><span>Betrag bis</span><input type="number" step="0.01" name="betragBis" placeholder="1.000,00"></label>
-<label data-wf="feld"><span>Kategorie</span><select name="kategorie"><option>Alle</option><option>Wohnen</option><option>Lebensmittel</option><option>Mobilität</option><option>Freizeit</option><option>Versicherungen</option><option>Gesundheit</option><option>Sonstiges</option></select></label>
+  <label data-wf="feld"><span>Suche</span><input type="search" name="suchtext" placeholder="Gegenpartei oder Verwendungszweck"></label>
+  <label data-wf="feld"><span>Zeitraum von</span><input type="date" name="zeitraumVon"></label>
+  <label data-wf="feld"><span>Zeitraum bis</span><input type="date" name="zeitraumBis"></label>
+  <label data-wf="feld"><span>Ein-/Ausgang</span><select name="richtung"><option>Alle</option><option>Eingang</option><option>Ausgang</option></select></label>
+  <label data-wf="feld"><span>Betrag von</span><input type="number" step="0.01" name="betragVon" placeholder="100,00"></label>
+  <label data-wf="feld"><span>Betrag bis</span><input type="number" step="0.01" name="betragBis" placeholder="1.000,00"></label>
+  <label data-wf="feld"><span>Kategorie</span><select name="kategorie"><option>Alle</option><option>Wohnen</option><option>Lebensmittel</option><option>Mobilität</option><option>Freizeit</option><option>Versicherungen</option><option>Gesundheit</option><option>Sonstiges</option></select></label>
 </div>
-<p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
-<p data-wf="meldung" role="alert">Der Betragsbereich ist ungültig: von liegt über bis.</p>
-<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
-<p data-wf="meldung" role="alert">Der Umsatz wurde nicht gefunden.</p>
-<p data-wf="meldung" role="alert">Die Notiz wurde nicht gefunden.</p>
-<p data-wf="meldung" role="alert">Die Notiz muss mindestens 1 Zeichen enthalten.</p>
-<p data-wf="meldung" role="alert">Die Notiz darf höchstens 140 Zeichen lang sein.</p>
-<p data-wf="meldung" role="alert">Für diese Auswahl gibt es keine Umsätze zum Export.</p>
-<p data-wf="meldung" role="alert">Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.</p>
-<p data-wf="meldung" role="alert">Dieser Umsatz ist keine SEPA-Lastschrift.</p>
-<p data-wf="meldung" role="alert">Die Lastschrift wurde bereits zurückgegeben.</p>
-<p data-wf="meldung" role="alert">Die Rückgabefrist von 8 Wochen ist abgelaufen.</p>
-<p data-wf="meldung" role="status">Notiz gespeichert.</p>
-<p data-wf="meldung" role="status">Notiz gelöscht.</p>
-<p data-wf="meldung" role="status">Lastschrift zurückgegeben: 29,90 € gutgeschrieben, neuer Saldo 2.175,20 €.</p>
-<dl data-wf="kennzahl"><div><dt>Gesamtzahl der Treffer</dt><dd>2</dd></div><div><dt>Seite</dt><dd>1</dd></div></dl>
-<div data-wf="aktionen"><button>Seite zurück</button><button>Seite vor</button></div>
-<table data-wf="tabelle">
-<caption>Umsätze Girokonto</caption>
-<thead><tr><th>Buchungstag</th><th>Gegenpartei</th><th>Verwendungszweck</th><th>Kategorie</th><th>Betrag</th><th>Saldo danach</th><th>Rückgabe</th><th>Notiz</th></tr></thead>
-<tbody>
-<tr><td>31.10.2026</td><td>Fitnessstudio Vital</td><td>Mitgliedsbeitrag</td><td>Freizeit</td><td>-29,90 €</td><td>2.145,30 €</td><td>Zurückgeben</td><td>Beitrag prüfen</td><td data-wf="aktionen"><button>Notiz ändern</button></td></tr>
-<tr><td>12.02.2026</td><td>Bäckerei Krause</td><td>Einkauf</td><td>Lebensmittel</td><td>-12,00 €</td><td>2.145,30 €</td><td></td><td></td><td data-wf="aktionen"><button>Notiz erfassen</button></td></tr>
-<tr><td>28.01.2026</td><td>Stadtwerke Rhein</td><td>Abschlag Strom</td><td>Wohnen</td><td>-89,00 €</td><td>2.157,30 €</td><td>Zurückgegeben</td><td></td><td data-wf="aktionen"><button>Notiz erfassen</button></td></tr>
-</tbody>
-</table>
-<div data-wf="leer"><p>Für diese Auswahl gibt es keine Umsätze.</p></div>
-<section data-wf="gruppe" data-merkmal="Notiz"><h2>Notiz zum Umsatz</h2><form data-wf="formular"><label data-wf="feld"><span>Notiz</span><input name="notiz" placeholder="Eigene Notiz, höchstens 140 Zeichen"></label><div data-wf="aktionen"><button data-wf="primaer">Speichern</button><button>Notiz löschen</button></div></form></section>
-<section data-wf="gruppe" data-merkmal="Notiz löschen"><h2>Notiz löschen</h2><p data-wf="meldung" role="status">Notiz zu Fitnessstudio Vital löschen? Die Notiz lässt sich nicht wiederherstellen.</p><div data-wf="aktionen"><button data-wf="primaer">Bestätigen</button><button>Abbrechen</button></div></section>
-<section data-wf="gruppe" data-merkmal="Rückgabe"><h2>Lastschrift zurückgeben</h2><p data-wf="meldung" role="status">Lastschrift über 29,90 € von Fitnessstudio Vital zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.</p><form data-wf="formular"><div data-wf="aktionen"><button data-wf="primaer">Bestätigen</button><button>Abbrechen</button></div></form></section>
+<div data-wf="stapel" data-richtung="reihe">
+  <dl data-wf="kennzahl" data-stil="ruhig" data-groesse="klein">
+    <div><dt>Gesamtzahl der Treffer</dt><dd>2</dd></div>
+    <div><dt>Seite</dt><dd>1</dd></div>
+  </dl>
+  <div data-wf="aktionen"><button data-symbol="pfeil-links">Seite zurück</button><button data-symbol="pfeil-rechts">Seite vor</button></div>
+</div>
+<section data-wf="gruppe" data-merkmal="Buchungstag" data-erscheinen="aufsteigen">
+  <h2>Umsätze Girokonto</h2>
+  <ul data-wf="liste" data-hover="anheben" data-zeichen="initialen" data-kann="blaettern">
+    <li><strong title="Gegenpartei">Fitnessstudio Vital</strong><span title="Verwendungszweck">Mitgliedsbeitrag</span><small title="Buchungstag">31.10.2026</small><small title="Kategorie">Freizeit</small><small title="Rückgabe">Zurückgeben</small><small title="Notiz">Beitrag prüfen</small><b title="Betrag">-29,90 €</b><em title="Saldo danach">2.145,30 €</em><button>Zurückgeben</button><button data-symbol="sprechblase">Notiz erfassen</button><button data-symbol="stift">Notiz ändern</button></li>
+    <li><strong title="Gegenpartei">Bäckerei Krause</strong><span title="Verwendungszweck">Einkauf</span><small title="Buchungstag">12.02.2026</small><small title="Kategorie">Lebensmittel</small><small title="Rückgabe"></small><small title="Notiz"></small><b title="Betrag">-12,00 €</b><em title="Saldo danach">2.145,30 €</em><button>Zurückgeben</button><button data-symbol="sprechblase">Notiz erfassen</button><button data-symbol="stift">Notiz ändern</button></li>
+    <li><strong title="Gegenpartei">Stadtwerke Rhein</strong><span title="Verwendungszweck">Abschlag Strom</span><small title="Buchungstag">28.01.2026</small><small title="Kategorie">Wohnen</small><small title="Rückgabe">Zurückgegeben</small><small title="Notiz"></small><b title="Betrag">-89,00 €</b><em title="Saldo danach">2.157,30 €</em><button>Zurückgeben</button><button data-symbol="sprechblase">Notiz erfassen</button><button data-symbol="stift">Notiz ändern</button></li>
+  </ul>
+  <div data-wf="leer"><p>Für diese Auswahl gibt es keine Umsätze.</p></div>
+</section>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="alert">Der Zeitraum ist ungültig: von liegt nach bis.</p>
+  <p data-wf="meldung" role="alert">Der Betragsbereich ist ungültig: von liegt über bis.</p>
+  <p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+  <p data-wf="meldung" role="alert">Der Umsatz wurde nicht gefunden.</p>
+  <p data-wf="meldung" role="alert">Die Notiz wurde nicht gefunden.</p>
+  <p data-wf="meldung" role="alert">Die Notiz muss mindestens 1 Zeichen enthalten.</p>
+  <p data-wf="meldung" role="alert">Die Notiz darf höchstens 140 Zeichen lang sein.</p>
+  <p data-wf="meldung" role="alert">Für diese Auswahl gibt es keine Umsätze zum Export.</p>
+  <p data-wf="meldung" role="alert">Der Export ist fehlgeschlagen. Bitte versuchen Sie es später erneut.</p>
+  <p data-wf="meldung" role="alert">Dieser Umsatz ist keine SEPA-Lastschrift.</p>
+  <p data-wf="meldung" role="alert">Die Lastschrift wurde bereits zurückgegeben.</p>
+  <p data-wf="meldung" role="alert">Die Rückgabefrist von 8 Wochen ist abgelaufen.</p>
+  <p data-wf="meldung" role="status">Notiz gespeichert.</p>
+  <p data-wf="meldung" role="status">Notiz gelöscht.</p>
+  <p data-wf="meldung" role="status">Lastschrift zurückgegeben: 29,90 € gutgeschrieben, neuer Saldo 2.175,20 €.</p>
+</details>
+<aside data-wf="blatt">
+  <h2>Notiz zum Umsatz</h2>
+  <label data-wf="feld"><span>Notiz</span><input name="notiz" placeholder="Eigene Notiz, höchstens 140 Zeichen"></label>
+  <div data-wf="aktionen"><button>Notiz löschen</button><button data-wf="primaer">Speichern</button></div>
+</aside>
+<aside data-wf="rueckfrage">
+  <h2>Notiz löschen?</h2>
+  <p>Notiz zu Fitnessstudio Vital löschen? Die Notiz lässt sich nicht wiederherstellen.</p>
+  <div data-wf="aktionen"><button>Abbrechen</button><button data-wf="primaer">Bestätigen</button></div>
+</aside>
+<aside data-wf="rueckfrage">
+  <h2>Lastschrift zurückgeben?</h2>
+  <p>Lastschrift über 29,90 € von Fitnessstudio Vital zurückgeben? Die Rückgabe lässt sich nicht rückgängig machen.</p>
+  <div data-wf="aktionen"><button>Abbrechen</button><button data-wf="primaer">Bestätigen</button></div>
+</aside>
