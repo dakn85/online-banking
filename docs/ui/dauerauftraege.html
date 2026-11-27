@@ -34,81 +34,56 @@
     {"label":"Nein","useCase":"UC-016","screen":"dauerauftraege"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Daueraufträge</h1>
   <p>Wiederkehrende Zahlungen von Ihrem Girokonto anlegen, ändern und löschen.</p>
+  <div data-wf="aktionen"><button data-wf="primaer" data-symbol="plus">Neuer Dauerauftrag</button></div>
 </header>
-<nav data-wf="navigation">
-  <a href="#">Finanzstatus</a>
-  <a href="#">Überweisung</a>
-  <a href="#" aria-current="page">Daueraufträge</a>
-</nav>
-<p data-wf="meldung" role="status">Dauerauftrag gespeichert.</p>
-<p data-wf="meldung" role="status">Dauerauftrag geändert.</p>
-<p data-wf="meldung" role="status">Dauerauftrag gelöscht.</p>
-<p data-wf="meldung" role="alert">Die Angaben zum Dauerauftrag sind unvollständig oder ungültig.</p>
-<p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
-<p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
-<p data-wf="meldung" role="alert">Der erste Ausführungstag darf nicht in der Vergangenheit liegen.</p>
-<p data-wf="meldung" role="alert">Das Enddatum darf nicht vor dem ersten Ausführungstag liegen.</p>
-<p data-wf="meldung" role="alert">Der Dauerauftrag existiert nicht mehr.</p>
-<table data-wf="tabelle">
-  <caption>Ihre Daueraufträge</caption>
-  <thead>
-    <tr><th>Empfänger</th><th>IBAN</th><th>Betrag</th><th>Zweck</th><th>Turnus</th><th>Erster Ausführungstag</th><th>Enddatum</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Hausverwaltung Weber</td><td>DE89 3704 0044 0532 0130 00</td><td>650,00 €</td><td>Miete</td><td>monatlich</td><td>01.12.2026</td><td></td></tr>
-    <tr><td>Möbel Nord GmbH</td><td>DE44 5001 0517 5407 3249 31</td><td>50,00 €</td><td>Rechnung 4711</td><td>vierteljährlich</td><td>15.12.2026</td><td>15.12.2027</td></tr>
-  </tbody>
-</table>
-<section data-wf="gruppe" data-merkmal="Neuer Dauerauftrag">
+<section data-wf="gruppe" data-erscheinen="aufsteigen">
+  <h2>Ihre Daueraufträge</h2>
+  <ul data-wf="liste" data-hover="anheben" data-zeichen="wiederholen">
+    <li><strong title="Empfänger">Hausverwaltung Weber</strong><span title="Zweck">Miete</span><small title="IBAN">DE89 3704 0044 0532 0130 00</small><small title="Erster Ausführungstag">01.12.2026</small><small title="Enddatum"></small><b title="Betrag">650,00 €</b><em title="Turnus">monatlich</em><button data-symbol="stift">Ändern</button><button data-symbol="muell">Löschen</button></li>
+    <li><strong title="Empfänger">Möbel Nord GmbH</strong><span title="Zweck">Rechnung 4711</span><small title="IBAN">DE44 5001 0517 5407 3249 31</small><small title="Erster Ausführungstag">15.12.2026</small><small title="Enddatum">15.12.2027</small><b title="Betrag">50,00 €</b><em title="Turnus">vierteljährlich</em><button data-symbol="stift">Ändern</button><button data-symbol="muell">Löschen</button></li>
+  </ul>
+  <div data-wf="leer"><p>Sie haben keine Daueraufträge. Miete, Sparrate oder Beiträge: einmal anlegen, die Bank führt sie aus.</p><button data-wf="primaer">Neuer Dauerauftrag</button></div>
+</section>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="status">Dauerauftrag gespeichert.</p>
+  <p data-wf="meldung" role="status">Dauerauftrag geändert.</p>
+  <p data-wf="meldung" role="status">Dauerauftrag gelöscht.</p>
+  <p data-wf="meldung" role="alert">Die Angaben zum Dauerauftrag sind unvollständig oder ungültig.</p>
+  <p data-wf="meldung" role="alert">Die IBAN ist ungültig oder gehört zu keinem SEPA-Land.</p>
+  <p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
+  <p data-wf="meldung" role="alert">Der erste Ausführungstag darf nicht in der Vergangenheit liegen.</p>
+  <p data-wf="meldung" role="alert">Das Enddatum darf nicht vor dem ersten Ausführungstag liegen.</p>
+  <p data-wf="meldung" role="alert">Der Dauerauftrag existiert nicht mehr.</p>
+</details>
+<aside data-wf="blatt">
   <h2>Neuer Dauerauftrag</h2>
-  <form data-wf="formular">
-    <label data-wf="feld"><span>Name des Empfängers</span><input name="empfaenger" placeholder="Möbel Nord GmbH" required></label>
-    <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
-    <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="50,00" required></label>
-    <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Rechnung 4711" required></textarea></label>
-    <label data-wf="feld"><span>Turnus des Dauerauftrags</span><select name="turnus"><option>monatlich</option><option>vierteljährlich</option><option>jährlich</option></select></label>
-    <label data-wf="feld"><span>Erster Ausführungstag am</span><input type="date" name="ersterAusfuehrungstag" required></label>
-    <label data-wf="feld"><span>Enddatum (optional)</span><input type="date" name="enddatum"></label>
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Speichern</button>
-    </div>
-  </form>
-</section>
-<section data-wf="gruppe" data-merkmal="Dauerauftrag ändern">
+  <label data-wf="feld"><span>Name des Empfängers</span><input name="empfaenger" placeholder="Möbel Nord GmbH" required></label>
+  <label data-wf="feld"><span>IBAN des Empfängers</span><input name="empfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
+  <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="50,00" required></label>
+  <label data-wf="feld"><span>Verwendungszweck</span><textarea name="verwendungszweck" placeholder="Rechnung 4711" required></textarea></label>
+  <label data-wf="feld"><span>Turnus des Dauerauftrags</span><select name="turnus"><option>monatlich</option><option>vierteljährlich</option><option>jährlich</option></select></label>
+  <label data-wf="feld"><span>Erster Ausführungstag am</span><input type="date" name="ersterAusfuehrungstag" required></label>
+  <label data-wf="feld"><span>Enddatum (optional)</span><input type="date" name="enddatum"></label>
+  <div data-wf="aktionen"><button data-wf="primaer">Speichern</button></div>
+</aside>
+<aside data-wf="blatt">
   <h2>Dauerauftrag ändern</h2>
-  <form data-wf="formular">
-    <label data-wf="feld"><span>Dauerauftrag zum Ändern</span><select name="dauerauftragAendern"><option>Hausverwaltung Weber, 650,00 €, monatlich, ab 01.12.2026</option><option>Möbel Nord GmbH, 50,00 €, vierteljährlich, ab 15.12.2026</option></select></label>
-    <label data-wf="feld"><span>Neuer Empfängername</span><input name="neuerEmpfaenger" placeholder="Möbel Nord GmbH" required></label>
-    <label data-wf="feld"><span>Neue IBAN des Empfängers</span><input name="neueEmpfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
-    <label data-wf="feld"><span>Neuer Betrag in Euro</span><input type="number" step="0.01" name="neuerBetrag" placeholder="50,00" required></label>
-    <label data-wf="feld"><span>Neuer Verwendungszweck</span><textarea name="neuerVerwendungszweck" placeholder="Rechnung 4711" required></textarea></label>
-    <label data-wf="feld"><span>Neuer Turnus</span><select name="neuerTurnus"><option>monatlich</option><option>vierteljährlich</option><option>jährlich</option></select></label>
-    <label data-wf="feld"><span>Neuer erster Ausführungstag</span><input type="date" name="neuerErsterAusfuehrungstag" required></label>
-    <label data-wf="feld"><span>Neues Enddatum (optional)</span><input type="date" name="neuesEnddatum"></label>
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Änderung speichern</button>
-    </div>
-  </form>
-</section>
-<section data-wf="gruppe" data-merkmal="Dauerauftrag löschen">
-  <h2>Dauerauftrag löschen</h2>
-  <form data-wf="formular">
-    <label data-wf="feld"><span>Dauerauftrag zum Löschen</span><select name="dauerauftragLoeschen"><option>Hausverwaltung Weber, 650,00 €, monatlich, ab 01.12.2026</option><option>Möbel Nord GmbH, 50,00 €, vierteljährlich, ab 15.12.2026</option></select></label>
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Löschen</button>
-    </div>
-  </form>
-</section>
-<section data-wf="gruppe" data-merkmal="Sicherheitsabfrage">
-  <h2>Sicherheitsabfrage</h2>
-  <p data-wf="meldung" role="status">Dauerauftrag löschen?</p>
-  <form data-wf="formular">
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Ja</button>
-      <button>Nein</button>
-    </div>
-  </form>
-</section>
+  <label data-wf="feld"><span>Dauerauftrag zum Ändern</span><select name="dauerauftragAendern"><option>Hausverwaltung Weber, 650,00 €, monatlich, ab 01.12.2026</option><option>Möbel Nord GmbH, 50,00 €, vierteljährlich, ab 15.12.2026</option></select></label>
+  <label data-wf="feld"><span>Neuer Empfängername</span><input name="neuerEmpfaenger" placeholder="Möbel Nord GmbH" required></label>
+  <label data-wf="feld"><span>Neue IBAN des Empfängers</span><input name="neueEmpfaengerIban" placeholder="DE89 3704 0044 0532 0130 00" required></label>
+  <label data-wf="feld"><span>Neuer Betrag in Euro</span><input type="number" step="0.01" name="neuerBetrag" placeholder="50,00" required></label>
+  <label data-wf="feld"><span>Neuer Verwendungszweck</span><textarea name="neuerVerwendungszweck" placeholder="Rechnung 4711" required></textarea></label>
+  <label data-wf="feld"><span>Neuer Turnus</span><select name="neuerTurnus"><option>monatlich</option><option>vierteljährlich</option><option>jährlich</option></select></label>
+  <label data-wf="feld"><span>Neuer erster Ausführungstag</span><input type="date" name="neuerErsterAusfuehrungstag" required></label>
+  <label data-wf="feld"><span>Neues Enddatum (optional)</span><input type="date" name="neuesEnddatum"></label>
+  <div data-wf="aktionen"><button data-wf="primaer">Änderung speichern</button></div>
+</aside>
+<aside data-wf="rueckfrage">
+  <h2>Dauerauftrag löschen?</h2>
+  <label data-wf="feld"><span>Dauerauftrag zum Löschen</span><select name="dauerauftragLoeschen"><option>Hausverwaltung Weber, 650,00 €, monatlich, ab 01.12.2026</option><option>Möbel Nord GmbH, 50,00 €, vierteljährlich, ab 15.12.2026</option></select></label>
+  <div data-wf="aktionen"><button>Nein</button><button data-wf="primaer">Ja</button></div>
+</aside>

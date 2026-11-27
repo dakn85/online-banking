@@ -9,15 +9,19 @@
     {"label":"Kontoauszug herunterladen","useCase":"UC-024#3","operation":"GET /api/konten/{iban}/kontoauszug","screen":"kontoauszug"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Kontoauszug</h1>
   <p>Laden Sie den Kontoauszug eines Kontos für einen Monat als PDF herunter.</p>
 </header>
-<form data-wf="formular">
+<form data-wf="formular" data-erscheinen="aufsteigen">
+  <h2>Kontoauszug als PDF</h2>
   <label data-wf="feld"><span>Konto</span><select name="konto"><option>Girokonto</option><option>Kreditkarte</option></select></label>
   <label data-wf="feld"><span>Monat</span><input name="monat" placeholder="2026-02" required></label>
-  <div data-wf="aktionen"><button data-wf="primaer">Kontoauszug herunterladen</button></div>
+  <div data-wf="aktionen"><button data-wf="primaer" data-symbol="herunterladen">Kontoauszug herunterladen</button></div>
 </form>
-<p data-wf="meldung" role="alert">Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.</p>
-<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
-<p data-wf="meldung" role="alert">Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.</p>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="alert">Der Monat ist ungültig: JJJJ-MM, höchstens der laufende Monat.</p>
+  <p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+  <p data-wf="meldung" role="alert">Der Kontoauszug konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.</p>
+</details>

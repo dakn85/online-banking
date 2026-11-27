@@ -10,24 +10,31 @@
     {"label":"Umbuchen","useCase":"UC-021#2","operation":"POST /api/umbuchungen","screen":"finanzstatus"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Umbuchung</h1>
   <p>Sofortige Umbuchung zwischen Ihrem Girokonto und Ihrem Tagesgeldkonto.</p>
 </header>
-<nav data-wf="navigation">
-  <a href="#">Finanzstatus</a>
-  <a href="#" aria-current="page">Umbuchung</a>
-</nav>
-<p data-wf="meldung" role="alert">Der Betrag übersteigt den verfügbaren Betrag des Quellkontos.</p>
-<p data-wf="meldung" role="alert">Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich.</p>
-<p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
-<p data-wf="meldung" role="alert">Die Umbuchung konnte nicht ausgeführt werden.</p>
-<form data-wf="formular">
-  <h2>Konten und Betrag</h2>
-  <label data-wf="feld"><span>Quellkonto</span><select name="quellkonto"><option>Girokonto · DE02 5001 0517 5407 3249 11 · Saldo 2.145,30 € · verfügbar 3.145,30 €</option><option>Tagesgeldkonto · DE97 5001 0517 5407 3249 47 · Saldo 0,00 €</option></select></label>
-  <label data-wf="feld"><span>Zielkonto</span><select name="zielkonto"><option>Tagesgeldkonto · DE97 5001 0517 5407 3249 47 · Saldo 0,00 €</option><option>Girokonto · DE02 5001 0517 5407 3249 11 · Saldo 2.145,30 € · verfügbar 3.145,30 €</option></select></label>
-  <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="500,00" required></label>
-  <div data-wf="aktionen">
-    <button data-wf="primaer">Umbuchen</button>
-  </div>
-</form>
+<div data-wf="spalten" data-teilung="2-1">
+  <form data-wf="formular" data-erscheinen="aufsteigen">
+    <h2>Konten und Betrag</h2>
+    <label data-wf="feld"><span>Quellkonto</span><select name="quellkonto"><option>Girokonto · DE02 5001 0517 5407 3249 11 · Saldo 2.145,30 € · verfügbar 3.145,30 €</option><option>Tagesgeldkonto · DE97 5001 0517 5407 3249 47 · Saldo 0,00 €</option></select></label>
+    <label data-wf="feld"><span>Zielkonto</span><select name="zielkonto"><option>Tagesgeldkonto · DE97 5001 0517 5407 3249 47 · Saldo 0,00 €</option><option>Girokonto · DE02 5001 0517 5407 3249 11 · Saldo 2.145,30 € · verfügbar 3.145,30 €</option></select></label>
+    <label data-wf="feld"><span>Betrag in Euro</span><input type="number" step="0.01" name="betrag" placeholder="500,00" required></label>
+    <div data-wf="aktionen"><button data-wf="primaer" data-symbol="sortieren">Umbuchen</button></div>
+  </form>
+  <section data-wf="flaeche" data-erscheinen="aufsteigen">
+    <h3>Ihre Konten</h3>
+    <dl data-wf="werte">
+      <div><dt>Girokonto</dt><dd>2.145,30 €</dd></div>
+      <div><dt>Girokonto, verfügbar</dt><dd>3.145,30 €</dd></div>
+      <div><dt>Tagesgeldkonto</dt><dd>0,00 €</dd></div>
+    </dl>
+  </section>
+</div>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="alert">Der Betrag übersteigt den verfügbaren Betrag des Quellkontos.</p>
+  <p data-wf="meldung" role="alert">Eine Umbuchung ist nur zwischen Girokonto und Tagesgeldkonto möglich.</p>
+  <p data-wf="meldung" role="alert">Der Betrag muss mindestens 0,10 € betragen.</p>
+  <p data-wf="meldung" role="alert">Die Umbuchung konnte nicht ausgeführt werden.</p>
+</details>

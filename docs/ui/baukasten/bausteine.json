@@ -1,0 +1,13 @@
+{
+  "name": "Aventa Bank",
+  "navigation": [
+    { "name": "Finanzstatus", "maske": "finanzstatus", "symbol": "balken" },
+    { "name": "Überweisung", "gruppe": "Zahlungen", "maske": "ueberweisung", "symbol": "tausch" },
+    { "name": "Umbuchung", "gruppe": "Zahlungen", "maske": "umbuchung", "symbol": "sortieren" },
+    { "name": "Daueraufträge", "gruppe": "Zahlungen", "maske": "dauerauftraege", "symbol": "wiederholen" },
+    { "name": "Empfängervorlagen", "gruppe": "Zahlungen", "maske": "empfaengervorlagen", "symbol": "gruppe" },
+    { "name": "Postfach", "gruppe": "Service", "maske": "postfach", "symbol": "brief" },
+    { "name": "Tageslimit", "gruppe": "Service", "maske": "tageslimit", "symbol": "schild" },
+    { "name": "Persönliche Daten", "gruppe": "Service", "maske": "persoenliche-daten", "symbol": "person" }
+  ]
+}
