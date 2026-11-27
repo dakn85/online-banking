@@ -15,3 +15,8 @@ tests:
         value: POST /api/anmeldung → GET /api/konten → GET /api/konten/{iban}/umsaetze
         by: Mandanten Admin
         at: 2026-11-27T22:58:02.069Z
+      - questionId: anfragen.anmeldung
+        question: Wie meldet sich der Test an?
+        value: Anmeldung über POST /api/anmeldung; jeder virtuelle Nutzer meldet sich einmal an und bleibt angemeldet.
+        by: Mandanten Admin
+        at: 2026-11-27T22:58:11.961Z
