@@ -18,60 +18,40 @@
     {"label":"Nein","useCase":"UC-020","screen":"postfach"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Postfach</h1>
   <p>Nachrichten der Bank lesen und löschen. Die Navigation zeigt „Postfach (n)“ erst ab 1 ungelesenen Nachricht, sonst nur „Postfach“.</p>
 </header>
-<nav data-wf="navigation">
-  <a href="#">Finanzstatus</a>
-  <a href="#">Überweisung</a>
-  <a href="#">Empfängervorlagen</a>
-  <a href="#" aria-current="page">Postfach (2)</a>
-</nav>
-<p data-wf="meldung" role="status">Nachricht gelöscht.</p>
-<dl data-wf="kennzahl">
-  <div><dt>Ungelesen</dt><dd>2</dd></div>
-</dl>
-<table data-wf="tabelle">
-  <caption>Ihre Nachrichten</caption>
-  <thead>
-    <tr><th>Absender</th><th>Betreff</th><th>Datum</th><th>Status</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Aventa Bank Kartenservice</td><td>Ihre Kreditkartenabrechnung liegt vor</td><td>17.11.2026</td><td>ungelesen</td></tr>
-    <tr><td>Aventa Bank</td><td>Neue Sicherheitshinweise zum Online-Banking</td><td>12.11.2026</td><td>ungelesen</td></tr>
-    <tr><td>Aventa Bank</td><td>Ihr Kontoauszug für Oktober</td><td>02.11.2026</td><td>gelesen</td></tr>
-  </tbody>
-</table>
-<p data-wf="meldung" role="status">Keine Nachrichten.</p>
-<section data-wf="gruppe" data-merkmal="Nachricht lesen">
-  <h2>Nachricht lesen</h2>
-  <form data-wf="formular">
-    <label data-wf="feld"><span>Nachricht zum Öffnen</span><select name="nachrichtOeffnen"><option>Ihre Kreditkartenabrechnung liegt vor</option><option>Neue Sicherheitshinweise zum Online-Banking</option></select></label>
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Öffnen</button>
-    </div>
-  </form>
-  <dl data-wf="kennzahl">
-    <div><dt>Text</dt><dd>Bitte geben Sie Ihre PIN niemals an Dritte weiter.</dd></div>
+<section data-wf="gruppe" data-erscheinen="aufsteigen">
+  <h2>Ihre Nachrichten</h2>
+  <dl data-wf="kennzahl" data-stil="ruhig" data-groesse="klein">
+    <div><dt>Ungelesen</dt><dd>2</dd></div>
   </dl>
+  <div data-wf="spalten" data-teilung="1-1">
+    <ul data-wf="liste" data-hover="anheben" data-zeichen="initialen">
+      <li><strong title="Betreff">Ihre Kreditkartenabrechnung liegt vor</strong><span title="Absender">Aventa Bank Kartenservice</span><small title="Datum">17.11.2026</small><small title="Status">ungelesen</small><button data-symbol="muell">Löschen</button></li>
+      <li><strong title="Betreff">Neue Sicherheitshinweise zum Online-Banking</strong><span title="Absender">Aventa Bank</span><small title="Datum">12.11.2026</small><small title="Status">ungelesen</small><button data-symbol="muell">Löschen</button></li>
+      <li><strong title="Betreff">Ihr Kontoauszug für Oktober</strong><span title="Absender">Aventa Bank</span><small title="Datum">02.11.2026</small><small title="Status">gelesen</small><button data-symbol="muell">Löschen</button></li>
+    </ul>
+    <section data-wf="flaeche">
+      <h3>Nachricht lesen</h3>
+      <form data-wf="formular">
+        <label data-wf="feld"><span>Nachricht zum Öffnen</span><select name="nachrichtOeffnen"><option>Ihre Kreditkartenabrechnung liegt vor</option><option>Neue Sicherheitshinweise zum Online-Banking</option></select></label>
+        <div data-wf="aktionen"><button data-wf="primaer">Öffnen</button></div>
+      </form>
+      <dl data-wf="werte">
+        <div><dt>Text</dt><dd>Bitte geben Sie Ihre PIN niemals an Dritte weiter.</dd></div>
+      </dl>
+    </section>
+  </div>
+  <div data-wf="leer"><p>Keine Nachrichten.</p></div>
 </section>
-<section data-wf="gruppe" data-merkmal="Nachricht löschen">
-  <h2>Nachricht löschen</h2>
-  <form data-wf="formular">
-    <label data-wf="feld"><span>Nachricht zum Löschen</span><select name="nachrichtLoeschen"><option>Ihre Kreditkartenabrechnung liegt vor</option><option>Ihr Kontoauszug für Oktober</option></select></label>
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Löschen</button>
-    </div>
-  </form>
-</section>
-<section data-wf="gruppe" data-merkmal="Löschen bestätigen">
-  <h2>Löschen bestätigen</h2>
-  <p data-wf="meldung" role="status">Nachricht löschen?</p>
-  <form data-wf="formular">
-    <div data-wf="aktionen">
-      <button data-wf="primaer">Ja</button>
-      <button>Nein</button>
-    </div>
-  </form>
-</section>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="status">Nachricht gelöscht.</p>
+</details>
+<aside data-wf="rueckfrage">
+  <h2>Nachricht löschen?</h2>
+  <label data-wf="feld"><span>Nachricht zum Löschen</span><select name="nachrichtLoeschen"><option>Ihre Kreditkartenabrechnung liegt vor</option><option>Ihr Kontoauszug für Oktober</option></select></label>
+  <div data-wf="aktionen"><button>Nein</button><button data-wf="primaer">Ja</button></div>
+</aside>

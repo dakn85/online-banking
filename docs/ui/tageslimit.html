@@ -10,26 +10,27 @@
     {"label":"Speichern","useCase":"UC-015#3","operation":"PUT /api/tageslimit","screen":"tageslimit"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Tageslimit</h1>
   <p>Höchstbetrag Ihrer Überweisungen je Kalendertag.</p>
 </header>
-<nav data-wf="navigation">
-  <a href="#">Finanzstatus</a>
-  <a href="#">Überweisung</a>
-  <a href="#" aria-current="page">Tageslimit</a>
-  <a href="#">Postfach (2)</a>
-</nav>
-<p data-wf="meldung" role="status">Tageslimit gespeichert.</p>
-<p data-wf="meldung" role="alert">Das Tageslimit muss zwischen 0,00 EUR und 5.000,00 EUR liegen.</p>
-<dl data-wf="kennzahl">
-  <div><dt>Aktuelles Tageslimit</dt><dd>5.000,00 €</dd></div>
-  <div><dt>Standardlimit</dt><dd>5.000,00 €</dd></div>
-</dl>
-<form data-wf="formular">
-  <h2>Tageslimit ändern</h2>
-  <label data-wf="feld"><span>Neues Tageslimit in Euro</span><input type="number" step="0.01" name="tageslimit" placeholder="1.000,00" required></label>
-  <div data-wf="aktionen">
-    <button data-wf="primaer">Speichern</button>
-  </div>
-</form>
+<div data-wf="spalten" data-teilung="2-1">
+  <form data-wf="formular" data-erscheinen="aufsteigen">
+    <h2>Tageslimit ändern</h2>
+    <label data-wf="feld"><span>Neues Tageslimit in Euro</span><input type="number" step="0.01" name="tageslimit" placeholder="1.000,00" required></label>
+    <div data-wf="aktionen"><button data-wf="primaer">Speichern</button></div>
+  </form>
+  <section data-wf="flaeche" data-erscheinen="aufsteigen">
+    <h3>Tageslimit für Überweisungen</h3>
+    <div data-wf="fortschritt"><p>Je Kalendertag</p><progress value="100" max="100"></progress><small>100 % des Standardlimits</small></div>
+    <dl data-wf="werte">
+      <div><dt>Aktuelles Tageslimit</dt><dd>5.000,00 €</dd></div>
+      <div><dt>Standardlimit</dt><dd>5.000,00 €</dd></div>
+    </dl>
+  </section>
+</div>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="status">Tageslimit gespeichert.</p>
+  <p data-wf="meldung" role="alert">Das Tageslimit muss zwischen 0,00 EUR und 5.000,00 EUR liegen.</p>
+</details>

@@ -11,31 +11,35 @@
     {"name":"anteil","label":"Anteil","kind":"anzeige","attribute":"Kategorieausgabe.anteil"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Ausgabenanalyse</h1>
   <p>Die Ausgaben Ihres Girokontos eines Monats nach Kategorien.</p>
 </header>
-<dl data-wf="kennzahl">
-  <div><dt>Konto</dt><dd>Girokonto</dd></div>
-  <div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 11</dd></div>
-  <div><dt>Gesamtausgaben</dt><dd>98,00 €</dd></div>
-</dl>
-<div data-wf="filter">
-  <label data-wf="feld"><span>Monat</span><input name="monat" placeholder="2026-02" required></label>
+<div data-wf="spalten" data-teilung="2-1">
+  <dl data-wf="kennzahl" data-stil="ruhig" data-groesse="klein">
+    <div><dt>Konto</dt><dd>Girokonto</dd></div>
+    <div><dt>IBAN</dt><dd>DE02 5001 0517 5407 3249 11</dd></div>
+  </dl>
+  <div data-wf="filter">
+    <label data-wf="feld"><span>Monat</span><input name="monat" placeholder="2026-02" required></label>
+  </div>
 </div>
-<p data-wf="meldung" role="alert">Der Monat ist ungültig: erwartet JJJJ-MM.</p>
-<p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
-<p data-wf="meldung" role="alert">Die Ausgabenanalyse gibt es nur für das Girokonto.</p>
-<table data-wf="tabelle">
-  <caption>Ausgaben Girokonto nach Kategorien</caption>
-  <thead>
-    <tr><th>Kategorie</th><th>Summe</th><th>Anteil</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Wohnen</td><td>86,00 €</td><td>87,8 %</td></tr>
-    <tr><td>Lebensmittel</td><td>12,00 €</td><td>12,2 %</td></tr>
-  </tbody>
-</table>
-<div data-wf="leer">
-  <p>Für diesen Monat gibt es keine Ausgaben.</p>
+<div data-wf="hauptwert" data-stil="umrandet" data-erscheinen="aufsteigen">
+  <p>Gesamtausgaben</p>
+  <strong>98,00 €</strong>
+  <small>Februar 2026</small>
 </div>
+<section data-wf="flaeche" data-erscheinen="aufsteigen">
+  <h3>Ausgaben Girokonto nach Kategorien</h3>
+  <ul data-wf="liste" data-zeichen="initialen">
+    <li><strong title="Kategorie">Wohnen</strong><b title="Summe">86,00 €</b><em title="Anteil">87,8 %</em></li>
+    <li><strong title="Kategorie">Lebensmittel</strong><b title="Summe">12,00 €</b><em title="Anteil">12,2 %</em></li>
+  </ul>
+  <div data-wf="leer"><p>Für diesen Monat gibt es keine Ausgaben.</p></div>
+</section>
+<details data-wf="klappe">
+  <summary>Meldungen</summary>
+  <p data-wf="meldung" role="alert">Der Monat ist ungültig: erwartet JJJJ-MM.</p>
+  <p data-wf="meldung" role="alert">Das Konto wurde nicht gefunden.</p>
+  <p data-wf="meldung" role="alert">Die Ausgabenanalyse gibt es nur für das Girokonto.</p>
+</details>

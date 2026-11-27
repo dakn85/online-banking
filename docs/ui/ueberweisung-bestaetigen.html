@@ -15,28 +15,26 @@
     {"label":"Abbrechen","screen":"finanzstatus"}
   ]
 } -->
-<header data-wf="kopf">
+<header data-wf="kopf" data-erscheinen="einblenden">
   <h1>Überweisung bestätigen</h1>
   <p>Bitte prüfen Sie Ihre Angaben. Mit einem Ausführungstag wird der Auftrag nur vorgemerkt und noch nicht gebucht.</p>
-  <div data-wf="aktionen">
-    <button data-wf="primaer">Bestätigen</button>
-    <button>Abbrechen</button>
-  </div>
 </header>
-<nav data-wf="navigation">
-  <a href="#">Finanzstatus</a>
-  <a href="#" aria-current="page">Überweisung</a>
-  <a href="#">Empfängervorlagen</a>
-  <a href="#">Postfach (2)</a>
-</nav>
-<section data-wf="gruppe" data-merkmal="Zusammenfassung">
-  <h2>Zusammenfassung</h2>
-  <dl data-wf="kennzahl">
-    <div><dt>Auftraggeberkonto</dt><dd>Girokonto · DE02 5001 0517 5407 3249 11</dd></div>
-    <div><dt>Empfänger</dt><dd>Möbel Nord GmbH</dd></div>
-    <div><dt>IBAN des Empfängers</dt><dd>DE02 5001 0517 5407 3249 11</dd></div>
-    <div><dt>Betrag in Euro</dt><dd>50,00 €</dd></div>
-    <div><dt>Verwendungszweck</dt><dd>Rechnung 4711</dd></div>
-    <div><dt>Ausführungstag</dt><dd>24.12.2026</dd></div>
-  </dl>
-</section>
+<ol data-wf="schritte"><li>Auftrag</li><li aria-current="step">Bestätigen</li></ol>
+<div data-wf="spalten" data-teilung="2-1">
+  <section data-wf="flaeche" data-erscheinen="aufsteigen">
+    <h3>Zusammenfassung</h3>
+    <dl data-wf="werte">
+      <div><dt>Auftraggeberkonto</dt><dd>Girokonto · DE02 5001 0517 5407 3249 11</dd></div>
+      <div><dt>Empfänger</dt><dd>Möbel Nord GmbH</dd></div>
+      <div><dt>IBAN des Empfängers</dt><dd>DE02 5001 0517 5407 3249 11</dd></div>
+      <div><dt>Verwendungszweck</dt><dd>Rechnung 4711</dd></div>
+      <div><dt>Ausführungstag</dt><dd>24.12.2026</dd></div>
+    </dl>
+    <div data-wf="aktionen"><button>Abbrechen</button><button data-wf="primaer">Bestätigen</button></div>
+  </section>
+  <div data-wf="hauptwert" data-verlauf="tief" data-muster="linien" data-erscheinen="zoomen">
+    <p>Betrag in Euro</p>
+    <strong>50,00 €</strong>
+    <small>an Möbel Nord GmbH</small>
+  </div>
+</div>
