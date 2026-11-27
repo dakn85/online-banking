@@ -8,7 +8,7 @@
 **Primärakteur:** Privatkundin  
 **Ziel:** Die Kundin sieht zu einem ihrer Konten die Umsätze mit Buchungstag, Gegenpartei, Verwendungszweck, Kategorie, Betrag und Saldo danach, den neuesten zuerst, und schränkt sie über die Textsuche sowie die Filter nach Zeitraum, Ein-/Ausgang, Betrag von/bis und Kategorie ein; sie blättert die Treffer seitenweise mit 20 Umsätzen je Seite und sieht die Gesamtzahl der Treffer, und sie lädt die Umsätze als CSV-Datei herunter. Zu einem Umsatz erfasst sie eine eigene Notiz, sieht sie in der Zeile, überschreibt sie und löscht sie nach einer Rückfrage wieder.  
 **Ziele:** Z-6  
-**Anforderungen:** NFR-001, C-001
+**Anforderungen:** NFR-001, C-001, NFR-008
 
 ## Vorbedingungen
 
