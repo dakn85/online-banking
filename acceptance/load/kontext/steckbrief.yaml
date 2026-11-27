@@ -9,3 +9,9 @@ tests:
       from: frei
       by: Mandanten Admin
       at: 2026-11-27T22:57:22.990Z
+    answers:
+      - questionId: ablauf.anfragen
+        question: Welche Anfragen soll der Test schicken?
+        value: POST /api/anmeldung → GET /api/konten → GET /api/konten/{iban}/umsaetze
+        by: Mandanten Admin
+        at: 2026-11-27T22:58:02.069Z
