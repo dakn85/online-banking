@@ -9,3 +9,5 @@ measures:
     request: GET /api/konten
   - nfr: NFR-004
     request: GET /api/konten
+  - nfr: NFR-008
+    request: GET /api/konten/{iban}/umsaetze
