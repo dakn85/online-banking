@@ -1,0 +1,11 @@
+# Steckbrief der Lasttests: Antworten und Festlegungen. Gepflegt über die Seite Last und den Testautor.
+# Antworten auf Fragen, die für das Projekt gelten, gelten für jeden Lasttest des Projekts.
+tests:
+  load/monatserster-finanzstatus.load.yaml:
+    draft:
+      title: Monatserster Finanzstatus
+      goal: Hält das Banking am Monatsersten 200 Kundinnen, die sich anmelden und ihren Finanzstatus und ihre Umsätze ansehen?
+      tool: gatling
+      from: frei
+      by: Mandanten Admin
+      at: 2026-11-27T22:57:22.990Z
