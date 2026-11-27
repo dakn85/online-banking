@@ -3,8 +3,8 @@ simulation: load.MonatsersterFinanzstatusSimulation
 dir: load/gatling
 measures:
   - nfr: NFR-003
+    request: GET /api/konten
   - nfr: NFR-004
+    request: GET /api/konten
 names:
-  "POST /api/anmeldung": [Anmelden]
   "GET /api/konten": [Finanzstatus]
-  "GET /api/konten/{iban}/umsaetze": [Umsaetze]
