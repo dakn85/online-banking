@@ -115,13 +115,15 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
             // lesen noch bis kurz nach dem Haltefenster; der Lauf endet spaetestens hier.
             .maxDuration(Duration.ofSeconds(200))
             .assertions(
+                // Betriebsaufrufe: Antwortzeit und Fehlerrate je Anfrage.
                 details("Anmelden").responseTime().percentile(95.0).lt(500),
                 details("Finanzstatus").responseTime().percentile(95.0).lt(500),
                 details("Umsaetze").responseTime().percentile(95.0).lt(500),
-                details("Lastreset").responseTime().percentile(95.0).lt(500),
                 details("Anmelden").failedRequests().percent().lt(0.5),
                 details("Finanzstatus").failedRequests().percent().lt(0.5),
                 details("Umsaetze").failedRequests().percent().lt(0.5),
+                // Der Lastreset ist ein einmaliger Setup-Schritt (setzt 200x200
+                // Umsaetze neu auf); keine Zeitgrenze, aber er muss fehlerfrei laufen.
                 details("Lastreset").failedRequests().percent().lt(0.5));
     }
 }
