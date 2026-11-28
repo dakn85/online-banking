@@ -3,6 +3,8 @@ package load;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
 
@@ -35,8 +37,10 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
     private static final Duration HALTEN = Duration.ofSeconds(120);
     private static final Duration ABBAU = Duration.ofSeconds(30);
     private static final Duration NUTZER_LEBENSDAUER = Duration.ofSeconds(120);
-    private static final long P95_MS = 500L;
+    private static final int P95_MS = 500;
     private static final double MAX_FEHLER_PROZENT = 0.5;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /** Einmal im Setup: Lastdaten zurücksetzen (nur Testbetrieb, ohne Anmeldung). */
     @Override
@@ -57,6 +61,21 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
         } catch (java.io.IOException | InterruptedException e) {
             throw new IllegalStateException("Lastdaten-Reset fehlgeschlagen: " + e.getMessage(), e);
         }
+    }
+
+    /** IBAN des ersten Girokontos aus der Kontenliste; nur dort gibt es Umsätze. */
+    private static String ersteGiroIban(String body) {
+        try {
+            JsonNode root = MAPPER.readTree(body);
+            for (JsonNode konto : root.path("konten")) {
+                if ("Girokonto".equals(konto.path("art").asText())) {
+                    return konto.path("iban").asText();
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Kontenliste nicht lesbar: " + e.getMessage(), e);
+        }
+        throw new IllegalStateException("Kein Girokonto in der Kontenliste.");
     }
 
     /** Feeder mit den 200 Lastkennungen, zyklisch. */
@@ -86,7 +105,8 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
             .exec(http("Finanzstatus")
                     .get("/api/konten")
                     .check(status().is(200))
-                    .check(jsonPath("$.konten[?(@.art=='Girokonto')].iban").find().saveAs("iban")))
+                    .check(bodyString().saveAs("kontenBody")))
+            .exec(session -> session.set("iban", ersteGiroIban(session.getString("kontenBody"))))
             .during(NUTZER_LEBENSDAUER).on(
                     // Finanzstatus und Umsätze ansehen, mit 1–2 s Denkzeit dazwischen.
                     exec(http("Finanzstatus")
