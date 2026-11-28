@@ -12,8 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
@@ -45,18 +44,20 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
     private final HttpProtocolBuilder httpProtocol = http
         .baseUrl(basisUrl)
         .acceptHeader("application/json")
-        .contentTypeHeader("application/json");
+        .contentTypeHeader("application/json")
+        // Wie ein Browser cached Gatling wiederholte GETs; ohne Abschalten kaeme
+        // GET /api/konten als 304 ohne Rumpf zurueck. Fuer den Lasttest unerwuenscht.
+        .disableCaching();
 
-    /** Je virtuelle Nutzerin genau ein Lastkunde: lasttest-001 bis lasttest-200. */
+    /** Je virtuelle Nutzerin genau ein Lastkunde: lasttest-001 bis lasttest-200 (zirkulaer). */
     private Iterator<Map<String, Object>> nutzer() {
-        return IntStream.rangeClosed(1, KUNDINNEN)
-            .mapToObj(i -> {
+        return Stream.iterate(0, i -> (i + 1) % KUNDINNEN)
+            .map(i -> {
                 Map<String, Object> zeile = new LinkedHashMap<>();
-                zeile.put("kennung", String.format("lasttest-%03d", i));
+                zeile.put("kennung", String.format("lasttest-%03d", i + 1));
                 zeile.put("pin", pin);
                 return zeile;
             })
-            .collect(Collectors.toList())
             .iterator();
     }
 
@@ -97,11 +98,11 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
             .post("/api/test/lasttest/reset")
             .check(status().is(204)));
 
-    /** Angemeldet bleiben, dann lesen, bis die Injektion die Nutzerin beendet. */
+    /** Angemeldet bleiben und lesen, solange die Lastfenster-Strecke laeuft. */
     private final ScenarioBuilder last = scenario("Monatserster Finanzstatus")
         .feed(nutzer())
         .exec(anmelden)
-        .forever().on(durchgang);
+        .during(Duration.ofSeconds(150)).on(durchgang);
 
     {
         setUp(
@@ -110,6 +111,9 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
                     rampConcurrentUsers(0).to(KUNDINNEN).during(Duration.ofSeconds(30)),
                     constantConcurrentUsers(KUNDINNEN).during(Duration.ofSeconds(120)))))
             .protocols(httpProtocol)
+            // Sicherheitsgrenze: Nutzerinnen, die erst gegen Ende des Anstiegs starten,
+            // lesen noch bis kurz nach dem Haltefenster; der Lauf endet spaetestens hier.
+            .maxDuration(Duration.ofSeconds(200))
             .assertions(
                 details("Anmelden").responseTime().percentile(95.0).lt(500),
                 details("Finanzstatus").responseTime().percentile(95.0).lt(500),
