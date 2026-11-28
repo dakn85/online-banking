@@ -1,0 +1,32 @@
+{
+  "kind": "probe",
+  "triedAt": "2026-11-28T13:51:51.877Z",
+  "environment": "default",
+  "sentBy": "Testautor",
+  "request": {
+    "method": "POST",
+    "url": "http://online-banking.online-banking:8080/api/anmeldung",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"kennung\":\"lasttest-001\",\"pin\":\"[REDACTED]\"}",
+    "template": "${BANKING_URL}/api/anmeldung"
+  },
+  "response": {
+    "status": 200,
+    "statusText": "OK",
+    "ms": 79,
+    "headers": {
+      "connection": "keep-alive",
+      "content-length": "24",
+      "content-type": "application/json; charset=utf-8",
+      "date": "Sat, 28 Nov 2026 13:51:51 GMT",
+      "etag": "W/\"18-4NtoxITcAiGu8KJNx/U8x3E9WMw\"",
+      "keep-alive": "timeout=5",
+      "set-cookie": "[REDACTED]",
+      "x-powered-by": "Express"
+    },
+    "contentType": "application/json; charset=utf-8",
+    "body": "{\"name\":\"Last Test 001\"}"
+  }
+}
