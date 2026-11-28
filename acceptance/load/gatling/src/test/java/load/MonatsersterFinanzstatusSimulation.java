@@ -98,7 +98,8 @@ public class MonatsersterFinanzstatusSimulation extends Simulation {
             // Einmal anmelden, Sitzung bleibt für die ganze Nutzerlebensdauer bestehen.
             .exec(http("Anmeldung")
                     .post("/api/anmeldung")
-                    .body(StringBody("{\"kennung\":\"#{kennung}\",\"pin\":\"#{pin}\"}").asJson())
+                    .header("Content-Type", "application/json")
+                    .body(StringBody("{\"kennung\":\"#{kennung}\",\"pin\":\"#{pin}\"}"))
                     .check(status().is(200))
                     .check(jsonPath("$.name").exists()))
             // Finanzstatus einmal abrufen und die Girokonto-IBAN für die Umsätze merken.
