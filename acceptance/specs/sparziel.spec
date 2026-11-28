@@ -140,3 +140,18 @@ Tags: UC-025, PK-72, BR-0103
 * "lasttest-001" meldet sich mit der Vorgabe-PIN der Lastkunden an
 * Die Kundin öffnet das Sparziel
 * Das Sparziel zeigt die Meldung "Sie haben kein Tagesgeldkonto."
+
+## Ein wiederholtes Anlegen mit gleichen Angaben legt ein weiteres Sparziel mit eigenem Dauerauftrag an
+
+Tags: UC-025, PK-72, BR-0103
+
+* Testdaten sind zurückgesetzt
+* "lena.hoffmann" meldet sich mit der PIN "24680" an
+* Die Kundin öffnet das Sparziel
+* Die Kundin berechnet die Sparrate für Zielbetrag "1.000,00 €" und Zieldatum "in 70 Tagen"
+* Die Kundin legt das Sparziel an
+* Die Kundin berechnet die Sparrate für Zielbetrag "1.000,00 €" und Zieldatum "in 70 Tagen"
+* Die Kundin legt das Sparziel an
+* Das Sparziel zeigt die Meldung "Sparziel angelegt."
+* Die Kundin öffnet die Daueraufträge
+* Die Daueraufträge zeigen "2" Daueraufträge an das Tagesgeldkonto mit Verwendungszweck "Sparrate Sparziel"

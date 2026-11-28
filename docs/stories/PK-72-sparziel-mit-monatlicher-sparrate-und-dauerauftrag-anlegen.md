@@ -46,6 +46,7 @@ Als Privatkundin möchte ich für mein Tagesgeldkonto ein Sparziel mit Zielbetra
 - `acceptance/specs/sparziel.spec`: Die Schnittstelle lehnt den Vorschlag ohne Anmeldung mit 401 ab
 - `acceptance/specs/sparziel.spec`: Die Sparrate wird aus Zielbetrag, Zieldatum und Saldo des Tagesgeldkontos vorgeschlagen
 - `acceptance/specs/sparziel.spec`: Ein Sparziel wird angelegt und der Dauerauftrag für die Sparrate eingerichtet
+- `acceptance/specs/sparziel.spec`: Ein wiederholtes Anlegen mit gleichen Angaben legt ein weiteres Sparziel mit eigenem Dauerauftrag an
 - `acceptance/specs/sparziel.spec`: Ein Zielbetrag nicht über dem Saldo des Tagesgeldkontos wird abgelehnt
 - `acceptance/specs/sparziel.spec`: Ein Zielbetrag von 0,00 € wird als ungültige Angabe abgelehnt
 - `acceptance/specs/sparziel.spec`: Ein Zieldatum vor der ersten Rate wird abgelehnt
@@ -93,7 +94,7 @@ Als Privatkundin möchte ich für mein Tagesgeldkonto ein Sparziel mit Zielbetra
   _→ eingearbeitet in UC-025, BR-0101, BR-0102, BR-0103, UC-016, Dauerauftrag, Sparziel, GET /api/sparziele/vorschlag, POST /api/sparziele, Schema Sparratenvorschlag, Schema NeuesSparziel, Schema Sparziel, sparziel, finanzstatus, vision, NFR-006 · 2b4c9d0_
 - Beim Anlegen entsteht der Dauerauftrag mit der IBAN des Tagesgeldkontos als Empfänger-IBAN. Gilt für diesen Dauerauftrag die IBAN-Prüfung des Dauerauftrags (BR-0003: Prüfziffer, SEPA-Land), oder wird die eigene IBAN des Tagesgeldkontos ungeprüft übernommen? (POST /api/sparziele, System)
   **Antwort:** Ungeprüft übernehmen: die IBAN stammt aus dem eigenen Kontobestand, ein Sparziel scheitert nie an der IBAN-Prüfung.
-  _→ noch nicht in der Spezifikation_
+  _→ eingearbeitet in UC-025, BR-0103, POST /api/sparziele, Dauerauftrag_
 - Die Kundin löst „Sparziel anlegen“ zweimal aus (Doppelklick oder wiederholter Aufruf mit gleichem Zielbetrag und Zieldatum). Mehrere Sparziele je Tagesgeldkonto sind zulässig und ohne Prüfung. Was geschieht beim zweiten Aufruf? (POST /api/sparziele, Konto.art Tagesgeldkonto)
   **Antwort:** Ein zweiter Aufruf mit gleichem Zielbetrag und Zieldatum wird mit 422 und einer neuen Meldung abgelehnt (neue Regel, widerspricht „keine Prüfung“ in BR-0103).
   _→ noch nicht in der Spezifikation_

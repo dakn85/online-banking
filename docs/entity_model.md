@@ -158,7 +158,7 @@ Eine wiederkehrende Zahlung vom Girokonto der Kundin an einen Empfänger mit Bet
 | ersterAusfuehrungstag | Tag der ersten Ausführung, ab dem der Turnus läuft; die Oberfläche zeigt ihn als TT.MM.JJJJ | Date |  | Pflicht; Beispiel 2026-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
 | enddatum | Letzter Tag, bis zu dem der Dauerauftrag laufen soll; optional, ohne Enddatum läuft er unbefristet; die Oberfläche zeigt es als TT.MM.JJJJ | Date |  | Beispiel 2027-12-01; Anzeige TT.MM.JJJJ, Austausch als JJJJ-MM-TT |
 
-**Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht. Ein Dauerauftrag kann aus einem Sparziel entstehen (Entität Sparziel); das Sparziel verweist über dauerauftragId auf ihn, der Dauerauftrag selbst trägt keinen Verweis zurück und wird in der Liste und bei Änderung und Löschung wie jeder andere behandelt.
+**Einschränkungen:** Ein Dauerauftrag gehört zum Girokonto der angemeldeten Kundin und ist nur für sie sichtbar. Eine Höchstzahl je Kundin gibt es nicht. Ein Dauerauftrag kann aus einem Sparziel entstehen (Entität Sparziel); das Sparziel verweist über dauerauftragId auf ihn, der Dauerauftrag selbst trägt keinen Verweis zurück und wird in der Liste und bei Änderung und Löschung wie jeder andere behandelt. Beim Anlegen aus einem Sparziel übernimmt der Dienst die IBAN des Tagesgeldkontos als empfaengerIban ohne IBAN-Prüfung nach BR-0003 (BR-0103).
 
 ### Nachricht
 

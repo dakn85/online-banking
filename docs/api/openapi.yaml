@@ -1516,7 +1516,7 @@ paths:
   /api/sparziele:
     post:
       summary: Sparziel anlegen
-      description: Legt für das Tagesgeldkonto der angemeldeten Kundin ein Sparziel an und richtet in einem Schritt den Dauerauftrag vom Girokonto auf das Tagesgeldkonto ein (BR-0103). Die Sparrate berechnet der Dienst selbst (BR-0101), sie steht nicht im Auftrag; die Antwort nennt Sparrate und ersten Ausführungstag, das Enddatum ist das Zieldatum. Prüfreihenfolge und Meldungen wie bei GET /api/sparziele/vorschlag. Bei einer Abweichung wird weder Sparziel noch Dauerauftrag angelegt. Ohne gültige Sitzung antwortet der Dienst mit 401.
+      description: Legt für das Tagesgeldkonto der angemeldeten Kundin ein Sparziel an und richtet in einem Schritt den Dauerauftrag vom Girokonto auf das Tagesgeldkonto ein (BR-0103). Die Sparrate berechnet der Dienst selbst (BR-0101), sie steht nicht im Auftrag; die Antwort nennt Sparrate und ersten Ausführungstag, das Enddatum ist das Zieldatum. Die IBAN des Tagesgeldkontos wird ohne IBAN-Prüfung nach BR-0003 als Empfänger-IBAN übernommen. Jeder Aufruf legt ein eigenes Sparziel mit eigenem Dauerauftrag an (201), auch bei gleichem Zielbetrag und Zieldatum; der Dienst erkennt keine Wiederholung, den Schutz vor Doppelklick leistet die Oberfläche. Prüfreihenfolge und Meldungen wie bei GET /api/sparziele/vorschlag. Bei einer Abweichung wird weder Sparziel noch Dauerauftrag angelegt. Ohne gültige Sitzung antwortet der Dienst mit 401.
       operationId: sparzielAnlegen
       tags:
         - Sparziel
