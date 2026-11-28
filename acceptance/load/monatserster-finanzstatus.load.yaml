@@ -1,0 +1,11 @@
+title: Monatserster Finanzstatus
+tool: gatling
+simulation: load.MonatsersterFinanzstatusSimulation
+dir: load/gatling
+measures:
+  - nfr: NFR-003
+    request: GET /api/konten
+  - nfr: NFR-004
+    request: GET /api/konten
+names:
+  GET /api/konten: [Finanzstatus]
