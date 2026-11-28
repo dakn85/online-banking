@@ -9,6 +9,11 @@ tests:
       from: frei
       by: Test User One
       at: 2026-11-28T13:48:45.212Z
+    needs:
+      lastmodell:
+        value: 200 Nutzer, 30 s Anstieg, 2 min halten, 1–2 s Denkzeit, p95 ≤ 500 ms, höchstens 0,5 % Fehler
+        by: Test User One
+        at: 2026-11-28T13:49:45.060Z
     answers:
       - questionId: ablauf.anfragen
         question: Welche Anfragen soll der Test schicken?
@@ -20,3 +25,13 @@ tests:
         value: Anmeldung über POST /api/anmeldung; jeder virtuelle Nutzer meldet sich einmal an und bleibt angemeldet.
         by: Test User One
         at: 2026-11-28T13:49:19.153Z
+      - questionId: randbedingungen.aufraeumen
+        question: Dürfen Lastläufe Daten auf default liegen lassen?
+        value: Der Test liest nur. Im Setup einmal POST /api/test/lasttest/reset.
+        by: Test User One
+        at: 2026-11-28T13:49:51.669Z
+      - questionId: randbedingungen.testdaten
+        question: Mit welchen Testnutzern meldet sich der Test an?
+        value: lasttest-001 bis lasttest-200, PIN aus dem Zugang LASTTEST_PIN
+        by: Test User One
+        at: 2026-11-28T13:50:04.221Z
