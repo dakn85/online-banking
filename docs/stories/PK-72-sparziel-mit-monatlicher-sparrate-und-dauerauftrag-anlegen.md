@@ -99,7 +99,7 @@ Als Privatkundin möchte ich für mein Tagesgeldkonto ein Sparziel mit Zielbetra
   _→ noch nicht in der Spezifikation_
 - Zählt BR-0101 für einen Anlagetag am 29., 30. oder 31. eines Monats die Raten nach den Tagen „Anlagetag plus n Monate“ (z. B. 28.02., 31.03.), obwohl der monatliche Dauerauftrag ab dem ersten Ausführungstag (28.02.) in den Folgemonaten am 28. läuft? Beispiel: Anlage am 31.01., Zieldatum 30.03. Nach BR-0101 gibt es 1 Rate (28.02.; der 31.03. liegt nach dem Zieldatum). Der Dauerauftrag mit erstem Tag 28.02. und Enddatum 30.03. hätte dagegen 2 Ausführungstage (28.02., 28.03.).
   **Antwort:** BR-0101 bleibt wie beschrieben: Raten zählen nach „Anlagetag plus n Monate“. Der Dauerauftrag wird nicht ausgeführt, die Abweichung beim Monatsende wird in Kauf genommen und in UC-025 und UC-016 vermerkt.
-  _→ eingearbeitet in UC-025, UC-016_
+  _→ eingearbeitet in UC-025, UC-016 · b4a2980_
 - Wie soll der Befund „Datenmodell: „Sparziel ||--|| Dauerauftrag“ verlangt für vorhandene Datensätze von Dauerauftrag ein Gegenstück in Sparziel“ gelöst werden?
   **Antwort:** fixe wie vorgeschlagen
   _→ eingearbeitet in Sparziel · 2467b85_
