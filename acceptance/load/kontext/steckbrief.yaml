@@ -9,3 +9,14 @@ tests:
       from: frei
       by: Test User One
       at: 2026-11-28T13:48:45.212Z
+    answers:
+      - questionId: ablauf.anfragen
+        question: Welche Anfragen soll der Test schicken?
+        value: POST /api/anmeldung → GET /api/konten → GET /api/konten/{iban}/umsaetze
+        by: Test User One
+        at: 2026-11-28T13:49:08.461Z
+      - questionId: anfragen.anmeldung
+        question: Wie meldet sich der Test an?
+        value: Anmeldung über POST /api/anmeldung; jeder virtuelle Nutzer meldet sich einmal an und bleibt angemeldet.
+        by: Test User One
+        at: 2026-11-28T13:49:19.153Z
